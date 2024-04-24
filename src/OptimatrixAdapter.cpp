@@ -13,7 +13,7 @@
 // Hard code for matrix
 // WE are going to add test cases in
 //DONE Add TESTING SUITE FOR EASY DEBUGGING AND TESTING IN PURE CPP
-OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosition,
+OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosition,
                                                                     const std::vector<int> &yPosition,
                                                                     const std::vector<double> &data,
                                                                     const int rowSize, const int colSize) {
@@ -29,26 +29,29 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     //Get unique names
     // TYPE CONVERSIONS TO STRINGS ARE SLOW, but for a one-to-one concept, we are converting to strings
     // As per the OptiMatrix class
-    std::vector<std::pair<int, std::set<long long>>> closenessList(count);
+    std::vector<std::pair<int, std::set<long long> > > closenessList(count);
 
     std::vector<std::string> singletonList;
-    // Shouldnt be duplicates, but there can be duplicates. There is a way to deal with it
+    // Shouldn't be duplicates, but there can be duplicates. There is a way to deal with it
     std::unordered_map<int, std::vector<int> > singletonClusterMap;
     std::set<int> names;
     for (size_t i = 0; i < count; i++) {
+        int currentXPos = xPosition[i];
+        int currentYPos = yPosition[i];
         if (data[i] > cutoff) // its 1 - score, so the higher your score, the closer to the cutoff you are
         {
             // You are a singleton, so we will add you to the list
             //singletonList.emplace_back(std::to_string(xPosition[i]));
             // At this position, I dont cluster with the current x,y Position, so I am a singleton
             //List of possible singletons
-            singletonClusterMap[static_cast<int>(i)].emplace_back(xPosition[i]);
+            //I am using the index not the actually position, the xPos is the position to the other.
+            singletonClusterMap[currentXPos].emplace_back(currentYPos);
             continue;
         }
         // xPosition[i] is the name in this context
         // Linked list?
-        closenessList[xPosition[i]].first = static_cast<int>(i);
-        closenessList[xPosition[i]].second.insert(yPosition[i]);
+        closenessList[currentXPos].first = currentXPos;
+        closenessList[currentXPos].second.insert(yPosition[i]);
     }
     //TODO Change this back into a vector, we do not need to delete values
     const std::list<std::pair<int, std::set<long long>>> closenessListWithoutEmpties(closenessList.begin(),

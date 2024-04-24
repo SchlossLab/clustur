@@ -3,8 +3,8 @@
 //it will look in a package!
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"
-//#include "MothurDependencies/OptiMatrix.h"
-// #include "MothurDependencies/Clustercommand.h"
+#include "MothurDependencies/OptiMatrix.h"
+#include "MothurDependencies/ClusterCommand.h"
 
 #include <Rcpp.h>
 //[[Rcpp::export]]
@@ -14,9 +14,8 @@ std::string MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
 {
     OptimatrixAdapter adapter(cutoff);
     const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition,yPosition,data,rowSize,colSize);
-    //auto* command = new ClusterCommand();
-   // command->SetMaxIterations(iterations);
-   //  command->runOptiCluster(optiMatrix);
-   // return command->clusterMatrixOutput;
-   return "";
+    auto* command = new ClusterCommand();
+    command->SetMaxIterations(iterations);
+    command->runOptiCluster(optiMatrix);
+    return command->clusterMatrixOutput;
 }
