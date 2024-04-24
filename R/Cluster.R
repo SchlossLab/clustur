@@ -4,13 +4,22 @@
 # muMS2 -> cluster file
 # Samples contains names:
 # Prototype is complete
-Opticluster <- function(sparse_matrix, cutoff, iterations)
+#' Opticluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param param1 A Sparse Matrix.
+#' @param param2 A cutoff value
+#' @param param3 The number of iterations
+#' @return A dataframe of the clusters.
+OptiCluster <- function(sparse_matrix, cutoff, iterations)
 {
   indexOneList <- sparse_matrix@i
   indexTwoList <- sparse_matrix@j
   valueList <- sparse_matrix@x
   matrix_length <- length(indexOneList)
-  clustering_output_string <- Opticluster::MatrixToOpiMatrixCluster(indexOneList, indexTwoList, valueList, cutoff,
+  clustering_output_string <- MatrixToOpiMatrixCluster(indexOneList, indexTwoList, valueList, cutoff,
                                    matrix_length, matrix_length, iterations)
   return(t(read.table(text = clustering_output_string, sep = "\t", header = TRUE)))
 }
