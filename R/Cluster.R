@@ -12,7 +12,7 @@
 #' @param param1 A Sparse Matrix.
 #' @param param2 A cutoff value
 #' @param param3 The number of iterations
-#' @return A dataframe of the clusters.
+#' @return A data.frame of the clusters.
 OptiCluster <- function(sparse_matrix, cutoff, iterations)
 {
   indexOneList <- sparse_matrix@i

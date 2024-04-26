@@ -14,7 +14,7 @@ OptiCluster(sparse_matrix, cutoff, iterations)
 \item{param3}{The number of iterations}
 }
 \value{
-A dataframe of the clusters.
+A data.frame of the clusters.
 }
 \description{
 Detailed description of the function.
