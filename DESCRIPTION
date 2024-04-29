@@ -9,8 +9,10 @@ Description: One paragraph description of what the package does as one
         or more full sentences.
 License: GPL (>= 2)
 Imports: Rcpp (>= 1.0.12)
-LinkingTo: Rcpp
+LinkingTo: Rcpp,
+    testthat
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    xml2
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1

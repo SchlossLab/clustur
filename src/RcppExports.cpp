@@ -28,8 +28,11 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP run_testthat_tests(SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 7},
+    {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
 
