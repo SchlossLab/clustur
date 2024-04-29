@@ -21,7 +21,7 @@ OptiCluster <- function(sparse_matrix, cutoff, iterations)
   matrix_length <- length(indexOneList)
   clustering_output_string <- MatrixToOpiMatrixCluster(indexOneList, indexTwoList, valueList, cutoff,
                                    matrix_length, matrix_length, iterations)
-  df <- data.frame(t(read.table(text = clustering_output_string, sep = "\t", header = TRUE)))
+  df <- t(read.table(text = clustering_output_string, sep = "\t", header = TRUE))
   colnames(df)[1] <- "cluster"
-  return(df)
+  return(data.frame(df))
 }

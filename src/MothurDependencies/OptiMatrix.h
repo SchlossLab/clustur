@@ -21,15 +21,12 @@ public:
     nameMap = name;
     singletons = single;
 }//closeness, namemap, singleton, cutoff
-    OptiMatrix() = default;
     ~OptiMatrix(){}
     std::vector<std::set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameMap;}
     std::vector<std::string> GetSingletons() {return singletons;}
 private:
-    double cutoff{};
     std::string distFile, namefile, countfile, format, distFormat;
-    bool sim{};
 };
 
 
