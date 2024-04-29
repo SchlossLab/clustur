@@ -16,6 +16,7 @@
 class OptiData {
 public:
     OptiData(double c)  { cutoff = c; }
+    OptiData() {}
     virtual ~OptiData(){}
 
     std::set<long long> getCloseSeqs(long long i);

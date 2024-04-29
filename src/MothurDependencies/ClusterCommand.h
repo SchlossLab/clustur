@@ -36,7 +36,6 @@
 #include "Metrics/tptn.hpp"
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
-#include "../TestHelpers/TestHelper.h"
 using namespace std;
 
 /* The cluster() command:
@@ -51,7 +50,7 @@ class ClusterCommand {
 	
 public:
 	//ClusterCommand(string);
-	ClusterCommand() = default;
+	ClusterCommand() {}
 	~ClusterCommand();
 
 	std::vector<string> setParameters();

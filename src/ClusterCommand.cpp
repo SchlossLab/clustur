@@ -7,7 +7,7 @@
  *
  */
 
-#include "MothurDependencies/Clustercommand.h"
+#include "MothurDependencies/ClusterCommand.h"
 using namespace std;
 ClusterCommand::~ClusterCommand() {
 }
@@ -129,17 +129,6 @@ int ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
             printHeaders = false;
         } else { list->setPrintedLabels(printHeaders); }
         clusterMatrixOutput = list->print(listFile);
-#if !DEBUG_RCPP
-        std::ofstream outPutWriter("F:\\muMS2_Clustering\\muMS2_Clustering\\Distance_files\\cluster_ouput.list");
-        while(!outPutWriter.is_open()) {
-            TestHelper::Print("Enter new path: ");
-            std::string filePath;
-            std::cin >> filePath;
-            outPutWriter.open(filePath);
-        }
-        outPutWriter << clusterMatrixOutput;
-        outPutWriter.close();
-#endif
         delete list;
         results = cluster.getStats(tp, tn, fp, fn);
 
