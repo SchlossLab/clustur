@@ -6,23 +6,51 @@
 
 
 bool OptimatrixAdapterTestFixture::TestOptimatrixReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                     const std::vector<int> &yPosition, const std::vector<double> &data) {
+                                                                     const std::vector<int> &yPosition,
+                                                                     const std::vector<double> &data) {
     Setup();
     const bool hasPassed = adapter->ConvertToOptimatrix(xPosition, yPosition, data) != nullptr;
     TearDown();
     return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue() {
-    return false;
+bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(const std::vector<int> &xPosition,
+                                                                                const std::vector<int> &yPosition,
+                                                                                const std::vector<double> &data,
+                                                                                const int expectedSizeOfList) {
+    Setup();
+    bool hasPassed = false;
+    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
+    hasPassed = adapter->GetCloseness().size() == expectedSizeOfList;
+    TearDown();
+    return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue() {
-    return false;
+bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue(const std::vector<int> &xPosition,
+                                                                                const std::vector<int> &yPosition,
+                                                                                const std::vector<double> &data,
+                                                                                const int expectedSizeOfList) {
+    Setup();
+    bool hasPassed = false;
+    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
+    hasPassed = adapter->GetSingletons().size() == expectedSizeOfList;
+    TearDown();
+    return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue() {
-    return false;
+bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(const std::vector<int> &xPosition,
+                                                                                const std::vector<int> &yPosition,
+                                                                                const std::vector<double> &data,
+                                                                                const int expectedSizeOfList) {
+
+    // OptimatrixAdapter adapt(0.03);
+    // adapt.ConvertToOptimatrix(xVals, yVals, data);
+    Setup();
+    bool hasPassed = false;
+    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
+    hasPassed = adapter->GetNameList().size() == expectedSizeOfList;
+    TearDown();
+    return hasPassed;
 }
 
 void OptimatrixAdapterTestFixture::Setup() {

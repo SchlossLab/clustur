@@ -10,10 +10,14 @@
 // associated context should be wrapped in braced.
 //  OptiMatrix* ConvertToOptimatrix(const std::vector<int>
 //        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, int rowSize, int colSize);
-void Check()
-{
-   
-}
+// void Check()
+// {
+//   OptimatrixAdapterTestFixture fixture;
+//   std::vector<int> xVals = std::vector<int>{1,1,1,2,2,3,5};
+//   std::vector<int> yVals = std::vector<int>{2,3,5,3,5,5,5};
+//   std::vector<double> data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+//   bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(xVals, yVals, data, 4);
+// }
 context("Optimatrix Test") {
 
   // The format for specifying tests is similar to that of
@@ -23,6 +27,30 @@ context("Optimatrix Test") {
   test_that("OptimatrixAdapter returns a optimatrix") {
     OptimatrixAdapterTestFixture fixture;
     bool result = fixture.TestOptimatrixReturnsCorrectValue(std::vector<int>(), std::vector<int>(), std::vector<double>());
+    expect_true(result);
+  }
+  test_that("OptimatrixAdapter returns the correct number of Closeness Values"){
+    OptimatrixAdapterTestFixture fixture;
+    const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
+    const auto yVals = std::vector<int>{2,3,5,3,5,5,5};
+    const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+    bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(xVals, yVals, data, 4);
+    expect_true(result);
+  }
+  test_that("OptimatrixAdapter returns the correct number of Singletons"){
+    OptimatrixAdapterTestFixture fixture;
+    const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
+    const auto yVals = std::vector<int>{2,3,5,3,5,5,5};
+    const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+    bool result = fixture.TestOptimatrixSingletonReturnsCorrectValue(xVals, yVals, data, 1);
+    expect_true(result);
+  }
+  test_that("OptimatrixAdapter returns the correct number of Names"){
+    OptimatrixAdapterTestFixture fixture;
+    const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
+    const auto yVals = std::vector<int>{2,3,5,3,5,5,5};
+    const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+    bool result = fixture.TestOptimatrixNameListReturnsCorrectValue(xVals, yVals, data, 4);
     expect_true(result);
   }
 

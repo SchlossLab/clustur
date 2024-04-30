@@ -12,11 +12,14 @@
 
 class OptimatrixAdapterTestFixture : public TestFixture{
 public:
-    bool TestOptimatrixReturnsCorrectValue(const std::vector<int>&
-        xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
-    bool TestOptimatrixClosenessReturnsCorrectValue();
-    bool TestOptimatrixSingletonReturnsCorrectValue();
-    bool TestOptimatrixNameListReturnsCorrectValue();
+    bool TestOptimatrixReturnsCorrectValue(const std::vector<int>&xPosition,
+        const std::vector<int>& yPosition, const std::vector<double>& data);
+    bool TestOptimatrixClosenessReturnsCorrectValue(const std::vector<int> &xPosition,
+        const std::vector<int> &yPosition, const std::vector<double> &data, int expectedSizeOfList);
+    bool TestOptimatrixSingletonReturnsCorrectValue(const std::vector<int> &xPosition,
+        const std::vector<int> &yPosition, const std::vector<double> &data, int expectedSizeOfList);
+    bool TestOptimatrixNameListReturnsCorrectValue(const std::vector<int> &xPosition,
+        const std::vector<int> &yPosition, const std::vector<double> &data, int expectedSizeOfList);
 private:
     void Setup() override;
     void TearDown() override;
