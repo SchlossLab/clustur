@@ -10,6 +10,7 @@ __pycache__/
 
 # Cpp Object files
 *.o
+*.dll
 
 # Distribution / packaging
 .Python
@@ -38,6 +39,9 @@ var/
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
+# CMakeCheck list via Clion
+CMakeLists.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -186,4 +190,4 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # idea folder, uncomment if you don't need it
-# .idea
+.idea
