@@ -25,7 +25,7 @@ public:
         this->cutoff = cutoff;
     }
     OptiMatrix* ConvertToOptimatrix(const std::vector<int>
-        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, int rowSize, int colSize);
+        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
     std::vector<std::set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameList;}
     std::vector<std::string> GetSingletons() {return singletons;}

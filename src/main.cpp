@@ -10,10 +10,10 @@
 //[[Rcpp::export]]
 std::string MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
                         const std::vector<int> &yPosition, const std::vector<double> &data, const double cutoff,
-                        const int rowSize, const int colSize, const int iterations = 2)
+                        const int iterations = 2)
 {
     OptimatrixAdapter adapter(cutoff);
-    const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition,yPosition,data,rowSize,colSize);
+    const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition,yPosition,data);
     auto* command = new ClusterCommand();
     command->SetMaxIterations(iterations);
     command->runOptiCluster(optiMatrix);

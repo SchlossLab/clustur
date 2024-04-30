@@ -1,5 +1,5 @@
 #include <testthat.h>
-#include "Adapters/OptimatrixAdapter.h"
+#include "Tests/OptimatrixAdapterTestFixture.h"
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
 // file providing the definition, and let R CMD INSTALL
@@ -21,9 +21,9 @@ context("Optimatrix Test") {
   // unit test, and use 'expect_true()' and 'expect_false()'
   // to test the desired conditions.
   test_that("OptimatrixAdapter returns a optimatrix") {
-    OptimatrixAdapter adapter(0.2);
-    auto optimatrix = adapter.ConvertToOptimatrix(std::vector<int>(), std::vector<int>(), std::vector<double>(), 0,0);
-    expect_false(optimatrix == nullptr);
+    OptimatrixAdapterTestFixture fixture;
+    bool result = fixture.TestOptimatrixReturnsCorrectValue(std::vector<int>(), std::vector<int>(), std::vector<double>());
+    expect_true(result);
   }
 
 }

@@ -15,8 +15,7 @@
 //DONE Add TESTING SUITE FOR EASY DEBUGGING AND TESTING IN PURE CPP
 OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosition,
                                                                     const std::vector<int> &yPosition,
-                                                                    const std::vector<double> &data,
-                                                                    const int rowSize, const int colSize) {
+                                                                    const std::vector<double> &data) {
     // The closeness map does not contain sequences that have 0 values....
     //If there are no values within the range of it, and its empty, REMOVE IT
     // All the values that are correlated to this also belong in the nameMap...
@@ -26,7 +25,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     // Create the names vector
     // Creating these will allow us to have a prototype opticluster sparse matrix.
     const size_t count = data.size();
-    //Get unique names
+    // Get unique names
     // TYPE CONVERSIONS TO STRINGS ARE SLOW, but for a one-to-one concept, we are converting to strings
     // As per the OptiMatrix class
     std::vector<std::pair<int, std::set<long long> > > closenessList(count);
