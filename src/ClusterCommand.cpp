@@ -122,7 +122,6 @@ int ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
 
         clusterOutputData += "\n\n";
         list = cluster.getList();
-        list->setLabel(std::to_string(cutoff));
         //
         if (printHeaders) {
             //only print headers the first time

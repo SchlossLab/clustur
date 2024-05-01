@@ -1,3 +1,6 @@
+
+#include "TestHelpers/TestHelper.h"
+#if DEBUG_RCPP
 #include <testthat.h>
 #include "Tests/OptimatrixAdapterTestFixture.h"
 // Normally this would be a function from your package's
@@ -55,3 +58,5 @@ context("Optimatrix Test") {
   }
 
 }
+
+#endif
