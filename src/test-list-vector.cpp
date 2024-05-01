@@ -25,7 +25,6 @@
 //   bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(xVals, yVals, data, 4);
 // }
 context("ListVectorTest") {
-
   // The format for specifying tests is similar to that of
   // testthat's R functions. Use 'test_that()' to define a
   // unit test, and use 'expect_true()' and 'expect_false()'
@@ -103,6 +102,20 @@ context("ListVectorTest") {
     bool result = testFixture.TestListVectorPrintDisplaysDataCorrectly(mockData, "\tOtu1\tOtu2\tOtu3\n\t2,2\t1\t3\n");
     expect_true(result);
   }
+  test_that("List Vector Properly Sets Its Labels") {
+    std::vector<std::string> mockData {"1", "2,2", "3"};
+    ListVectorTestFixture testFixture;
+    bool result = testFixture.TestListVectorSetsLabelsCorrectly(mockData, 3);
+    expect_true(result);
+  }
+  test_that("Set PrintedLabel Functions Correctly") {
+    ListVectorTestFixture testFixture;
+    bool result = testFixture.TestListVectorSetsPrintedLabelsCorrectly(true, true);
+    expect_true(result);
+    result = testFixture.TestListVectorSetsPrintedLabelsCorrectly(false, true);
+    expect_false(result);
+  }
+
 
 
 }
