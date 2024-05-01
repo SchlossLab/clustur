@@ -16,7 +16,11 @@ ClusterCommand::~ClusterCommand() {
 /// Bad alloctions, returns basic_string, returns emptry string, returns non-utf8 characters, etc
 /// @param optiMatrix
 /// @return
-int ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
+std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
+    std::string clusterOutputData;
+    std::string sensFile;
+    std::string outStep;
+    std::string clusterMatrixOutput;
     if (!cutOffSet) {
         clusterOutputData += ("\nYou did not set a cutoff, using 0.03.\n");
         cutoff = 0.5;
@@ -137,5 +141,5 @@ int ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         for (double result : results) { sensFile + std::to_string(result) + '\t'; }
     }
     delete matrix;
-    return 0;
+    return clusterMatrixOutput;
 }

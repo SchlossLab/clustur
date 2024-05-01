@@ -52,24 +52,14 @@ public:
 	//ClusterCommand(string);
 	ClusterCommand() {}
 	~ClusterCommand();
-
-	std::vector<string> setParameters();
-	string getCommandName()			{ return "cluster";		}
-	string getCommandCategory()		{ return "Clustering";	}
-	string getCitation() { return "Schloss PD, Westcott SL (2011). Assessing and improving methods used in OTU-based approaches for 16S rRNA gene sequence analysis. Appl Environ Microbiol 77:3219.\nSchloss PD, Handelsman J (2005). Introducing DOTUR, a computer program for defining operational taxonomic units and estimating species richness. Appl Environ Microbiol 71: 1501-6.\nhttp://www.mothur.org/wiki/Cluster"; }
-	string getDescription()		{ return "cluster your sequences into OTUs using a distance matrix"; }
 	void SetMaxIterations(const int iterations) {maxIters = iterations;}
-	int runOptiCluster(OptiMatrix*);
-	int execute();
-	std::string clusterOutputData;
-	std::string sensFile;
-	std::string outStep;
-	std::string clusterMatrixOutput;
+	std::string runOptiCluster(OptiMatrix*);
+
+
 	
 private:
 	ListVector* list;
 	ListVector oldList;
-
 	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
@@ -82,8 +72,6 @@ private:
 	bool print_start;
 	time_t start;
 	unsigned long loops;
-	
-	void printData(string label, map<string, int>&, bool&);
 	vector<string> outputNames;
 };
 

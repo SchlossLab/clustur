@@ -15,9 +15,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixReturnsCorrectValue(const std::
 }
 
 bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                                const std::vector<int> &yPosition,
-                                                                                const std::vector<double> &data,
-                                                                                const int expectedSizeOfList) {
+                                                                              const std::vector<int> &yPosition,
+                                                                              const std::vector<double> &data,
+                                                                              const int expectedSizeOfList) {
     Setup();
     bool hasPassed = false;
     adapter->ConvertToOptimatrix(xPosition, yPosition, data);
