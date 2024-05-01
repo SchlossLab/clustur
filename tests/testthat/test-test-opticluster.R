@@ -11,3 +11,4 @@ test_that("Clustering returns proper results", {
   expect_equal(class(df), "data.frame")
   expect_equal(df, expected_df)
 })
+

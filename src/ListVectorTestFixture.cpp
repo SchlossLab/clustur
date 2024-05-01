@@ -32,7 +32,7 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectMaxRank(const std::vecto
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
-    const bool result = listVector->getNumBins() == expectedResult;
+    const bool result = listVector->getMaxRank() == expectedResult;
     TearDown();
     return result;
 }
