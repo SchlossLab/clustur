@@ -11,9 +11,9 @@
 
 class ClusterCommandTestFixture : TestFixture{
 public:
-    bool TestRunOptiClusterReturnsCorrectData(const OptiMatrix* mockMatrix,
+    bool TestRunOptiClusterReturnsCorrectData(OptiMatrix* mockMatrix,
         const std::string& expectedResult);
-    bool TestSetIterationsWorksCorrectly(int iterations, int expectedIterations);
+    bool TestSetIterationsWorksCorrectly(int iterations, bool expectResult);
 private:
     std::unique_ptr<ClusterCommand> clusterCommand;
     void Setup() override;

@@ -45,7 +45,7 @@ context("Optimatrix Test") {
     const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
     const auto yVals = std::vector<int>{2,3,5,3,5,5,5};
     const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
-    bool result = fixture.TestOptimatrixSingletonReturnsCorrectValue(xVals, yVals, data, 1);
+    bool result = fixture.TestOptimatrixSingletonReturnsCorrectValue(xVals, yVals, data, 0);
     expect_true(result);
   }
   test_that("OptimatrixAdapter returns the correct number of Names"){

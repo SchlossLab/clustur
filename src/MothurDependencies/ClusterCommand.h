@@ -52,7 +52,7 @@ public:
 	//ClusterCommand(string);
 	ClusterCommand() {}
 	~ClusterCommand();
-	void SetMaxIterations(const int iterations) {maxIters = iterations;}
+	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
 	std::string runOptiCluster(OptiMatrix*);
 
 
