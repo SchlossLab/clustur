@@ -28,8 +28,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     // Get unique names
     // TYPE CONVERSIONS TO STRINGS ARE SLOW, but for a one-to-one concept, we are converting to strings
     // As per the OptiMatrix class
-    std::vector<std::pair<int, std::set<long long> > > closenessList(count);
-
+    std::map<int, std::set<long long>> closenessMap;
     std::vector<std::string> singletonList;
     // Shouldn't be duplicates, but there can be duplicates. There is a way to deal with it
     std::unordered_map<int, std::vector<int> > singletonClusterMap;
@@ -49,22 +48,17 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
         }
         // xPosition[i] is the name in this context
         // Linked list?
-        closenessList[currentXPos].first = currentXPos;
-        closenessList[currentXPos].second.insert(yPosition[i]);
+        closenessMap[currentXPos].emplace(currentYPos);
+        closenessMap[currentYPos].emplace(currentXPos);
     }
     //TODO Change this back into a vector, we do not need to delete values
-    const std::list<std::pair<int, std::set<long long>>> closenessListWithoutEmpties(closenessList.begin(),
-        closenessList.end());
+    int index = 0;
     std::vector<std::set<long long> > adjustedClosenessList;
-    closenessList.clear();
-    for (auto &[index, closenessValues]: closenessListWithoutEmpties) {
-        if (!closenessValues.empty()) {
-            adjustedClosenessList.emplace_back(closenessValues);
-            names.insert(index);
-            continue;
-        }
+    for (auto &[key, closenessValues]: closenessMap) {
+        adjustedClosenessList.emplace_back(closenessValues.begin(), closenessValues.end());
+        names.insert(key);
     }
-
+    //TODO Work on creating singletons properly!
     const size_t maxSizeOfCluster = names.size();
     for (const auto &[key, value]: singletonClusterMap) {
         if (value.size() < maxSizeOfCluster) {
