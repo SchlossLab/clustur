@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <list>
 #include "../MothurDependencies/OptiMatrix.h"
 #include <fstream>
