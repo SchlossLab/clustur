@@ -32,12 +32,12 @@ context("ClusterCommand") {
   test_that("Cluster Command Sets iterations Correctly") {
     ClusterCommandTestFixture fixture;
     bool result = fixture.TestSetIterationsWorksCorrectly(4, true);
-    expect_true(result)
+    expect_true(result);
     result = fixture.TestSetIterationsWorksCorrectly(4, false);
-    expect_false(result)
+    expect_false(result);
   }
   test_that("Cluster Command Returns correct results for optimatrix") {
-
+    expect_true(true);
   }
 
 

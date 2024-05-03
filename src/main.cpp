@@ -5,6 +5,7 @@
 #include "Adapters/OptimatrixAdapter.h"
 #include "MothurDependencies/ListVector.h"
 #include "TestHelpers/TestHelper.h"
+#include "Tests/OptimatrixAdapterTestFixture.h"
 #if DEBUG_RCPP
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"
@@ -25,10 +26,10 @@ std::string MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
 }
 #endif
 int main() {
-    const auto xVals = std::vector<int>{0,0,0,1,1,2,4};
-    const auto yVals = std::vector<int>{1,2,4,2,4,4,4};
-    const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
-    OptimatrixAdapter adapter(0.03);
-    auto val = adapter.ConvertToOptimatrix(xVals,yVals,data);
+    // OptimatrixAdapterTestFixture fixture;
+    // const auto xVals = std::vector<int>{0,0,0,1,1,2,3};
+    // const auto yVals = std::vector<int>{1,2,4,2,4,4,4};
+    // const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+    // bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(xVals, yVals, data, 4);
     return 0;
 }

@@ -4,7 +4,7 @@
 
 #ifndef TESTHELPER_H
 #define TESTHELPER_H
-#define DEBUG_RCPP 0
+#define DEBUG_RCPP 1
 #if DEBUG_RCPP
     #include <Rcpp.h>
 #endif
