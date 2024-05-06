@@ -14,8 +14,8 @@
 class OptiMatrix : public OptiData{
 
 public:
-    OptiMatrix(std::vector<std::set<long long>> close,  std::vector<std::string> name,
-     std::vector<std::string> single, const double c): OptiData(c)
+    OptiMatrix(const std::vector<std::set<long long>>& close,  const std::vector<std::string>& name,
+     const std::vector<std::string>& single, const double c): OptiData(c)
 {
     closeness = close;
     nameMap = name;

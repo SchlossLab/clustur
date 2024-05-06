@@ -32,6 +32,7 @@ public:
     std::vector<std::string> GetSingletons() {return singletons;}
 private:
     double cutoff;
+    //TODO Get rid of values inside of the adapter, it should not care about them
     std::vector<std::set<long long>> closeness;
     std::vector<std::string> nameList;
     std::vector<std::string> singletons;
