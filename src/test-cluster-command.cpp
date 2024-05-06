@@ -20,10 +20,7 @@
 // associated context should be wrapped in braced.
 //  OptiMatrix* ConvertToOptimatrix(const std::vector<int>
 //        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, int rowSize, int colSize);
-void Start() {
-  ClusterCommandTestFixture fixture;
-  fixture.TestSetIterationsWorksCorrectly(4, true);
-}
+
 context("ClusterCommand") {
   // The format for specifying tests is similar to that of
   // testthat's R functions. Use 'test_that()' to define a
