@@ -32,7 +32,7 @@ bool OptiClusterTestFixture::OpticlusterReturnsTheCorrectStats(double tp, double
     return stats == expectedResults;
 }
 
-bool OptiClusterTestFixture::OptiClusterGetsTheCorrectCloseFarCounts(long long sequence, long long newBin,
+bool OptiClusterTestFixture::OptiClusterGetsTheCorrectCloseFarCounts(const long long sequence, const long long newBin,
     const std::vector<double>& expectedResults) {
     Setup();
     double metric = 0;
@@ -75,5 +75,5 @@ void OptiClusterTestFixture::Setup() {
 }
 
 void OptiClusterTestFixture::TearDown() {
-    optiCluster.reset();
+    optiCluster.reset(nullptr);
 }
