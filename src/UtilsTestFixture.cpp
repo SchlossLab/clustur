@@ -4,8 +4,6 @@
 
 #include "tests/UtilsTestFixture.h"
 
-#include <list>
-
 bool UtilsTestFixture::TestMothurRandomShufflesRandomizesData(std::vector<int> listToRandomize,
                                                               const bool expectedResult) {
     Setup();
@@ -112,6 +110,11 @@ bool UtilsTestFixture::TestSplitAtCommaReturnsCorrectData(std::string &stringToS
     return container == expectedResult;
 
 }
+
+bool UtilsTestFixture::TestGetOTUNamesReturnsOTUNames(const std::vector<std::string> &currentLabels, int numBins,
+    const std::string &tagHeader, int expectedResult) {
+}
+
 void UtilsTestFixture::Setup() {
     utils = std::make_unique<Utils>();
 }
