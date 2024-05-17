@@ -82,15 +82,29 @@ context("Utils Testing") {
     UtilsTestFixture testFixture;
     bool result = testFixture.TestMothurConvertStringToDoubleIsCorrect("2.00", 2, true);
     expect_true(result);
+    result = testFixture.TestMothurConvertStringToDoubleIsCorrect("==", 2, false);
+    expect_false(result);
+
   }
   test_that("Utils Converts Floats Properly") {
     UtilsTestFixture testFixture;
     bool result = testFixture.TestMothurConvertStringToFloatIsCorrect("2.00", 2, true);
     expect_true(result);
+    result = testFixture.TestMothurConvertStringToFloatIsCorrect("==", 2, false);
+    expect_false(result);
   }
   test_that("Utils Converts Ints Properly") {
     UtilsTestFixture testFixture;
     bool result = testFixture.TestMothurConvertStringToIntIsCorrect("2", 2, true);
+    expect_true(result);
+    result = testFixture.TestMothurConvertStringToIntIsCorrect("==", 2, true);
+    expect_false(result);
+  }
+  test_that("Get OTU Names returns the correct number of OTU Names") {
+    UtilsTestFixture testFixture;
+    bool result = testFixture.TestGetOTUNamesReturnsCorrectNames({"OTU12", "OTU13"}, 4, "OTU", 4);
+    expect_true(result);
+    result = testFixture.TestGetOTUNamesReturnsCorrectNames({"OTU12", "OTU13"}, 2, "OTU", 0);
     expect_true(result);
   }
 }

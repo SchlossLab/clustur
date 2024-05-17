@@ -29,8 +29,6 @@ public:
     bool TestIsNumericIsCorrect(const std::string& stringToCheck, bool expectedResult);
     bool TestSplitAtCommaReturnsCorrectData(std::string& stringToSplit, std::vector<std::string> container,
         const std::vector<std::string>& expectedResult);
-    bool TestGetOTUNamesReturnsOTUNames(const std::vector<std::string>& currentLabels, int numBins,
-        const std::string& tagHeader, int expectedResult);
 private:
     std::unique_ptr<Utils> utils;
     void Setup() override;

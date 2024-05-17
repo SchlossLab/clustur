@@ -110,11 +110,6 @@ bool UtilsTestFixture::TestSplitAtCommaReturnsCorrectData(std::string &stringToS
     return container == expectedResult;
 
 }
-
-bool UtilsTestFixture::TestGetOTUNamesReturnsOTUNames(const std::vector<std::string> &currentLabels, int numBins,
-    const std::string &tagHeader, int expectedResult) {
-}
-
 void UtilsTestFixture::Setup() {
     utils = std::make_unique<Utils>();
 }

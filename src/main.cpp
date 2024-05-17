@@ -2,9 +2,8 @@
 #include <fstream>
 //TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
 //it will look in a package!
-#include "Adapters/OptimatrixAdapter.h"
-#include "MothurDependencies/ListVector.h"
 #include "TestHelpers/TestHelper.h"
+#include "tests/UtilsTestFixture.h"
 #if DEBUG_RCPP
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"
@@ -24,6 +23,3 @@ std::string MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
     return command->runOptiCluster(optiMatrix);
 }
 #endif
-int main() {
-    return 0;
-}
