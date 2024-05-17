@@ -45,7 +45,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
-    output_cluster += label + "\t" + std::to_string(numBins);
+    //output_cluster += label + "\t" + std::to_string(numBins);
     //TestHelper::Print(output_cluster);
     Utils util;
     std::vector<listCt> hold;
@@ -100,9 +100,7 @@ std::string ListVector::print(std::ostream &output) {
 void ListVector::printHeaders(std::string &output, std::map<std::string, int> &ct, bool sortPlease) {
     if (printListHeaders) {
         if (binLabels.size() == 0) { sortPlease = false; } //we are creating arbitary otuNames
-        output = "hello\n";
         std::vector<std::string> theseLabels = getLabels();
-        output = "label\tnum" + otuTag + "s";
         if (sortPlease) {
             Utils util;
             std::vector<listCt> hold;
@@ -131,7 +129,6 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
         }
 
         output += "\n";
-
         printListHeaders = false;
     }
 }

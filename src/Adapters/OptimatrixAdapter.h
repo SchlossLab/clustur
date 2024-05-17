@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <set>
+#include <unordered_set>
 #include <list>
 #include "../MothurDependencies/OptiMatrix.h"
 #include <fstream>
@@ -25,12 +26,13 @@ public:
         this->cutoff = cutoff;
     }
     OptiMatrix* ConvertToOptimatrix(const std::vector<int>
-        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, int rowSize, int colSize);
+        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
     std::vector<std::set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameList;}
     std::vector<std::string> GetSingletons() {return singletons;}
 private:
     double cutoff;
+    //TODO Get rid of values inside of the adapter, it should not care about them
     std::vector<std::set<long long>> closeness;
     std::vector<std::string> nameList;
     std::vector<std::string> singletons;

@@ -15,8 +15,7 @@
 //DONE Add TESTING SUITE FOR EASY DEBUGGING AND TESTING IN PURE CPP
 OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosition,
                                                                     const std::vector<int> &yPosition,
-                                                                    const std::vector<double> &data,
-                                                                    const int rowSize, const int colSize) {
+                                                                    const std::vector<double> &data) {
     // The closeness map does not contain sequences that have 0 values....
     //If there are no values within the range of it, and its empty, REMOVE IT
     // All the values that are correlated to this also belong in the nameMap...
@@ -26,14 +25,13 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     // Create the names vector
     // Creating these will allow us to have a prototype opticluster sparse matrix.
     const size_t count = data.size();
-    //Get unique names
+    // Get unique names
     // TYPE CONVERSIONS TO STRINGS ARE SLOW, but for a one-to-one concept, we are converting to strings
     // As per the OptiMatrix class
-    std::vector<std::pair<int, std::set<long long> > > closenessList(count);
-
+    std::map<int, std::set<long long>> closenessMap;
     std::vector<std::string> singletonList;
     // Shouldn't be duplicates, but there can be duplicates. There is a way to deal with it
-    std::unordered_map<int, std::vector<int> > singletonClusterMap;
+    std::unordered_set<int> singletonCandidates; // If your names is not included in this set you are an singleton
     std::set<int> names;
     for (size_t i = 0; i < count; i++) {
         int currentXPos = xPosition[i];
@@ -45,35 +43,26 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
             // At this position, I dont cluster with the current x,y Position, so I am a singleton
             //List of possible singletons
             //I am using the index not the actually position, the xPos is the position to the other.
-            singletonClusterMap[currentXPos].emplace_back(currentYPos);
+            singletonCandidates.insert(currentXPos);
+            singletonCandidates.insert(currentYPos);
             continue;
         }
         // xPosition[i] is the name in this context
         // Linked list?
-        closenessList[currentXPos].first = currentXPos;
-        closenessList[currentXPos].second.insert(yPosition[i]);
+        closenessMap[currentXPos].emplace(currentYPos);
+        closenessMap[currentYPos].emplace(currentXPos);
     }
     //TODO Change this back into a vector, we do not need to delete values
-    const std::list<std::pair<int, std::set<long long>>> closenessListWithoutEmpties(closenessList.begin(),
-        closenessList.end());
+    int index = 0;
     std::vector<std::set<long long> > adjustedClosenessList;
-    closenessList.clear();
-    for (auto &[index, closenessValues]: closenessListWithoutEmpties) {
-        if (!closenessValues.empty()) {
-            adjustedClosenessList.emplace_back(closenessValues);
-            names.insert(index);
-            continue;
-        }
+    for (auto &[key, closenessValues]: closenessMap) {
+        adjustedClosenessList.emplace_back(closenessValues.begin(), closenessValues.end());
+        names.insert(key);
     }
-
-    const size_t maxSizeOfCluster = names.size();
-    for (const auto &[key, value]: singletonClusterMap) {
-        if (value.size() < maxSizeOfCluster) {
-            // If the number of values that you are a singleton to is greater
-            //than the amount of currently avaliable names (Means you are completely alone), than you are a singleton
-            //Means I am not a singleton
+    //TODO Work on creating singletons properly!
+    for (const auto &key: singletonCandidates) {
+        if(names.find(key) != names.end()) //If its not found, its a singleton
             continue;
-        }
         singletonList.emplace_back(std::to_string(key));
     }
     int counter = 0;

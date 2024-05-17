@@ -28,9 +28,7 @@ public:
     bool mothurConvert(std::string item, float& num);
     std::string getLabelTag(std::string label);
     std::string getSimpleLabel(std::string label);
-    void splitAtComma(std::string&, std::string&);
     void splitAtComma(std::string& s, std::vector<std::string>& container);
-    void splitAtComma(std::string& s, std::vector<int>& container);
     template <typename Out>
     void split(const std::string &s, char delim, Out result) {
         std::istringstream iss(s);
