@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 5/8/24.
 //
 
-#include "tests/UtilsTestFixture.h"
+#include "Tests/UtilsTestFixture.h"
 
 bool UtilsTestFixture::TestMothurRandomShufflesRandomizesData(std::vector<int> listToRandomize,
                                                               const bool expectedResult) {

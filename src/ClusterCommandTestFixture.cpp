@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 5/1/24.
 //
 
-#include "tests/ClusterCommandTestFixture.h"
+#include "Tests/ClusterCommandTestFixture.h"
 
 bool ClusterCommandTestFixture::TestSetIterationsWorksCorrectly(const int iterations, const bool expectResult) {
     Setup();

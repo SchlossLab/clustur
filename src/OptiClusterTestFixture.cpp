@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 5/3/24.
 //
 
-#include "tests/OptiClusterTestFixture.h"
+#include "Tests/OptiClusterTestFixture.h"
 
 #include "Adapters/OptimatrixAdapter.h"
 #include "MothurDependencies/Metrics/mcc.hpp"

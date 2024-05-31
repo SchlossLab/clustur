@@ -13,7 +13,7 @@ ClusterCommand::~ClusterCommand() {
 }
 
 // //**********************************************************************************************************************
-/// Bad alloctions, returns basic_string, returns emptry string, returns non-utf8 characters, etc
+/// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
 /// @param optiMatrix
 /// @return
 std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {

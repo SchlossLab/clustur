@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 5/1/24.
 //
 
-#include "tests/ListVectorTestFixture.h"
+#include "Tests/ListVectorTestFixture.h"
 
 bool ListVectorTestFixture::TestListVectorReturnsCorrectNumberOfBins(const std::vector<std::string>& mockListOfSequences,
     const int expectedResult) {

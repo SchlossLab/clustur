@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 5/7/24.
 //
 
-#include "tests/OptiDataTestFixture.h"
+#include "Tests/OptiDataTestFixture.h"
 
 #include "Adapters/OptimatrixAdapter.h"
 

@@ -3,7 +3,6 @@
 //TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
 //it will look in a package!
 #include "TestHelpers/TestHelper.h"
-#include "tests/UtilsTestFixture.h"
 #if DEBUG_RCPP
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"

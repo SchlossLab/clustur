@@ -2,10 +2,9 @@
 // Created by Gregory Johnson on 5/14/24.
 //
 #include "TestHelpers/TestHelper.h"
-#include "tests/UtilsTestFixture.h"
+#include "Tests/UtilsTestFixture.h"
 #if DEBUG_RCPP
 #include <testthat.h>
-#include "Tests/OptimatrixAdapterTestFixture.h"
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
 // file providing the definition, and let R CMD INSTALL
