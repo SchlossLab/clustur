@@ -4,9 +4,11 @@
 
 #ifndef CLUSTERCOMMANDTESTFIXTURE_H
 #define CLUSTERCOMMANDTESTFIXTURE_H
+#include <memory>
 #include "TestFixture.h"
 #include "../MothurDependencies/ClusterCommand.h"
 #include "../MothurDependencies/OptiMatrix.h"
+
 
 
 class ClusterCommandTestFixture : TestFixture{
