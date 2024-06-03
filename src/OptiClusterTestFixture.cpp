@@ -71,9 +71,9 @@ void OptiClusterTestFixture::Setup() {
     const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
     OptimatrixAdapter adapter(0.03);
     OptiData *matrix = adapter.ConvertToOptimatrix(xVals, yVals, data);
-    optiCluster = std::make_unique<OptiCluster>(matrix, new MCC(), 0);;
+    optiCluster = new OptiCluster(matrix, new MCC(), 0);;
 }
 
 void OptiClusterTestFixture::TearDown() {
-    optiCluster.reset(nullptr);
+    delete(optiCluster);
 }

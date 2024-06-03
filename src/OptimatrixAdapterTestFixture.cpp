@@ -54,9 +54,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(con
 }
 
 void OptimatrixAdapterTestFixture::Setup() {
-    adapter = std::make_unique<OptimatrixAdapter>(0.03);
+    adapter = new OptimatrixAdapter(0.03);
 }
 
 void OptimatrixAdapterTestFixture::TearDown() {
-    adapter.reset();
+    delete(adapter);
 }

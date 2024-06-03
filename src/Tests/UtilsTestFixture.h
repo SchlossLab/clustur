@@ -30,7 +30,7 @@ public:
     bool TestSplitAtCommaReturnsCorrectData(std::string& stringToSplit, std::vector<std::string> container,
         const std::vector<std::string>& expectedResult);
 private:
-    std::unique_ptr<Utils> utils;
+    Utils* utils = nullptr;
     void Setup() override;
     void TearDown() override;
 };

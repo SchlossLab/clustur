@@ -124,9 +124,9 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetOtuNamesSize(const st
 }
 
 void ListVectorTestFixture::Setup() {
-    listVector = std::make_unique<ListVector>();
+    listVector = new ListVector();
 }
 
 void ListVectorTestFixture::TearDown() {
-    listVector.reset();
+    delete(listVector);
 }

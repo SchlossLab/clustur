@@ -81,10 +81,9 @@ void OptiDataTestFixture::Setup() {
     const auto yVals = std::vector<int>{1,2,4,2,4,4,4};
     const auto data = std::vector<double>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
     OptimatrixAdapter adapter(0.03);
-    OptiData *matrix = adapter.ConvertToOptimatrix(xVals, yVals, data);
-    optiData.reset(matrix);
+    optiData = adapter.ConvertToOptimatrix(xVals, yVals, data);
 }
 
 void OptiDataTestFixture::TearDown() {
-    optiData.reset();
+    delete(optiData);
 }

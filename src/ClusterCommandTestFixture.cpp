@@ -12,9 +12,9 @@ bool ClusterCommandTestFixture::TestSetIterationsWorksCorrectly(const int iterat
 }
 
 void ClusterCommandTestFixture::Setup() {
-    clusterCommand = std::make_unique<ClusterCommand>();
+    clusterCommand = new ClusterCommand();
 }
 
 void ClusterCommandTestFixture::TearDown() {
-    clusterCommand.reset();
+    delete(clusterCommand);
 }

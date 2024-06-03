@@ -25,7 +25,7 @@ public:
     bool TestIsCloseFitReturnsCorrectData(long long indexOne, long long indexTwo, bool expected, bool expectedResult);
 
 private:
-    std::unique_ptr<OptiData> optiData;
+    OptiData* optiData = nullptr;
     void Setup() override;
     void TearDown() override;
 };

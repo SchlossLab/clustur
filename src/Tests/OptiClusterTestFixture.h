@@ -4,7 +4,6 @@
 
 #ifndef OPTICLUSTERTESTFIXTURE_H
 #define OPTICLUSTERTESTFIXTURE_H
-#include <memory>
 #include "TestFixture.h"
 #include "../MothurDependencies/OptiCluster.h"
 
@@ -25,7 +24,7 @@ public:
 private:
     void Setup() override;
     void TearDown() override;
-    std::unique_ptr<OptiCluster> optiCluster;
+    OptiCluster* optiCluster = nullptr;
 };
 
 

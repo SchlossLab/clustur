@@ -111,9 +111,9 @@ bool UtilsTestFixture::TestSplitAtCommaReturnsCorrectData(std::string &stringToS
 
 }
 void UtilsTestFixture::Setup() {
-    utils = std::make_unique<Utils>();
+    utils =  new Utils();
 }
 
 void UtilsTestFixture::TearDown() {
-    utils.reset(nullptr);
+    delete(utils);
 }

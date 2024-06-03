@@ -23,7 +23,7 @@ public:
 private:
     void Setup() override;
     void TearDown() override;
-    std::unique_ptr<OptimatrixAdapter> adapter = nullptr;
+    OptimatrixAdapter* adapter = nullptr;
 };
 
 

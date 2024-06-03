@@ -17,7 +17,7 @@ public:
         const std::string& expectedResult);
     bool TestSetIterationsWorksCorrectly(int iterations, bool expectResult);
 private:
-    std::unique_ptr<ClusterCommand> clusterCommand;
+    ClusterCommand* clusterCommand = nullptr;
     void Setup() override;
     void TearDown() override;
 };

@@ -34,7 +34,7 @@ public:
 private:
     void Setup() override;
     void TearDown() override;
-    std::unique_ptr<ListVector> listVector;
+    ListVector* listVector = nullptr;
 };
 
 
