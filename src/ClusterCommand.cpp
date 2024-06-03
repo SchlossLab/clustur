@@ -96,7 +96,7 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         // The difference between what the current and last metric (delta)
         // MaxIters -> is an exit condition
         while ((delta > stableMetric) && (iters < maxIters)) {
-            long start = time(nullptr);
+            //long start = std::time(nullptr);
             double oldMetric = listVectorMetric;
 
             cluster.update(listVectorMetric);
@@ -107,15 +107,15 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
             results = cluster.getStats(tp, tn, fp, fn);
             numBins = cluster.getNumBins();
 
-            clusterOutputData += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
-                                  std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
-                                  std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
-                                  + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-            outStep += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
-                        std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
-                    + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
-                    std::to_string(fn) +
-                    '\t';
+            // clusterOutputData += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+            //                       std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
+            //                       std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
+            //                       + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
+            // outStep += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+            //             std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
+            //         + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
+            //         std::to_string(fn) +
+            //         '\t';
             for (double result : results) {
                 clusterOutputData += (std::to_string(result) + "\t");
                 outStep += std::to_string(result) + "\t";
