@@ -55,9 +55,9 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     //TODO Change this back into a vector, we do not need to delete values
     int index = 0;
     std::vector<std::set<long long> > adjustedClosenessList;
-    for (auto &[key, closenessValues]: closenessMap) {
-        adjustedClosenessList.emplace_back(closenessValues.begin(), closenessValues.end());
-        names.insert(key);
+    for (auto closenessValues&: closenessMap) {
+        adjustedClosenessList.emplace_back(closenessValues.second.begin(), closenessValues.second.end());
+        names.insert(closenessValues.first);
     }
     //TODO Work on creating singletons properly!
     for (const auto &key: singletonCandidates) {

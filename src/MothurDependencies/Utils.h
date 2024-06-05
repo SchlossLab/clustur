@@ -40,8 +40,8 @@ public:
         }
     }
 
-    template<typename T>
-    void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
+    //template<typename T>
+    // void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
 private:
     std::mt19937_64 mersenne_twister_engine;
 };

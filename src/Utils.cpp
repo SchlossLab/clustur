@@ -61,61 +61,39 @@ int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std
 
 }
 bool Utils::mothurConvert(std::string item, int& num){
-    bool error = false;
-
-    if (isNumeric1(item)) { convert<int>(item, num); }
-    else {
-        num = 0;
-        error = true;
+    if(!isNumeric1(item)) {
+        return false;
     }
-
-    return error;
+    num = std::stoi(item);
+    return true;
 
 }
 
 bool Utils::mothurConvert(std::string item, float& num){
-        bool error = false;
-
-        if (isNumeric1(item)) {
-            convert<float>(item, num);
-        }else {
-            try {
-                num = std::atof(item.c_str());
-            }catch(std::exception& e) {
-                num = 0;
-                error = true;
-            }
-        }
-
-        return error;
+    if(!isNumeric1(item)) {
+        return false;
+    }
+    num = std::stof(item);
+    return true;
 }
 /***********************************************************************/
 bool Utils::mothurConvert(std::string item, double& num){
 
-        bool error = false;
-
-        if (isNumeric1(item)) {
-            convert<double>(item, num);
-        }else {
-            try {
-                num = std::atof(item.c_str());
-            }catch(std::exception& e) {
-                num = 0;
-                error = true;
-            }
-        }
-
-        return error;
+    if(!isNumeric1(item)) {
+        return false;
+    }
+    num = std::stod(item);
+    return true;
 }
-template<typename T>
-void Utils::convert(const std::string& s, T& x, bool failIfLeftoverChars){
-
-    std::istringstream i(s);
-    char c;
-    if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
-        throw BadConversion(s);
-
-}
+// template<typename T>
+// void Utils::convert(const std::string& s, T& x, bool failIfLeftoverChars){
+//
+//     std::istringstream i(s);
+//     char c;
+//     if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
+//         throw BadConversion(s);
+//
+// }
 std::string Utils::getSimpleLabel(std::string label){
         std::string simple = "";
 

@@ -90,7 +90,7 @@ context("Optidata test") {
         OptiDataTestFixture testFixture;
         bool result = testFixture.TestIsCloseFitReturnsCorrectData(1, 1, false, false);
         expect_true(result);
-        result = result = testFixture.TestIsCloseFitReturnsCorrectData(1, 1, false, true);
+        result = testFixture.TestIsCloseFitReturnsCorrectData(1, 1, false, true);
         expect_false(result);
     }
 
