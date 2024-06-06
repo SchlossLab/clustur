@@ -53,9 +53,8 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
         closenessMap[currentYPos].emplace(currentXPos);
     }
     //TODO Change this back into a vector, we do not need to delete values
-    int index = 0;
     std::vector<std::set<long long> > adjustedClosenessList;
-    for (auto closenessValues&: closenessMap) {
+    for (const auto &closenessValues: closenessMap) {
         adjustedClosenessList.emplace_back(closenessValues.second.begin(), closenessValues.second.end());
         names.insert(closenessValues.first);
     }
