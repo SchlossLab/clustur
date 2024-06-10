@@ -20,6 +20,7 @@
 #include <map>
 #include "OptiMatrix.h"
 #include "ListVector.h"
+#include <Rcpp.h>
 #include "Metrics/accuracy.hpp"
 #include "Metrics/f1score.hpp"
 #include "Metrics/fdr.hpp"
@@ -53,6 +54,7 @@ public:
 	ClusterCommand() {}
 	~ClusterCommand();
 	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
+	bool SetOpticlusterRandomShuffle(const bool shuffle) {canShuffle = shuffle; return canShuffle;}
 	std::string runOptiCluster(OptiMatrix*);
 
 
@@ -72,6 +74,7 @@ private:
 	bool print_start;
 	time_t start;
 	unsigned long loops;
+	bool canShuffle;
 	vector<string> outputNames;
 };
 

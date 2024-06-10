@@ -14,11 +14,12 @@
 //[[Rcpp::export]]
 std::string MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
                         const std::vector<int> &yPosition, const std::vector<double> &data, const double cutoff,
-                        const int iterations = 2)
+                        const int iterations = 2, const bool shuffle = true)
 {
     OptimatrixAdapter adapter(cutoff);
     const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition,yPosition,data);
     auto* command = new ClusterCommand();
+    command ->SetOpticlusterRandomShuffle(shuffle);
     command->SetMaxIterations(iterations);
     return command->runOptiCluster(optiMatrix);
 }

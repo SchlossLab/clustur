@@ -17,16 +17,16 @@ ClusterCommand::~ClusterCommand() {
 /// @param optiMatrix
 /// @return
 std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
-    std::string clusterOutputData;
+    std::string clusterMetrics;
     std::string sensFile;
     std::string outStep;
     std::string clusterMatrixOutput;
     if (!cutOffSet) {
-        clusterOutputData += ("\nYou did not set a cutoff, using 0.03.\n");
+        clusterMetrics += ("\nYou did not set a cutoff, using 0.03.\n");
         cutoff = 0.05;
     }
 
-    clusterOutputData += ("\nClustering " + distfile + "\n");
+    clusterMetrics += ("\nClustering " + distfile + "\n");
 
     ClusterMetric *metric = nullptr;
     metricName = "mcc";
@@ -57,11 +57,11 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
     // string distfile = columnfile;
     // if (format == "phylip") { distfile = phylipfile; }
     //
-    // sensFile += "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-    // clusterOutputData += (
-    //     "\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
-    // outStep +=
-    //         "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+    sensFile += "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+    clusterMetrics += (
+        "\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
+    outStep +=
+            "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
 
     bool printHeaders = true;
 
@@ -74,22 +74,22 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         int iters = 0;
         double listVectorMetric = 0; //worst state
         double delta = 1;
-        // long long numBins;
+        long long numBins;
         double tp, tn, fp, fn;
-        vector<double> results;
-        cluster.initialize(listVectorMetric, false, initialize);
-        // results = cluster.getStats(tp, tn, fp, fn);
-        // numBins = cluster.getNumBins();
-        // clusterOutputData += ("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
-        //                       std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" +
-        //                       std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-        // outStep += "0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) +
-        //         "\t" + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
-        //         std::to_string(fn) + '\t';
-        // for (double result : results) {
-        //     clusterOutputData += (std::to_string(result) + "\t");
-        //     outStep += std::to_string(result) + "\t";
-        // }
+        vector<double> stats;
+        cluster.initialize(listVectorMetric, canShuffle, initialize);
+        stats = cluster.getStats(tp, tn, fp, fn);
+        numBins = cluster.getNumBins();
+        clusterMetrics += ("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
+                              std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" +
+                              std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
+        outStep += "0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) +
+                "\t" + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
+                std::to_string(fn) + '\t';
+        for (double result : stats) {
+            clusterMetrics += (std::to_string(result) + "\t");
+            outStep += std::to_string(result) + "\t";
+        }
         //m->mothurOutEndLine();
         // outStep += "\n";
         // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
@@ -104,27 +104,27 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
             delta = std::abs(oldMetric - listVectorMetric);
             iters++;
 
-            // results = cluster.getStats(tp, tn, fp, fn);
-            // numBins = cluster.getNumBins();
+            stats = cluster.getStats(tp, tn, fp, fn);
+            numBins = cluster.getNumBins();
 
-            // clusterOutputData += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
-            //                       std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
-            //                       std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
-            //                       + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-            // outStep += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
-            //             std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
-            //         + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
-            //         std::to_string(fn) +
-            //         '\t';
-            // for (double result : results) {
-            //     clusterOutputData += (std::to_string(result) + "\t");
-            //     outStep += std::to_string(result) + "\t";
-            // }
-            // outStep += "\n";
+            clusterMetrics += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+                                  std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
+                                  std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
+                                  + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
+            outStep += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+                        std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
+                    + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
+                    std::to_string(fn) +
+                    '\t';
+            for (double result : stats) {
+                clusterMetrics += (std::to_string(result) + "\t");
+                outStep += std::to_string(result) + "\t";
+            }
+            outStep += "\n";
         }
         ListVector *list = nullptr;
 
-        // clusterOutputData += "\n\n";
+        clusterMetrics += "\n\n";
         list = cluster.getList();
         //
         if (printHeaders) {
@@ -133,13 +133,14 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         } else { list->setPrintedLabels(printHeaders); }
         clusterMatrixOutput = list->print(listFile);
         delete list;
-        // results = cluster.getStats(tp, tn, fp, fn);
-        //
-        // sensFile += std::to_string(cutoff) + '\t' + std::to_string(cutoff) + '\t' + std::to_string(tp) + '\t' +
-        //         std::to_string(tn) + '\t' +
-        //         std::to_string(fp) + '\t' + std::to_string(fn) + '\t';
-        // for (double result : results) { sensFile + std::to_string(result) + '\t'; }
-    }
+        stats = cluster.getStats(tp, tn, fp, fn);
+
+        sensFile += std::to_string(cutoff) + '\t' + std::to_string(cutoff) + '\t' + std::to_string(tp) + '\t' +
+                std::to_string(tn) + '\t' +
+                std::to_string(fp) + '\t' + std::to_string(fn) + '\t';
+        for (double result : stats) { sensFile + std::to_string(result) + '\t'; }
+        Rcpp::Rcout << "Metrics for the current cluster:\n\n " << sensFile << "\n\n" << clusterMetrics << "\n\n";
+     }
     delete matrix;
     return clusterMatrixOutput;
 }

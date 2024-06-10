@@ -13,12 +13,12 @@
 #' @param cutoff A cutoff value
 #' @param iterations The number of iterations
 #' @return A data.frame of the clusters.
-opti_cluster <- function(sparse_matrix, cutoff, iterations) {
+opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
   index_one_list <- sparse_matrix@i
   index_two_list <- sparse_matrix@j
   value_list <- sparse_matrix@x
   clustering_output_string <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
-                                                       iterations)
+                                                       iterations, shuffle)
   df <- t(read.table(text = clustering_output_string,
                      sep = "\t", header = TRUE))
   df <- data.frame(df[-1, ])
