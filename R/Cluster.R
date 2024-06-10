@@ -12,6 +12,7 @@
 #' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value
 #' @param iterations The number of iterations
+#' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
 #' @return A data.frame of the clusters.
 opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
   index_one_list <- sparse_matrix@i
