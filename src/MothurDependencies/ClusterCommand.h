@@ -48,14 +48,14 @@ using namespace std;
 
 
 class ClusterCommand {
-	
 public:
 	//ClusterCommand(string);
 	ClusterCommand() {}
 	~ClusterCommand();
 	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
 	bool SetOpticlusterRandomShuffle(const bool shuffle) {canShuffle = shuffle; return canShuffle;}
-	std::string runOptiCluster(OptiMatrix*);
+	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
+	std::vector<std::string> runOptiCluster(OptiMatrix*);
 
 
 	

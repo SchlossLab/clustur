@@ -16,7 +16,7 @@ ClusterCommand::~ClusterCommand() {
 /// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
 /// @param optiMatrix
 /// @return
-std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
+std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
     std::string clusterMetrics;
     std::string sensFile;
     std::string outStep;
@@ -39,7 +39,7 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
             metricName == "accuracy") { metric = new Accuracy(); } else if (
             metricName == "ppv") { metric = new PPV(); } else if (metricName == "npv") { metric = new NPV(); } else if (
             metricName == "fdr") { metric = new FDR(); } else if (metricName == "fpfn") { metric = new FPFN(); } else {
-            return 0;
+            return {};
         }
 
     // string nameOrCount = "";
@@ -139,8 +139,7 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
                 std::to_string(tn) + '\t' +
                 std::to_string(fp) + '\t' + std::to_string(fn) + '\t';
         for (double result : stats) { sensFile + std::to_string(result) + '\t'; }
-        Rcpp::Rcout << "Metrics for the current cluster:\n\n " << sensFile << "\n\n" << clusterMetrics << "\n\n";
      }
     delete matrix;
-    return clusterMatrixOutput;
+    return {clusterMatrixOutput, sensFile, clusterMetrics};
 }

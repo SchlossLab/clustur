@@ -18,11 +18,25 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
   index_one_list <- sparse_matrix@i
   index_two_list <- sparse_matrix@j
   value_list <- sparse_matrix@x
-  clustering_output_string <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
+  clustering_output_string_list <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
                                                        iterations, shuffle)
-  df <- t(read.table(text = clustering_output_string,
+  clustering_output_string <- clustering_output_string_list[1]
+  clustering_metric <- clustering_output_string_list[2]
+  clustering_metric_2 <- clustering_output_string_list[3]
+
+  df_cluster_metrics <- (read.table(text = clustering_metric,
+                     sep = "\t"))
+  df_other_cluster_metrics <-  t(read.table(text = clustering_metric_2,
+                     sep = "\t"))
+
+  df_cluster <- t(read.table(text = clustering_output_string,
                      sep = "\t", header = TRUE))
-  df <- data.frame(df[-1, ])
-  colnames(df)[1] <- "cluster"
-  return(df)
+  df_cluster <- data.frame(df_cluster[-1, ])
+  colnames(df_cluster)[1] <- "cluster"
+
+  opticluster_data <- list(cluster = df_cluster,
+                           cluster_metrics = df_cluster_metrics,
+                           other_cluster_metrics = df_other_cluster_metrics)
+
+  return(opticluster_data)
 }
