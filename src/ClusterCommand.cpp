@@ -77,7 +77,7 @@ std::string ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         // long long numBins;
         double tp, tn, fp, fn;
         vector<double> results;
-        cluster.initialize(listVectorMetric, true, initialize);
+        cluster.initialize(listVectorMetric, false, initialize);
         // results = cluster.getStats(tp, tn, fp, fn);
         // numBins = cluster.getNumBins();
         // clusterOutputData += ("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
