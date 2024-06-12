@@ -23,15 +23,15 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
   clustering_output_string <- clustering_output_string_list[1]
   clustering_metric <- clustering_output_string_list[2]
   clustering_metric_2 <- clustering_output_string_list[3]
-
   df_cluster_metrics <- (read.table(text = clustering_metric,
-                     sep = "\t"))
-  df_other_cluster_metrics <-  t(read.table(text = clustering_metric_2,
-                     sep = "\t"))
+                     sep = "\t", header = TRUE))
+  df_other_cluster_metrics <-  (read.table(text = clustering_metric_2,
+                     sep = "\t", header = TRUE))
 
   df_cluster <- t(read.table(text = clustering_output_string,
                      sep = "\t", header = TRUE))
   df_cluster <- data.frame(df_cluster[-1, ])
+
   colnames(df_cluster)[1] <- "cluster"
 
   opticluster_data <- list(cluster = df_cluster,
