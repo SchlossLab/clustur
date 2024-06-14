@@ -28,9 +28,7 @@ public:
     bool mothurConvert(std::string item, float& num);
     std::string getLabelTag(std::string label);
     std::string getSimpleLabel(std::string label);
-    void splitAtComma(std::string&, std::string&);
     void splitAtComma(std::string& s, std::vector<std::string>& container);
-    void splitAtComma(std::string& s, std::vector<int>& container);
     template <typename Out>
     void split(const std::string &s, char delim, Out result) {
         std::istringstream iss(s);
@@ -42,8 +40,8 @@ public:
         }
     }
 
-    template<typename T>
-    void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
+    //template<typename T>
+    // void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
 private:
     std::mt19937_64 mersenne_twister_engine;
 };

@@ -30,7 +30,7 @@ int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std
 
         int maxLabelNumber = 0;
         if (currentLabels.size() < numBins) {
-            std::string snumBins = std::to_string(numBins);
+            const std::string snumBins = std::to_string(numBins);
 
             for (int i = 0; i < numBins; i++) {
                 std::string binLabel = tagHeader;
@@ -61,61 +61,39 @@ int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std
 
 }
 bool Utils::mothurConvert(std::string item, int& num){
-    bool error = false;
-
-    if (isNumeric1(item)) { convert<int>(item, num); }
-    else {
-        num = 0;
-        error = true;
+    if(!isNumeric1(item)) {
+        return false;
     }
-
-    return error;
+    num = std::stoi(item);
+    return true;
 
 }
 
 bool Utils::mothurConvert(std::string item, float& num){
-        bool error = false;
-
-        if (isNumeric1(item)) {
-            convert<float>(item, num);
-        }else {
-            try {
-                num = std::atof(item.c_str());
-            }catch(std::exception& e) {
-                num = 0;
-                error = true;
-            }
-        }
-
-        return error;
+    if(!isNumeric1(item)) {
+        return false;
+    }
+    num = std::stof(item);
+    return true;
 }
 /***********************************************************************/
 bool Utils::mothurConvert(std::string item, double& num){
 
-        bool error = false;
-
-        if (isNumeric1(item)) {
-            convert<double>(item, num);
-        }else {
-            try {
-                num = std::atof(item.c_str());
-            }catch(std::exception& e) {
-                num = 0;
-                error = true;
-            }
-        }
-
-        return error;
+    if(!isNumeric1(item)) {
+        return false;
+    }
+    num = std::stod(item);
+    return true;
 }
-template<typename T>
-void Utils::convert(const std::string& s, T& x, bool failIfLeftoverChars){
-
-    std::istringstream i(s);
-    char c;
-    if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
-        throw BadConversion(s);
-
-}
+// template<typename T>
+// void Utils::convert(const std::string& s, T& x, bool failIfLeftoverChars){
+//
+//     std::istringstream i(s);
+//     char c;
+//     if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
+//         throw BadConversion(s);
+//
+// }
 std::string Utils::getSimpleLabel(std::string label){
         std::string simple = "";
 
@@ -141,7 +119,7 @@ std::string Utils::getLabelTag(std::string label){
 
     std::string tag = "";
 
-    for (auto n : label) {
+    for (const auto n : label) {
         if(n >47 && n <58) { //is a digit
         }else {  tag += n;  }
     }
@@ -166,24 +144,3 @@ void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
 
 }
 
-void Utils::splitAtComma(std::string& prefix, std::string& suffix){
-        prefix = suffix.substr(0,suffix.find_first_of(','));
-        if ((suffix.find_first_of(',')+2) <= suffix.length()) {  //checks to make sure you don't have comma at end of string
-            suffix = suffix.substr(suffix.find_first_of(',')+1, suffix.length());
-           std::string space = " ";
-            while(suffix.at(0) == ' ')
-                suffix = suffix.substr(1, suffix.length());
-        }else {  suffix = "";  }
-
-
-}
-
-void Utils::splitAtComma(std::string& s, std::vector<int>& container) {
-
-    std::vector<std::string> items; splitAtComma(s, items);
-    for (std::string i : items) {
-        int num; mothurConvert(i, num);
-        container.push_back(num);
-    }
-
-}

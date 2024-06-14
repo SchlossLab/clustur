@@ -38,32 +38,33 @@ public:
         }
         return false;
     }
+    // Max rank is equal to the amount of items separated by commas
+    // Number of sequences is the amount of sequences added to the list, (including those separated by delimiters)
+    // Num bins is the amount of bins, or the amount of times you pushed back, the size of the list basically.
     int getNumBins()							{	return numBins;		}
     int getNumSeqs()							{	return numSeqs;		}
     int getMaxRank()							{	return maxRank;		}
 
     std::string get(int);
+    // The amount of labels is equal to the size of the listVectorBins
     std::vector<std::string> getLabels();
     std::string getOTUName(int bin);
     void setLabels(std::vector<std::string>);
-
-    void setPrintedLabels(bool pl) { printListHeaders = pl; }
+    bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
 
     void push_back(std::string);
 
     std::string print(std::ostream&);
     std::string print(std::ostream&, std::map<std::string, int>&);
-    void setLabel(std::string l)		{	label = l;			}
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
-    int maxRank;
-    int numBins;
-    int numSeqs;
+    int maxRank = 0;
+    int numBins = 0;
+    int numSeqs = 0;
     std::vector<std::string> binLabels;
     std::string otuTag;
     bool printListHeaders;
     Utils util;
-    std::string label;
     void printHeaders(std::string&, std::map<std::string, int>&, bool);
 
 };
