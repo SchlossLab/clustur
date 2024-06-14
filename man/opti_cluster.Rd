@@ -4,7 +4,7 @@
 \alias{opti_cluster}
 \title{Opticluster Description}
 \usage{
-opti_cluster(sparse_matrix, cutoff, iterations)
+opti_cluster(sparse_matrix, cutoff, iterations, shuffle = TRUE)
 }
 \arguments{
 \item{sparse_matrix}{A Sparse Matrix.}
@@ -12,6 +12,8 @@ opti_cluster(sparse_matrix, cutoff, iterations)
 \item{cutoff}{A cutoff value}
 
 \item{iterations}{The number of iterations}
+
+\item{shuffle}{a boolean to determine whether or not you want to shuffle the data before you cluster}
 }
 \value{
 A data.frame of the clusters.

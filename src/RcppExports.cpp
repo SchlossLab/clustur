@@ -11,7 +11,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // MatrixToOpiMatrixCluster
-std::string MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const int iterations, const bool shuffle);
+std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const int iterations, const bool shuffle);
 RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP iterationsSEXP, SEXP shuffleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
