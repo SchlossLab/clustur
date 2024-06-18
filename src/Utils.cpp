@@ -14,6 +14,11 @@ void Utils::mothurRandomShuffle(std::vector<int>& randomize){
 void Utils::mothurRandomShuffle(std::vector<std::string>& randomize){
     std::shuffle(randomize.begin(), randomize.end(), mersenne_twister_engine);
 }
+
+void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
+    shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
+}
+
 int Utils::getNumNames(std::string names){
 
     if(names.empty()){ return 0; }
@@ -142,5 +147,9 @@ void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
         //parse string by delim and store in vector
         split(s, ',', std::back_inserter(container));
 
+}
+
+bool Utils::isEqual(const float num1, const float num2) {
+    return fabs(num1-num2) <= fabs(num1 * 0.001);
 }
 

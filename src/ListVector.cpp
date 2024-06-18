@@ -12,16 +12,29 @@ std::string ListVector::getOTUName(int bin) {
 
 /***********************************************************************/
 
-void ListVector::push_back(std::string seqNames) {
+void ListVector::push_back(const std::string& seqNames) {
     Utils util;
     data.push_back(seqNames);
-    int nNames = util.getNumNames(seqNames);
+    const int nNames = util.getNumNames(seqNames);
 
     numBins++;
 
     if (nNames > maxRank) { maxRank = nNames; }
 
     numSeqs += nNames;
+}
+
+void ListVector::set(const int binNumber, const std::string &seqNames) {
+    Utils util;
+    const int nNames_old = util.getNumNames(data[binNumber]);
+    data[binNumber] = seqNames;
+    const int nNames_new = util.getNumNames(seqNames);
+
+    if(nNames_old == 0)			{	numBins++;				}
+    if(nNames_new == 0)			{	numBins--;				}
+    if(nNames_new > maxRank)	{	maxRank = nNames_new;	}
+
+    numSeqs += (nNames_new - nNames_old);
 }
 
 std::vector<std::string> ListVector::getLabels() {
@@ -74,6 +87,14 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     }
     output_cluster += "\n";
     return output_cluster;
+}
+
+int ListVector::size() {
+}
+
+void ListVector::clear() {
+}
+void ListVector::resize(const int size) {
 }
 
 std::string ListVector::print(std::ostream &output) {

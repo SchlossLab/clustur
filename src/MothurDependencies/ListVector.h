@@ -10,15 +10,17 @@
 #include <fstream>
 #include <map>
 #include <iostream>
+
+#include "DataVector.h"
 #include "Utils.h"
 
 
 
 
-class ListVector {
+class ListVector : public DataVector{
 public:
 
-    ListVector() = default;
+    ListVector() {};
     ~ListVector(){};
 
     struct listCt{
@@ -52,10 +54,13 @@ public:
     void setLabels(std::vector<std::string>);
     bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
 
-    void push_back(std::string);
-
+    void push_back(const std::string&);
+    void set(int binNumber, const std::string& seqNames);
     std::string print(std::ostream&);
     std::string print(std::ostream&, std::map<std::string, int>&);
+    int size() override;
+    void clear() override;
+    void resize(int) override;
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
     int maxRank = 0;
@@ -66,6 +71,8 @@ private:
     bool printListHeaders;
     Utils util;
     void printHeaders(std::string&, std::map<std::string, int>&, bool);
+
+public:
 
 };
 

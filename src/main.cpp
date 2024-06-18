@@ -24,3 +24,4 @@ std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosit
     return command->runOptiCluster(optiMatrix);
 }
 #endif
+int main() {return 0;}
