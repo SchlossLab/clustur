@@ -2,11 +2,11 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "SparseDistanceMatrix.h"
+#include "MothurDependencies/SparseDistanceMatrix.h"
 
 #include <iostream>
 
-#include "sparsedistancematrix.h"
+#include "MothurDependencies/sparsedistancematrix.h"
 
 
 /***********************************************************************/
@@ -76,7 +76,7 @@ void SparseDistanceMatrix::addCell(unsigned long row, PDistCell cell){
     seqVec[row].push_back(cell);
     PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
-
+    // It pushes itself back in the row, and in the column to create the sparse matrix
 }
 /***********************************************************************/
 int SparseDistanceMatrix::addCellSorted(unsigned long row, PDistCell cell){

@@ -152,4 +152,6 @@ void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
 bool Utils::isEqual(const float num1, const float num2) {
     return fabs(num1-num2) <= fabs(num1 * 0.001);
 }
-
+float Utils::ceilDist(float dist, int precision){
+        return int(ceil(dist * precision))/float(precision);
+}

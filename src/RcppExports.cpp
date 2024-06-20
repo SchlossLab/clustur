@@ -26,11 +26,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// MatrixDataToPhylipFormat
+std::string MatrixDataToPhylipFormat(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& outputPath);
+RcppExport SEXP _Opticluster_MatrixDataToPhylipFormat(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP outputPathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type outputPath(outputPathSEXP);
+    rcpp_result_gen = Rcpp::wrap(MatrixDataToPhylipFormat(xPosition, yPosition, data, cutoff, outputPath));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 6},
+    {"_Opticluster_MatrixDataToPhylipFormat", (DL_FUNC) &_Opticluster_MatrixDataToPhylipFormat, 5},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

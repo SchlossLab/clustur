@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "WeightedLinkage.h"
+#include "MothurDependencies/WeightedLinkage.h"
 /* This class implements the WPGMA, weighted average neighbor clustering algorithm */
 
 /***********************************************************************/

@@ -8,6 +8,9 @@
  */
 
 #include "MothurDependencies/ClusterCommand.h"
+
+#include "MothurDependencies/Cluster.h"
+#include "MothurDependencies/SingleLinkage.h"
 using namespace std;
 ClusterCommand::~ClusterCommand() {
 }
@@ -145,4 +148,75 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
      }
     delete matrix;
     return {clusterMatrixOutput, sensFile, clusterMetrics};
+}
+
+int ClusterCommand::runMothurCluster(SingleLinkage* cluster, SparseDistanceMatrix* matrix, double cutoff, const ListVector* list){
+        //
+        map<string, int> counts;
+        this->cutoff = cutoff;
+        float previousDist = 0.00000;
+        float rndPreviousDist = 0.00000;
+        oldList = *list;
+        print_start = true;
+        start = time(nullptr);
+        loops = 0;
+        double saveCutoff = cutoff;
+        bool printHeaders = true;
+
+    while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)){
+
+        // if (m->getControl_pressed()) { //clean up
+        //     delete list; delete matrix; delete rabund; delete cluster;
+        //     if(countfile == "") {rabundFile.close(); sabundFile.close();  util.mothurRemove((fileroot+ tag + ".rabund")); util.mothurRemove((fileroot+ tag + ".sabund")); }
+        //     listFile.close(); util.mothurRemove((fileroot+ tag + ".list")); outputTypes.clear(); return 0;
+        // }
+        //
+        // if (print_start && util.isTrue(timing)) {
+        //     m->mothurOut("Clustering (" + tag + ") dist " + toString(matrix->getSmallDist()) + "/"
+        //                  + toString(util.roundDist(matrix->getSmallDist(), precision))
+        //                  + "\t(precision: " + toString(precision) + ", Nodes: " + toString(matrix->getNNodes()) + ")");
+        //     cout.flush();
+        //     print_start = false;
+        // }
+
+        cluster->update(cutoff);
+        const double smallest_dist =  matrix->getSmallDist();
+        const int nNodes = matrix -> getNNodes();
+
+        //std::cout << "Nodes: " << nNodes << "\t" << "smallest_dist: " << smallest_dist << std::endl;
+
+        float dist = matrix->getSmallDist();
+        float rndDist = util.ceilDist(dist, precision);
+
+        if(previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
+            printData("unique", counts, printHeaders);
+        }
+        else if(!util.isEqual(rndDist, rndPreviousDist)) {
+            printData(std::to_string(rndPreviousDist), counts, printHeaders);
+        }
+        oldList = *list;
+        previousDist = dist;
+        rndPreviousDist = rndDist;
+    }
+     //const std::string data = oldList.print(listFile);
+     //std::cout << "\n" <<data;
+
+
+
+        return 0;
+}
+void ClusterCommand::printData(const string label, map<string, int>& counts, bool& ph){
+        oldList.setPrintedLabels(ph); ph = false;
+        print_start = true;
+        loops = 0;
+        start = time(nullptr);
+
+        oldList.setLabel(label);
+    std::string data;
+        if(countfile != "") {
+            data = oldList.print(listFile, counts);
+        }else {
+            data = oldList.print(listFile);
+        }
+    std::cout << data;
 }

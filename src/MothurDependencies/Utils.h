@@ -35,6 +35,9 @@ public:
     std::string getSimpleLabel(std::string label);
     void splitAtComma(std::string& s, std::vector<std::string>& container);
     bool isEqual(float num1, float num2);
+
+    float ceilDist(float dist, int precision);
+
     template <typename Out>
     void split(const std::string &s, char delim, Out result) {
         std::istringstream iss(s);

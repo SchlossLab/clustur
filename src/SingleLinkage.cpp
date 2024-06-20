@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "SingleLinkage.h"
+#include "MothurDependencies/SingleLinkage.h"
 
 /***********************************************************************/
 

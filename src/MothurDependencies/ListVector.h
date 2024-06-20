@@ -21,6 +21,8 @@ class ListVector : public DataVector{
 public:
 
     ListVector() {};
+    explicit ListVector(const int n):	DataVector(), data(n, "") ,
+    maxRank(0), numBins(0), numSeqs(0), otuTag("Otu"), printListHeaders(true){}
     ~ListVector(){};
 
     struct listCt{

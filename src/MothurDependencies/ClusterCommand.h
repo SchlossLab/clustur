@@ -36,6 +36,7 @@
 #include "Metrics/tptn.hpp"
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
+#include "SingleLinkage.h"
 using namespace std;
 
 /* The cluster() command:
@@ -56,8 +57,10 @@ public:
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
 	std::vector<std::string> runOptiCluster(OptiMatrix*);
 
+	int runMothurCluster(SingleLinkage *cluster, SparseDistanceMatrix *matrix, double cutoff, const ListVector*);
 
-	
+	void printData(string label, map<string, int> &counts, bool &ph);
+
 private:
 	ListVector* list;
 	ListVector oldList;

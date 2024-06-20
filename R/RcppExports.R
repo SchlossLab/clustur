@@ -5,3 +5,7 @@ MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, iterati
     .Call(`_Opticluster_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, iterations, shuffle)
 }
 
+MatrixDataToPhylipFormat <- function(xPosition, yPosition, data, cutoff, outputPath) {
+    .Call(`_Opticluster_MatrixDataToPhylipFormat`, xPosition, yPosition, data, cutoff, outputPath)
+}
+

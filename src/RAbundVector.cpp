@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "RAbundVector.h"
+#include "MothurDependencies/RAbundVector.h"
 /*
  *  rabundvector.cpp
  *

@@ -1,0 +1,4 @@
+label	numOtus	Otu1	Otu2	Otu3
+unique	3	4,2	5,1	3
+0.04	2	5,1,4,2	3
+0.12	1	5,1,4,2,3

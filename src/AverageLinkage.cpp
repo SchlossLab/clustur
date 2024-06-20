@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "AverageLinkage.h"
+#include "MothurDependencies/AverageLinkage.h"
 
 /* This class implements the average UPGMA, average neighbor clustering algorithm */
 

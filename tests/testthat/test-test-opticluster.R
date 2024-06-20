@@ -8,3 +8,4 @@ test_that("Clustering returns proper results", {
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_true(all(df$exists == TRUE))
 })
+

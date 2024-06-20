@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/14/24.
 //
 
-#include "Cluster.h"
+#include "MothurDependencies/Cluster.h"
 /*
  *  cluster.cpp
  *
@@ -40,6 +40,8 @@ void Cluster::clusterNames(){
 		list->set(smallCol, list->get(smallRow)+','+list->get(smallCol));
 		list->set(smallRow, "");
 		list->setLabel(std::to_string(smallDist));
+    std::ofstream stream;
+    std::cout << list->print(stream);
 
 }
 /***********************************************************************/
@@ -100,7 +102,7 @@ bool Cluster::update(double& cutOFF){
                 dMatrix->rmCell(smallRow, i);
 			}
 		}
-		clusterBins();
+		//clusterBins();
 		clusterNames();
 
         if (method == "nearest") {
