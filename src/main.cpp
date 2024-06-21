@@ -34,26 +34,26 @@ std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosit
 SparseDistanceMatrix *MatrixToCluster(const std::vector<int> &xPosition,
                                       const std::vector<int> &yPosition, const std::vector<double> &data,
                                       const double cutoff) {
-    Rcpp::Rcout << "Made it 1" << std::endl;
+
+
     const auto count = std::max(*std::max_element(xPosition.begin(), xPosition.end()),
                                 *std::max_element(yPosition.begin(), yPosition.end()));
-    Rcpp::Rcout << "Made it 2" << std::endl;
-    std::vector<PDistCell> cells(count + 1);
-    auto *distanceMatrix = new SparseDistanceMatrix();
+
+    auto* list = new ListVector();
+    list->resize(count);
+    auto* distanceMatrix = new SparseDistanceMatrix();
     distanceMatrix->resize(count);
-    for (size_t i = 0; i < data.size(); i++) {
-        try {
-            cells[i] = PDistCell(xPosition[i], data[i]);
-            distanceMatrix->addCell(xPosition[i], PDistCell(yPosition[i], data[i]));
+    for (int i = 0; i < data.size(); i++) {
+        const double distance = data[i];
+        const std::string name = std::to_string(xPosition[i]);
+        list->set(i, name);
+        if(distance > cutoff) {
+            continue;
         }
-        catch(std::exception& ex){
-            Rcpp::Rcout << ex.what() << std::endl;
-            Rcpp::Rcout << "at i postion: " << i << " : Count: " << count << std::endl;
-        }
+        distanceMatrix->addCell(xPosition[i], PDistCell(yPosition[i], data[i]));
         //The rows in the sparse Distance matrix is the I'positons and the index in the Pdist cell is the j postion
         //This is why we are having duplicates and other isuses...
     }
-    Rcpp::Rcout << "Made it 3" << std::endl;
     return distanceMatrix;
 }
 
@@ -61,14 +61,13 @@ std::string DistanceMatrixToDistFile(const SparseDistanceMatrix &matrix, const s
                               const std::string &outputPath) {
     int count = 0;
     const size_t size = names.size();
-    Rcpp::Rcout << "Size: " << size << std::endl;
     std::string distanceString = "\t" + std::to_string(size) + "\n";
     for (const auto &cells: matrix.seqVec) {
+        if(cells.empty()) continue;
         distanceString += names[count++];
         int indexCounter = 0;
         for (int i = 0; i < size; i++) {
             if (!cells.empty() && cells[indexCounter].index == i) {
-                Rcpp::Rcout << "Adding too: "<< std::endl;
                 distanceString += "\t" + std::to_string(cells[indexCounter++].dist);
                 continue;
             }
@@ -94,35 +93,70 @@ std::string MatrixDataToPhylipFormat(const std::vector<int> &xPosition,
                               const std::vector<double> &data,
                               const double cutoff,
                               const std::string &outputPath) {
-    Rcpp::Rcout << "Failing here" << std::endl;
     const auto *distanceMatrix_print = MatrixToCluster(xPosition, yPosition, data, cutoff);
     OptimatrixAdapter optiMatrixAdapter(cutoff);
-    Rcpp::Rcout << "Failing here1" << std::endl;
     auto *optiMatrix = optiMatrixAdapter.ConvertToOptimatrix(xPosition, yPosition, data);
-    Rcpp::Rcout << "Failing here2" << std::endl;
     return DistanceMatrixToDistFile(*distanceMatrix_print, optiMatrix->GetNameList(), outputPath);
 }
+std::vector<RowData> DistanceMatrixToRowData(const std::vector<int> &xPosition,
+                              const std::vector<int> &yPosition,
+                              const std::vector<double> &data) {
+    const size_t size = data.size();
+    std::vector<RowData> dataList(size);
+    std::unordered_map<int, int> positionsOfIndexs;
+    for(int i = 0; i < size; i++) {
+        if(positionsOfIndexs.find(i) == positionsOfIndexs.end()) {
+            // This indexs is currently not set
+            positionsOfIndexs[i] = xPosition[i];
+            dataList[positionsOfIndexs[xPosition[i]]].name = std::to_string(xPosition[i]);
+        }
+        dataList[positionsOfIndexs[xPosition[i]]].rowValues.emplace_back(data[i]);
+    }
 
-//
-// int main() {
-//     double cutoff = 0.2;
-//     const std::vector<int> xPosition = {1, 2, 2, 3, 4};
-//     const std::vector<int> yPosition = {2, 3, 4, 4, 5};
-//     const std::vector<double> data = {.13f, .24f, .41f, .55f, .19f};
-//     auto *distanceMatrix_print = MatrixToCluster(xPosition, yPosition, data, cutoff);
-//     OptimatrixAdapter optiMatrixAdapter(cutoff);
-//     auto *optiMatrix = optiMatrixAdapter.ConvertToOptimatrix(xPosition, yPosition, data);
-//     MatrixDataToPhylipFormat(xPosition, yPosition, data, cutoff, "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_3.txt");
-//
-//
-//     // const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_2.txt";
-//     // ReadPhylipMatrix reader(path, cutoff);
-//     // reader.read();
-//     // auto *distanceMatrix = reader.getDMatrix();
-//     // auto *list = reader.getListVector();
-//     // auto *cluster = new SingleLinkage(new RAbundVector(), list,
-//     //                                   distanceMatrix, 0.2, "nearest", -1.0);
-//     // ClusterCommand command;
-//     // command.runMothurCluster(cluster, distanceMatrix, cutoff, list);
-//     // return 0;
-// }
+    ReadPhylipMatrix matrix("", 0.2f);
+    matrix.read(dataList);
+    auto* mat = matrix.getDMatrix();
+}
+
+
+std::string ClusterClassic(const std::vector<int> &xPosition,
+                              const std::vector<int> &yPosition,
+                              const std::vector<double> &data,
+                              const double cutoff) {
+
+    //The named vector is the listvector in this case.
+    const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_5.txt";
+    ReadPhylipMatrix reader(path, cutoff);
+    reader.read();
+    auto *distanceMatrix = reader.getDMatrix();
+    auto *list = reader.getListVector();
+    auto *cluster = new SingleLinkage(new RAbundVector(), list,
+                                      distanceMatrix, 0.2, "nearest", -1.0);
+    ClusterCommand command;
+    command.runMothurCluster(cluster, distanceMatrix, cutoff, list);
+    return "";
+}
+
+
+int main() {
+    constexpr double cutoff = 0.2;
+    const std::vector<int> xPosition = {1, 2, 2, 3, 4};
+    const std::vector<int> yPosition = {2, 3, 4, 4, 5};
+    const std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
+    // ClusterClassic(xPosition,yPosition,data,cutoff);
+    // auto *distanceMatrix_print = MatrixToCluster(xPosition, yPosition, data, cutoff);
+    // OptimatrixAdapter optiMatrixAdapter(cutoff);
+    // auto *optiMatrix = optiMatrixAdapter.ConvertToOptimatrix(xPosition, yPosition, data);
+    // MatrixDataToPhylipFormat(xPosition, yPosition, data, cutoff, "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_6.txt");
+    DistanceMatrixToRowData(xPosition, yPosition, data);
+    //  const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_6.txt";
+    //  ReadPhylipMatrix reader(path, cutoff);
+    // reader.read();
+    // auto *distanceMatrix = reader.getDMatrix();
+    // auto *list = reader.getListVector();
+    // auto *cluster = new SingleLinkage(new RAbundVector(), list,
+    //                                   distanceMatrix, 0.2, "nearest", -1.0);
+    // ClusterCommand command;
+    // command.runMothurCluster(cluster, distanceMatrix, cutoff, list);
+    return 0;
+}

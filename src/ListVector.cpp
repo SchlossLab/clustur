@@ -95,6 +95,7 @@ int ListVector::size() {
 void ListVector::clear() {
 }
 void ListVector::resize(const int size) {
+    data.resize(size);
 }
 
 std::string ListVector::print(std::ostream &output) {

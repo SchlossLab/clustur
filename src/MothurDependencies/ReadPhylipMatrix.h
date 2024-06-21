@@ -6,6 +6,7 @@
 #define READPHYLIPMATRIX_H
 #include <fstream>
 
+#include "../RowData.h"
 #include "ListVector.h"
 #include "sparsedistancematrix.h"
 
@@ -19,6 +20,7 @@ public:
     SparseDistanceMatrix* getDMatrix() const { return DMatrix;}
     ListVector* getListVector()	const {	return list;}
     int read();
+    int read(const std::vector<RowData>& rowData);
 private:
     std::ifstream fileHandle;
     std::string distFile;

@@ -43,11 +43,14 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
 
 create_phylip_file <- function(sparse_matrix, cutoff, file_path)
 {
-  return (MatrixDataToPhylipFormat(sparse_matrix@i[1:10], sparse_matrix@j[1:10],
-                           sparse_matrix@x[1:10], cutoff, file_path))
+  return (MatrixDataToPhylipFormat(sparse_matrix@i, sparse_matrix@j,
+                           sparse_matrix@x, cutoff, file_path))
 }
 function_1 <- function(){
+  devtools::load_all()
     matrix <- readRDS(test_path("extdata","matrix_data.RDS"))
-    create_phylip_file(matrix, 0.2,
+    dat_string <- create_phylip_file(matrix, 0.2,
                    "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/matrix_output.txt")
+  write(dat_string, "output_matrix_phylip.txt")
+
 }

@@ -7,12 +7,12 @@
 #include "MothurDependencies/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(std::string filePath, const float cutoff) {
-    fileHandle.open(filePath);
-    if(!fileHandle.is_open()) {
-        std::cout << "Enter another file path";
-        std::cin >> filePath;
-        fileHandle.open(filePath);
-    }
+    // fileHandle.open(filePath);
+    // if(!fileHandle.is_open()) {
+    //     std::cout << "Enter another file path";
+    //     std::cin >> filePath;
+    //     fileHandle.open(filePath);
+    // }
     DMatrix = new SparseDistanceMatrix();
     list = new ListVector();
     this->cutoff = cutoff;
@@ -166,4 +166,40 @@ int ReadPhylipMatrix::read(){
         fileHandle.close();
 
         return 1;
+}
+
+int ReadPhylipMatrix::read(const std::vector<RowData>& rowData) {
+
+    if(rowData.empty())
+        return 0;
+    const std::string name = rowData[0].name;
+    std::vector<std::string> matrixNames;
+
+    const size_t nseqs = rowData[0].rowValues.size();
+
+    list = new ListVector(nseqs);
+    list->set(0, name);
+
+    DMatrix->resize(nseqs);
+    for(int i = 0; i < nseqs; i++) {
+        matrixNames.push_back(rowData[i].name);
+
+        for(int j = 0; j < rowData[i].rowValues.size(); j++) {
+            float distance = rowData[i].rowValues[j];
+            if (util.isEqual(distance, -1)) {
+                distance = 1000000;
+            }
+            else if (sim) {
+                distance = 1.0f - distance;
+            }
+
+            if(distance <= cutoff){
+                const PDistCell value(i, distance);
+                DMatrix->addCell(j, value);
+            }
+
+        }
+    }
+    list->setLabel("0");
+    return 1;
 }

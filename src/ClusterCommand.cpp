@@ -180,6 +180,7 @@ int ClusterCommand::runMothurCluster(SingleLinkage* cluster, SparseDistanceMatri
         // }
 
         cluster->update(cutoff);
+        std::cout << cutoff << std::endl;
         const double smallest_dist =  matrix->getSmallDist();
         const int nNodes = matrix -> getNNodes();
 
