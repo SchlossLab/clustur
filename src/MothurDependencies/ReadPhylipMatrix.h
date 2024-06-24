@@ -27,7 +27,7 @@ private:
     SparseDistanceMatrix* DMatrix;
     ListVector* list;
     float cutoff;
-    bool sim;
+    bool sim = false;
     Utils util;
 };
 

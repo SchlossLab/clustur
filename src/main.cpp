@@ -7,6 +7,7 @@
 #include "MothurDependencies/SingleLinkage.h"
 #include "TestHelpers/TestHelper.h"
 #include "Tests/UtilsTestFixture.h"
+#include <unordered_set>
 #include "fstream"
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/ReadPhylipMatrix.h"
@@ -87,38 +88,80 @@ std::string DistanceMatrixToDistFile(const SparseDistanceMatrix &matrix, const s
     return distanceString;
 }
 
+
+SparseDistanceMatrix* DistanceMatrixToRowData(const std::vector<int> &xPosition,
+                              const std::vector<int> &yPosition,
+                              const std::vector<double> &data,
+                              std::set<int> &names,
+                              const double cutoff) {
+    // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
+    const size_t nSeqs = data.size();
+    std::unordered_map<int, RowData> dataList;
+    std::unordered_map<int, int> positionsOfIndexs;
+   for(size_t i = 0; i < nSeqs; i ++) {
+       names.insert(xPosition[i]);
+       names.insert(yPosition[i]);
+   }
+    auto nameIter = names.begin();
+    for(int i = 0; i < nSeqs; i++) {
+        positionsOfIndexs[*nameIter] = i;
+        dataList[i].name = std::to_string(*nameIter++);
+        dataList[i].rowValues = std::vector<float>(nSeqs);
+    }
+    // for(int i = 0; i < size; i++) {
+    //     if(positionsOfIndexs.find(i) == positionsOfIndexs.end()) {
+    //         // This indexs is currently not set
+    //         positionsOfIndexs[i] = xPosition[i];
+    //         dataList[positionsOfIndexs[xPosition[i]]].name = std::to_string(xPosition[i]);
+    //     }
+    //     dataList[positionsOfIndexs[xPosition[i]]].rowValues.emplace_back(data[i]);
+    // }
+    for(size_t i = 0; i < nSeqs; i++) {
+        int xIndex =  positionsOfIndexs[xPosition[i]];
+        int yIndex =  positionsOfIndexs[yPosition[i]];
+        dataList[xIndex].rowValues[yIndex] = data[i];
+        dataList[yIndex].rowValues[xIndex] = data[i];
+        // for(size_t j = i; j < nSeqs; j++) {
+        //     const double distance = data[j];
+        //     if(i != nextSeqeunce) {
+        //         dataList[i].rowValues[j] = 0;
+        //         dataList[j].rowValues[i] = 0;
+        //         continue;
+        //     }
+        //     dataList[i].rowValues[j] = distance;
+        //     dataList[j].rowValues[i] = distance;
+        // }
+    }
+
+    std::vector<RowData> sequenceData(nSeqs);
+    int index = 0;
+    for(const auto& row : dataList) {
+        sequenceData[index++] = row.second;
+    }
+    std::sort(sequenceData.begin(), sequenceData.end(), RowData::SortComparison);
+    ReadPhylipMatrix matrix("", cutoff);
+    matrix.read(sequenceData);
+    return matrix.getDMatrix();
+
+}
+
 //[[Rcpp::export]]
 std::string MatrixDataToPhylipFormat(const std::vector<int> &xPosition,
                               const std::vector<int> &yPosition,
                               const std::vector<double> &data,
                               const double cutoff,
                               const std::string &outputPath) {
-    const auto *distanceMatrix_print = MatrixToCluster(xPosition, yPosition, data, cutoff);
+    std::set<int> names;
+    const auto *distanceMatrix_print = DistanceMatrixToRowData(xPosition, yPosition, data, names, cutoff);
     OptimatrixAdapter optiMatrixAdapter(cutoff);
     auto *optiMatrix = optiMatrixAdapter.ConvertToOptimatrix(xPosition, yPosition, data);
-    return DistanceMatrixToDistFile(*distanceMatrix_print, optiMatrix->GetNameList(), outputPath);
-}
-std::vector<RowData> DistanceMatrixToRowData(const std::vector<int> &xPosition,
-                              const std::vector<int> &yPosition,
-                              const std::vector<double> &data) {
-    const size_t size = data.size();
-    std::vector<RowData> dataList(size);
-    std::unordered_map<int, int> positionsOfIndexs;
-    for(int i = 0; i < size; i++) {
-        if(positionsOfIndexs.find(i) == positionsOfIndexs.end()) {
-            // This indexs is currently not set
-            positionsOfIndexs[i] = xPosition[i];
-            dataList[positionsOfIndexs[xPosition[i]]].name = std::to_string(xPosition[i]);
-        }
-        dataList[positionsOfIndexs[xPosition[i]]].rowValues.emplace_back(data[i]);
+    std::vector<std::string> nameVector(names.size());
+    int count = 0;
+    for(const auto& name : names) {
+        nameVector[count++] = std::to_string(name);
     }
-
-    ReadPhylipMatrix matrix("", 0.2f);
-    matrix.read(dataList);
-    auto* mat = matrix.getDMatrix();
+    return DistanceMatrixToDistFile(*distanceMatrix_print, nameVector, outputPath);
 }
-
-
 std::string ClusterClassic(const std::vector<int> &xPosition,
                               const std::vector<int> &yPosition,
                               const std::vector<double> &data,
@@ -147,10 +190,10 @@ int main() {
     // auto *distanceMatrix_print = MatrixToCluster(xPosition, yPosition, data, cutoff);
     // OptimatrixAdapter optiMatrixAdapter(cutoff);
     // auto *optiMatrix = optiMatrixAdapter.ConvertToOptimatrix(xPosition, yPosition, data);
-    // MatrixDataToPhylipFormat(xPosition, yPosition, data, cutoff, "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_6.txt");
-    DistanceMatrixToRowData(xPosition, yPosition, data);
-    //  const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_6.txt";
-    //  ReadPhylipMatrix reader(path, cutoff);
+    MatrixDataToPhylipFormat(xPosition, yPosition, data, cutoff, "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output_7.txt");
+    // DistanceMatrixToRowData(xPosition, yPosition, data);
+    // const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/output.txt";
+    // ReadPhylipMatrix reader(path, cutoff);
     // reader.read();
     // auto *distanceMatrix = reader.getDMatrix();
     // auto *list = reader.getListVector();

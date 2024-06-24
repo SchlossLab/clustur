@@ -7,7 +7,7 @@
 #include "MothurDependencies/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(std::string filePath, const float cutoff) {
-    // fileHandle.open(filePath);
+    fileHandle.open(filePath);
     // if(!fileHandle.is_open()) {
     //     std::cout << "Enter another file path";
     //     std::cin >> filePath;
@@ -184,7 +184,7 @@ int ReadPhylipMatrix::read(const std::vector<RowData>& rowData) {
     for(int i = 0; i < nseqs; i++) {
         matrixNames.push_back(rowData[i].name);
 
-        for(int j = 0; j < rowData[i].rowValues.size(); j++) {
+        for(int j = i; j < rowData[i].rowValues.size(); j++) {
             float distance = rowData[i].rowValues[j];
             if (util.isEqual(distance, -1)) {
                 distance = 1000000;
