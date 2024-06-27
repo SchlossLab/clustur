@@ -9,3 +9,7 @@ MatrixDataToPhylipFormat <- function(xPosition, yPosition, data, cutoff, outputP
     .Call(`_Opticluster_MatrixDataToPhylipFormat`, xPosition, yPosition, data, cutoff, outputPath)
 }
 
+ClusterClassic <- function(xPosition, yPosition, data, filePath, cutoff) {
+    .Call(`_Opticluster_ClusterClassic`, xPosition, yPosition, data, filePath, cutoff)
+}
+

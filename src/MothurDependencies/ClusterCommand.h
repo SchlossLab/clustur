@@ -57,7 +57,7 @@ public:
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
 	std::vector<std::string> runOptiCluster(OptiMatrix*);
 
-	int runMothurCluster(SingleLinkage *cluster, SparseDistanceMatrix *matrix, double cutoff, const ListVector*);
+	std::string runMothurCluster(Cluster *cluster, SparseDistanceMatrix *matrix, double cutoff, const ListVector*);
 
 	void printData(string label, map<string, int> &counts, bool &ph);
 

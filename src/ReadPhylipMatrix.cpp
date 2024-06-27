@@ -4,6 +4,8 @@
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
 
+#include <Rcpp.h>
+
 #include "MothurDependencies/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(std::string filePath, const float cutoff) {
@@ -18,186 +20,167 @@ ReadPhylipMatrix::ReadPhylipMatrix(std::string filePath, const float cutoff) {
     this->cutoff = cutoff;
 }
 
-int ReadPhylipMatrix::read(){
+int ReadPhylipMatrix::read() {
+    ListVector *nameMap = nullptr;
+    float distance;
+    int square;
+    square = 0;
+    std::string name;
+    std::vector<std::string> matrixNames;
 
-    ListVector* nameMap = nullptr;
-        float distance;
-        int square; square = 0;
-        std::string name;
-        std::vector<std::string> matrixNames;
-
-        std::string numTest;
+    std::string numTest;
 
 
-        fileHandle >> numTest >> name;
-        const int nseqs = std::stoi(numTest);
-        // if (!util.isContainingOnlyDigits(numTest)) {}
-        // else { convert(numTest, nseqs); }
+    fileHandle >> numTest >> name;
+    const int nseqs = std::stoi(numTest);
+    // if (!util.isContainingOnlyDigits(numTest)) {}
+    // else { convert(numTest, nseqs); }
 
-        matrixNames.push_back(name);
+    matrixNames.push_back(name);
 
-        if(nameMap == nullptr){
-            list = new ListVector(nseqs);
-            list->set(0, name);
+    if (nameMap == nullptr) {
+        list = new ListVector(nseqs);
+        list->set(0, name);
+    } else {
+        //list = new ListVector(nameMap->getListVector());
+        //if(nameMap->count(name)==0){ }
+    }
+
+    char d;
+    while ((d = fileHandle.get()) != EOF) {
+        if (isalnum(d)) {
+            square = 1;
+            fileHandle.putback(d);
+            for (int i = 0; i < nseqs; i++) {
+                fileHandle >> distance;
+            }
+            break;
         }
-        else{
-            //list = new ListVector(nameMap->getListVector());
-            //if(nameMap->count(name)==0){ }
+        if (d == '\n') {
+            square = 0;
+            break;
         }
+    }
 
-        char d;
-        while((d=fileHandle.get()) != EOF){
+    DMatrix->resize(nseqs);
 
-            if(isalnum(d)){
-                square = 1;
-                fileHandle.putback(d);
-                for(int i=0;i<nseqs;i++){
+    if (square == 0) {
+        int index = 0;
+
+        for (int i = 1; i < nseqs; i++) {
+            fileHandle >> name;
+            matrixNames.push_back(name);
+
+
+            //there's A LOT of repeated code throughout this method...
+            if (nameMap == nullptr) {
+                list->set(i, name);
+
+                for (int j = 0; j < i; j++) {
                     fileHandle >> distance;
-                }
-                break;
-            }
-            if(d == '\n'){
-                square = 0;
-                break;
-            }
-        }
 
-        DMatrix->resize(nseqs);
+                    if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1.0 - distance; }
+                    //user has entered a sim matrix that we need to convert.
 
-        if(square == 0) {
-            int        index = 0;
-
-            for(int i=1;i<nseqs;i++){
-
-                fileHandle >> name;
-                matrixNames.push_back(name);
-
-
-                //there's A LOT of repeated code throughout this method...
-                if(nameMap == nullptr){
-                    list->set(i, name);
-
-                    for(int j=0;j<i;j++){
-
-
-                        fileHandle >> distance;
-
-                        if (util.isEqual(distance, -1)) { distance = 1000000; }
-                        else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
-
-                        if(distance <= cutoff){
-                            PDistCell value(i, distance);
-                            DMatrix->addCell(j, value);
-                        }
-                        index++;
-
+                    if (distance <= cutoff) {
+                        PDistCell value(i, distance);
+                        DMatrix->addCell(j, value);
                     }
-
+                    index++;
                 }
-                else{
-                    // if(nameMap->count(name)==0){
-                    //
-                    //     for(int j=0;j<i;j++){
-                    //         fileHandle >> distance;
-                    //
-                    //
-                    //         if (util.isEqual(distance, -1)) { distance = 1000000; }
-                    //         else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
-                    //
-                    //         if(distance <= cutoff){
-                    //             PDistCell value(nameMap->get(matrixNames[i]), distance);
-                    //             DMatrix->addCell(nameMap->get(matrixNames[j]), value);
-                    //         }
-                    //         index++;
-                    //
-                    //     }
-                    // }
-                }
+            } else {
+                // if(nameMap->count(name)==0){
+                //
+                //     for(int j=0;j<i;j++){
+                //         fileHandle >> distance;
+                //
+                //
+                //         if (util.isEqual(distance, -1)) { distance = 1000000; }
+                //         else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
+                //
+                //         if(distance <= cutoff){
+                //             PDistCell value(nameMap->get(matrixNames[i]), distance);
+                //             DMatrix->addCell(nameMap->get(matrixNames[j]), value);
+                //         }
+                //         index++;
+                //
+                //     }
+                // }
             }
         }
-        else{
-            int index = nseqs;
+    } else {
+        int index = nseqs;
 
-            for(int i=1;i<nseqs;i++){
-                fileHandle >> name;
-                matrixNames.push_back(name);
-
-
-
-                if(nameMap == nullptr){
-                    list->set(i, name);
-                    for(int j=0;j<nseqs;j++){
-                        fileHandle >> distance;
+        for (int i = 1; i < nseqs; i++) {
+            fileHandle >> name;
+            matrixNames.push_back(name);
 
 
-                        if (util.isEqual(distance, -1)) { distance = 1000000; }
-                        else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
+            if (nameMap == nullptr) {
+                list->set(i, name);
+                for (int j = 0; j < nseqs; j++) {
+                    fileHandle >> distance;
 
-                        if(distance <= cutoff && j < i){
-                            PDistCell value(i, distance);
-                            DMatrix->addCell(j, value);
-                        }
-                        index++;
 
+                    if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1.0 - distance; }
+                    //user has entered a sim matrix that we need to convert.
+
+                    if (distance <= cutoff && j < i) {
+                        PDistCell value(i, distance);
+                        DMatrix->addCell(j, value);
                     }
-
+                    index++;
                 }
-                else{
-                    // if(nameMap->count(name)==0){ }
+            } else {
+                // if(nameMap->count(name)==0){ }
 
-                    // for(int j=0;j<nseqs;j++){
-                    //     fileHandle >> distance;
-                    //
-                    //
-                    //     if (util.isEqual(distance, -1)) { distance = 1000000; }
-                    //     else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
-                    //
-                    //     if(distance <= cutoff && j < i){
-                    //         PDistCell value(nameMap->get(matrixNames[i]), distance);
-                    //         DMatrix->addCell(nameMap->get(matrixNames[j]), value);
-                    //     }
-                    //     index++;
-                    //
-                    // }
-                }
+                // for(int j=0;j<nseqs;j++){
+                //     fileHandle >> distance;
+                //
+                //
+                //     if (util.isEqual(distance, -1)) { distance = 1000000; }
+                //     else if (sim) { distance = 1.0 - distance;  }  //user has entered a sim matrix that we need to convert.
+                //
+                //     if(distance <= cutoff && j < i){
+                //         PDistCell value(nameMap->get(matrixNames[i]), distance);
+                //         DMatrix->addCell(nameMap->get(matrixNames[j]), value);
+                //     }
+                //     index++;
+                //
+                // }
             }
         }
-        list->setLabel("0");
-        fileHandle.close();
+    }
+    list->setLabel("0");
+    fileHandle.close();
 
-        return 1;
+    return 1;
 }
 
-int ReadPhylipMatrix::read(const std::vector<RowData>& rowData) {
-
-    if(rowData.empty())
+int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
+    if (rowData.empty())
         return 0;
     const std::string name = rowData[0].name;
     std::vector<std::string> matrixNames;
-
-    const size_t nseqs = rowData[0].rowValues.size();
-
+    const size_t nseqs = rowData.size();
     list = new ListVector(nseqs);
     list->set(0, name);
 
     DMatrix->resize(nseqs);
-    for(int i = 0; i < nseqs; i++) {
+    for (int i = 0; i < nseqs; i++) {
         matrixNames.push_back(rowData[i].name);
-
-        for(int j = i; j < rowData[i].rowValues.size(); j++) {
+        for (int j = i; j < rowData[i].rowValues.size(); j++) {
             float distance = rowData[i].rowValues[j];
-            if (util.isEqual(distance, -1)) {
+            const bool equalivance = util.isEqual(distance, -1);
+            if (equalivance) {
                 distance = 1000000;
-            }
-            else if (sim) {
+            } else if (sim) {
                 distance = 1.0f - distance;
             }
-
-            if(distance <= cutoff){
+            if (distance <= cutoff) {
                 const PDistCell value(i, distance);
                 DMatrix->addCell(j, value);
             }
-
         }
     }
     list->setLabel("0");

@@ -5,6 +5,7 @@
 #include "MothurDependencies/SparseDistanceMatrix.h"
 
 #include <iostream>
+#include <Rcpp.h>
 
 #include "MothurDependencies/sparsedistancematrix.h"
 
@@ -70,12 +71,14 @@ int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
 /***********************************************************************/
 void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell){
 
-	numNodes+=2;
-	if(cell.dist < smallDist){ smallDist = cell.dist; }
+    numNodes+=2;
+
+    if(cell.dist < smallDist){ smallDist = cell.dist; }
     seqVec[row].push_back(cell);
     if(row == cell.index) return;
     const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
+
     // It pushes itself back in the row, and in the column to create the sparse matrix
 }
 /***********************************************************************/

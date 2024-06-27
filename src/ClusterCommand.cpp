@@ -150,7 +150,7 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
     return {clusterMatrixOutput, sensFile, clusterMetrics};
 }
 
-int ClusterCommand::runMothurCluster(SingleLinkage* cluster, SparseDistanceMatrix* matrix, double cutoff, const ListVector* list){
+std::string ClusterCommand::runMothurCluster(Cluster* cluster, SparseDistanceMatrix* matrix, double cutoff, const ListVector* list){
         //
         map<string, int> counts;
         this->cutoff = cutoff;
@@ -199,12 +199,7 @@ int ClusterCommand::runMothurCluster(SingleLinkage* cluster, SparseDistanceMatri
         previousDist = dist;
         rndPreviousDist = rndDist;
     }
-     //const std::string data = oldList.print(listFile);
-     //std::cout << "\n" <<data;
-
-
-
-        return 0;
+     return oldList.print(listFile);
 }
 void ClusterCommand::printData(const string label, map<string, int>& counts, bool& ph){
         oldList.setPrintedLabels(ph); ph = false;
