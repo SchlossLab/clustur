@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "DataVector.h"
+#include "RAbundVector.h"
 #include "Utils.h"
 
 
@@ -59,10 +60,14 @@ public:
     void push_back(const std::string&);
     void set(int binNumber, const std::string& seqNames);
     std::string print(std::ostream&);
+
+    RAbundVector getRAbundVector() const;
+
     std::string print(std::ostream&, std::map<std::string, int>&);
     int size() override;
     void clear() override;
     void resize(int) override;
+
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
     int maxRank = 0;

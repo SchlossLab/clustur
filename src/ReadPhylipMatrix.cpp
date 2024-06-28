@@ -4,7 +4,6 @@
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
 
-#include <Rcpp.h>
 
 #include "MothurDependencies/ListVector.h"
 
@@ -21,10 +20,9 @@ ReadPhylipMatrix::ReadPhylipMatrix(std::string filePath, const float cutoff) {
 }
 
 int ReadPhylipMatrix::read() {
-    ListVector *nameMap = nullptr;
+    const ListVector *nameMap = nullptr;
     float distance;
-    int square;
-    square = 0;
+    int square = 0;
     std::string name;
     std::vector<std::string> matrixNames;
 
@@ -83,7 +81,7 @@ int ReadPhylipMatrix::read() {
                     //user has entered a sim matrix that we need to convert.
 
                     if (distance <= cutoff) {
-                        PDistCell value(i, distance);
+                        const PDistCell value(i, distance);
                         DMatrix->addCell(j, value);
                     }
                     index++;
@@ -160,16 +158,18 @@ int ReadPhylipMatrix::read() {
 int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
     if (rowData.empty())
         return 0;
-    const std::string name = rowData[0].name;
+    std::string name = rowData[0].name;
     std::vector<std::string> matrixNames;
     const size_t nseqs = rowData.size();
     list = new ListVector(nseqs);
     list->set(0, name);
 
     DMatrix->resize(nseqs);
-    for (int i = 0; i < nseqs; i++) {
-        matrixNames.push_back(rowData[i].name);
-        for (int j = i; j < rowData[i].rowValues.size(); j++) {
+    for (int i = 1; i < nseqs; i++) {
+        name = rowData[i].name;
+        list->set(i, name);
+        matrixNames.push_back(name);
+        for (int j = 0; j < nseqs; j++) {
             float distance = rowData[i].rowValues[j];
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
@@ -177,7 +177,7 @@ int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
             } else if (sim) {
                 distance = 1.0f - distance;
             }
-            if (distance <= cutoff) {
+            if (distance <= cutoff && j < i) {
                 const PDistCell value(i, distance);
                 DMatrix->addCell(j, value);
             }

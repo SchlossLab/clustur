@@ -3,6 +3,8 @@
 //
 #include "MothurDependencies/ListVector.h"
 
+#include "MothurDependencies/RAbundVector.h"
+
 std::string ListVector::getOTUName(int bin) {
     if (binLabels.size() > bin) {
     } else { getLabels(); }
@@ -58,7 +60,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
-    //output_cluster += label + "\t" + std::to_string(numBins);
+    // output_cluster += label + "\t" + std::to_string(numBins);
     //TestHelper::Print(output_cluster);
     Utils util;
     std::vector<listCt> hold;
@@ -117,6 +119,17 @@ std::string ListVector::print(std::ostream &output) {
     }
 
     return print(output, ct);
+}
+RAbundVector ListVector::getRAbundVector() const {
+    RAbundVector rav;
+    Utils util;
+    for(int i=0;i<data.size();i++){
+        const int binSize = util.getNumNames(data[i]);
+        rav.push_back(binSize);
+    }
+    rav.setLabel(label);
+
+    return rav;
 }
 
 void ListVector::printHeaders(std::string &output, std::map<std::string, int> &ct, bool sortPlease) {

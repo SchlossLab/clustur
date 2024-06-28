@@ -41,18 +41,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// ClusterClassic
-std::string ClusterClassic(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const std::string& filePath, const double cutoff);
-RcppExport SEXP _Opticluster_ClusterClassic(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP filePathSEXP, SEXP cutoffSEXP) {
+// ClassicCluster
+std::string ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method);
+RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(ClusterClassic(xPosition, yPosition, data, filePath, cutoff));
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -62,7 +62,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 6},
     {"_Opticluster_MatrixDataToPhylipFormat", (DL_FUNC) &_Opticluster_MatrixDataToPhylipFormat, 5},
-    {"_Opticluster_ClusterClassic", (DL_FUNC) &_Opticluster_ClusterClassic, 5},
+    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 5},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

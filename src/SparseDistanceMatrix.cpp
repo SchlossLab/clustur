@@ -5,7 +5,6 @@
 #include "MothurDependencies/SparseDistanceMatrix.h"
 
 #include <iostream>
-#include <Rcpp.h>
 
 #include "MothurDependencies/sparsedistancematrix.h"
 
@@ -60,9 +59,13 @@ int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
     //find the columns entry for this cell as well
     for (int i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
 
-
-    seqVec[vrow].erase(seqVec[vrow].begin()+vcol);
-    seqVec[row].erase(seqVec[row].begin()+col);
+    try {
+        seqVec[vrow].erase(seqVec[vrow].begin()+vcol);
+        seqVec[row].erase(seqVec[row].begin()+col);
+    }
+    catch(std::exception& ex) {
+        std::cout << ex.what();
+    }
 
     //print();
 
