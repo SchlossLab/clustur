@@ -14,19 +14,18 @@
 class ReadPhylipMatrix  {
 
 public:
-    ReadPhylipMatrix(std::string, float);
-    //ReadPhylipMatrix(std::string, bool);
+    ReadPhylipMatrix(double);
+    // ReadPhylipMatrix(std::string, bool);
     ~ReadPhylipMatrix() {};
     SparseDistanceMatrix* getDMatrix() const { return DMatrix;}
     ListVector* getListVector()	const {	return list;}
-    int read();
+    int read(const std::string&);
     int read(const std::vector<RowData>& rowData);
 private:
     std::ifstream fileHandle;
-    std::string distFile;
     SparseDistanceMatrix* DMatrix;
     ListVector* list;
-    float cutoff;
+    double cutoff;
     bool sim = false;
     Utils util;
 };

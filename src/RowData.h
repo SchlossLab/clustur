@@ -17,7 +17,7 @@ struct RowValues {
 };
 struct RowData {
     std::string name;
-    std::vector<float> rowValues;
+    std::vector<double> rowValues;
     static bool SortComparison(const RowData& a, const RowData& b) {
         return std::stoi(a.name) < std::stoi(b.name);
     }

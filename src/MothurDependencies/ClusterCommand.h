@@ -69,7 +69,7 @@ private:
 	double cutoff, stableMetric = 0;
     float adjust;
 	string showabund, timing, metricName;
-	int precision, length, maxIters = 2, processors;
+	int precision = 10, length, maxIters = 2, processors;
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;

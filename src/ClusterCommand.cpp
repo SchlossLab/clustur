@@ -51,7 +51,7 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
         return {};
     }
 
-
+    // Setting headers
     sensFile += "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
     clusterMetrics += (
         "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
@@ -175,16 +175,12 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
         rndPreviousDist = rndDist;
 
     }
-    return clusterResult + oldList.print(listFile);
+    return clusterResult;
 }
 
 std::string ClusterCommand::PrintData(const string& label, map<string, int> &counts, bool &ph) {
     oldList.setPrintedLabels(ph);
     ph = false;
-    print_start = true;
-    loops = 0;
-    start = time(nullptr);
-
     oldList.setLabel(label);
     std::string data = label + "\t" + std::to_string(oldList.getNumBins());
     if (countfile.empty()) {
