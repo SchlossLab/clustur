@@ -3,16 +3,11 @@
 //TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
 //it will look in a package!
 #include "Adapters/OptimatrixAdapter.h"
-#include "MothurDependencies/Cluster.h"
-#include "MothurDependencies/SingleLinkage.h"
 #include "TestHelpers/TestHelper.h"
 #include "Tests/UtilsTestFixture.h"
 #include <unordered_set>
-#include "fstream"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
-#include "MothurDependencies/CompleteLinkage.h"
-#include "MothurDependencies/ReadPhylipMatrix.h"
 #if DEBUG_RCPP
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"
@@ -20,6 +15,15 @@
 #include "MothurDependencies/ClusterCommand.h"
 
 #include <Rcpp.h>
+
+//[[Rcpp::export]]
+void WriterPhylipFile(const std::vector<int> &xPosition,
+                      const std::vector<int> &yPosition, const std::vector<double> &data,
+                      const double cutoff, const std::string& saveLocation) {
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    adapter.CreatePhylipFile(saveLocation);
+}
+
 //[[Rcpp::export]]
 std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
                                                   const std::vector<int> &yPosition, const std::vector<double> &data,
@@ -69,12 +73,12 @@ void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions
 }
 
 int main() {
-    constexpr double cutoff = 0.2;
+    constexpr double cutoff = 0.5;
      std::vector<int> xPosition = {1, 2, 2, 3, 4};
      std::vector<int> yPosition = {2, 3, 4, 4, 5};
      std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
 
     CreateRandomData(xPosition, yPosition,data, 1000);
-    std::cout << ClassicCluster(xPosition,yPosition, data, 0.5, "furthest");
+    std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "furthest");
     return 0;
 }
