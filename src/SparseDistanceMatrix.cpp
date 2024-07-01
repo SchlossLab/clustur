@@ -117,14 +117,8 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 
     std::vector<PDistCellMin> mins;
     smallDist = MOTHURMAX;
-    // Priority queue
-    // std::cout << "init size: " << mins.size() << std::endl;
-   // std::vector<std::vector<PDistCell>> newVec(seqVec.size());
     for (int i = 0; i < seqVec.size(); i++) {
         for (int j = 0; j < seqVec[i].size(); j++) {
-            //newVec[i] = seqVec[i];
-
-            //already checked everyone else in row
 
             if (i < seqVec[i][j].index) {
                 const float dist = seqVec[i][j].dist;
@@ -133,26 +127,19 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
                     smallDist = dist;
                     PDistCellMin temp(i, seqVec[i][j].index);
                     mins.emplace_back(temp);
-
                 }
                 else if(util.isEqual(dist, smallDist)){  //if a subsequent distance is the same as mins distance add the new iterator to the mins vector
                     PDistCellMin temp(i, seqVec[i][j].index);
                     mins.emplace_back(temp);
-
                 }
             }else { j+=seqVec[i].size(); } //stop looking
 		}
 	}
 
-    // for(auto cells : newVec) {
-    //     std::make_heap(cells.begin(), cells.end(), SparseDistanceMatrix::heapComparator);
-    // }
-
     if(mins.empty())
         return -1;
-     const unsigned long num = util.getRandomNumber(static_cast<int>(mins.size() - 1));
-	 // util.mothurRandomShuffle(mins); //randomize the order of the iterators in the mins vector
-    // std::cout << "after size: "<< mins.size() << std::endl;
+
+    const unsigned long num = util.getRandomNumber(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col;
 	return col;

@@ -41,19 +41,20 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
   return(opticluster_data)
 }
 
+
+
+#' Opticluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param sparse_matrix A Sparse Matrix.
+#' @param cutoff A cutoff value
+#' @param method The type of cluster you wish to conduct. There are four different types:
+#' furthest, nearest, average, weighted.
+#' @return A string of the given cluster.
 cluster <- function(sparse_matrix, cutoff, method)
 {
   return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
                            sparse_matrix@x, cutoff, method))
-}
-function_1 <- function(){
-  devtools::load_all()
-    matrix <- readRDS(test_path("extdata","matrix_data.RDS"))
-    # dat_string <- create_phylip_file(matrix, 0.2,
-    #                "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/matrix_output1000.txt")
-  time <- Sys.time()
-  clust <- cluster(matrix, 0.25, "furthest")
-  print(Sys.time() - time)
-  write(clust, "tests/testthat/extdata/Furthest_full_3.txt")
-
 }

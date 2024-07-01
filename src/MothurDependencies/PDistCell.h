@@ -15,7 +15,7 @@ struct PDistCell{
 struct PDistCellMin{
     unsigned long row;
     unsigned long col;
-
+    PDistCellMin() = default;
     PDistCellMin(const unsigned long r, const unsigned long c) :  col(c), row(r) {}
 };
 #endif //PDISTCELL_H
