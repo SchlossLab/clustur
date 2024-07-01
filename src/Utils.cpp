@@ -19,6 +19,11 @@ void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
     shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
 }
 
+int Utils::getRandomNumber(const int range) {
+    std::uniform_int_distribution<int> distribution(0,range);
+    return distribution(mersenne_twister_engine);
+}
+
 int Utils::getNumNames(std::string names){
 
     if(names.empty()){ return 0; }

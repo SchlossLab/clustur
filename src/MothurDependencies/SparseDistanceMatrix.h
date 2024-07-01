@@ -24,7 +24,7 @@ public:
     int getNNodes();
     unsigned long getSmallestCell(unsigned long& index);		//Return the cell with the smallest distance
     float getSmallDist();
-
+    static bool heapComparator(const PDistCell& a, const PDistCell& b);
     int rmCell(unsigned long, unsigned long);
     int updateCellCompliment(unsigned long, unsigned long);
     void resize(const unsigned long n) { seqVec.resize(n);  }

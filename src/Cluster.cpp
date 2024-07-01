@@ -47,9 +47,11 @@ void Cluster::clusterNames(){
 /***********************************************************************/
 bool Cluster::update(double& cutOFF){
         smallCol = dMatrix->getSmallestCell(smallRow);
+        if(smallCol == -1)
+            return false;
         nColCells = dMatrix->seqVec[smallCol].size();
         nRowCells = dMatrix->seqVec[smallRow].size();
-
+        // std::cout << "rowCells: " << nRowCells << std::endl;
 		std::vector<int> foundCol(nColCells, 0);
 
 		int search;

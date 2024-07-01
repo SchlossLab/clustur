@@ -10,6 +10,20 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// WriterPhylipFile
+void WriterPhylipFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& saveLocation);
+RcppExport SEXP _Opticluster_WriterPhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP saveLocationSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type saveLocation(saveLocationSEXP);
+    WriterPhylipFile(xPosition, yPosition, data, cutoff, saveLocation);
+    return R_NilValue;
+END_RCPP
+}
 // MatrixToOpiMatrixCluster
 std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const int maxIterations, const bool shuffle);
 RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP) {
@@ -45,6 +59,7 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_Opticluster_WriterPhylipFile", (DL_FUNC) &_Opticluster_WriterPhylipFile, 5},
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 6},
     {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 5},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},

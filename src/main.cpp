@@ -72,13 +72,17 @@ void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions
     }
 }
 
-int main() {
-    constexpr double cutoff = 0.5;
-     std::vector<int> xPosition = {1, 2, 2, 3, 4};
-     std::vector<int> yPosition = {2, 3, 4, 4, 5};
-     std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
-
-    CreateRandomData(xPosition, yPosition,data, 1000);
-    std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "furthest");
-    return 0;
-}
+// int main() {
+//     const auto start = std::chrono::high_resolution_clock::now();
+//     constexpr double cutoff = 0.5;
+//      std::vector<int> xPosition = {1, 2, 2, 3, 4};
+//      std::vector<int> yPosition = {2, 3, 4, 4, 5};
+//      std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
+//
+//     CreateRandomData(xPosition, yPosition,data, 1000);
+//     std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "furthest") << std::endl;
+//     const auto stop = std::chrono::high_resolution_clock::now();
+//     std::cout << "Time taken: " << std::chrono::duration_cast<chrono::milliseconds>(stop - start).count();
+//     return 0;
+// }
+//TODO: Get smallest cell and mothurRandomShuffle need to be improved

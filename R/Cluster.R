@@ -51,7 +51,9 @@ function_1 <- function(){
     matrix <- readRDS(test_path("extdata","matrix_data.RDS"))
     # dat_string <- create_phylip_file(matrix, 0.2,
     #                "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/matrix_output1000.txt")
+  time <- Sys.time()
   clust <- cluster(matrix, 0.25, "furthest")
+  print(Sys.time() - time)
   write(clust, "tests/testthat/extdata/Furthest_full_3.txt")
 
 }

@@ -11,7 +11,7 @@
 
 /***********************************************************************/
 
-SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX){ sorted=false; aboveCutoff = MOTHURMAX; }
+SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX){ sorted=false; aboveCutoff = MOTHURMAX;}
 
 /***********************************************************************/
 
@@ -30,6 +30,11 @@ void SparseDistanceMatrix::clear(){
 float SparseDistanceMatrix::getSmallDist(){
 	return smallDist;
 }
+
+bool SparseDistanceMatrix::heapComparator(const PDistCell &a, const PDistCell &b) {
+    return a.dist < b.dist;
+}
+
 /***********************************************************************/
 
 int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long col){
@@ -112,10 +117,12 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 
     std::vector<PDistCellMin> mins;
     smallDist = MOTHURMAX;
-
+    // Priority queue
+    // std::cout << "init size: " << mins.size() << std::endl;
+   // std::vector<std::vector<PDistCell>> newVec(seqVec.size());
     for (int i = 0; i < seqVec.size(); i++) {
         for (int j = 0; j < seqVec[i].size(); j++) {
-
+            //newVec[i] = seqVec[i];
 
             //already checked everyone else in row
 
@@ -125,25 +132,29 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
                     mins.clear();
                     smallDist = dist;
                     PDistCellMin temp(i, seqVec[i][j].index);
-                    mins.push_back(temp);
+                    mins.emplace_back(temp);
 
                 }
                 else if(util.isEqual(dist, smallDist)){  //if a subsequent distance is the same as mins distance add the new iterator to the mins vector
                     PDistCellMin temp(i, seqVec[i][j].index);
-                    mins.push_back(temp);
+                    mins.emplace_back(temp);
 
                 }
             }else { j+=seqVec[i].size(); } //stop looking
 		}
 	}
 
-	util.mothurRandomShuffle(mins);  //randomize the order of the iterators in the mins vector
+    // for(auto cells : newVec) {
+    //     std::make_heap(cells.begin(), cells.end(), SparseDistanceMatrix::heapComparator);
+    // }
 
-    row = mins[0].row;
-    unsigned long col = mins[0].col;
-
-
-
+    if(mins.empty())
+        return -1;
+     const unsigned long num = util.getRandomNumber(static_cast<int>(mins.size() - 1));
+	 // util.mothurRandomShuffle(mins); //randomize the order of the iterators in the mins vector
+    // std::cout << "after size: "<< mins.size() << std::endl;
+    row = mins[num].row;
+    const unsigned long col = mins[num].col;
 	return col;
 
 }

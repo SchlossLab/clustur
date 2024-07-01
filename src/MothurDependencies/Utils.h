@@ -25,6 +25,7 @@ public:
     void mothurRandomShuffle(std::vector<int>& randomize);
     void mothurRandomShuffle(std::vector<std::string>& randomize);
     void mothurRandomShuffle(std::vector<PDistCellMin>& randomize);
+    int getRandomNumber(int range);
     int getNumNames(std::string names);
     bool mothurConvert(std::string item, int& num);
     bool isNumeric1(std::string stringToCheck);
