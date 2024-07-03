@@ -4,6 +4,7 @@
 
 #ifndef MATRIXADAPTER_H
 #define MATRIXADAPTER_H
+#include <unordered_map>
 #include "../MothurDependencies/ReadPhylipMatrix.h"
 
 

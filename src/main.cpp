@@ -13,7 +13,7 @@
 #include "Adapters/OptimatrixAdapter.h"
 #include "MothurDependencies/OptiMatrix.h"
 #include "MothurDependencies/ClusterCommand.h"
-
+#include <chrono>
 #include <Rcpp.h>
 
 //[[Rcpp::export]]
@@ -46,9 +46,8 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const std::string& method) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
     ClusterCommand command;
-
-    return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());
-
+    auto* spareMatrix = adapter.CreateSparseMatrix();
+    return command.runMothurCluster(method, spareMatrix, cutoff, adapter.GetListVector());
 }
 
 
@@ -57,7 +56,7 @@ void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions
     xPositions.resize(amount);
     yPositions.resize(amount);
     data.resize(amount);
-    std::srand(std::time(nullptr));
+   // std::srand(std::time(nullptr));
     for (size_t i = 0; i < amount; i++) {
         xPositions[i] = std::rand() % amount;
         yPositions[i] = i;
@@ -73,7 +72,7 @@ void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions
 }
 
 int main() {
-    const auto start = std::chrono::high_resolution_clock::now();
+   // const auto start = std::chrono::high_resolution_clock::now();
     constexpr double cutoff = 0.5;
      std::vector<int> xPosition = {1, 2, 2, 3, 4};
      std::vector<int> yPosition = {2, 3, 4, 4, 5};
@@ -81,8 +80,8 @@ int main() {
 
     CreateRandomData(xPosition, yPosition,data, 1000);
     std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "furthest") << std::endl;
-    const auto stop = std::chrono::high_resolution_clock::now();
-    std::cout << "Time taken: " << std::chrono::duration_cast<chrono::milliseconds>(stop - start).count();
+    //const auto stop = std::chrono::high_resolution_clock::now();
+    //std::cout << "Time taken: " << std::chrono::duration_cast<chrono::milliseconds>(stop - start).count();
     return 0;
 }
 //TODO: Get smallest cell and mothurRandomShuffle need to be improved
