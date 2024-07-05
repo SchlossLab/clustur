@@ -1,7 +1,6 @@
 //
 // Created by Gregory Johnson on 6/28/24.
 //
-
 #include "Adapters/MatrixAdapter.h"
 
 
@@ -79,12 +78,13 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     }
 
     for (size_t i = 0; i < nSeqs;  i++) {
-        if(data[i] <= 0) // Ensure there are no negatives distances
-            data[i] = 0;
-
         int xIndex = positionsOfIndexs[xPosition[i]];
         int yIndex = positionsOfIndexs[yPosition[i]];
 
+
+        if(data[i] < 0) {
+            data[i] = 0;
+        }
         dataList[xIndex].rowValues[yIndex] = data[i];
         dataList[yIndex].rowValues[xIndex] = data[i];
     }

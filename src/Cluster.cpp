@@ -3,6 +3,7 @@
 //
 
 #include "MothurDependencies/Cluster.h"
+
 /*
  *  cluster.cpp
  *
@@ -47,7 +48,6 @@ void Cluster::clusterNames(){
 /***********************************************************************/
 bool Cluster::update(double& cutOFF){
         smallCol = dMatrix->getSmallestCell(smallRow);
-        // std::cout << "Back in Cluster: " <<  smallRow << std::endl;
         if(smallCol == -1)
             return false;
         nColCells = dMatrix->seqVec[smallCol].size();

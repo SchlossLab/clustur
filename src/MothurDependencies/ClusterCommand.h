@@ -67,9 +67,9 @@ private:
 	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
-    float adjust;
+    float adjust = -1;
 	string showabund, timing, metricName;
-	int precision = 10, length, maxIters = 2, processors;
+	int precision = 100, length, maxIters = 2, processors;
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;

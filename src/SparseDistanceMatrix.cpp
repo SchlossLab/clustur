@@ -3,7 +3,6 @@
 //
 
 #include "MothurDependencies/SparseDistanceMatrix.h"
-
 #include <iostream>
 #include "MothurDependencies/sparsedistancematrix.h"
 
@@ -62,16 +61,9 @@ int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
 
     //find the columns entry for this cell as well
     for (int i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
+    seqVec[vrow].erase(seqVec[vrow].begin()+vcol);
+    seqVec[row].erase(seqVec[row].begin()+col);
 
-    try {
-        seqVec[vrow].erase(seqVec[vrow].begin()+vcol);
-        seqVec[row].erase(seqVec[row].begin()+col);
-    }
-    catch(std::exception& ex) {
-        std::cout << ex.what();
-    }
-
-    //print();
 
 	return(0);
 }
@@ -134,10 +126,9 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
             }else { j+=seqVec[i].size(); } //stop looking
 		}
 	}
-
     if(mins.empty())
         return -1;
-
+    // TestHelper::Print(std::to_string(smallDist) + "\n");
     const unsigned long num = util.getRandomNumber(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col;

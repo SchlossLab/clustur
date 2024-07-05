@@ -3,7 +3,6 @@
 //
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
-
 #include "MothurDependencies/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff) {
