@@ -56,7 +56,7 @@ void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions
     xPositions.resize(amount);
     yPositions.resize(amount);
     data.resize(amount);
-   // std::srand(std::time(nullptr));
+    std::srand(10);
     for (size_t i = 0; i < amount; i++) {
         xPositions[i] = std::rand() % amount;
         yPositions[i] = i;
@@ -78,8 +78,8 @@ int main() {
      std::vector<int> yPosition = {2, 3, 4, 4, 5};
      std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
 
-    CreateRandomData(xPosition, yPosition,data, 1000);
-    std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "furthest") << std::endl;
+    CreateRandomData(xPosition, yPosition,data, 100);
+    ClassicCluster(xPosition,yPosition, data, cutoff, "furthest");
     //const auto stop = std::chrono::high_resolution_clock::now();
     //std::cout << "Time taken: " << std::chrono::duration_cast<chrono::milliseconds>(stop - start).count();
     return 0;

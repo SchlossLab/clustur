@@ -86,6 +86,7 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
     if(row == cell.index) return;
     const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
+    //std::cout << smallDist << std::endl;
 
     // It pushes itself back in the row, and in the column to create the sparse matrix
 }

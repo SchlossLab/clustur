@@ -4,6 +4,7 @@
 
 #include "MothurDependencies/Utils.h"
 
+#include <cmath>
 #include <random>
 #include <sstream>
 #include <unordered_set>
@@ -16,7 +17,7 @@ void Utils::mothurRandomShuffle(std::vector<std::string>& randomize){
 }
 
 void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
-    shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
+    std::shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
 }
 
 int Utils::getRandomNumber(const int range) {
@@ -155,7 +156,7 @@ void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
 }
 
 bool Utils::isEqual(const float num1, const float num2) {
-    return fabs(num1-num2) <= fabs(num1 * 0.001);
+    return std::fabs(num1-num2) <= std::fabs(static_cast<float>(num1 * 0.001));
 }
 float Utils::ceilDist(float dist, int precision){
         return int(ceil(dist * precision))/float(precision);
