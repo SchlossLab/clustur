@@ -4,7 +4,6 @@
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
 
-
 #include "MothurDependencies/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff) {
@@ -130,7 +129,6 @@ int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
                 distance = 1.0f - distance;
             }
             if (distance <= cutoff && j < i) {
-                std::cout << distance <<  std::endl;
                 const PDistCell value(i, distance);
                 DMatrix->addCell(j, value);
             }
