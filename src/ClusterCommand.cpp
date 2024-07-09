@@ -147,7 +147,7 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
     //
     Cluster *cluster = nullptr;
     auto rAbund = list->getRAbundVector();
-    if (clusterMethod == "furthest")	{	cluster = new CompleteLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
+    if (clusterMethod ==  "furthest")	{	cluster = new CompleteLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "nearest"){	cluster = new SingleLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "average"){	cluster = new AverageLinkage(&rAbund, list, matrix, cutoff, method, adjust);	}
     else {	cluster = new WeightedLinkage(&rAbund, list, matrix, cutoff, method, adjust);}
@@ -164,7 +164,7 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
         cluster->update(cutoff);
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
-
+        std::cout << "dist: " << dist << " prev: " << previousDist << std::endl;
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
             clusterResult += PrintData("unique", counts, printHeaders);
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {

@@ -19,15 +19,9 @@ int ReadPhylipMatrix::read(const std::string& filePath) {
     std::vector<std::string> matrixNames;
 
     fileHandle.open(filePath);
-
     std::string numTest;
-
-
     fileHandle >> numTest >> name;
     const int nseqs = std::stoi(numTest);
-    // if (!util.isContainingOnlyDigits(numTest)) {}
-    // else { convert(numTest, nseqs); }
-
     matrixNames.push_back(name);
 
 

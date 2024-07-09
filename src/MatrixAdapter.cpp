@@ -3,6 +3,8 @@
 //
 #include "Adapters/MatrixAdapter.h"
 
+#include "TestHelpers/TestHelper.h"
+
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
                              const std::vector<double> &dataValues, const double cutoff) {
@@ -48,7 +50,7 @@ void MatrixAdapter::CreatePhylipFile(const std::string& saveFileLocation) {
     }
     std::ofstream writeOut(saveFileLocation);
     if (!writeOut.is_open()) {
-        std::cout << "Failed to open: \n" << std::endl;
+        TestHelper::Print("Failed to open: \n");
     }
     writeOut << distanceString;
     writeOut.close();
