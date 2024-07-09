@@ -156,15 +156,17 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
     this->cutoff = cutoff;
     float previousDist = 0.00000;
     float rndPreviousDist = 0.00000;
+    float dist;
+    float rndDist;
+
     oldList = *list;
     bool printHeaders = true;
     std::string clusterResult;
 
     while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)) { //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         cluster->update(cutoff);
-        const float dist = matrix->getSmallDist(); // Round to the third decimal place
-        const float rndDist = util.ceilDist(dist, precision);
-        std::cout << "dist: " << dist << " prev: " << previousDist << std::endl;
+        dist = matrix->getSmallDist(); // Round to the third decimal place
+        rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
             clusterResult += PrintData("unique", counts, printHeaders);
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
@@ -175,6 +177,8 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
         rndPreviousDist = rndDist;
 
     }
+    if(previousDist <= 0.0000)          { clusterResult += PrintData("unique", counts, printHeaders);                            }
+    else if(rndPreviousDist<cutoff)     { clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders); }
     return clusterResult;
 }
 

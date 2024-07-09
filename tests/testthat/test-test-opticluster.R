@@ -11,7 +11,6 @@ test_that("Clustering returns proper results", {
 
 test_that("Normal Cluster is able to properly cluster data",
 {
-  expected_df <- readRDS(test_path("extdata","df_test_file.RDS"))
   mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
 
   cluster_furthest <- cluster(mat, 0.2, "furthest")
@@ -23,5 +22,12 @@ test_that("Normal Cluster is able to properly cluster data",
   expect_true(any(class(cluster_average) == "character"))
   expect_true(any(class(cluster_weighted) == "character"))
   expect_true(any(class(cluster_nearest) == "character"))
+
+  expect_false(cluster_furthest == "")
+  expect_false(cluster_average == "")
+  expect_false(cluster_weighted == "")
+  expect_false(cluster_nearest == "")
+
+
 
 })

@@ -33,7 +33,7 @@ std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosit
     command->SetMaxIterations(maxIterations);
     return command->runOptiCluster(optiMatrix);
 }
-#endif
+
 
 //[[Rcpp::export]]
 std::string ClassicCluster(const std::vector<int> &xPosition,
@@ -46,41 +46,4 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     auto* spareMatrix = adapter.CreateSparseMatrix();
     return command.runMothurCluster(method, spareMatrix, cutoff, adapter.GetListVector());
 }
-
-
- void CreateRandomData(std::vector<int> &xPositions, std::vector<int> &yPositions, std::vector<double> &data,
-                       const int amount) {
-     xPositions.resize(amount);
-     yPositions.resize(amount);
-     data.resize(amount);
-     std::srand(10);
-    int lb = amount/1.5;
-    int up = amount;
-     for (size_t i = 0; i < amount; i++) {
-         xPositions[i] = std::rand() % amount;
-         yPositions[i] = i;
-         const double value = (std::rand() % (up - lb) + lb);
-         data[i] = 1 - value / amount;
-     }
-     for (size_t i = 0; i < amount / 2; i++) {
-         const int currentValue = yPositions[i];
-         const int randomIndex = std::rand() % amount;
-         yPositions[i] = yPositions[randomIndex];
-         yPositions[randomIndex] = currentValue;
-     }
- }
-
- int main() {
-    // const auto start = std::chrono::high_resolution_clock::now();
-     constexpr double cutoff = 0.95;
-      std::vector<int> xPosition = {1, 2, 2, 3, 4};
-      std::vector<int> yPosition = {2, 3, 4, 4, 5};
-      std::vector<double> data = {.13f, .14f, .16f, .11f, .19f};
-
-     CreateRandomData(xPosition, yPosition,data, 5);
-     std::cout << ClassicCluster(xPosition,yPosition, data, cutoff, "nearest");
-     //const auto stop = std::chrono::high_resolution_clock::now();
-     //std::cout << "Time taken: " << std::chrono::duration_cast<chrono::milliseconds>(stop - start).count();
-     return 0;
- }
-// TODO: Get smallest cell and mothurRandomShuffle need to be improved
+#endif
