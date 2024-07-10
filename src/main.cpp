@@ -28,10 +28,10 @@ std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosit
                                                   const int maxIterations = 100, const bool shuffle = true) {
     OptimatrixAdapter adapter(cutoff);
     const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition, yPosition, data);
-    auto *command = new ClusterCommand();
-    command->SetOpticlusterRandomShuffle(shuffle);
-    command->SetMaxIterations(maxIterations);
-    return command->runOptiCluster(optiMatrix);
+    ClusterCommand command;
+    command.SetOpticlusterRandomShuffle(shuffle);
+    command.SetMaxIterations(maxIterations);
+    return command.runOptiCluster(optiMatrix);
 }
 
 
@@ -43,7 +43,5 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const std::string& method) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
     ClusterCommand command;
-    auto* spareMatrix = adapter.CreateSparseMatrix();
-    return command.runMothurCluster(method, spareMatrix, cutoff, adapter.GetListVector());
-}
+    return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());}
 #endif
