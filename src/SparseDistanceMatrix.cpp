@@ -137,8 +137,10 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 }
 /***********************************************************************/
 
-void SparseDistanceMatrix::print(){
+bool SparseDistanceMatrix::print(){
 
+    if(seqVec.empty() <= 0)
+        return false;
     std::cout << std::endl;
     //saves time in getSmallestCell, by making it so you dont search the repeats
     for (int i = 0; i < seqVec.size(); i++) {
@@ -147,6 +149,7 @@ void SparseDistanceMatrix::print(){
         std::cout << std::endl;
     }
     std::cout << std::endl;
+    return true;
 }
 /***********************************************************************/
 

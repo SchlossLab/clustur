@@ -5,10 +5,26 @@
 #ifndef SPARSEMATRIXTESTFIXTURE_H
 #define SPARSEMATRIXTESTFIXTURE_H
 #include "TestFixture.h"
+#include "../MothurDependencies/sparsedistancematrix.h"
 
 
-class SparseMatrixTestFixture : public TestFixture {
-
+class SparseMatrixTestFixture final : public TestFixture {
+public:
+    bool TestGetSmallestCell(unsigned long& index, unsigned long expectedResult);
+    bool TestGetSmallestDist(float expectedResult);
+    bool TestHeapComparator(const PDistCell& a, const PDistCell& b, bool expectedResult);
+    bool TestRemoveCell(unsigned long, unsigned long, bool expectedResult);
+    bool TestUpdateCellCompliment(unsigned long, unsigned long, bool expectedResult);
+    bool TestResize(unsigned long size, long expectedResult);
+    bool TestClear(bool expectedResult);
+    bool TestAddCell(unsigned long, const PDistCell&, bool expectedResult);
+    bool TestAddCellSorted(unsigned long, const PDistCell&, bool expectedResult);
+    bool TestPrint(bool expectedResult);
+private:
+    ~SparseMatrixTestFixture() override;
+    void Setup() override;
+    void TearDown() override;
+    SparseDistanceMatrix* sparseDistanceMatrix = nullptr;
 };
 
 

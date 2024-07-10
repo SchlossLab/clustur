@@ -45,3 +45,7 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     ClusterCommand command;
     return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());}
 #endif
+
+int main() {
+    return 0;
+}

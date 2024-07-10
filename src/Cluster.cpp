@@ -25,20 +25,22 @@ Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, fl
 }
 
 /***********************************************************************/
-void Cluster::clusterBins() {
+bool Cluster::clusterBins() {
     rabund->set(smallCol, rabund->get(smallRow) + rabund->get(smallCol));
     rabund->set(smallRow, 0);
     rabund->setLabel(std::to_string(smallDist));
+    return true;
 }
 
 /***********************************************************************/
 
-void Cluster::clusterNames() {
+bool Cluster::clusterNames() {
     if (mapWanted) { updateMap(); }
 
     list->set(smallCol, list->get(smallRow) + ',' + list->get(smallCol));
     list->set(smallRow, "");
     list->setLabel(std::to_string(smallDist));
+    return true;
     // std::ofstream stream;
     // std::cout << list->print(stream);
 }
@@ -156,34 +158,14 @@ bool Cluster::update(double &cutOFF) {
 }
 
 /***********************************************************************/
-void Cluster::setMapWanted(bool f) {
-    mapWanted = f;
-
-    //initialize map
-    for (int k = 0; k < list->getNumBins(); k++) {
-        std::string names = list->get(k);
-
-        //parse bin
-        std::string individual = "";
-        int binNameslength = names.size();
-        for (int j = 0; j < binNameslength; j++) {
-            if (names[j] == ',') {
-                seq2Bin[individual] = k;
-                individual = "";
-            } else { individual += names[j]; }
-        }
-        //get last name
-        seq2Bin[individual] = k;
-    }
-}
-
-/***********************************************************************/
-void Cluster::updateMap() {
+bool Cluster::updateMap() {
     //update location of seqs in smallRow since they move to smallCol now
     std::string names = list->get(smallRow);
-
     std::string individual = "";
     int binNameslength = names.size();
+    if(names.size() <= 0)
+        return false;
+
     for (int j = 0; j < binNameslength; j++) {
         if (names[j] == ',') {
             seq2Bin[individual] = smallCol;
@@ -192,6 +174,7 @@ void Cluster::updateMap() {
     }
     //get last name
     seq2Bin[individual] = smallCol;
+    return true;
 }
 
 /***********************************************************************/

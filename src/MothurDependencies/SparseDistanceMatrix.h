@@ -32,7 +32,7 @@ public:
     void addCell(unsigned long, PDistCell);
     int addCellSorted(unsigned long, PDistCell);
     std::vector<std::vector<PDistCell> > seqVec;
-    void print();
+    bool print();
 
 private:
     PDistCell smallCell;				//The cell with the smallest distance

@@ -8,23 +8,21 @@
 #include "../MothurDependencies/Cluster.h"
 
 
-class ClusterTestFixture : public TestFixture {
+class ClusterTestFixture : public TestFixture , public Cluster {
 public:
-    ClusterTestFixture() {};
-    bool TestUpdateClusterWorks();
-    bool TestGetTagGetter();
-    bool TestSetWantedMap();
-    bool TestGetSeqToBin();
-    bool TestUpdateDistanceOverload();
-    bool TestClusterBins();
-    bool TestClusterNames();
-    bool TestUpdateMap();
+    ClusterTestFixture() = default;
+    bool TestGetTagGetter(Cluster *clust, const std::string &expectedResult);
+    bool TestGetSeqToBin(Cluster* clust, const std::map<std::string, int>& expectedMap);
+    bool TestUpdateDistanceOverload(Cluster* clust, PDistCell& row, PDistCell& col, bool expected);
+    bool TestClusterBins(RAbundVector* rAbdund, bool expectedResult);
+    bool TestClusterNames(ListVector* listVector, bool expectedResult);
+    bool TestUpdateMap(ListVector* listVector, bool expectedResult);
     ~ClusterTestFixture() override;
 
 private:
     void Setup() override;
     void TearDown() override;
-    Cluster* cluster;
+    Cluster* cluster = nullptr;
 };
 
 

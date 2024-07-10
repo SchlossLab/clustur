@@ -8,7 +8,7 @@
 
 #include "../RowData.h"
 #include "ListVector.h"
-#include "sparsedistancematrix.h"
+#include "SparseDistanceMatrix.h"
 
 
 class ReadPhylipMatrix  {

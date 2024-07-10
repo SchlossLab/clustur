@@ -23,16 +23,13 @@ public:
     virtual ~Cluster() = default;
     virtual bool update(double&);
 	virtual std::string getTag() = 0;
-	virtual void setMapWanted(bool m);
+	// virtual void setMapWanted(bool m);
 	virtual std::map<std::string, int> getSeqtoBin()  {  return seq2Bin;	}
-protected:
-
-
 	virtual bool updateDistance(PDistCell& colCell, PDistCell& rowCell) = 0;
-
-	virtual void clusterBins();
-	virtual void clusterNames();
-	virtual void updateMap();
+protected:
+	virtual bool clusterBins();
+	virtual bool clusterNames();
+	virtual bool updateMap();
 
 
 	RAbundVector* rabund;
