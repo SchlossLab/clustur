@@ -92,6 +92,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
 }
 
 int ListVector::size() {
+    return data.size();
 }
 
 void ListVector::clear() {

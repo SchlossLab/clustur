@@ -20,11 +20,13 @@ void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
     std::shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
 }
 
-int Utils::getRandomNumber(const int range) {
-    std::uniform_int_distribution<int> distribution(0,range);
-    return distribution(mersenne_twister_engine);
-}
+int Utils::getRandomIndex(const int highest){
+        if (highest == 0) { return 0; }
+    mersenne_twister_engine.seed(std::time(nullptr));
+    std::uniform_int_distribution<int> dis(0, highest);
+    return dis(mersenne_twister_engine);
 
+}
 int Utils::getNumNames(std::string names){
 
     if(names.empty()){ return 0; }

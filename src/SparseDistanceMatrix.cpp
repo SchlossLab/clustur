@@ -54,6 +54,8 @@ int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long 
 /***********************************************************************/
 
 int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
+    if(row > seqVec.max_size() || col > seqVec.max_size())
+        return 0;
     numNodes-=2;
 
     unsigned long vrow = seqVec[row][col].index;
@@ -103,7 +105,7 @@ int SparseDistanceMatrix::addCellSorted(unsigned long row, PDistCell cell){
 
 unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
     if (!sorted) { sortSeqVec(); sorted = true; }
-
+//TODO Add visuals
     //print();
 
     std::vector<PDistCellMin> mins;
@@ -116,8 +118,9 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
                 if(dist < smallDist){  //found a new smallest distance
                     mins.clear();
                     smallDist = dist;
-                    PDistCellMin temp(i, seqVec[i][j].index);
-                    mins.emplace_back(temp);
+                    PDistCellMin temp(i, seqVec[i][j].index); // The Index is not representative of the actually position of sort.
+                    mins.emplace_back(temp);    // Some indexes are 5, but are sorted from the top to the last position, therefore it is not the same
+                    // And it pulls the highest distances sometimes
                 }
                 else if(util.isEqual(dist, smallDist)){  //if a subsequent distance is the same as mins distance add the new iterator to the mins vector
                     PDistCellMin temp(i, seqVec[i][j].index);
@@ -129,17 +132,17 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
     if(mins.empty())
         return -1;
     // TestHelper::Print(std::to_string(smallDist) + "\n");
-    const unsigned long num = util.getRandomNumber(static_cast<int>(mins.size() - 1));
+    const unsigned long num = util.getRandomIndex(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
-    const unsigned long col = mins[num].col;
+    const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
 	return col;
 
 }
 /***********************************************************************/
 
-bool SparseDistanceMatrix::print(){
+bool SparseDistanceMatrix::print() const{
 
-    if(seqVec.empty() <= 0)
+    if(seqVec.empty())
         return false;
     std::cout << std::endl;
     //saves time in getSmallestCell, by making it so you dont search the repeats

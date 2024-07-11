@@ -14,7 +14,7 @@ class PhylipReaderTestFixture final: public TestFixture{
 public:
     bool TestReadPhylipFile(const std::string& file, bool expectedResult);
     bool TestReadPhylipFile(const std::vector<RowData>& rowData, bool expectedResult);
-    bool TestGetDistanceMatix(const std::vector<RowData> &rowData, bool expectedResult);
+    bool TestGetDistanceMatrix(const std::vector<RowData> &rowData, bool expectedResult);
     bool TestGetListVector(const std::vector<RowData> &rowData, bool expectedResult);
 
 private:

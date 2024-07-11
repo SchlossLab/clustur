@@ -18,10 +18,10 @@ public:
     ListVector* GetListVector() const {return phylipReader->getListVector();}
     SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->getDMatrix();}
     void CreatePhylipFile(const std::string& saveFileLocation);
-
+    std::vector<RowData> DistanceMatrixToSquareMatrix();
 
 private:
-    std::vector<RowData> DistanceMatrixToSquareMatrix();
+
     ReadPhylipMatrix* phylipReader;
     SparseDistanceMatrix* spareDistanceMatrix = nullptr;
     std::vector<int> xPosition;

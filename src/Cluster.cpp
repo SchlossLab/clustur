@@ -26,6 +26,8 @@ Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, fl
 
 /***********************************************************************/
 bool Cluster::clusterBins() {
+    if(list->size() <= 0)
+        return false;
     rabund->set(smallCol, rabund->get(smallRow) + rabund->get(smallCol));
     rabund->set(smallRow, 0);
     rabund->setLabel(std::to_string(smallDist));
@@ -35,6 +37,8 @@ bool Cluster::clusterBins() {
 /***********************************************************************/
 
 bool Cluster::clusterNames() {
+    if(list->size() <= 0)
+        return false;
     if (mapWanted) { updateMap(); }
 
     list->set(smallCol, list->get(smallRow) + ',' + list->get(smallCol));

@@ -11,14 +11,19 @@ ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff) {
     this->cutoff = cutoff;
 }
 
-int ReadPhylipMatrix::read(const std::string& filePath) {
+bool ReadPhylipMatrix::read(const std::string& filePath) {
+
+    fileHandle.open(filePath);
+    if(!fileHandle.is_open())
+        return false;
+
     const ListVector *nameMap = nullptr;
     float distance;
     int square = 0;
     std::string name;
     std::vector<std::string> matrixNames;
 
-    fileHandle.open(filePath);
+
     std::string numTest;
     fileHandle >> numTest >> name;
     const int nseqs = std::stoi(numTest);
@@ -96,12 +101,12 @@ int ReadPhylipMatrix::read(const std::string& filePath) {
     list->setLabel("0");
     fileHandle.close();
 
-    return 1;
+    return true;
 }
 
-int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
+bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
     if (rowData.empty())
-        return 0;
+        return false;
     std::string name = rowData[0].name;
     std::vector<std::string> matrixNames;
     const size_t nseqs = rowData.size();
@@ -128,5 +133,5 @@ int ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
         }
     }
     list->setLabel("0");
-    return 1;
+    return true;
 }

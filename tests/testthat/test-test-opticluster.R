@@ -12,7 +12,8 @@ test_that("Clustering returns proper results", {
 test_that("Normal Cluster is able to properly cluster data",
 {
   mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
-
+  WritePhylipFile(mat@i, mat@j, mat@x, 0.2,
+                  "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/testthat/extdata/matrix_phylip.txt")
   cluster_furthest <- cluster(mat, 0.2, "furthest")
   cluster_average <- cluster(mat, 0.2, "average")
   cluster_weighted <- cluster(mat, 0.2, "weighted")

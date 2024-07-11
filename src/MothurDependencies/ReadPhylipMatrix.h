@@ -19,8 +19,8 @@ public:
     ~ReadPhylipMatrix() {};
     SparseDistanceMatrix* getDMatrix() const { return DMatrix;}
     ListVector* getListVector()	const {	return list;}
-    int read(const std::string&);
-    int read(const std::vector<RowData>& rowData);
+    bool read(const std::string&);
+    bool read(const std::vector<RowData>& rowData);
 private:
     std::ifstream fileHandle;
     SparseDistanceMatrix* DMatrix;

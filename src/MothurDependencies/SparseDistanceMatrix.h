@@ -27,12 +27,16 @@ public:
     static bool heapComparator(const PDistCell& a, const PDistCell& b);
     int rmCell(unsigned long, unsigned long);
     int updateCellCompliment(unsigned long, unsigned long);
-    void resize(const unsigned long n) { seqVec.resize(n);  }
+    void resize(const unsigned long n) {
+        if(n > seqVec.max_size())
+            return;
+        seqVec.resize(n);
+    }
     void clear();
     void addCell(unsigned long, PDistCell);
     int addCellSorted(unsigned long, PDistCell);
     std::vector<std::vector<PDistCell> > seqVec;
-    bool print();
+    bool print() const;
 
 private:
     PDistCell smallCell;				//The cell with the smallest distance

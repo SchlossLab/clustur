@@ -13,15 +13,18 @@ public:
     ClusterTestFixture() = default;
     bool TestGetTagGetter(Cluster *clust, const std::string &expectedResult);
     bool TestGetSeqToBin(Cluster* clust, const std::map<std::string, int>& expectedMap);
-    bool TestUpdateDistanceOverload(Cluster* clust, PDistCell& row, PDistCell& col, bool expected);
-    bool TestClusterBins(RAbundVector* rAbdund, bool expectedResult);
-    bool TestClusterNames(ListVector* listVector, bool expectedResult);
-    bool TestUpdateMap(ListVector* listVector, bool expectedResult);
-    ~ClusterTestFixture() override;
+    bool TestClusterBins(RAbundVector *rAbdund, SparseDistanceMatrix *distanceMatrix, bool expectedResult);
+    bool TestClusterNames(ListVector *listVector, SparseDistanceMatrix *distanceMatrix, bool expectedResult);
+    bool TestUpdateMap(ListVector *listVector, SparseDistanceMatrix *distanceMatrix, const bool expectedResult);
+    ~ClusterTestFixture() override = default;
 
 private:
     void Setup() override;
     void TearDown() override;
+    std::string getTag() override {return "";}
+    bool updateDistance(PDistCell &colCell, PDistCell &rowCell) override {return false;}
+
+private:
     Cluster* cluster = nullptr;
 };
 

@@ -95,6 +95,5 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     for (const auto &row: dataList) {
         sequenceData[index++] = row.second;
     }
-    std::sort(sequenceData.begin(), sequenceData.end(), RowData::SortComparison);
     return sequenceData;
 }

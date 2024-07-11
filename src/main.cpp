@@ -6,6 +6,9 @@
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
+#include "MothurDependencies/CompleteLinkage.h"
+#include "Tests/PhylipReaderTestFixture.h"
+
 #if DEBUG_RCPP
 #include <vector>
 #include "Adapters/OptimatrixAdapter.h"
@@ -47,5 +50,7 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
 #endif
 
 int main() {
-    return 0;
+    PhylipReaderTestFixture fixture;
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    fixture.TestGetListVector(adapter.DistanceMatrixToSquareMatrix(), true);
 }
