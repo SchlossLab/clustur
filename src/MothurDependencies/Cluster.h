@@ -7,7 +7,7 @@
 
 
 
-#include "sparsedistancematrix.h"
+#include "SparseDistanceMatrix.h"
 #include "optimatrix.h"
 #include "PDistCell.h"
 #include "RAbundVector.h"

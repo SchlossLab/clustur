@@ -6,7 +6,7 @@
 #define SPARSEMATRIXTESTFIXTURE_H
 #include "TestFixture.h"
 #include <vector>
-#include "../MothurDependencies/sparsedistancematrix.h"
+#include "../MothurDependencies/SparseDistanceMatrix.h"
 
 
 class SparseMatrixTestFixture final : public TestFixture {

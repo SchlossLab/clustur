@@ -4,7 +4,7 @@
 
 #include "MothurDependencies/SparseDistanceMatrix.h"
 #include <iostream>
-#include "MothurDependencies/sparsedistancematrix.h"
+#include "MothurDependencies/SparseDistanceMatrix.h"
 
 
 /***********************************************************************/
