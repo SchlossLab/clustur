@@ -2,25 +2,45 @@
 #include <fstream>
 //TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
 //it will look in a package!
-#include "TestHelpers/TestHelper.h"
-#include "Tests/UtilsTestFixture.h"
-#if DEBUG_RCPP
-#include <vector>
 #include "Adapters/OptimatrixAdapter.h"
-#include "MothurDependencies/OptiMatrix.h"
+#include "TestHelpers/TestHelper.h"
+#include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
+#include "MothurDependencies/OptiMatrix.h"
+#include <vector>
 
+#if DEBUG_RCPP
 #include <Rcpp.h>
+
+//[[Rcpp::export]]
+void WritePhylipFile(const std::vector<int> &xPosition,
+                      const std::vector<int> &yPosition, const std::vector<double> &data,
+                      const double cutoff, const std::string& saveLocation) {
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    adapter.CreatePhylipFile(saveLocation);
+}
+
 //[[Rcpp::export]]
 std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
-                        const std::vector<int> &yPosition, const std::vector<double> &data, const double cutoff,
-                        const int iterations = 2, const bool shuffle = true)
-{
+                                                  const std::vector<int> &yPosition, const std::vector<double> &data,
+                                                  const double cutoff,
+                                                  const int maxIterations = 100, const bool shuffle = true) {
     OptimatrixAdapter adapter(cutoff);
-    const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition,yPosition,data);
-    auto* command = new ClusterCommand();
-    command ->SetOpticlusterRandomShuffle(shuffle);
-    command->SetMaxIterations(iterations);
-    return command->runOptiCluster(optiMatrix);
+    const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition, yPosition, data);
+    ClusterCommand command;
+    command.SetOpticlusterRandomShuffle(shuffle);
+    command.SetMaxIterations(maxIterations);
+    return command.runOptiCluster(optiMatrix);
 }
+
+
+//[[Rcpp::export]]
+std::string ClassicCluster(const std::vector<int> &xPosition,
+                           const std::vector<int> &yPosition,
+                           const std::vector<double> &data,
+                           const double cutoff,
+                           const std::string& method) {
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    ClusterCommand command;
+    return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());}
 #endif

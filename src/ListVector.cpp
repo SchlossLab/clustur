@@ -3,6 +3,8 @@
 //
 #include "MothurDependencies/ListVector.h"
 
+#include "MothurDependencies/RAbundVector.h"
+
 std::string ListVector::getOTUName(int bin) {
     if (binLabels.size() > bin) {
     } else { getLabels(); }
@@ -12,16 +14,29 @@ std::string ListVector::getOTUName(int bin) {
 
 /***********************************************************************/
 
-void ListVector::push_back(std::string seqNames) {
+void ListVector::push_back(const std::string& seqNames) {
     Utils util;
     data.push_back(seqNames);
-    int nNames = util.getNumNames(seqNames);
+    const int nNames = util.getNumNames(seqNames);
 
     numBins++;
 
     if (nNames > maxRank) { maxRank = nNames; }
 
     numSeqs += nNames;
+}
+
+void ListVector::set(const int binNumber, const std::string &seqNames) {
+    Utils util;
+    const int nNames_old = util.getNumNames(data[binNumber]);
+    data[binNumber] = seqNames;
+    const int nNames_new = util.getNumNames(seqNames);
+
+    if(nNames_old == 0)			{	numBins++;				}
+    if(nNames_new == 0)			{	numBins--;				}
+    if(nNames_new > maxRank)	{	maxRank = nNames_new;	}
+
+    numSeqs += (nNames_new - nNames_old);
 }
 
 std::vector<std::string> ListVector::getLabels() {
@@ -45,7 +60,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
-    //output_cluster += label + "\t" + std::to_string(numBins);
+    // output_cluster += label + "\t" + std::to_string(numBins);
     //TestHelper::Print(output_cluster);
     Utils util;
     std::vector<listCt> hold;
@@ -76,6 +91,16 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     return output_cluster;
 }
 
+int ListVector::size() {
+    return data.size();
+}
+
+void ListVector::clear() {
+}
+void ListVector::resize(const int size) {
+    data.resize(size);
+}
+
 std::string ListVector::print(std::ostream &output) {
     std::map<std::string, int> ct;
     for (int i = 0; i < data.size(); i++) {
@@ -95,6 +120,17 @@ std::string ListVector::print(std::ostream &output) {
     }
 
     return print(output, ct);
+}
+RAbundVector ListVector::getRAbundVector() const {
+    RAbundVector rav;
+    Utils util;
+    for(int i=0;i<data.size();i++){
+        const int binSize = util.getNumNames(data[i]);
+        rav.push_back(binSize);
+    }
+    rav.setLabel(label);
+
+    return rav;
 }
 
 void ListVector::printHeaders(std::string &output, std::map<std::string, int> &ct, bool sortPlease) {

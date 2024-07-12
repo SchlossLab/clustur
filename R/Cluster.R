@@ -40,3 +40,22 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
 
   return(opticluster_data)
 }
+
+
+
+#' Opticluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param sparse_matrix A Sparse Matrix.
+#' @param cutoff A cutoff value
+#' @param method The type of cluster you wish to conduct. There are four different types:
+#' furthest, nearest, average, weighted.
+#' @return A string of the given cluster.
+cluster <- function(sparse_matrix, cutoff, method)
+{
+
+  return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
+                           sparse_matrix@x, cutoff, method))
+}
