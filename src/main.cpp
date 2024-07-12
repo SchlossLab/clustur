@@ -6,16 +6,10 @@
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
-#include "MothurDependencies/CompleteLinkage.h"
-#include "Tests/MatrixAdapterTestFixture.h"
-#include "Tests/PhylipReaderTestFixture.h"
-#include "Tests/RAbundVectorTestFixture.h"
+#include "MothurDependencies/OptiMatrix.h"
+#include <vector>
 
 #if DEBUG_RCPP
-#include <vector>
-#include "Adapters/OptimatrixAdapter.h"
-#include "MothurDependencies/OptiMatrix.h"
-#include "MothurDependencies/ClusterCommand.h"
 #include <Rcpp.h>
 
 //[[Rcpp::export]]
@@ -50,19 +44,3 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     ClusterCommand command;
     return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());}
 #endif
-
-int main() {
-    RAbundVectorTestFixture fixture;
-    bool result = fixture.TestClear(true);
-    result = fixture.TestGet(1, 1);
-    result = fixture.TestQuicksort(true);
-    result = fixture.TestRemove(1,true);
-    result = fixture.TestResize(3,true);
-    result = fixture.TestSet(1,2, true);
-    result = fixture.TestSize(6);
-    result = fixture.TestGetOverload({1,1,1,1,1,1});
-    result = fixture.TestPushBack(2, true);
-    result = fixture.TestGetMaxRank(1);
-    result = fixture.TestGetNumBins(6);
-    result = fixture.TestGetNumSeqs(6);
-}
