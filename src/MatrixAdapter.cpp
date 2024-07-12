@@ -2,7 +2,6 @@
 // Created by Gregory Johnson on 6/28/24.
 //
 #include "Adapters/MatrixAdapter.h"
-
 #include "TestHelpers/TestHelper.h"
 
 
@@ -16,6 +15,8 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
 }
 
 ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) {
+    if(path.empty())
+        return nullptr;
     phylipReader->read(path);
     return phylipReader;
 }
@@ -30,7 +31,9 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
     return spareDistanceMatrix;
 }
 
-void MatrixAdapter::CreatePhylipFile(const std::string& saveFileLocation) {
+bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
+    if(saveFileLocation.empty())
+        return false;
     auto matrix = CreateSparseMatrix();
     int count = 0;
     const size_t size = matrixNames.size();
@@ -55,6 +58,7 @@ void MatrixAdapter::CreatePhylipFile(const std::string& saveFileLocation) {
     writeOut << distanceString;
     writeOut.close();
     delete(matrix);
+    return true;
 
 }
 

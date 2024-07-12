@@ -21,7 +21,7 @@ bool PhylipReaderTestFixture::TestReadPhylipFile(const std::vector<RowData> &row
 bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::vector<RowData> &rowData, const bool expectedResult) {
     Setup();
     reader->read(rowData);
-    const auto result = reader->getDMatrix()->seqVec.empty();
+    const auto result = !reader->getDMatrix()->seqVec.empty();
     TearDown();
     return result == expectedResult;
 

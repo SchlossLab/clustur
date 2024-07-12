@@ -20,69 +20,6 @@ RAbundVector::RAbundVector() : DataVector(), maxRank(0), numBins(0), numSeqs(0) 
 
 RAbundVector::RAbundVector(int n) : DataVector(), data(n,0) , maxRank(0), numBins(0), numSeqs(0) {}
 
-/***********************************************************************/
-
-//RAbundVector::RAbundVector(const RAbundVector& rav) : DataVector(rav), data(rav.data), (rav.label),  (rav.maxRank), (rav.numBins), (rav.numSeqs){}
-
-
-/***********************************************************************/
-
-RAbundVector::RAbundVector(std::string id, std::vector<int> rav) : DataVector(id), data(rav) {
-	numBins = 0;
-	maxRank = 0;
-	numSeqs = 0;
-
-	for(int i=0;i<data.size();i++){
-		if(data[i] != 0)		{	numBins = i+1;		}
-		if(data[i] > maxRank)	{	maxRank = data[i];	}
-		numSeqs += data[i];
-	}
-
-}
-/***********************************************************************/
-
-// RAbundVector::RAbundVector(std::vector<int> rav) :  DataVector(), maxRank(0), numBins(0), numSeqs(0)  {
-//         for(int i=0;i<rav.size();i++){ set(i, rav[i]); }
-// }
-
-/***********************************************************************/
-
-RAbundVector::RAbundVector(std::vector<int> rav, int mr, int nb, int ns) {
-	numBins = nb;
-	maxRank = mr;
-	numSeqs = ns;
-	data = rav;
-}
-/***********************************************************************/
-
-
-RAbundVector::RAbundVector(std::ifstream& f) : DataVector(), maxRank(0), numBins(0), numSeqs(0) {
-    int hold;
-    f >> label >> hold;
-
-    data.assign(hold, 0);
-    int inputData;
-
-    for(int i=0;i<hold;i++){
-        f >> inputData;
-        set(i, inputData);
-    }
-
-}
-
-/***********************************************************************/
-RAbundVector::RAbundVector(std::ifstream& f, std::string l) : DataVector(), maxRank(0), numBins(0), numSeqs(0) {
-    label = l;
-	f >> numBins;
-    data.assign(numBins, 0);
-
-	int inputData;
-	for(int i=0;i<numBins;i++){
-		f >> inputData;
-		set(i, inputData);
-	}
-
-}
 
 /***********************************************************************/
 
@@ -105,7 +42,7 @@ void RAbundVector::set(int binNumber, int newBinSize){
 
 /***********************************************************************/
 
-int RAbundVector::get(const int index){
+int RAbundVector::get(const int index) const {
 	return data[index];
 
 }
@@ -149,13 +86,6 @@ int RAbundVector::remove(const int bin){
 }
 /***********************************************************************/
 
-void RAbundVector::pop_back(){
-
-	return data.pop_back();
-}
-
-/***********************************************************************/
-
 void RAbundVector::resize(int size){
 
 	data.resize(size);
@@ -169,74 +99,12 @@ int RAbundVector::size(){
 
 /***********************************************************************/
 
-void RAbundVector::quicksort(){
+bool RAbundVector::quicksort(){
 	std::sort(data.rbegin(), data.rend());
+	return true;
 }
 
-/***********************************************************************/
 
-int RAbundVector::sum(){
-    Utils util;
-	//return util.sum(data);
-}
-
-/***********************************************************************/
-
-int RAbundVector::sum(int index){
-    int sum = 0;
-    for(int i = index; i < data.size(); i++) {  sum += data[i];  }
-	return sum;
-}
-
-/***********************************************************************/
-
-int RAbundVector::numNZ(){
-    int numNZ = 0;
-    for(int i = 0; i < data.size(); i++) { if(data[i] != 0) { numNZ++; } }
-	return numNZ;
-}
-/***********************************************************************/
-
-std::vector<int> RAbundVector::getSortedD(){
-    std::vector<int> temp; temp = data;
-    std::sort(temp.begin()+1, temp.end());
-    return temp;
-}
-/***********************************************************************/
-
-std::vector<int>::reverse_iterator RAbundVector::rbegin(){
-	return data.rbegin();
-}
-
-/***********************************************************************/
-
-std::vector<int>::reverse_iterator RAbundVector::rend(){
-	return data.rend();
-}
-
-/***********************************************************************/
-void RAbundVector::nonSortedPrint(std::ostream& output){
-    output << label;
-    output << '\t' << numBins;
-
-	for(int i=0;i<numBins;i++){		output  << '\t' << data[i];		}
-	output << std::endl;
-
-}
-/***********************************************************************/
-std::string RAbundVector::print(std::ostream& output){
-
-    std::string printString = label;
-    printString += ('\t' + numBins);
-
-	std::vector<int> hold = data;
-	std::sort(hold.rbegin(), hold.rend());
-
-	for(int i=0;i<numBins;i++){		printString +=  ('\t' + hold[i]);		}
-	printString += "\n";
-	return printString;
-
-}
 /***********************************************************************/
 int RAbundVector::getNumBins(){
 	return numBins;
@@ -254,11 +122,6 @@ int RAbundVector::getMaxRank(){
 	return maxRank;
 }
 
-/***********************************************************************/
-
-RAbundVector RAbundVector::getRAbundVector(){
-	return *this;
-}
 /***********************************************************************/
 
 // RAbundFloatVector RAbundVector::getRAbundFloatVector(){

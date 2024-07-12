@@ -22,9 +22,10 @@ context("PhylipReader Test") {
     // to test the desired conditions.
     test_that("Phylip Reader reads phylip files") {
         PhylipReaderTestFixture fixture;
-        bool result = fixture.TestReadPhylipFile("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/testthat/extdata/matrix_phylip.txt", true);
-        expect_true(result);
-        result = fixture.TestReadPhylipFile("", true);
+        //bool result = fixture.TestReadPhylipFile
+        //("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/testthat/extdata/matrix_phylip.txt", true);
+        // expect_true(result);
+        bool result = fixture.TestReadPhylipFile("", true);
         expect_false(result);
     }
     test_that("Phylip Reader reads phylip file from created RowData Vectors") {
@@ -33,7 +34,7 @@ context("PhylipReader Test") {
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
         bool result = fixture.TestReadPhylipFile(squareMatrix, true);
         expect_true(result);
-        result = fixture.TestReadPhylipFile(squareMatrix, true);
+        result = fixture.TestReadPhylipFile(squareMatrix, false);
         expect_false(result);
     }
     test_that("Phylip Reader properly creates a sparse distance matrix"){

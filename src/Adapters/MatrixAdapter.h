@@ -17,7 +17,8 @@ public:
     SparseDistanceMatrix* CreateSparseMatrix();
     ListVector* GetListVector() const {return phylipReader->getListVector();}
     SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->getDMatrix();}
-    void CreatePhylipFile(const std::string& saveFileLocation);
+
+    bool CreatePhylipFile(const std::string &saveFileLocation);
     std::vector<RowData> DistanceMatrixToSquareMatrix();
 
 private:
@@ -27,7 +28,7 @@ private:
     std::vector<int> xPosition;
     std::vector<int> yPosition;
     std::vector<double> data;
-    std::vector<std::string> matrixNames;;
+    std::vector<std::string> matrixNames;
     double cutoff;
 };
 

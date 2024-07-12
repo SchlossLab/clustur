@@ -29,12 +29,6 @@ class RAbundVector : public DataVector {
 public:
     RAbundVector();
     RAbundVector(int);
-    RAbundVector(std::vector<int>, int, int, int);
-    //RAbundVector(vector<int>);
-    RAbundVector(std::string, std::vector<int>);
-    RAbundVector(const RAbundVector& bv) : DataVector(bv), data(bv.data), maxRank(bv.maxRank), numBins(bv.numBins), numSeqs(bv.numSeqs) {};
-    RAbundVector(std::ifstream&);
-    RAbundVector(std::ifstream& f, std::string l); //filehandle, label
     ~RAbundVector();
 
     int getNumBins();
@@ -43,28 +37,13 @@ public:
 
     int remove(int);
     void set(int, int);
-    int get(int);
+    int get(int) const;
     std::vector<int> get() { return data; }
     void push_back(int);
-    void pop_back();
     void resize(int);
     int size();
-    void quicksort();
-    int sum();
-    int sum(int);
-    int numNZ();
-    std::vector<int> getSortedD();
+    bool quicksort();
     void clear();
-    std::vector<int>::reverse_iterator rbegin();
-    std::vector<int>::reverse_iterator rend();
-
-    std::string print(std::ostream&); //sorted
-    void nonSortedPrint(std::ostream&); //nonsorted
-
-    RAbundVector getRAbundVector();
-    RAbundFloatVector getRAbundFloatVector();
-    //SAbundVector getSAbundVector();
-    OrderVector getOrderVector(std::map<std::string,int>*);
 
 private:
     std::vector<int> data;
