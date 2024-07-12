@@ -22,7 +22,6 @@ void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
 
 int Utils::getRandomIndex(const int highest){
         if (highest == 0) { return 0; }
-    mersenne_twister_engine.seed(std::time(nullptr));
     std::uniform_int_distribution<int> dis(0, highest);
     return dis(mersenne_twister_engine);
 
