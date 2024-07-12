@@ -59,11 +59,11 @@ public:
 
     void push_back(const std::string&);
     void set(int binNumber, const std::string& seqNames);
-    std::string print(std::ostream&);
+    std::string print(std::ostream&) override;
 
     RAbundVector getRAbundVector() const;
 
-    std::string print(std::ostream&, std::map<std::string, int>&);
+    std::string print(std::ostream&, std::map<std::string, int>&) override;
     int size() override;
     void clear() override;
     void resize(int) override;

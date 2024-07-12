@@ -4,8 +4,10 @@
 
 #ifndef READPHYLIPMATRIX_H
 #define READPHYLIPMATRIX_H
-#include <fstream>
 
+#include <fstream>
+#include <string>
+#include <vector>
 #include "../RowData.h"
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"

@@ -5,6 +5,7 @@
 #ifndef SPARSEMATRIXTESTFIXTURE_H
 #define SPARSEMATRIXTESTFIXTURE_H
 #include "TestFixture.h"
+#include <vector>
 #include "../MothurDependencies/sparsedistancematrix.h"
 
 

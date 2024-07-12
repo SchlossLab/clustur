@@ -20,6 +20,8 @@
 #include <vector>
 
 #include "DataVector.h"
+#include <vector>
+#include <algorithm>
 
 class RAbundFloatVector;
 class OrderVector;

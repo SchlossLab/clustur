@@ -5,6 +5,7 @@
 #ifndef MATRIXADAPTERTESTFIXTURE_H
 #define MATRIXADAPTERTESTFIXTURE_H
 #include "TestFixture.h"
+#include <vector>
 #include "../Adapters/MatrixAdapter.h"
 
 

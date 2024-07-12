@@ -131,7 +131,6 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 	}
     if(mins.empty())
         return -1;
-    // TestHelper::Print(std::to_string(smallDist) + "\n");
     const unsigned long num = util.getRandomIndex(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
@@ -144,14 +143,14 @@ bool SparseDistanceMatrix::print() const{
 
     if(seqVec.empty())
         return false;
-    std::cout << std::endl;
-    //saves time in getSmallestCell, by making it so you dont search the repeats
-    for (int i = 0; i < seqVec.size(); i++) {
-        std::cout << i << '\t';
-        for (int j = 0; j < seqVec[i].size(); j++) {   std::cout <<  seqVec[i][j].index << '\t' ;  }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    // std::cout << std::endl;
+    // //saves time in getSmallestCell, by making it so you dont search the repeats
+    // for (int i = 0; i < seqVec.size(); i++) {
+    //     std::cout << i << '\t';
+    //     for (int j = 0; j < seqVec[i].size(); j++) {   std::cout <<  seqVec[i][j].index << '\t' ;  }
+    //     std::cout << std::endl;
+    // }
+    // std::cout << std::endl;
     return true;
 }
 /***********************************************************************/
