@@ -8,7 +8,7 @@
 
 
 #include "SparseDistanceMatrix.h"
-#include "optimatrix.h"
+#include "OptiMatrix.h"
 #include "PDistCell.h"
 #include "RAbundVector.h"
 
