@@ -42,5 +42,9 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const std::string& method) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
     ClusterCommand command;
-    return command.runMothurCluster(method, adapter.CreateSparseMatrix(), cutoff, adapter.GetListVector());}
+    //Race Condition, going to have to look for a fix in the future, but Create Sparse Matrix has to go first
+    const auto sparseMatix = adapter.CreateSparseMatrix();
+    const auto listVector = adapter.GetListVector();
+    return command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+}
 #endif
