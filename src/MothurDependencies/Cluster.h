@@ -37,10 +37,12 @@ protected:
 	SparseDistanceMatrix* dMatrix;
 
 	unsigned long smallRow, smallCol, nRowCells, nColCells;
-	float smallDist, adjust, cutoff;
+	float cutoff;
+	std::string method;
+	float smallDist, adjust;
 	bool mapWanted;
 	std::map<std::string, int> seq2Bin;
-	std::string method;
+
 
     Utils util;
 };

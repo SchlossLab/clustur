@@ -25,10 +25,10 @@ public:
     //virtual OrderVector getOrderVector(std::map<std::string,int>* hold = nullptr) = 0;
     virtual void resize(int) = 0;
 
-    virtual std::string print(std::ostream&, std::map<std::string, int>&) {}
-    virtual std::string printHeaders(std::ostream&) {};
-    virtual std::string print(std::ostream&, bool&) {}
-    virtual std::string print(std::ostream&) {}
+    virtual std::string print(std::ostream&, std::map<std::string, int>&) {return "";}
+    virtual std::string printHeaders(std::ostream&) {return "";}
+    virtual std::string print(std::ostream&, bool&) {return "";}
+    virtual std::string print(std::ostream&) {return "";}
 
     void setLabel(const std::string& l)		{	label = l;			}
     std::string getLabel()			    {	return label;		}

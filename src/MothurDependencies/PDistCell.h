@@ -13,8 +13,8 @@ struct PDistCell{
     static bool CompareIndexes(const PDistCell& left, const PDistCell& right){return left.index > right.index; }
 };
 struct PDistCellMin{
-    unsigned long row;
     unsigned long col;
+    unsigned long row;
     PDistCellMin() = default;
     PDistCellMin(const unsigned long r, const unsigned long c) :  col(c), row(r) {}
 };
