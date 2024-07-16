@@ -36,8 +36,6 @@ context("ClusterCommand") {
     expect_true(true);
   }
 
-
-
 }
 
 #endif

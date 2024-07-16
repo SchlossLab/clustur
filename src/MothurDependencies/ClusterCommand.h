@@ -20,7 +20,6 @@
 #include <map>
 #include "OptiMatrix.h"
 #include "ListVector.h"
-#include <Rcpp.h>
 #include "Metrics/accuracy.hpp"
 #include "Metrics/f1score.hpp"
 #include "Metrics/fdr.hpp"
@@ -37,6 +36,8 @@
 #include "Metrics/tptn.hpp"
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
+#include <chrono>
+#include "SingleLinkage.h"
 using namespace std;
 
 /* The cluster() command:
@@ -57,17 +58,19 @@ public:
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
 	std::vector<std::string> runOptiCluster(OptiMatrix*);
 
+	std::string runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
 
-	
+	std::string PrintData(const string &label, map<string, int> &counts, bool &ph);
+
 private:
 	ListVector* list;
 	ListVector oldList;
 	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
-    float adjust;
+    float adjust = -1;
 	string showabund, timing, metricName;
-	int precision, length, maxIters = 2, processors;
+	int precision = 1000, length, maxIters = 2, processors;
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;

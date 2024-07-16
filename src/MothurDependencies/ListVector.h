@@ -10,15 +10,20 @@
 #include <fstream>
 #include <map>
 #include <iostream>
+
+#include "DataVector.h"
+#include "RAbundVector.h"
 #include "Utils.h"
 
 
 
 
-class ListVector {
+class ListVector : public DataVector{
 public:
 
-    ListVector() = default;
+    ListVector() {};
+    explicit ListVector(const int n):	DataVector(), data(n, "") ,
+    maxRank(0), numBins(0), numSeqs(0), otuTag("Otu"), printListHeaders(true){}
     ~ListVector(){};
 
     struct listCt{
@@ -52,10 +57,17 @@ public:
     void setLabels(std::vector<std::string>);
     bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
 
-    void push_back(std::string);
+    void push_back(const std::string&);
+    void set(int binNumber, const std::string& seqNames);
+    std::string print(std::ostream&) override;
 
-    std::string print(std::ostream&);
-    std::string print(std::ostream&, std::map<std::string, int>&);
+    RAbundVector getRAbundVector() const;
+
+    std::string print(std::ostream&, std::map<std::string, int>&) override;
+    int size() override;
+    void clear() override;
+    void resize(int) override;
+
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
     int maxRank = 0;
@@ -66,6 +78,8 @@ private:
     bool printListHeaders;
     Utils util;
     void printHeaders(std::string&, std::map<std::string, int>&, bool);
+
+public:
 
 };
 
