@@ -36,6 +36,7 @@
 #include "Metrics/tptn.hpp"
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
+#include <chrono>
 #include "SingleLinkage.h"
 using namespace std;
 

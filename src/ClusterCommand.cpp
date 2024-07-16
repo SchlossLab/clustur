@@ -103,11 +103,11 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
 
             numBins = cluster.getNumBins();
 
-            clusterMetrics += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+            clusterMetrics += (std::to_string(iters) + "\t" + std::to_string(std::time(nullptr) - start) + "\t" +
                                std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
                                std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
                                + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-            outStep += (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+            outStep += (std::to_string(iters) + "\t" + std::to_string(std::time(nullptr) - start) + "\t" +
                         std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
                     + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
                     std::to_string(fn) +
