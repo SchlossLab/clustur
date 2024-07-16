@@ -28,7 +28,7 @@ public:
     int rmCell(unsigned long, unsigned long);
     int updateCellCompliment(unsigned long, unsigned long);
     void resize(const unsigned long n) {
-        if(n > seqVec.max_size())
+        if(n > seqVec.max_size() || n <= 0)
             return;
         seqVec.resize(n);
     }

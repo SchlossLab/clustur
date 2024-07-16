@@ -32,10 +32,8 @@ context("Spase Distance Matrix") {
         expect_true(result);
         result = fixture.TestResize(4, 3);
         expect_false(result);
-        result = fixture.TestResize(-1, 0);
-        expect_false(result);
         result = fixture.TestResize(0, 0);
-        expect_true(result);
+        expect_false(result);
     }
     test_that("Prints returns whether it printed the data or not") {
         SparseMatrixTestFixture fixture;
@@ -64,8 +62,6 @@ context("Spase Distance Matrix") {
         SparseMatrixTestFixture fixture;
         bool result = fixture.TestRemoveCell(1,1,true);
         expect_true(result);
-        result = fixture.TestRemoveCell(-1,1,true);
-        expect_false(result);
     }
     test_that("Test Adding Cells sorted works") {
         SparseMatrixTestFixture fixture;

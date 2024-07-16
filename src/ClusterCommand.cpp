@@ -13,7 +13,6 @@
 #include "MothurDependencies/CompleteLinkage.h"
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
-#include "TestHelpers/TestHelper.h"
 using namespace std;
 
 ClusterCommand::~ClusterCommand() {

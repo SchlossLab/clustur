@@ -27,7 +27,4 @@ test_that("Normal Cluster is able to properly cluster data",
   expect_false(cluster_average == "")
   expect_false(cluster_weighted == "")
   expect_false(cluster_nearest == "")
-
-
-
 })
