@@ -1,2 +1,2 @@
 # Makevars
-CXX_STD = CXX17
+CXX_STD = CXX11
