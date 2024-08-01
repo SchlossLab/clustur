@@ -15,7 +15,7 @@
 class SharedFile {
 public:
     explicit SharedFile(const std::vector<OTUAbundancePair>& otuAbundance):otuAbundance(otuAbundance) {}
-    void PrintData() const;
+    void PrintData(double cutoff) const;
 
 private:
     std::vector<OTUAbundancePair> otuAbundance;

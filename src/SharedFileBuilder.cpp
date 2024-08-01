@@ -5,7 +5,6 @@
 #include "MothurDependencies/SharedFileBuilder.h"
 
 
-
 //TODO: Create Similar Sequences map **WE ARE HERE**
 //TODO: Create a NameFile Based on the Similar Sequence Map
 //TODO: Create a Counttable Based on the Name File
