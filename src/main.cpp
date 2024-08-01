@@ -6,8 +6,11 @@
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
+#include "MothurDependencies/RSparseMatrix.h"
 #include "MothurDependencies/OptiMatrix.h"
 #include <vector>
+
+#include "MothurDependencies/SharedFileBuilder.h"
 
 #if DEBUG_RCPP
 #include <Rcpp.h>
@@ -41,10 +44,30 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const double cutoff,
                            const std::string& method) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    SharedFileBuilder builder(RSpraseMatrix(xPosition, yPosition, data));
+    builder.CreateNameMap();
+    builder.CreateCountTable();
+    builder.OutputFiles();
     ClusterCommand command;
     //Race Condition, going to have to look for a fix in the future, but Create Sparse Matrix has to go first
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();
-    return command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    const auto shared = builder.BuildSharedFile(listVector);
+    shared->PrintData();
+    delete(shared);
+    return result;
+
 }
 #endif
+// int main() {
+//     const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
+//     const auto yVals = std::vector<int>{2,3,5,3,5,5,5};
+//     const auto data = std::vector<double>{0.02,0.04,0.25,0.1,0.28,0.05,0.15};
+//     ClassicCluster(xVals,yVals,data,0.2, "furthest");
+//     // SharedFileBuilder builder(RSpraseMatrix(xVals, yVals, data));
+//     // builder.CreateNameMap();
+//     // builder.CreateCountTable();
+//     // builder.OutputFiles();
+//     return 0;
+// }

@@ -8,18 +8,18 @@
 
 
 struct RSparseData {
-    RSparseData(const int i, const int j, const float value) {
+    RSparseData(const int i, const int j, const double value) {
         iIndex = i;
         jIndex = j;
         data = value;
     }
     int iIndex;
     int jIndex;
-    float data;
+    double data;
 };
 
 struct RSpraseMatrix {
-    RSpraseMatrix(const std::vector<int> &iIndex, const std::vector<int> &jIndex, const std::vector<float> &data){
+    RSpraseMatrix(const std::vector<int> &iIndex, const std::vector<int> &jIndex, const std::vector<double> &data){
         for(size_t i = 0; i < data.size(); i++) {
             sparseValues.emplace_back(iIndex[i], jIndex[i], data[i]);
         }

@@ -59,3 +59,4 @@ cluster <- function(sparse_matrix, cutoff, method)
   return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
                            sparse_matrix@x, cutoff, method))
 }
+
