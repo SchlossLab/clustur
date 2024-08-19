@@ -10,6 +10,7 @@
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/AverageLinkage.h"
 #include "MothurDependencies/Cluster.h"
+#include "MothurDependencies/ClusterResult.h"
 #include "MothurDependencies/CompleteLinkage.h"
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
@@ -145,6 +146,7 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
                                              double cutoff, ListVector *list) {
     //
     Cluster *cluster = nullptr;
+    auto* result = new ClusterResult();
     auto rAbund = list->getRAbundVector();
     if (clusterMethod ==  "furthest")	{	cluster = new CompleteLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "nearest"){	cluster = new SingleLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
@@ -162,13 +164,19 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
 
     while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)) { //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         cluster->update(cutoff);
+        ClusterData data;
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
             clusterResult += PrintData("unique", counts, printHeaders);
+            data.label = "unique";
+            data.numberOfOtu = oldList.getNumBins();
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
             clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
+            data.label = std::to_string(rndPreviousDist);
+            data.numberOfOtu = oldList.getNumBins();
         }
+
         oldList = *list;
         previousDist = dist;
         rndPreviousDist = rndDist;
@@ -176,11 +184,13 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
     }
     if(previousDist <= 0.0000)          { clusterResult += PrintData("unique", counts, printHeaders);                            }
     else if(rndPreviousDist<cutoff)     { clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders); }
+    rAbund.print();
     delete(cluster);
     return clusterResult;
 }
 
 std::string ClusterCommand::PrintData(const string& label, map<string, int> &counts, bool &ph) {
+    //TODO Return a ClusterData to add to cluster results here!
     oldList.setPrintedLabels(ph);
     ph = false;
     oldList.setLabel(label);

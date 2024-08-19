@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "DataVector.h"
+#include <fstream>
 #include <vector>
 #include <algorithm>
 
@@ -36,6 +37,8 @@ public:
     int getNumBins();
     int getNumSeqs();
     int getMaxRank();
+
+    void print() const;
 
     int remove(int);
     void set(int, int);

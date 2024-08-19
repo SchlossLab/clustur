@@ -123,6 +123,20 @@ int RAbundVector::getMaxRank(){
 }
 
 /***********************************************************************/
+void RAbundVector::print() const {
+	std::ofstream output("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/output_rabund.txt");
+	output << label;
+	output << '\t' << numBins;
+
+	std::vector<int> hold = data;
+	std::sort(hold.rbegin(), hold.rend());
+
+	for(int i=0;i<numBins;i++){		output  << '\t' << hold[i];		}
+	output << std::endl;
+	output.close();
+
+}
+/***********************************************************************/
 
 // RAbundFloatVector RAbundVector::getRAbundFloatVector(){
 //     RAbundFloatVector rav; rav.setLabel(label);
