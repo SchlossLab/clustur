@@ -146,8 +146,10 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
                                              double cutoff, ListVector *list) {
     //
     Cluster *cluster = nullptr;
-    auto* result = new ClusterResult();
+    // auto* result = new ClusterResult();
+    auto* clusterData = new ClusterData("");
     auto rAbund = list->getRAbundVector();
+    rAbund.print();
     if (clusterMethod ==  "furthest")	{	cluster = new CompleteLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "nearest"){	cluster = new SingleLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "average"){	cluster = new AverageLinkage(&rAbund, list, matrix, cutoff, method, adjust);	}
@@ -164,26 +166,42 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
 
     while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)) { //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         cluster->update(cutoff);
-        ClusterData data;
+        ClusterInformation data;
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
             clusterResult += PrintData("unique", counts, printHeaders);
             data.label = "unique";
+            rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
             clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
             data.label = std::to_string(rndPreviousDist);
+            rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
         }
 
         oldList = *list;
         previousDist = dist;
         rndPreviousDist = rndDist;
-
+        data.clusterBins = oldList.print(listFile);
+        clusterData->AddToData(data);
     }
-    if(previousDist <= 0.0000)          { clusterResult += PrintData("unique", counts, printHeaders);                            }
-    else if(rndPreviousDist<cutoff)     { clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders); }
+    ClusterInformation data;
+    if(previousDist <= 0.0000) {
+        clusterResult += PrintData("unique", counts, printHeaders);
+        data.label = "unique";
+        data.numberOfOtu = oldList.getNumBins();
+    }
+    else if(rndPreviousDist<cutoff) {
+        clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
+        data.label = std::to_string(rndPreviousDist);
+        data.numberOfOtu = oldList.getNumBins();
+    }
+
+
+    data.clusterBins = oldList.print(listFile);
+    clusterData->AddToData(data);
     rAbund.print();
     delete(cluster);
     return clusterResult;

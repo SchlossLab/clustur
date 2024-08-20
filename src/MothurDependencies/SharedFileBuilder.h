@@ -24,6 +24,7 @@ public:
     void CreateCountTable();
     void OutputFiles() const;
     SharedFile* BuildSharedFile(ListVector*);
+    SharedFile *BuildSharedFile(RAbundVector *listVector);
 
 private:
     RSpraseMatrix matrix;

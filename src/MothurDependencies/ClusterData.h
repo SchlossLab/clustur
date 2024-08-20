@@ -8,9 +8,22 @@
 #include <unordered_map>
 #include <vector>
 
-struct ClusterData {
+#include "ClusterExport.h"
+
+struct ClusterInformation {
     std::string label;
     int numberOfOtu;
-    std::unordered_map<int, std::vector<int>> clusters;
+    std::string clusterBins;
 };
+
+class ClusterData final : public ClusterExport {
+public:
+    explicit ClusterData(std::string header):headers(std::move(header)){}
+    std::string Print() const override;
+    void AddToData(ClusterInformation&);
+private:
+    std::vector<ClusterInformation> clusterInformation;
+    std::string headers;
+};
+
 #endif //CLUSTERDATA_H

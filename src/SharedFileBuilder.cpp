@@ -81,3 +81,16 @@ SharedFile* SharedFileBuilder::BuildSharedFile(ListVector *listVector) {
     }
     return new SharedFile(abundanceMap);
 }
+SharedFile* SharedFileBuilder::BuildSharedFile(RAbundVector *listVector) {
+    const int size = listVector->size();
+    std::vector<OTUAbundancePair> abundanceMap(size);
+    std::vector<OTUAbundancePair> pair;
+    for(int i = 0; i < size; i++) {
+        std::vector<std::string> container;
+        const int abundance = listVector->get(i);
+        abundanceMap[i] = OTUAbundancePair(abundance,
+            "OTU" + std::to_string(i + 1),"");
+        // Get abundance at each otu level
+    }
+    return new SharedFile(abundanceMap);
+}

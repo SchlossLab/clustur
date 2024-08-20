@@ -38,7 +38,7 @@ public:
     int getNumSeqs();
     int getMaxRank();
 
-    void print() const;
+    void print();
 
     int remove(int);
     void set(int, int);
@@ -52,6 +52,7 @@ public:
 
 private:
     std::vector<int> data;
+    int rAbundNumber = 0;
     int maxRank;
     int numBins;
     int numSeqs;

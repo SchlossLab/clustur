@@ -6,13 +6,13 @@
 #define CLUSTERRESULT_H
 #include "ClusterData.h"
 #include <string>
+#include <utility>
 #include <vector>
-#include <unordered_map>
 
 class ClusterResult {
 public:
-    std::string ResultsToString() const;
-    std::vector<ClusterData> clusterData;
+    ClusterResult() = default;
+    std::string ResultsToString(const ClusterExport&) const;
 };
 
 #endif //CLUSTERRESULT_H
