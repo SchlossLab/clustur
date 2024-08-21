@@ -53,10 +53,12 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
-    const auto shared = builder.BuildSharedFile(listVector);
-    shared->PrintData(cutoff);
-    delete(shared);
-    return result;
+    std::string exportResult = result->Print();
+    delete(result);
+    // const auto shared = builder.BuildSharedFile(listVector);
+    // shared->PrintData(cutoff);
+    // delete(shared);
+    return exportResult;
 
 }
 #endif

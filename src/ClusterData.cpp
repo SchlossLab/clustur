@@ -2,12 +2,14 @@
 // Created by gregj on 8/20/2024.
 //
 
-#include "ClusterData.h"
+#include "MothurDependencies/ClusterData.h"
+
+#include "TestHelpers/TestHelper.h"
 
 std::string ClusterData::Print() const {
     std::string results = headers;
     for(const auto& cluster : clusterInformation) {
-        results += cluster.label + std::to_string(cluster.numberOfOtu) + cluster.clusterBins + "\n";
+        results += cluster.label + "\t" + cluster.clusterBins;
     }
     return results;
 }

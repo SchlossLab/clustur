@@ -37,6 +37,8 @@
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
 #include <chrono>
+
+#include "ClusterExport.h"
 #include "SingleLinkage.h"
 using namespace std;
 
@@ -58,7 +60,7 @@ public:
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
 	std::vector<std::string> runOptiCluster(OptiMatrix*);
 
-	std::string runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
+	ClusterExport* runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
 
 	std::string PrintData(const string &label, map<string, int> &counts, bool &ph);
 

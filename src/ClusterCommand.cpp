@@ -142,7 +142,7 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
     return {clusterMatrixOutput, sensFile, clusterMetrics};
 }
 
-std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, SparseDistanceMatrix *matrix,
+ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod, SparseDistanceMatrix *matrix,
                                              double cutoff, ListVector *list) {
     //
     Cluster *cluster = nullptr;
@@ -180,12 +180,13 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
             rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
         }
-
         oldList = *list;
         previousDist = dist;
         rndPreviousDist = rndDist;
-        data.clusterBins = oldList.print(listFile);
-        clusterData->AddToData(data);
+        if(!data.label.empty()) {
+            data.clusterBins = oldList.print(listFile);
+            clusterData->AddToData(data);
+        }
     }
     ClusterInformation data;
     if(previousDist <= 0.0000) {
@@ -199,12 +200,14 @@ std::string ClusterCommand::runMothurCluster(const std::string &clusterMethod, S
         data.numberOfOtu = oldList.getNumBins();
     }
 
-
-    data.clusterBins = oldList.print(listFile);
-    clusterData->AddToData(data);
+    // data.clusterBins = oldList.print(listFile);
+    if(!data.label.empty()) {
+        data.clusterBins = oldList.print(listFile);
+        clusterData->AddToData(data);
+    }
     rAbund.print();
     delete(cluster);
-    return clusterResult;
+    return clusterData;
 }
 
 std::string ClusterCommand::PrintData(const string& label, map<string, int> &counts, bool &ph) {

@@ -12,7 +12,6 @@ test_that("Clustering returns proper results", {
 test_that("Normal Cluster is able to properly cluster data",
 {
   mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
-
   cluster_furthest <- cluster(mat, 0.2, "furthest")
   cluster_average <- cluster(mat, 0.2, "average")
   cluster_weighted <- cluster(mat, 0.2, "weighted")
