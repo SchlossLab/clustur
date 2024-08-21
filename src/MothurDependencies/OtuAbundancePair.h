@@ -5,16 +5,19 @@
 #ifndef OTUABUNDANCEPAIR_H
 #define OTUABUNDANCEPAIR_H
 #include <string>
+#include <utility>
 struct OTUAbundancePair {
-    OTUAbundancePair(const int abundance, const std::string &otu, const std::string &group)
+    OTUAbundancePair(const int abundance, std::string otu, std::string group, std::string label)
         : abundance(abundance),
-          otu(otu),
-          group(group) {
+          otu(std::move(otu)),
+          group(std::move(group)),
+          label(std::move(label)){
     }
     OTUAbundancePair() = default;
 
-    int abundance;
+    int abundance = 0;
     std::string otu;
     std::string group;
+    std::string label;
 };
 #endif //OTUABUNDANCEPAIR_H

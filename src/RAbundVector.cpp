@@ -124,8 +124,8 @@ int RAbundVector::getMaxRank(){
 
 /***********************************************************************/
 void RAbundVector::print() {
-	std::string path = "F:\\Opticluster\\output_rabund" + std::to_string(rAbundNumber++) + ".txt";
-	std::ofstream output("F:\\Opticluster\\output_rabund.txt");
+	const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/Opticluster/output_rabund.txt";
+	std::ofstream output(path);
 	output << label;
 	output << '\t' << numBins;
 

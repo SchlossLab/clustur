@@ -17,3 +17,7 @@ std::string ClusterData::Print() const {
 void ClusterData::AddToData(ClusterInformation& information) {
     clusterInformation.emplace_back(information);
 }
+
+std::string ClusterData::GetLabel(const int index) const {
+    return clusterInformation[index].label;
+}

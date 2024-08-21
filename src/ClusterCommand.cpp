@@ -12,6 +12,7 @@
 #include "MothurDependencies/Cluster.h"
 #include "MothurDependencies/ClusterResult.h"
 #include "MothurDependencies/CompleteLinkage.h"
+#include "MothurDependencies/OpticlusterData.h"
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
 using namespace std;
@@ -23,18 +24,13 @@ ClusterCommand::~ClusterCommand() {
 /// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
 /// @param optiMatrix
 /// @return
-std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
-    std::string clusterMetrics;
-    std::string sensFile;
-    std::string outStep;
-    std::string clusterMatrixOutput;
+ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
     if (!cutOffSet) {
         // clusterMetrics += ("\nYou did not set a cutoff, using 0.03.\n");
         cutoff = 0.05;
     }
-
     // clusterMetrics += ("\nClustering " + distfile + "\n");
-
+    auto* data = new OpticlusterData("");
     ClusterMetric *metric = nullptr;
     metricName = "mcc";
     if (metricName == "mcc") { metric = new MCC(); } else if (
@@ -50,14 +46,10 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
         metricName == "fdr") { metric = new FDR(); } else if (metricName == "fpfn") { metric = new FPFN(); } else {
         return {};
     }
-
     // Setting headers
-    sensFile += "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-    clusterMetrics += (
+    sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+    clusterMetrics = (
         "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
-    outStep +=
-            "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-
     bool printHeaders = true;
 
     cutoffs.insert("0.2");
@@ -65,7 +57,6 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
     OptiData *matrix = optiMatrix;
     for (auto it = cutoffs.begin(); it != cutoffs.end(); it++) {
         OptiCluster cluster(matrix, metric, 0);
-
         int iters = 0;
         double listVectorMetric = 0; //worst state
         double delta = 1;
@@ -78,16 +69,11 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
         clusterMetrics += ("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
                            std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" +
                            std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-        outStep += "0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) +
-                "\t" + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
-                std::to_string(fn) + '\t';
         for (double result: stats) {
             clusterMetrics += (std::to_string(result) + "\t");
-            outStep += std::to_string(result) + "\t";
         }
         //m->mothurOutEndLine();
         clusterMetrics += "\n";
-        outStep += "\n";
         // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
         // The difference between what the current and last metric (delta)
         // MaxIters -> is an exit condition
@@ -108,20 +94,12 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
                                std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
                                std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
                                + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
-            outStep += (std::to_string(iters) + "\t" + std::to_string(std::time(nullptr) - start) + "\t" +
-                        std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t")
-                    + std::to_string(tp) + '\t' + std::to_string(tn) + '\t' + std::to_string(fp) + '\t' +
-                    std::to_string(fn) +
-                    '\t';
             for (double result: stats) {
                 clusterMetrics += (std::to_string(result) + "\t");
-                outStep += std::to_string(result) + "\t";
             }
             clusterMetrics += "\n";
-            outStep += "\n";
         }
         ListVector *list = nullptr;
-
         // clusterMetrics += "\n\n";
         list = cluster.getList();
         //
@@ -129,7 +107,12 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
             //only print headers the first time
             printHeaders = false;
         } else { list->setPrintedLabels(printHeaders); }
-        clusterMatrixOutput = list->print(listFile);
+        OptiClusterInformation clusterInformation;
+        clusterInformation.label = std::to_string(cutoff);
+        clusterInformation.numberOfOtu = static_cast<int>(numBins);
+        clusterInformation.clusterBins = list->print(listFile);
+        data->AddToData(clusterInformation);
+        // clusterMatrixOutput = list->print(listFile);
         delete list;
         stats = cluster.getStats(tp, tn, fp, fn);
 
@@ -139,7 +122,8 @@ std::vector<std::string> ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) 
         for (double result: stats) { sensFile += std::to_string(result) + '\t'; }
     }
     delete matrix;
-    return {clusterMatrixOutput, sensFile, clusterMetrics};
+    return data;
+    // return {clusterMatrixOutput, sensFile, clusterMetrics};
 }
 
 ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod, SparseDistanceMatrix *matrix,

@@ -14,7 +14,7 @@ test_that("Normal Cluster is able to properly cluster data",
   mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
   cluster_furthest <- cluster(mat, 0.2, "furthest")
   cluster_average <- cluster(mat, 0.2, "average")
-  cluster_weighted <- cluster(mat, 0.2, "weighted")
+  cluster_weighted <- cluster(mat, 0.2, "weighted") # TODO Fix Label
   cluster_nearest <- cluster(mat, 0.2, "nearest")
 
   expect_true(any(class(cluster_furthest) == "character"))

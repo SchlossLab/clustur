@@ -33,7 +33,10 @@ std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosit
     ClusterCommand command;
     command.SetOpticlusterRandomShuffle(shuffle);
     command.SetMaxIterations(maxIterations);
-    return command.runOptiCluster(optiMatrix);
+    const auto* clusterExport = command.runOptiCluster(optiMatrix);
+    std::string clusterResults = clusterExport->Print();
+    delete (clusterExport);
+    return {clusterResults, command.GetSensitivityData(), command.GetClusterMetrics()} ;
 }
 
 
@@ -44,17 +47,20 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const double cutoff,
                            const std::string& method) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
-    SharedFileBuilder builder(RSpraseMatrix(xPosition, yPosition, data));
-    builder.CreateNameMap();
-    builder.CreateCountTable();
-    builder.OutputFiles();
+    SharedFileBuilder builder;
     ClusterCommand command;
     //Race Condition, going to have to look for a fix in the future, but Create Sparse Matrix has to go first
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();
+
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    // TestHelper::Print("Made it\n");
     std::string exportResult = result->Print();
+    auto rabund = listVector->getRAbundVector();
+    builder.BuildSharedFile(&rabund, result)->PrintData();
+    // auto val = listVector->getRAbundVector();
     delete(result);
+    delete(listVector);
     // const auto shared = builder.BuildSharedFile(listVector);
     // shared->PrintData(cutoff);
     // delete(shared);

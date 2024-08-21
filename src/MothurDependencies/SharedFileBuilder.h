@@ -12,6 +12,7 @@
 #include <set>
 #include <list>
 
+#include "ClusterExport.h"
 #include "ListVector.h"
 #include "RSparseMatrix.h"
 #include "SharedFile.h"
@@ -19,19 +20,8 @@
 
 class SharedFileBuilder {
 public:
-    explicit SharedFileBuilder(const RSpraseMatrix& sparseMatrix);
-    void CreateNameMap();
-    void CreateCountTable();
-    void OutputFiles() const;
-    SharedFile* BuildSharedFile(ListVector*);
-    SharedFile *BuildSharedFile(RAbundVector *listVector);
-
-private:
-    RSpraseMatrix matrix;
-    std::unordered_map<int, std::set<int>> nameMap;
-    std::unordered_map<int, int> countTable;
-    Utils utils;
-    float cutoff = 0.1;
+    SharedFile *BuildSharedFile(RAbundVector *rAdbundVector, const ClusterExport *clusterExport);
+    SharedFileBuilder() = default;
 };
 
 

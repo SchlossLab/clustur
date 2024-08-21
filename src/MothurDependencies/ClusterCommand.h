@@ -58,7 +58,9 @@ public:
 	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
 	bool SetOpticlusterRandomShuffle(const bool shuffle) {canShuffle = shuffle; return canShuffle;}
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
-	std::vector<std::string> runOptiCluster(OptiMatrix*);
+	std::string GetSensitivityData(){return sensFile;}
+	std::string GetClusterMetrics(){return clusterMetrics;}
+	ClusterExport* runOptiCluster(OptiMatrix*);
 
 	ClusterExport* runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
 
@@ -67,6 +69,8 @@ public:
 private:
 	ListVector* list;
 	ListVector oldList;
+	std::string clusterMetrics;
+	std::string sensFile;
 	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
