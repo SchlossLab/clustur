@@ -11,6 +11,19 @@ std::string ListVector::getOTUName(int bin) {
     return binLabels[bin];
 }
 
+ListVector::ListVector(const ListVector& other)  : DataVector(other) {
+    for(const auto& currentData : other.data) {
+        push_back(currentData);
+    }
+    label = other.label;
+    printListHeaders = other.printListHeaders;
+    binLabels = other.binLabels;
+    otuTag = other.otuTag;
+    numBins = other.numBins;
+    numSeqs = other.numSeqs;
+    maxRank = other.maxRank;
+}
+
 
 /***********************************************************************/
 
@@ -79,7 +92,10 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
             hold.push_back(temp);
         }
     }
-    std::sort(hold.begin(), hold.end(), abundNamesSort2);
+    std::sort(hold.begin(), hold.end(), abundNamesSort2); // Mothur sorts
+    // its bins
+    // This means that we can create an rabundvector just by sorting it by size.
+    // And it should be equal. Rabund = binSize. And since it is sorted, they should be equal.
 
     for (int i = 0; i < hold.size(); i++) {
         if (hold[i].bin != "") {

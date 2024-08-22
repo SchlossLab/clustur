@@ -14,11 +14,15 @@
 
 class SharedFile {
 public:
-    explicit SharedFile(const std::vector<OTUAbundancePair>& otuAbundance):otuAbundance(otuAbundance) {}
-    void PrintData(double cutoff) const;
+    explicit SharedFile(const std::unordered_map<std::string, std::vector<OTUAbundancePair>>& sharedMap,
+        const int binSize):
+    otuAbundance(sharedMap),
+    largestBin(binSize){}
+    void PrintData() const;
 
 private:
-    std::vector<OTUAbundancePair> otuAbundance;
+    std::unordered_map<std::string, std::vector<OTUAbundancePair>> otuAbundance;
+    int largestBin;
 };
 
 

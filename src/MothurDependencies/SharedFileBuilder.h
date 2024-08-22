@@ -20,7 +20,7 @@
 
 class SharedFileBuilder {
 public:
-    SharedFile *BuildSharedFile(RAbundVector *rAdbundVector, const ClusterExport *clusterExport);
+    SharedFile *BuildSharedFile(const std::unordered_map<std::string, RAbundVector> &rAdbundMap);
     SharedFileBuilder() = default;
 };
 

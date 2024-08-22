@@ -7,15 +7,19 @@
 #include "MothurDependencies/ClusterExport.h"
 
 // TODO: Fix this function so that it exports a clean shared file
-void SharedFile::PrintData(ClusterExport *clusterExport) const {
-    std::string headers = "label\t";
+void SharedFile::PrintData() const {
+    std::string headers = "label\tnumOTUS\t";
+    for(int i = 0; i < largestBin; i++) {
+        headers += "OTU" + std::to_string(i) + "\t";
+    }
     std::string sharedFile;
-    for(size_t i = 0; i < clusterExport->GetAbundanceCount(); i++) {
-        std::string data = otuAbundance[i].label + "\t";
-        for (const auto &abundancePairs: otuAbundance) {
-            //headers += abundancePairs.otu + '\t';
-            data += std::to_string(abundancePairs.abundance) + '\t';
+    for(const auto& abund : otuAbundance) {
+        const size_t size = abund.second.size();
+        std::string data = abund.first + "\t" + std::to_string(size) + "\t"; // label
+        for(const auto& otuPairs : abund.second) {
+            data += std::to_string(otuPairs.abundance) + '\t';
         }
+        sharedFile += data + "\n";
     }
     sharedFile[sharedFile.size() - 1] = ' ';
     std::ofstream sharedFileOutput("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/SharedFile.txt");

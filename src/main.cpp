@@ -57,7 +57,12 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     // TestHelper::Print("Made it\n");
     std::string exportResult = result->Print();
     auto rabund = listVector->getRAbundVector();
-    builder.BuildSharedFile(&rabund, result)->PrintData();
+    std::unordered_map<std::string, RAbundVector> map;
+    auto listVectors = result->GetListVectors();
+    for(int i = 0; i < listVectors.size(); i++) {
+        map[result->GetLabel(i)] = listVectors[i]->getRAbundVector();
+    }
+    builder.BuildSharedFile(map)->PrintData();
     // auto val = listVector->getRAbundVector();
     delete(result);
     delete(listVector);

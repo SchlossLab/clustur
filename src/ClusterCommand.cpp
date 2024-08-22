@@ -15,6 +15,8 @@
 #include "MothurDependencies/OpticlusterData.h"
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
+#include "TestHelpers/TestHelper.h"
+#include <string>
 using namespace std;
 
 ClusterCommand::~ClusterCommand() {
@@ -30,7 +32,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         cutoff = 0.05;
     }
     // clusterMetrics += ("\nClustering " + distfile + "\n");
-    auto* data = new OpticlusterData("");
+    auto* data = new OpticlusterData("", cutoff);
     ClusterMetric *metric = nullptr;
     metricName = "mcc";
     if (metricName == "mcc") { metric = new MCC(); } else if (
@@ -112,6 +114,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         clusterInformation.numberOfOtu = static_cast<int>(numBins);
         clusterInformation.clusterBins = list->print(listFile);
         data->AddToData(clusterInformation);
+        data->AddToList(oldList);
         // clusterMatrixOutput = list->print(listFile);
         delete list;
         stats = cluster.getStats(tp, tn, fp, fn);
@@ -154,12 +157,12 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
-            clusterResult += PrintData("unique", counts, printHeaders);
+            // clusterResult += PrintData("unique", counts, printHeaders);
             data.label = "unique";
             rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
-            clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
+            //clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
             data.label = std::to_string(rndPreviousDist);
             rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
@@ -169,7 +172,9 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         rndPreviousDist = rndDist;
         if(!data.label.empty()) {
             data.clusterBins = oldList.print(listFile);
+            auto* vec = new ListVector(oldList);
             clusterData->AddToData(data);
+            clusterData->AddToList(*vec);
         }
     }
     ClusterInformation data;
@@ -187,7 +192,9 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     // data.clusterBins = oldList.print(listFile);
     if(!data.label.empty()) {
         data.clusterBins = oldList.print(listFile);
+        auto* vec = new ListVector(oldList);
         clusterData->AddToData(data);
+        clusterData->AddToList(*vec);
     }
     rAbund.print();
     delete(cluster);
@@ -200,7 +207,8 @@ std::string ClusterCommand::PrintData(const string& label, map<string, int> &cou
     ph = false;
     oldList.setLabel(label);
     std::string data = label + "\t" + std::to_string(oldList.getNumBins());
-    if (countfile.empty()) {
+    TestHelper::Print(std::to_string(countfile.empty()) + " : File\n");
+    if (!countfile.empty()) {
         data += oldList.print(listFile, counts);
     } else {
         data += oldList.print(listFile);
