@@ -62,7 +62,7 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
     for(int i = 0; i < listVectors.size(); i++) {
         map[result->GetLabel(i)] = listVectors[i]->getRAbundVector();
     }
-    builder.BuildSharedFile(map)->PrintData();
+    builder.BuildSharedFile(map, result->GetLargestBinSize())->PrintData();
     // auto val = listVector->getRAbundVector();
     delete(result);
     delete(listVector);

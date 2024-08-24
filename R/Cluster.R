@@ -60,3 +60,5 @@ cluster <- function(sparse_matrix, cutoff, method)
                            sparse_matrix@x, cutoff, method))
 }
 
+# df_read_table <- (read.table(text = cluster_furthest,
+#   sep = "\t", header = TRUE, na.strings = "#NA", fill = TRUE))

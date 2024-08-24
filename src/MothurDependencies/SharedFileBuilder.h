@@ -20,7 +20,7 @@
 
 class SharedFileBuilder {
 public:
-    SharedFile *BuildSharedFile(const std::unordered_map<std::string, RAbundVector> &rAdbundMap);
+    SharedFile *BuildSharedFile(const std::unordered_map<std::string, RAbundVector> &rAdbundMap, const int largestBin);
     SharedFileBuilder() = default;
 };
 

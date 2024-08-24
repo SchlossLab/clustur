@@ -148,23 +148,21 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     float rndPreviousDist = 0.00000;
 
     oldList = *list;
-    bool printHeaders = true;
+    bool printHeaders = false;
     std::string clusterResult;
-
+    std::string label;
+    std::string binResults;
+    list->setPrintedLabels(printHeaders);
     while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)) { //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         cluster->update(cutoff);
         ClusterInformation data;
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
-            // clusterResult += PrintData("unique", counts, printHeaders);
-            data.label = "unique";
-            rAbund.print();
+            data.label = std::to_string(previousDist);
             data.numberOfOtu = oldList.getNumBins();
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
-            //clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
             data.label = std::to_string(rndPreviousDist);
-            rAbund.print();
             data.numberOfOtu = oldList.getNumBins();
         }
         oldList = *list;
@@ -173,30 +171,27 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         if(!data.label.empty()) {
             data.clusterBins = oldList.print(listFile);
             auto* vec = new ListVector(oldList);
+            list->setPrintedLabels(false);
             clusterData->AddToData(data);
             clusterData->AddToList(*vec);
         }
     }
     ClusterInformation data;
     if(previousDist <= 0.0000) {
-        clusterResult += PrintData("unique", counts, printHeaders);
-        data.label = "unique";
+        data.label = std::to_string(previousDist);
         data.numberOfOtu = oldList.getNumBins();
     }
     else if(rndPreviousDist<cutoff) {
-        clusterResult += PrintData(std::to_string(rndPreviousDist), counts, printHeaders);
         data.label = std::to_string(rndPreviousDist);
         data.numberOfOtu = oldList.getNumBins();
     }
 
-    // data.clusterBins = oldList.print(listFile);
     if(!data.label.empty()) {
         data.clusterBins = oldList.print(listFile);
         auto* vec = new ListVector(oldList);
         clusterData->AddToData(data);
         clusterData->AddToList(*vec);
     }
-    rAbund.print();
     delete(cluster);
     return clusterData;
 }
@@ -207,7 +202,6 @@ std::string ClusterCommand::PrintData(const string& label, map<string, int> &cou
     ph = false;
     oldList.setLabel(label);
     std::string data = label + "\t" + std::to_string(oldList.getNumBins());
-    TestHelper::Print(std::to_string(countfile.empty()) + " : File\n");
     if (!countfile.empty()) {
         data += oldList.print(listFile, counts);
     } else {

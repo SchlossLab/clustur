@@ -7,9 +7,19 @@
 #include "TestHelpers/TestHelper.h"
 
 std::string ClusterData::Print() const {
-    std::string results = headers;
+    std::string results = "label\t";
+   
+    const int largestBinSize = GetLargestBinSize();
+    const int length = std::to_string(largestBinSize).length();
+    for(int i = 0; i < GetLargestBinSize(); i++) {
+        std::stringstream ss;
+        ss << std::setw(length) << std::setfill('0') << (i + 1);
+        results += "OTU" + ss.str() + "\t";
+    }
+    results[results.length() - 1] = ' ';
+    results += "\n";
     for(const auto& cluster : clusterInformation) {
-        results += cluster.label + "\t" + cluster.clusterBins;
+        results += cluster.label + cluster.clusterBins;
     }
     return results;
 }

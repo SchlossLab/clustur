@@ -19,6 +19,14 @@ public:
         listVectors.emplace_back(&vector);
     };
     virtual std::vector<ListVector*> GetListVectors() const {return listVectors;}
+    virtual int GetLargestBinSize() const {
+        int largestNum = 0;
+        for(const auto& listVec : listVectors) {
+            if(listVec->getNumBins() > largestNum)
+                largestNum = listVec->getNumBins();
+        }
+        return largestNum;
+    }
 protected:
     std::vector<ListVector*> listVectors;
 

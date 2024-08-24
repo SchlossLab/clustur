@@ -9,9 +9,9 @@
 
 //TODO: Find a way to incorporate groups
 //TODO Find a way to incorporate the map correctly
-SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, RAbundVector>& rAdbundMap) {
+SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, RAbundVector>& rAdbundMap,
+    const int largestBin) {
     std::unordered_map<std::string, std::vector<OTUAbundancePair>> sharedFileMap;
-    int largestBin = 0;
     int count = 0;
     for(const auto& abundVectorMap : rAdbundMap) {
         std::string label = abundVectorMap.first;
@@ -24,9 +24,6 @@ SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::str
                 continue;
             sharedFileMap[label].emplace_back(abundance,
            "OTU" + std::to_string(i + 1),"nogroup", label);
-        }
-         if(vecSize >  sharedFileMap[label].size()) {
-            largestBin = sharedFileMap[label].size();
         }
     }
     return new SharedFile(sharedFileMap, largestBin);

@@ -69,7 +69,6 @@ void ListVector::setLabels(std::vector<std::string> labels) {
 }
 
 std::string ListVector::print(std::ostream &output, std::map<std::string, int> &ct) {
-    printListHeaders = true;
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
