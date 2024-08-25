@@ -62,3 +62,50 @@ cluster <- function(sparse_matrix, cutoff, method)
 
 # df_read_table <- (read.table(text = cluster_furthest,
 #   sep = "\t", header = TRUE, na.strings = "#NA", fill = TRUE))
+
+
+# May have to create a formater package in the utils
+progenesis_formatter <- function(peak_table) {
+  peak_table <- readr::read_csv(peak_table,
+    skip = 2,
+    show_col_types = FALSE
+  )
+  names(peak_table)[2] <- "mz"
+  names(peak_table)[3] <- "rt"
+  return(peak_table)
+}
+
+# Simple way, but is hard coded. Does not account for other columns
+create_count_table <- function(x)
+{
+  df <- progenesis_formatter("tests\\testthat\\extdata\\102623_peaktable_coculture_simple.csv")
+  df$total <- rowSums(df[which(!(names(df) == "Compound"))])
+  df <- df[,which(!(names(df) %in% c("mz", "rt")))]
+  df <- data.frame("Compound" = df$Compound, "total" = df$total, df[,which(!(names(df) %in% c("total", "Compound")))])
+  meta_data <- read.csv("tests/testthat/extdata/102623_metadata_simple.csv")
+  samples <- which((colnames(df) %in% grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)))
+  other_columns <- names(df)[-samples]
+  tidy_df <- melt(df, id = "Compound", variable.name = "sample", value.name = "intensity")
+  groups <- names(df)[samples]
+  # grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)
+}
+
+# In our case, we want to cluster only ms2 spectra, but we will force the user to give us a peak table that only has ms2 spectra.
+# Other it clusters as needed
+create_count_table_no_total <- function(x)
+{
+  df <- progenesis_formatter("tests\\testthat\\extdata\\102623_peaktable_coculture_simple.csv")
+  df <- df[,which(!(names(df) %in% c("mz", "rt")))]
+  meta_data <- read.csv("tests/testthat/extdata/102623_metadata_simple.csv")
+  samples <- which((colnames(df) %in% grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)))
+  other_columns <- names(df)[-samples]
+  tidy_df <- melt(df, id = "Compound", variable.name = "sample", value.name = "intensity")
+
+  groups <- names(df)[samples]
+  # grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)
+}
+
+# Need to figure out how to create a sparse distance matrix,
+# Whether it be them creating a sparse distance matrix and inputting it as a phylip file
+# Or using the scoring package to score things inside of this package.
+# I think I will have them input a sparse distance file.
