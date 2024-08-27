@@ -36,20 +36,23 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
         return false;
     auto matrix = CreateSparseMatrix();
     int count = 0;
+    double zero = 0;
     const size_t size = matrixNames.size();
     std::string distanceString = "\t" + std::to_string(size) + "\n";
     for (const auto &cells: matrix->seqVec) {
         if (cells.empty()) continue;
-        distanceString += matrixNames[count++];
+        distanceString += matrixNames[count];
         int indexCounter = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < count; i++) {
             if (!cells.empty() && cells[indexCounter].index == i) {
                 distanceString += "\t" + std::to_string(cells[indexCounter++].dist);
                 continue;
             }
-            distanceString += "\t0";
+           
+            distanceString += "\t" + std::to_string(zero);
         }
         distanceString += "\n";
+        count++;
     }
     std::ofstream writeOut(saveFileLocation);
     if (!writeOut.is_open()) {

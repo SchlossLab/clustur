@@ -78,7 +78,7 @@ progenesis_formatter <- function(peak_table) {
 # Simple way, but is hard coded. Does not account for other columns
 create_count_table <- function(x)
 {
-  df <- progenesis_formatter("tests\\testthat\\extdata\\102623_peaktable_coculture_simple.csv")
+  df <- progenesis_formatter("tests/testthat/extdata/102623_peaktable_coculture_simple.csv")
   df$total <- rowSums(df[which(!(names(df) == "Compound"))])
   df <- df[,which(!(names(df) %in% c("mz", "rt")))]
   df <- data.frame("Compound" = df$Compound, "total" = df$total, df[,which(!(names(df) %in% c("total", "Compound")))])
@@ -100,12 +100,43 @@ create_count_table_no_total <- function(x)
   samples <- which((colnames(df) %in% grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)))
   other_columns <- names(df)[-samples]
   tidy_df <- melt(df, id = "Compound", variable.name = "sample", value.name = "intensity")
-
   groups <- names(df)[samples]
   # grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)
 }
 
-# Need to figure out how to create a sparse distance matrix,
+create_fake_sparse_matrix <- function(peak_table)
+{
+  peak_table <- df
+  count <- nrow(peak_table)
+  number_of_ions <- ceiling(runif(n=1, min=count/2, max=count))
+  sampled_peak_table <- df[sample(nrow(df), number_of_ions), ] # Ions with ms2 peaks
+  I_values <- sort(sampled_peak_table$Compound, decreasing = FALSE)
+  # I_values = lapply(I_values, function(x){ return (1-x)})
+  Y_values <- sampled_peak_table$Compound
+  values <- runif(number_of_ions, .01, .8)
+  T2 <- new("dgTMatrix",
+          i = as.integer(I_values),
+          j = as.integer(Y_values), x=as.double(values), Dim=1325:1326)
+}
+# T2 <- new("dgTMatrix",
+#           i = as.integer(c(1,1,0,3,3)),
+#           j = as.integer(c(2,2,4,0,0)), x=10*1:5, Dim=1325:1326)
+#   T2@x <- I_values
+
+# sparse <- Matrix::sparseMatrix( i = I_values, j=Y_values, x = values)
+# WritePhylipFile(I_values, Y_values, values, 0.25, "Phylip_file.txt")
+# cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
+# # write
+#  Need to figure out how to create a sparse distance matrix,
 # Whether it be them creating a sparse distance matrix and inputting it as a phylip file
 # Or using the scoring package to score things inside of this package.
 # I think I will have them input a sparse distance file.
+# Return shared file in tidy format and compare the result to mothur
+
+# MOTHUR COMMAND
+# cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
+# clust_fur <- ClassicCluster(I_values, Y_values,
+#   values, 0.3, "furthest")
+
+# Create Count Table
+# write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)

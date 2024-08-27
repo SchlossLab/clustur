@@ -28,4 +28,4 @@ test_that("Normal Cluster is able to properly cluster data",
   expect_false(cluster_nearest == "")
 })
 
-# tidy_data <- reshape2::melt(val, id.vars=c("label" ,"numOTUS"), variable.name = "OTU" ,value.name = "abundance")
+# tidy_data <- reshape2::melt(shared_file, id.vars=c("label" ), variable.name = "OTU" ,value.name = "abundance")
