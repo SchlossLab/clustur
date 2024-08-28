@@ -110,14 +110,14 @@ create_fake_sparse_matrix <- function(peak_table)
   count <- nrow(peak_table)
   number_of_ions <- ceiling(runif(n=1, min=count/2, max=count))
   number_of_ions <- 1046
-  sampled_peak_table <- df[sample(nrow(df), number_of_ions), ] # Ions with ms2 peaks
+  sampled_peak_table <- df[sample(nrow(df), number_of_ions), ] # Ions with ms2 peaks or the count_table
   I_values <- sort(sampled_peak_table$Compound, decreasing = FALSE)
-  # I_values = lapply(I_values, function(x){ return (1-x)})
   Y_values <- sampled_peak_table$Compound
   values <- runif(number_of_ions, .01, .99)
   T2 <- new("dgTMatrix",
           i = as.integer(I_values),
           j = as.integer(Y_values), x=as.double(values), Dim=1325:1326)
+  WritePhylipFile(I_values, Y_values, values, 0.25, "Phylip_file.txt")
 }
 # T2 <- new("dgTMatrix",
 #           i = as.integer(c(1,1,0,3,3)),

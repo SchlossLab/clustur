@@ -8,14 +8,22 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <algorithm>
 
 class CountTableAdapter {
 public:
     CountTableAdapter() = default;
-    void CreateDataFrameMap(Rcpp::DataFrame countTable);
-    std::unordered_map<std::string, std::vector<double>> GetDataFrameMap(){return dataFrameMap;}
+    void CreateDataFrameMap(const Rcpp::DataFrame& countTable);
+    // Going to ensure that each count_table atleast has a group
+    // And if there is no count table inputted, I will create a base one.
+    double FindAbundanceBasedOnGroup(const std::string& group, const std::string& sampleName) const;
+    double FindTotalAbundance(const std::string& sampleName) const;
+    std::vector<double> GetColumnByName (const std::string& name) const;
+    std::vector<std::string> GetGroups() const;
 private:
+    std::vector<std::string> sampleNames;
     std::unordered_map<std::string, std::vector<double>> dataFrameMap;
+    std::vector<std::string> groups;
 };
 
 
