@@ -10,6 +10,7 @@
 #include "MothurDependencies/OptiMatrix.h"
 #include <vector>
 
+#include "Adapters/CountTableAdapter.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 
 #if DEBUG_RCPP
@@ -45,14 +46,16 @@ std::string ClassicCluster(const std::vector<int> &xPosition,
                            const std::vector<int> &yPosition,
                            const std::vector<double> &data,
                            const double cutoff,
-                           const std::string& method) {
+                           const std::string& method,
+                           const Rcpp::DataFrame& df) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
     SharedFileBuilder builder;
     ClusterCommand command;
     //Race Condition, going to have to look for a fix in the future, but Create Sparse Matrix has to go first
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();
-
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(df);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     // TestHelper::Print("Made it\n");
     std::string exportResult = result->Print();

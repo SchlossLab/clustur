@@ -41,8 +41,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ClassicCluster
-std::string ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method);
-RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP) {
+std::string ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& df);
+RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP dfSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,7 +51,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method));
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type df(dfSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method, df));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -61,7 +62,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 5},
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 6},
-    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 5},
+    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 6},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

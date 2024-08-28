@@ -57,7 +57,7 @@ cluster <- function(sparse_matrix, cutoff, method)
 {
 
   return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method))
+                           sparse_matrix@x, cutoff, method, sampled_peak_table))
 }
 
 # df_read_table <- (read.table(text = cluster_furthest,
@@ -109,11 +109,12 @@ create_fake_sparse_matrix <- function(peak_table)
   peak_table <- df
   count <- nrow(peak_table)
   number_of_ions <- ceiling(runif(n=1, min=count/2, max=count))
+  number_of_ions <- 1046
   sampled_peak_table <- df[sample(nrow(df), number_of_ions), ] # Ions with ms2 peaks
   I_values <- sort(sampled_peak_table$Compound, decreasing = FALSE)
   # I_values = lapply(I_values, function(x){ return (1-x)})
   Y_values <- sampled_peak_table$Compound
-  values <- runif(number_of_ions, .01, .8)
+  values <- runif(number_of_ions, .01, .99)
   T2 <- new("dgTMatrix",
           i = as.integer(I_values),
           j = as.integer(Y_values), x=as.double(values), Dim=1325:1326)
@@ -136,7 +137,7 @@ create_fake_sparse_matrix <- function(peak_table)
 # MOTHUR COMMAND
 # cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
 # clust_fur <- ClassicCluster(I_values, Y_values,
-#   values, 0.3, "furthest")
+#   values, 0.3, "furthest", sampled_peak_table)
 
 # Create Count Table
 # write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
