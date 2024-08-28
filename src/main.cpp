@@ -24,55 +24,61 @@ void WritePhylipFile(const std::vector<int> &xPosition,
     adapter.CreatePhylipFile(saveLocation);
 }
 
+Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
+    std::string clusterResults = result->Print();
+    SharedFileBuilder builder;
+    std::unordered_map<std::string, RAbundVector> map;
+    std::unordered_map<std::string, ListVector> listMap;
+    auto listVectors = result->GetListVectors();
+    for(int i = 0; i < listVectors.size(); i++) {
+        ListVector vector = *listVectors[i];
+        listMap[result->GetLabel(i)] = vector;
+    }
+    SharedFile* sharedFile = builder.BuildSharedFile(listMap, countTable);
+    Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData();
+
+    delete(sharedFile);
+    return tidySharedDataFrame;
+}
 //[[Rcpp::export]]
-std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
+Rcpp::DataFrame MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
                                                   const std::vector<int> &yPosition, const std::vector<double> &data,
-                                                  const double cutoff,
+                                                  const double cutoff, const Rcpp::DataFrame& countTable,
                                                   const int maxIterations = 100, const bool shuffle = true) {
     OptimatrixAdapter adapter(cutoff);
     const auto optiMatrix = adapter.ConvertToOptimatrix(xPosition, yPosition, data);
     ClusterCommand command;
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
     command.SetOpticlusterRandomShuffle(shuffle);
     command.SetMaxIterations(maxIterations);
-    const auto* clusterExport = command.runOptiCluster(optiMatrix);
-    std::string clusterResults = clusterExport->Print();
-    delete (clusterExport);
-    return {clusterResults, command.GetSensitivityData(), command.GetClusterMetrics()} ;
+    const auto* result = command.runOptiCluster(optiMatrix);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    return tidySharedDataFrame;
+    //return {clusterResults, command.GetSensitivityData(), command.GetClusterMetrics()} ;
 }
 
 
 //[[Rcpp::export]]
-std::string ClassicCluster(const std::vector<int> &xPosition,
+Rcpp::DataFrame ClassicCluster(const std::vector<int> &xPosition,
                            const std::vector<int> &yPosition,
                            const std::vector<double> &data,
                            const double cutoff,
                            const std::string& method,
-                           const Rcpp::DataFrame& df) {
+                           const Rcpp::DataFrame& countTable) {
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
-    SharedFileBuilder builder;
     ClusterCommand command;
-    //Race Condition, going to have to look for a fix in the future, but Create Sparse Matrix has to go first
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();
     CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(df);
+    countTableAdapter.CreateDataFrameMap(countTable);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
-    // TestHelper::Print("Made it\n");
-    std::string exportResult = result->Print();
-    auto rabund = listVector->getRAbundVector();
-    std::unordered_map<std::string, RAbundVector> map;
-    auto listVectors = result->GetListVectors();
-    for(int i = 0; i < listVectors.size(); i++) {
-        map[result->GetLabel(i)] = listVectors[i]->getRAbundVector();
-    }
-    builder.BuildSharedFile(map, result->GetLargestBinSize())->PrintData();
-    // auto val = listVector->getRAbundVector();
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+
     delete(result);
     delete(listVector);
-    // const auto shared = builder.BuildSharedFile(listVector);
-    // shared->PrintData(cutoff);
-    // delete(shared);
-    return exportResult;
+    return tidySharedDataFrame;
 
 }
 #endif

@@ -28,7 +28,6 @@ double CountTableAdapter::FindAbundanceBasedOnGroup(const std::string &group, co
     if (std::find(groups.begin(), groups.end(), group) == groups.end())
         return -1; //Not Found, may need to throw and execption...
     const std::vector<double> groupCol = GetColumnByName(group);
-    // Binary search?
     const long index = std::distance(sampleNames.begin(), std::find(sampleNames.begin(),
         sampleNames.end(), sampleName));
     return dataFrameMap.at(group)[index];

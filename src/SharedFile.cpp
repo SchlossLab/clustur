@@ -3,26 +3,24 @@
 //
 
 #include "MothurDependencies/SharedFile.h"
-
 #include "MothurDependencies/ClusterExport.h"
 
-// TODO: Fix this function so that it exports a clean shared file
-void SharedFile::PrintData() const {
-    std::string headers = "label\t";
-    for(int i = 0; i < largestBin; i++) {
-        headers += "OTU" + std::to_string(i) + "\t";
+
+Rcpp::DataFrame SharedFile::PrintData() const {
+    const size_t size = tidySharedList.size();
+    std::vector<std::string> labels(size);
+    std::vector<std::string> groups(size);
+    std::vector<std::string> otus(size);
+    std::vector<double> abundanceList(size);
+    int count = 0;
+    for(const auto& abundances : tidySharedList) {
+        labels[count] = abundances.label;
+        groups[count] = abundances.group;
+        otus[count] = abundances.OTU;
+        abundanceList[count++] = abundances.groupAbundance;
     }
-    std::string sharedFile;
-    for(const auto& abund : otuAbundance) {
-        // const size_t size = abund.second.size(); bin size
-        std::string data = abund.first + "\t"; // label
-        for(const auto& otuPairs : abund.second) {
-            data += std::to_string(otuPairs.abundance) + '\t';
-        }
-        sharedFile += data + "\n";
-    }
-    sharedFile[sharedFile.size() - 1] = ' ';
-    std::ofstream sharedFileOutput("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/SharedFile.txt");
-    sharedFileOutput << headers + "\n" + sharedFile + "\n";
-    sharedFileOutput.close();
+    return Rcpp::DataFrame::create(Rcpp::Named("label") = labels,
+                                                Rcpp::Named("samples") = groups,
+                                                Rcpp::Named("otu") = otus,
+                                                Rcpp::Named("abundance") = abundanceList);
 }

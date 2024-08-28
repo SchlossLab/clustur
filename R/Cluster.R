@@ -14,12 +14,13 @@
 #' @param iterations The number of iterations
 #' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
 #' @return A data.frame of the clusters.
-opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
+opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE, count_table) {
   index_one_list <- sparse_matrix@i
   index_two_list <- sparse_matrix@j
   value_list <- sparse_matrix@x
+  count_table <- validate_count_table(count_table)
   clustering_output_string_list <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
-                                                       iterations, shuffle)
+                                                       count_table, iterations, shuffle)
   clustering_output_string <- clustering_output_string_list[1]
   clustering_metric <- clustering_output_string_list[2]
   clustering_metric_2 <- clustering_output_string_list[3]
@@ -43,6 +44,8 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
 
 
 
+
+
 #' Opticluster Description
 #'
 #' Detailed description of the function.
@@ -53,11 +56,10 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
 #' @param method The type of cluster you wish to conduct. There are four different types:
 #' furthest, nearest, average, weighted.
 #' @return A string of the given cluster.
-cluster <- function(sparse_matrix, cutoff, method)
+cluster <- function(sparse_matrix, cutoff, method, count_table)
 {
-
   return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method, sampled_peak_table))
+                           sparse_matrix@x, cutoff, method, validate_count_table(count_table)))
 }
 
 # df_read_table <- (read.table(text = cluster_furthest,
@@ -119,10 +121,26 @@ create_fake_sparse_matrix <- function(peak_table)
           j = as.integer(Y_values), x=as.double(values), Dim=1325:1326)
   WritePhylipFile(I_values, Y_values, values, 0.25, "Phylip_file.txt")
 }
+
+
+validate_count_table <- function(count_table_df){
+  if(ncol(count_table_df) > 2)
+    return(count_table_df)
+  totals <- count_table_df$total
+  count_table_df <- cbind(count_table_df, totals)
+  names(count_table_df)[3] <- "no_group"
+  return(count_table_df)
+}
+# count_table_no_groups <- sampled_peak_table[, 1:2]
+# count_table_no_groups <- validate_count_table(count_table_no_groups)
 # T2 <- new("dgTMatrix",
-#           i = as.integer(c(1,1,0,3,3)),
-#           j = as.integer(c(2,2,4,0,0)), x=10*1:5, Dim=1325:1326)
-#   T2@x <- I_values
+#           i = as.integer(I_values),
+#           j = as.integer(Y_values), x=values, Dim=5:6)
+
+
+#   T2@i <- as.integer(I_values)
+# T2@j <- as.integer(Y_values)
+# T2@x <- values
 
 # sparse <- Matrix::sparseMatrix( i = I_values, j=Y_values, x = values)
 # WritePhylipFile(I_values, Y_values, values, 0.25, "Phylip_file.txt")
@@ -135,9 +153,13 @@ create_fake_sparse_matrix <- function(peak_table)
 # Return shared file in tidy format and compare the result to mothur
 
 # MOTHUR COMMAND
-# cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
+# # cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
 # clust_fur <- ClassicCluster(I_values, Y_values,
-#   values, 0.3, "furthest", sampled_peak_table)
+#    values, 0.3, "furthest", sampled_peak_table)
+#    cluster(T2, 0.3, "furthest", count_table_no_groups)
+# clust_fur_no_groups <- ClassicCluster(I_values, Y_values,
+#     values, 0.3, "furthest", count_table_no_groups)
 
-# Create Count Table
-# write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
+# # # Create Count Table
+# # write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
+# tidy_shared <- readr::read_tsv("SharedFile_tidy.txt")

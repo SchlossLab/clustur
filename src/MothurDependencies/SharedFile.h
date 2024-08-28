@@ -7,22 +7,18 @@
 #include <unordered_map>
 #include <vector>
 #include <fstream>
+#include <Rcpp.h>
 #include "OtuAbundancePair.h"
-
-
 
 
 class SharedFile {
 public:
-    explicit SharedFile(const std::unordered_map<std::string, std::vector<OTUAbundancePair>>& sharedMap,
-        const int binSize):
-    otuAbundance(sharedMap),
-    largestBin(binSize){}
-    void PrintData() const;
-
+    explicit SharedFile(const std::vector<SharedAbundance>& otherTidySharedList)
+        : tidySharedList(otherTidySharedList) {
+    }
+    Rcpp::DataFrame PrintData() const;
 private:
-    std::unordered_map<std::string, std::vector<OTUAbundancePair>> otuAbundance;
-    int largestBin;
+    std::vector<SharedAbundance> tidySharedList;
 };
 
 

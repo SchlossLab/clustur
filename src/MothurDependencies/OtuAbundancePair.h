@@ -20,4 +20,19 @@ struct OTUAbundancePair {
     std::string group;
     std::string label;
 };
+
+struct SharedAbundance {
+    SharedAbundance(std::string group, std::string otu,
+        std::string label, const double group_abundance)
+        : group(std::move(group)),
+          OTU(std::move(otu)),
+          label(std::move(label)),
+          groupAbundance(group_abundance) {
+    }
+
+    std::string group;
+    std::string OTU;
+    std::string label;
+    double groupAbundance;
+};
 #endif //OTUABUNDANCEPAIR_H

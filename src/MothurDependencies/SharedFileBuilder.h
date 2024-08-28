@@ -5,6 +5,7 @@
 #ifndef SHAREDFILEBUILDER_H
 #define SHAREDFILEBUILDER_H
 
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <iostream>
@@ -17,10 +18,13 @@
 #include "RSparseMatrix.h"
 #include "SharedFile.h"
 #include "OtuAbundancePair.h"
+#include "../Adapters/CountTableAdapter.h"
+
 
 class SharedFileBuilder {
 public:
-    SharedFile *BuildSharedFile(const std::unordered_map<std::string, RAbundVector> &rAdbundMap, const int largestBin);
+    SharedFile *BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
+        const CountTableAdapter& countTable);
     SharedFileBuilder() = default;
 };
 

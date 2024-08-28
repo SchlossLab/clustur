@@ -14,8 +14,6 @@ std::string OpticlusterData::Print() const {
         results += cluster.clusterBins;
     }
     return results;
-
-
 }
 
 std::string OpticlusterData::GetLabel(const int index) const {

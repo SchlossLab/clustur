@@ -6,40 +6,43 @@
 
 #include "MothurDependencies/ClusterExport.h"
 
-
-//TODO: Find a way to incorporate groups
-//TODO Find a way to incorporate the map correctly
-SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, RAbundVector>& rAdbundMap,
-    const int largestBin) {
-    std::unordered_map<std::string, std::vector<OTUAbundancePair>> sharedFileMap;
-    int count = 0;
-    for(const auto& abundVectorMap : rAdbundMap) {
-        std::string label = abundVectorMap.first;
-        auto rAbound = abundVectorMap.second;
-        const int vecSize = rAbound.getNumBins();
-        for(int i = 0; i < vecSize; i++) 
-        {
-            const int abundance = rAbound.get(i);
-            if(abundance <= 0)
-                continue;
-            sharedFileMap[label].emplace_back(abundance,
-           "OTU" + std::to_string(i + 1),"nogroup", label);
+// TODO Comment this code
+SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
+    const CountTableAdapter &countTable) {
+    Utils utils;
+    double largestCutoff = 0;
+    std::string largestCutoffLabel;
+    for(auto& map : listVectorMap) {
+        const double cutoffLabel = std::stod(map.first);
+        if(largestCutoff < cutoffLabel) {
+            largestCutoff = cutoffLabel;
+            largestCutoffLabel = map.first;
         }
     }
-    return new SharedFile(sharedFileMap, largestBin);
+    std::vector<SharedAbundance> abundancesList;
+    std::vector<std::string> groups = countTable.GetGroups();
+    ListVector correctListVector = listVectorMap.at(largestCutoffLabel);
+    const int seqs = correctListVector.getNumSeqs();
+    int count = 1;
+    for(int i = 0; i < seqs; i++) {
+        std::string samples = correctListVector.get(i);
+        if(samples.empty())
+            continue;
+        std::vector<std::string> splitSamples;
+        std::string otuName = "OTU" + std::to_string(count++);
+        utils.splitAtComma(samples, splitSamples);
+        std::unordered_map<std::string, double> totalAbundanceInEachGroup;
+        for(const auto& sample : splitSamples) {
+            for(const auto& group : groups) { // Its already in tidy form
+                totalAbundanceInEachGroup[group] += countTable.FindAbundanceBasedOnGroup(group, sample);
+            }
+        }
+        for(const auto& groupTotals : totalAbundanceInEachGroup) {
+            abundancesList.emplace_back(groupTotals.first, otuName,
+                 largestCutoffLabel, groupTotals.second);
+        }
+    }
+    // Have to make it group totals, not the abundance of each sample at each group
+   return new SharedFile(abundancesList);
 
-
-    //
-    //
-    //
-    // std::vector<OTUAbundancePair> abundanceMap(size);
-    // std::vector<OTUAbundancePair> pair;
-    // for(int i = 0; i < size; i++) {
-    //     std::vector<std::string> container;
-    //     const int abundance = rAdbundVector->get(i);
-    //     abundanceMap[i] = OTUAbundancePair(abundance,
-    //         "OTU" + std::to_string(i + 1),"nogroup", clusterExport->GetLabel(i));
-    //     // Get abundance at each otu level
-    // }
-    // return new SharedFile(abundanceMap);
 }
