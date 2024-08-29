@@ -102,11 +102,12 @@ bool ListVectorTestFixture::TestListVectorPrintDisplaysDataCorrectly(
     const std::vector<std::string> &mockListOfSequences, const std::string& expectedResult) {
     Setup();
     std::ofstream stream;
+    listVector->setPrintedLabels(true);
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
     // Get rid of ofstream in listVector
-    const bool result =listVector->print(stream) == expectedResult;
+    const bool result = listVector->print(stream) == expectedResult;
     TearDown();
     return result;
 }

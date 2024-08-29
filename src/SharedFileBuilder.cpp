@@ -11,7 +11,7 @@
 SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
     const CountTableAdapter &countTable) {
     Utils utils;
-    double largestCutoff = 0;
+    double largestCutoff = -1;
     std::string largestCutoffLabel;
     for(auto& map : listVectorMap) {
         const double cutoffLabel = std::stod(map.first);

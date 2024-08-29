@@ -1,31 +1,38 @@
 test_that("Clustering returns proper results", {
-  expected_df <- readRDS(test_path("extdata","df_test_file.RDS"))
-  mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
-  df <- Opticluster::opti_cluster(mat, 0.2, 2, FALSE)
-  df$cluster$exists <- do.call(paste0, df$cluster) %in% do.call(paste0, expected_df)
+  expected_df <- readRDS(test_path("extdata","abundanceResult.RDS"))
+  sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
+  count_table <- readRDS(test_path("extdata", "count_table.RDS"))
+  df <- Opticluster::opti_cluster(sparse_matrix, 0.2, 2, FALSE, count_table)
+  trueList <- do.call(paste0, df$abundance) %in% do.call(paste0, expected_df)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
-  expect_true(all(df$exists == TRUE))
+  expect_equal(class(df$abundance), "data.frame")
+  expect_true(all(trueList == TRUE))
 })
 
 test_that("Normal Cluster is able to properly cluster data",
 {
-  mat <- readRDS(test_path("extdata", "matrix_data.RDS"))
-  cluster_furthest <- cluster(mat, 0.2, "furthest")
-  cluster_average <- cluster(mat, 0.2, "average")
-  cluster_weighted <- cluster(mat, 0.2, "weighted") # TODO Fix Label
-  cluster_nearest <- cluster(mat, 0.2, "nearest")
 
-  expect_true(any(class(cluster_furthest) == "character"))
-  expect_true(any(class(cluster_average) == "character"))
-  expect_true(any(class(cluster_weighted) == "character"))
-  expect_true(any(class(cluster_nearest) == "character"))
+  sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
+  count_table <- readRDS(test_path("extdata", "count_table.RDS"))
 
-  expect_false(cluster_furthest == "")
-  expect_false(cluster_average == "")
-  expect_false(cluster_weighted == "")
-  expect_false(cluster_nearest == "")
+  
+  cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", count_table)
+  cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table)
+  cluster_weighted <- cluster(sparse_matrix, 0.2, "weighted", count_table) # TODO Fix Label
+  cluster_nearest <- cluster(sparse_matrix, 0.2, "nearest", count_table)
+
+  expect_length(cluster_furthest, 2)
+  expect_length(cluster_average, 2)
+  expect_length(cluster_weighted, 2)
+  expect_length(cluster_nearest, 2)
+
+
+  expect_true(any(class(cluster_furthest$abundance) == "data.frame"))
+  expect_true(any(class(cluster_average$abundance) == "data.frame"))
+  expect_true(any(class(cluster_weighted$abundance) == "data.frame"))
+  expect_true(any(class(cluster_nearest$abundance) == "data.frame"))
 })
 
 # tidy_data <- reshape2::melt(shared_file, id.vars=c("label" ), variable.name = "OTU" ,value.name = "abundance")

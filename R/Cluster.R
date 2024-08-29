@@ -13,31 +13,19 @@
 #' @param cutoff A cutoff value
 #' @param iterations The number of iterations
 #' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
+#' @param count_table A table of abundances
 #' @return A data.frame of the clusters.
 opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE, count_table) {
   index_one_list <- sparse_matrix@i
   index_two_list <- sparse_matrix@j
   value_list <- sparse_matrix@x
   count_table <- validate_count_table(count_table)
-  clustering_output_string_list <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
+  cluster_dfs <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
                                                        count_table, iterations, shuffle)
-  clustering_output_string <- clustering_output_string_list[1]
-  clustering_metric <- clustering_output_string_list[2]
-  clustering_metric_2 <- clustering_output_string_list[3]
-  df_cluster_metrics <- (read.table(text = clustering_metric,
-                     sep = "\t", header = TRUE))
-  df_other_cluster_metrics <-  (read.table(text = clustering_metric_2,
-                     sep = "\t", header = TRUE))
-
-  df_cluster <- t(read.table(text = clustering_output_string,
-                     sep = "\t", header = TRUE))
-  df_cluster <- data.frame(df_cluster[-1, ])
-
-  colnames(df_cluster)[1] <- "cluster"
-
-  opticluster_data <- list(cluster = df_cluster,
-                           cluster_metrics = df_cluster_metrics,
-                           other_cluster_metrics = df_other_cluster_metrics)
+  opticluster_data <- list(abundance = cluster_dfs[[1]],
+                           cluster = cluster_dfs[[4]],
+                           cluster_metrics = cluster_dfs[[3]],
+                           other_cluster_metrics = cluster_dfs[[2]])
 
   return(opticluster_data)
 }
@@ -53,13 +41,17 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value
+#' @param count_table A table of abundances
 #' @param method The type of cluster you wish to conduct. There are four different types:
 #' furthest, nearest, average, weighted.
 #' @return A string of the given cluster.
 cluster <- function(sparse_matrix, cutoff, method, count_table)
 {
-  return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method, validate_count_table(count_table)))
+  df <- ClassicCluster(sparse_matrix@i, sparse_matrix@j,
+                           sparse_matrix@x, cutoff, method, validate_count_table(count_table))
+  
+  return (list(abundance = df[[1]],
+                cluster = df[[2]]))
 }
 
 # df_read_table <- (read.table(text = cluster_furthest,
@@ -101,7 +93,7 @@ create_count_table_no_total <- function(x)
   meta_data <- read.csv("tests/testthat/extdata/102623_metadata_simple.csv")
   samples <- which((colnames(df) %in% grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)))
   other_columns <- names(df)[-samples]
-  tidy_df <- melt(df, id = "Compound", variable.name = "sample", value.name = "intensity")
+  tidy_df <- reshape(df, idvar = "Compound", direction="long")
   groups <- names(df)[samples]
   # grep(paste(meta_data$Sample_Code, collapse ="|"), names(df), value = TRUE)
 }

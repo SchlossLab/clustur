@@ -12,6 +12,7 @@
 
 #include "Adapters/CountTableAdapter.h"
 #include "MothurDependencies/SharedFileBuilder.h"
+#include "Tests/ListVectorTestFixture.h"
 
 #if DEBUG_RCPP
 #include <Rcpp.h>
@@ -77,6 +78,7 @@ std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int> &xPosition,
     return {tidySharedDataFrame, clusterDataFrame};
 
 }
+
 #endif
 // int main() {
 //     const auto xVals = std::vector<int>{1,1,1,2,2,3,5};
