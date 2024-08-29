@@ -10,11 +10,11 @@
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/AverageLinkage.h"
 #include "MothurDependencies/Cluster.h"
-#include "MothurDependencies/ClusterResult.h"
 #include "MothurDependencies/CompleteLinkage.h"
 #include "MothurDependencies/OpticlusterData.h"
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
+#include "MothurDependencies/ClusterData.h"
 #include "TestHelpers/TestHelper.h"
 #include <string>
 

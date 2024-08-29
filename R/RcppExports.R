@@ -13,7 +13,3 @@ ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTabl
     .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable)
 }
 
-Test <- function() {
-    invisible(.Call(`_Opticluster_Test`))
-}
-
