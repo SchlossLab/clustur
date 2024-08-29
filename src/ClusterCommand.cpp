@@ -17,6 +17,8 @@
 #include "MothurDependencies/WeightedLinkage.h"
 #include "TestHelpers/TestHelper.h"
 #include <string>
+
+#include "Adapters/DataFrameAdapter.h"
 using namespace std;
 
 ClusterCommand::~ClusterCommand() {
@@ -25,15 +27,15 @@ ClusterCommand::~ClusterCommand() {
 // //**********************************************************************************************************************
 /// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
 /// @param optiMatrix
+/// @param cutoffValue
 /// @return
-ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
-    if (!cutOffSet) {
-        // clusterMetrics += ("\nYou did not set a cutoff, using 0.03.\n");
-        cutoff = 0.05;
-    }
+ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const double cutoffValue) {
+    cutoff = cutoffValue;
     // clusterMetrics += ("\nClustering " + distfile + "\n");
     auto* data = new OpticlusterData("", cutoff);
     ClusterMetric *metric = nullptr;
+    std::string clusterMetrics;
+    std::string sensFile;
     metricName = "mcc";
     if (metricName == "mcc") { metric = new MCC(); } else if (
         metricName == "sens") { metric = new Sensitivity(); } else if (metricName == "spec") {
@@ -49,12 +51,19 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         return {};
     }
     // Setting headers
-    sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-    clusterMetrics = (
-        "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
-    bool printHeaders = true;
 
-    cutoffs.insert("0.2");
+
+    std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
+        "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
+    // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+
+    std::vector<std::string> clusterMetricsHeaders{"iter","time","label","num_otus","cutoff","tp","tn",
+      "fp","fn","sensitivity","specificity","ppv","npv",
+        "fdr", "accuracy", "mcc", "f1score"};
+    // clusterMetrics = (
+    //     "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
+    bool printHeaders = true;
+    cutoffs.insert(std::to_string(cutoff));
 
     OptiData *matrix = optiMatrix;
     for (auto it = cutoffs.begin(); it != cutoffs.end(); it++) {
@@ -65,17 +74,20 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         long long numBins;
         double tp, tn, fp, fn;
         vector<double> stats;
+        std::vector<std::string> clusterMetricList;
         cluster.initialize(listVectorMetric, canShuffle, initialize);
         stats = cluster.getStats(tp, tn, fp, fn);
         numBins = cluster.getNumBins();
-        clusterMetrics += ("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
-                           std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" +
-                           std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
+        clusterMetrics = ("0,0," + std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                           std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + "," +
+                           std::to_string(fp) + "," + std::to_string(fn) + ",");
+
+
         for (double result: stats) {
-            clusterMetrics += (std::to_string(result) + "\t");
+            clusterMetrics += (std::to_string(result) + ",");
         }
+        util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
         //m->mothurOutEndLine();
-        clusterMetrics += "\n";
         // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
         // The difference between what the current and last metric (delta)
         // MaxIters -> is an exit condition
@@ -92,14 +104,14 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
 
             numBins = cluster.getNumBins();
 
-            clusterMetrics += (std::to_string(iters) + "\t" + std::to_string(std::time(nullptr) - start) + "\t" +
-                               std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" +
-                               std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t"
-                               + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
+            clusterMetrics = (std::to_string(iters) + "," + std::to_string(std::time(nullptr) - start) + "," +
+                               std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                               std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
+                               + std::to_string(fp) + "," + std::to_string(fn) + ",");
             for (double result: stats) {
-                clusterMetrics += (std::to_string(result) + "\t");
+                clusterMetrics += (std::to_string(result) + ",");
             }
-            clusterMetrics += "\n";
+            util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
         }
         ListVector *list = nullptr;
         // clusterMetrics += "\n\n";
@@ -114,19 +126,18 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix) {
         clusterInformation.numberOfOtu = static_cast<int>(numBins);
         clusterInformation.clusterBins = list->print(listFile);
         data->AddToData(clusterInformation);
-        data->AddToList(oldList);
+        data->SetListVector(*list, std::to_string(cutoff));
         // clusterMatrixOutput = list->print(listFile);
-        delete list;
         stats = cluster.getStats(tp, tn, fp, fn);
 
-        sensFile += std::to_string(cutoff) + '\t' + std::to_string(cutoff) + '\t' + std::to_string(tp) + '\t' +
-                std::to_string(tn) + '\t' +
-                std::to_string(fp) + '\t' + std::to_string(fn) + '\t';
-        for (double result: stats) { sensFile += std::to_string(result) + '\t'; }
+        sensFile += std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
+                std::to_string(tn) + ',' +
+                std::to_string(fp) + ',' + std::to_string(fn) + ',';
+        for (double result: stats) { sensFile += std::to_string(result) + ','; }
+        util.AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
     }
     delete matrix;
     return data;
-    // return {clusterMatrixOutput, sensFile, clusterMetrics};
 }
 
 ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod, SparseDistanceMatrix *matrix,
@@ -150,7 +161,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     oldList = *list;
     bool printHeaders = false;
     std::string clusterResult;
-    std::string label;
+    double highestDistLabel =  -1;
     std::string binResults;
     list->setPrintedLabels(printHeaders);
     while ((matrix->getSmallDist() <= cutoff) && (matrix->getNNodes() > 0)) { //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
@@ -173,8 +184,12 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             auto* vec = new ListVector(oldList);
             list->setPrintedLabels(false);
             clusterData->AddToData(data);
-            clusterData->AddToList(*vec);
+            if(previousDist > highestDistLabel) {
+                highestDistLabel = previousDist;
+                clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
+            }
         }
+
     }
     ClusterInformation data;
     if(previousDist <= 0.0000) {
@@ -190,7 +205,10 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         data.clusterBins = oldList.print(listFile);
         auto* vec = new ListVector(oldList);
         clusterData->AddToData(data);
-        clusterData->AddToList(*vec);
+        if(previousDist > highestDistLabel) {
+            highestDistLabel = previousDist;
+            clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
+        }
     }
     delete(cluster);
     return clusterData;
@@ -209,3 +227,5 @@ std::string ClusterCommand::PrintData(const string& label, map<string, int> &cou
     }
     return data;
 }
+
+

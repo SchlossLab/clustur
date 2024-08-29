@@ -25,7 +25,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // MatrixToOpiMatrixCluster
-Rcpp::DataFrame MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle);
+std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle);
 RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -42,7 +42,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ClassicCluster
-Rcpp::DataFrame ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable);
+std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable);
 RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

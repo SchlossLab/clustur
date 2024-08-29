@@ -3,6 +3,7 @@
 //
 #include "MothurDependencies/ListVector.h"
 
+#include "Adapters/DataFrameAdapter.h"
 #include "MothurDependencies/RAbundVector.h"
 
 std::string ListVector::getOTUName(int bin) {
@@ -182,4 +183,18 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
         output += "\n";
         printListHeaders = false;
     }
+}
+
+Rcpp::DataFrame ListVector::CreateDataFrameFromList(const std::string& label) {
+    std::unordered_map<std::string, std::vector<std::string>> map;
+    const std::vector<std::string> headers{"otu", "bins", "label"};
+    int count = 1;
+    for(const auto& bin : data) {
+        if(bin.empty())
+            continue;
+        map[headers[0]].emplace_back("otu" + std::to_string(count++));
+        map[headers[1]].emplace_back(bin);
+        map[headers[2]].emplace_back(label);
+    }
+    return DataFrameAdapter::UnorderedMapToDataFrame(map);
 }

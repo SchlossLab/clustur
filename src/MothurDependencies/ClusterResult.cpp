@@ -3,8 +3,3 @@
 //
 
 #include "ClusterResult.h"
-
-
-std::string ClusterResult::ResultsToString(const ClusterExport& exportedData) const {
-    return exportedData.Print();
-}

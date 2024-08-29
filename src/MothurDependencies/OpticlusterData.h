@@ -14,12 +14,10 @@ struct OptiClusterInformation {
     std::string label;
 };
 
-class OpticlusterData : public ClusterExport{
+class OpticlusterData final: public ClusterExport{
 public:
     explicit OpticlusterData(std::string header, const double cutoff):headers(std::move(header)){}
     void AddToData(OptiClusterInformation&);
-    std::string Print() const override;
-    std::string GetLabel(int) const override;
 
 private:
     std::vector<OptiClusterInformation> opticlusterInformation;

@@ -7,6 +7,7 @@
 #include "MothurDependencies/ClusterExport.h"
 
 // TODO Comment this code
+// TODO We may need to build a traditional file builder...So we can output a dataframe of how the clusters are (list)
 SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
     const CountTableAdapter &countTable) {
     Utils utils;

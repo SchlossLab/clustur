@@ -25,23 +25,18 @@ void WritePhylipFile(const std::vector<int> &xPosition,
 }
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
-    std::string clusterResults = result->Print();
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
-    auto listVectors = result->GetListVectors();
-    for(int i = 0; i < listVectors.size(); i++) {
-        ListVector vector = *listVectors[i];
-        listMap[result->GetLabel(i)] = vector;
-    }
-    SharedFile* sharedFile = builder.BuildSharedFile(listMap, countTable);
+    const auto listVectors = result->GetListVector();
+    listMap[listVectors.label] = *listVectors.listVector;
+    const SharedFile* sharedFile = builder.BuildSharedFile(listMap, countTable);
     Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData();
-
     delete(sharedFile);
     return tidySharedDataFrame;
 }
 //[[Rcpp::export]]
-Rcpp::DataFrame MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
+std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
                                                   const std::vector<int> &yPosition, const std::vector<double> &data,
                                                   const double cutoff, const Rcpp::DataFrame& countTable,
                                                   const int maxIterations = 100, const bool shuffle = true) {
@@ -52,16 +47,16 @@ Rcpp::DataFrame MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     command.SetOpticlusterRandomShuffle(shuffle);
     command.SetMaxIterations(maxIterations);
-    const auto* result = command.runOptiCluster(optiMatrix);
+    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
     Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
-    return tidySharedDataFrame;
-    //return {clusterResults, command.GetSensitivityData(), command.GetClusterMetrics()} ;
+    return {tidySharedDataFrame, command.GetSensitivityData(), command.GetClusterMetrics(), clusterDataFrame};
 }
 
 
 //[[Rcpp::export]]
-Rcpp::DataFrame ClassicCluster(const std::vector<int> &xPosition,
+std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int> &xPosition,
                            const std::vector<int> &yPosition,
                            const std::vector<double> &data,
                            const double cutoff,
@@ -74,11 +69,12 @@ Rcpp::DataFrame ClassicCluster(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
     Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
 
     delete(result);
     delete(listVector);
-    return tidySharedDataFrame;
+    return {tidySharedDataFrame, clusterDataFrame};
 
 }
 #endif

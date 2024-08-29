@@ -10,7 +10,7 @@
 #include <fstream>
 #include <map>
 #include <iostream>
-
+#include <Rcpp.h>
 #include "DataVector.h"
 #include "RAbundVector.h"
 #include "Utils.h"
@@ -68,6 +68,7 @@ public:
     int size() override;
     void clear() override;
     void resize(int) override;
+    Rcpp::DataFrame CreateDataFrameFromList(const std::string &label);
 
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
@@ -79,6 +80,8 @@ private:
     bool printListHeaders;
     Utils util;
     void printHeaders(std::string&, std::map<std::string, int>&, bool);
+
+
 
 public:
 

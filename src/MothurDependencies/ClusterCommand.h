@@ -37,9 +37,11 @@
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
 #include <chrono>
+#include <Rcpp.h>
 
 #include "ClusterExport.h"
 #include "SingleLinkage.h"
+#include "../Adapters/DataFrameAdapter.h"
 using namespace std;
 
 /* The cluster() command:
@@ -58,19 +60,18 @@ public:
 	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
 	bool SetOpticlusterRandomShuffle(const bool shuffle) {canShuffle = shuffle; return canShuffle;}
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
-	std::string GetSensitivityData(){return sensFile;}
-	std::string GetClusterMetrics(){return clusterMetrics;}
-	ClusterExport* runOptiCluster(OptiMatrix*);
+	Rcpp::DataFrame GetSensitivityData() const {return DataFrameAdapter::UnorderedMapToDataFrame(dataframeMapSensMetrics);}
+	Rcpp::DataFrame GetClusterMetrics() const {return DataFrameAdapter::UnorderedMapToDataFrame(dataframeMapClusterMetrics);}
+	ClusterExport* runOptiCluster(OptiMatrix*, double);
 
 	ClusterExport* runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
 
 	std::string PrintData(const string &label, map<string, int> &counts, bool &ph);
 
+
 private:
 	ListVector* list;
 	ListVector oldList;
-	std::string clusterMetrics;
-	std::string sensFile;
 	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
@@ -85,6 +86,8 @@ private:
 	unsigned long loops;
 	bool canShuffle;
 	vector<string> outputNames;
+	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;
+	std::unordered_map<std::string, std::vector<std::string>> dataframeMapSensMetrics;
 };
 
 #endif

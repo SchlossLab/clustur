@@ -5,31 +5,36 @@
 #ifndef CLUSTEREXPORT_H
 #define CLUSTEREXPORT_H
 #include <string>
+#include <utility>
 
 #include "ListVector.h"
 #include "RAbundVector.h"
-
+struct ListVectorPair {
+    ListVectorPair(ListVector * const list_vector, std::string label)
+        : listVector(list_vector),
+          label(std::move(label)) {
+    }
+    ListVector* listVector;
+    std::string label;
+};
 class ClusterExport {
 public:
-    virtual ~ClusterExport() = default;
+
     ClusterExport() = default;
-    virtual std::string Print() const = 0;
-    virtual std::string GetLabel(int) const = 0;
-    virtual void AddToList(ListVector& vector)  {
-        listVectors.emplace_back(&vector);
+    virtual void SetListVector(ListVector& vector, const std::string& label)  {
+        listVector = &vector;
+        largestLabel = label;
     };
-    virtual std::vector<ListVector*> GetListVectors() const {return listVectors;}
+    virtual ListVectorPair GetListVector() const {return {listVector, largestLabel};}
     virtual int GetLargestBinSize() const {
-        int largestNum = 0;
-        for(const auto& listVec : listVectors) {
-            if(listVec->getNumBins() > largestNum)
-                largestNum = listVec->getNumBins();
-        }
-        return largestNum;
+        return listVector->getNumBins();
+    }
+    virtual ~ClusterExport() {
+        delete listVector;
     }
 protected:
-    std::vector<ListVector*> listVectors;
-
+    ListVector* listVector = nullptr;
+    std::string largestLabel;
 };
 
 #endif //CLUSTEREXPORT_H

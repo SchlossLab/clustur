@@ -116,9 +116,10 @@ create_fake_sparse_matrix <- function(peak_table)
   I_values <- sort(sampled_peak_table$Compound, decreasing = FALSE)
   Y_values <- sampled_peak_table$Compound
   values <- runif(number_of_ions, .01, .99)
+  max(Y_values)
   T2 <- new("dgTMatrix",
           i = as.integer(I_values),
-          j = as.integer(Y_values), x=as.double(values), Dim=1325:1326)
+          j = as.integer(Y_values), x=as.double(values), Dim=1334:1335)
   WritePhylipFile(I_values, Y_values, values, 0.25, "Phylip_file.txt")
 }
 
@@ -129,16 +130,21 @@ validate_count_table <- function(count_table_df){
   totals <- count_table_df$total
   count_table_df <- cbind(count_table_df, totals)
   names(count_table_df)[3] <- "no_group"
+  count_table_df[[1]] <- as.character(count_table_df[[1]])
   return(count_table_df)
 }
 # count_table_no_groups <- sampled_peak_table[, 1:2]
-# count_table_no_groups <- validate_count_table(count_table_no_groups)
+# # count_table_no_groups <- validate_count_table(count_table_no_groups)
 # T2 <- new("dgTMatrix",
-#           i = as.integer(I_values),
-#           j = as.integer(Y_values), x=values, Dim=5:6)
+#           i = as.integer(c(0,1,3,4,5)),
+#           j = as.integer(c(1,0,3,4,5)),x=10*1:5, Dim=6:7)
+
+# T2 <- new("dgTMatrix",
+#           i = as.integer(c(1,1,0,3,3)),
+#           j = as.integer(c(2,2,4,0,0)), x=10*1:5, Dim=4:5)
 
 
-#   T2@i <- as.integer(I_values)
+# T2@i <- as.integer(I_values)
 # T2@j <- as.integer(Y_values)
 # T2@x <- values
 
@@ -156,10 +162,18 @@ validate_count_table <- function(count_table_df){
 # # cluster(count=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/count_table_sample.count_table, phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/Phylip_file.txt)
 # clust_fur <- ClassicCluster(I_values, Y_values,
 #    values, 0.3, "furthest", sampled_peak_table)
-#    cluster(T2, 0.3, "furthest", count_table_no_groups)
-# clust_fur_no_groups <- ClassicCluster(I_values, Y_values,
-#     values, 0.3, "furthest", count_table_no_groups)
+# sampled_peak_table$Compound <- as.character(sampled_peak_table$Compound)
+# count_table_ms <- sampled_peak_table
+# clust_fur <- cluster(T2, 0.3, "furthest", count_table_ms)
+# clust_fur_no_groups <- cluster(T2, 0.3, "furthest", count_table_no_groups)
 
+# TODO fix the opticluster return statement!!
+# index_one_list <- T2@i
+# index_two_list <- T2@j
+# value_list <- T2@x
+# count_table <- validate_count_table(count_table_no_groups)
+# df <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, 0.3,
+#                                                      count_table, 1, TRUE)
 # # # Create Count Table
-# # write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
+# write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
 # tidy_shared <- readr::read_tsv("SharedFile_tidy.txt")

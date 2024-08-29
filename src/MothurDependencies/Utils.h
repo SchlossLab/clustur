@@ -39,6 +39,9 @@ public:
 
     float ceilDist(float dist, int precision);
 
+    void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, std::string &data,
+                              const std::vector<std::string> &headers);
+
     template <typename Out>
     void split(const std::string &s, char delim, Out result) {
         std::istringstream iss(s);

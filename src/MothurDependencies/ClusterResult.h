@@ -9,10 +9,4 @@
 #include <utility>
 #include <vector>
 
-class ClusterResult {
-public:
-    ClusterResult() = default;
-    std::string ResultsToString(const ClusterExport&) const;
-};
-
 #endif //CLUSTERRESULT_H
