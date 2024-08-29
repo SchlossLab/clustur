@@ -12,7 +12,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
-
+#include <unordered_map>
 #include "PDistCell.h"
 
 class BadConversion : public std::runtime_error {
