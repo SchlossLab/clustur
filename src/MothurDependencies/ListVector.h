@@ -10,7 +10,7 @@
 #include <fstream>
 #include <map>
 #include <iostream>
-
+#include <Rcpp.h>
 #include "DataVector.h"
 #include "RAbundVector.h"
 #include "Utils.h"
@@ -22,6 +22,7 @@ class ListVector : public DataVector{
 public:
 
     ListVector() {};
+    ListVector(const ListVector& other);
     explicit ListVector(const int n):	DataVector(), data(n, "") ,
     maxRank(0), numBins(0), numSeqs(0), otuTag("Otu"), printListHeaders(true){}
     ~ListVector(){};
@@ -67,6 +68,7 @@ public:
     int size() override;
     void clear() override;
     void resize(int) override;
+    Rcpp::DataFrame CreateDataFrameFromList(const std::string &label);
 
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.
@@ -78,6 +80,8 @@ private:
     bool printListHeaders;
     Utils util;
     void printHeaders(std::string&, std::map<std::string, int>&, bool);
+
+
 
 public:
 

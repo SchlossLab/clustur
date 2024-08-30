@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "DataVector.h"
+#include <fstream>
 #include <vector>
 #include <algorithm>
 
@@ -37,6 +38,8 @@ public:
     int getNumSeqs();
     int getMaxRank();
 
+    void print();
+
     int remove(int);
     void set(int, int);
     int get(int) const;
@@ -49,6 +52,7 @@ public:
 
 private:
     std::vector<int> data;
+    int rAbundNumber = 0;
     int maxRank;
     int numBins;
     int numSeqs;

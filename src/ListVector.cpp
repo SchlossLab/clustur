@@ -3,12 +3,26 @@
 //
 #include "MothurDependencies/ListVector.h"
 
+#include "Adapters/DataFrameAdapter.h"
 #include "MothurDependencies/RAbundVector.h"
 
 std::string ListVector::getOTUName(int bin) {
     if (binLabels.size() > bin) {
     } else { getLabels(); }
     return binLabels[bin];
+}
+
+ListVector::ListVector(const ListVector& other)  : DataVector(other) {
+    for(const auto& currentData : other.data) {
+        push_back(currentData);
+    }
+    label = other.label;
+    printListHeaders = other.printListHeaders;
+    binLabels = other.binLabels;
+    otuTag = other.otuTag;
+    numBins = other.numBins;
+    numSeqs = other.numSeqs;
+    maxRank = other.maxRank;
 }
 
 
@@ -56,7 +70,6 @@ void ListVector::setLabels(std::vector<std::string> labels) {
 }
 
 std::string ListVector::print(std::ostream &output, std::map<std::string, int> &ct) {
-    printListHeaders = true;
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
@@ -79,7 +92,10 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
             hold.push_back(temp);
         }
     }
-    std::sort(hold.begin(), hold.end(), abundNamesSort2);
+    std::sort(hold.begin(), hold.end(), abundNamesSort2); // Mothur sorts
+    // its bins
+    // This means that we can create an rabundvector just by sorting it by size.
+    // And it should be equal. Rabund = binSize. And since it is sorted, they should be equal.
 
     for (int i = 0; i < hold.size(); i++) {
         if (hold[i].bin != "") {
@@ -167,4 +183,18 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
         output += "\n";
         printListHeaders = false;
     }
+}
+
+Rcpp::DataFrame ListVector::CreateDataFrameFromList(const std::string& label) {
+    std::unordered_map<std::string, std::vector<std::string>> map;
+    const std::vector<std::string> headers{"otu", "bins", "label"};
+    int count = 1;
+    for(const auto& bin : data) {
+        if(bin.empty())
+            continue;
+        map[headers[0]].emplace_back("otu" + std::to_string(count++));
+        map[headers[1]].emplace_back(bin);
+        map[headers[2]].emplace_back(label);
+    }
+    return DataFrameAdapter::UnorderedMapToDataFrame(map);
 }

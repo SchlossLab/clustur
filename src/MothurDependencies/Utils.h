@@ -12,7 +12,7 @@
 #include <set>
 #include <sstream>
 #include <stdexcept>
-
+#include <unordered_map>
 #include "PDistCell.h"
 
 class BadConversion : public std::runtime_error {
@@ -38,6 +38,9 @@ public:
     bool isEqual(float num1, float num2);
 
     float ceilDist(float dist, int precision);
+
+    void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, std::string &data,
+                              const std::vector<std::string> &headers);
 
     template <typename Out>
     void split(const std::string &s, char delim, Out result) {

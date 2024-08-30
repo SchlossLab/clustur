@@ -162,3 +162,13 @@ bool Utils::isEqual(const float num1, const float num2) {
 float Utils::ceilDist(float dist, int precision){
         return int(ceil(dist * precision))/float(precision);
 }
+
+void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>>& map,
+    std::string& data, const std::vector<std::string>& headers) {
+    Utils utils;
+    std::vector<std::string> splitStrings;
+    utils.splitAtComma(data, splitStrings);
+    for(int i = 0; i < headers.size(); i++) {
+        map[headers[i]].emplace_back(splitStrings[i]);
+    }
+}

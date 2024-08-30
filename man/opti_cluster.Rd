@@ -4,7 +4,13 @@
 \alias{opti_cluster}
 \title{Opticluster Description}
 \usage{
-opti_cluster(sparse_matrix, cutoff, iterations, shuffle = TRUE)
+opti_cluster(
+  sparse_matrix,
+  cutoff,
+  iterations = 100,
+  shuffle = TRUE,
+  count_table
+)
 }
 \arguments{
 \item{sparse_matrix}{A Sparse Matrix.}
@@ -14,6 +20,8 @@ opti_cluster(sparse_matrix, cutoff, iterations, shuffle = TRUE)
 \item{iterations}{The number of iterations}
 
 \item{shuffle}{a boolean to determine whether or not you want to shuffle the data before you cluster}
+
+\item{count_table}{A table of abundances}
 }
 \value{
 A data.frame of the clusters.
