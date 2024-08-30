@@ -6,6 +6,9 @@
 
 #include "TestHelpers/TestHelper.h"
 
-void ClusterData::AddToData(ClusterInformation& information) {
+bool ClusterData::AddToData(ClusterInformation& information) {
+    if(information.label.empty())
+        return false;
     clusterInformation.emplace_back(information);
+    return true;
 }

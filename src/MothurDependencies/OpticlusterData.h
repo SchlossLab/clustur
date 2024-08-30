@@ -17,7 +17,7 @@ struct OptiClusterInformation {
 class OpticlusterData final: public ClusterExport{
 public:
     explicit OpticlusterData(std::string header, const double cutoff):headers(std::move(header)){}
-    void AddToData(OptiClusterInformation&);
+    bool AddToData(OptiClusterInformation&);
 
 private:
     std::vector<OptiClusterInformation> opticlusterInformation;

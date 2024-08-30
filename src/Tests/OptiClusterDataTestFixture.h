@@ -4,10 +4,17 @@
 
 #ifndef OPTICLUSTERDATATESTFIXTURE_H
 #define OPTICLUSTERDATATESTFIXTURE_H
+#include "TestFixture.h"
+#include "../MothurDependencies/OpticlusterData.h"
 
 
-
-class OptiClusterDataTestFixture {
+class OptiClusterDataTestFixture final : public TestFixture {
+public:
+    bool CheckAddToData(OptiClusterInformation &information, bool expectedResult);
+private:
+    void Setup() override;
+    void TearDown() override;
+    OpticlusterData* data = nullptr;
 
 };
 

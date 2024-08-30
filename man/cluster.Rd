@@ -4,7 +4,7 @@
 \alias{cluster}
 \title{Opticluster Description}
 \usage{
-cluster(sparse_matrix, cutoff, method)
+cluster(sparse_matrix, cutoff, method, count_table)
 }
 \arguments{
 \item{sparse_matrix}{A Sparse Matrix.}
@@ -13,6 +13,8 @@ cluster(sparse_matrix, cutoff, method)
 
 \item{method}{The type of cluster you wish to conduct. There are four different types:
 furthest, nearest, average, weighted.}
+
+\item{count_table}{A table of abundances}
 }
 \value{
 A string of the given cluster.

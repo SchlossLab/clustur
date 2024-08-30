@@ -147,7 +147,6 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     // auto* result = new ClusterResult();
     auto* clusterData = new ClusterData("");
     auto rAbund = list->getRAbundVector();
-    rAbund.print();
     if (clusterMethod ==  "furthest")	{	cluster = new CompleteLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "nearest"){	cluster = new SingleLinkage(&rAbund, list, matrix, cutoff, method, adjust); }
     else if(clusterMethod == "average"){	cluster = new AverageLinkage(&rAbund, list, matrix, cutoff, method, adjust);	}

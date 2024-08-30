@@ -19,7 +19,7 @@ struct ClusterInformation {
 class ClusterData final : public ClusterExport {
 public:
     explicit ClusterData(std::string header):headers(std::move(header)){}
-    void AddToData(ClusterInformation&);
+    bool AddToData(ClusterInformation&);
 
 private:
     std::vector<ClusterInformation> clusterInformation;
