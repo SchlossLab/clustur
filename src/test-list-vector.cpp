@@ -115,6 +115,13 @@ context("ListVectorTest") {
     result = testFixture.TestListVectorSetsPrintedLabelsCorrectly(false, true);
     expect_false(result);
   }
+  test_that("Create Dataframe from list works") {
+    ListVectorTestFixture testFixture;
+    bool result = testFixture.TestCreateDataFrameFromList("0.0001", true);
+    expect_true(result);
+    result = testFixture.TestCreateDataFrameFromList("0.0001", false);
+    expect_false(result);
+  }
 
 
 

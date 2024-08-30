@@ -123,6 +123,16 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetOtuNamesSize(const st
     TearDown();
     return result;
 }
+bool ListVectorTestFixture::TestCreateDataFrameFromList(const std::string& label, const bool expectResult) {
+    Setup();
+    listVector->push_back("2");
+    listVector->push_back("1");
+    auto df = listVector->CreateDataFrameFromList(label);
+    const std::vector<std::string> names = df.names();
+    TearDown();
+    return expectResult == !names.empty();
+}
+
 
 void ListVectorTestFixture::Setup() {
     listVector = new ListVector();

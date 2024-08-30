@@ -14,7 +14,6 @@
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Tests/DataFrameAdapterTestFixture.h"
 
-
 #if DEBUG_RCPP
 #include <Rcpp.h>
 
