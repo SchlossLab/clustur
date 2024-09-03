@@ -21,7 +21,7 @@
 void WritePhylipFile(const std::vector<int> &xPosition,
                       const std::vector<int> &yPosition, const std::vector<double> &data,
                       const double cutoff, const std::string& saveLocation) {
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false);
     adapter.CreatePhylipFile(saveLocation);
 }
 
@@ -62,8 +62,9 @@ std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int> &xPosition,
                            const std::vector<double> &data,
                            const double cutoff,
                            const std::string& method,
+                           const bool isSimularity,
                            const Rcpp::DataFrame& countTable) {
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff);
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSimularity);
     ClusterCommand command;
     const auto sparseMatix = adapter.CreateSparseMatrix();
     const auto listVector = adapter.GetListVector();

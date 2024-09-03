@@ -11,7 +11,7 @@
 class MatrixAdapter {
 public:
     MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
-        const std::vector<double> &dataValues, double cutoff);
+        const std::vector<double> &dataValues, double cutoff, bool isSimularity);
     ~MatrixAdapter() = default;
     ReadPhylipMatrix* ReadPhylipFile(const std::string& path);
     SparseDistanceMatrix* CreateSparseMatrix();

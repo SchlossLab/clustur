@@ -5,10 +5,11 @@
 #include "MothurDependencies/ReadPhylipMatrix.h"
 #include "MothurDependencies/ListVector.h"
 
-ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff) {
+ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix) {
     DMatrix = new SparseDistanceMatrix();
     list = new ListVector();
     this->cutoff = cutoff;
+    sim = simularityMatrix;
 }
 
 bool ReadPhylipMatrix::read(const std::string& filePath) {

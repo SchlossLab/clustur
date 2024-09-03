@@ -45,10 +45,10 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE
 #' @param method The type of cluster you wish to conduct. There are four different types:
 #' furthest, nearest, average, weighted.
 #' @return A string of the given cluster.
-cluster <- function(sparse_matrix, cutoff, method, count_table)
+cluster <- function(sparse_matrix, cutoff, method, simularity_matrix = FALSE, count_table)
 {
   df <- ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method, validate_count_table(count_table))
+                           sparse_matrix@x, cutoff, method, simularity_matrix, validate_count_table(count_table))
   
   return (list(abundance = df[[1]],
                 cluster = df[[2]]))

@@ -30,7 +30,7 @@ context("PhylipReader Test") {
     }
     test_that("Phylip Reader reads phylip file from created RowData Vectors") {
         PhylipReaderTestFixture fixture;
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
         bool result = fixture.TestReadPhylipFile(squareMatrix, true);
         expect_true(result);
@@ -39,12 +39,12 @@ context("PhylipReader Test") {
     }
     test_that("Phylip Reader properly creates a sparse distance matrix"){
         PhylipReaderTestFixture fixture;
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
         bool result = fixture.TestGetDistanceMatrix(squareMatrix, true);
         expect_true(result);
 
-        MatrixAdapter adapterTwo({}, {}, {}, 0.2);
+        MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
         std::vector<RowData> squareMatrixTwo = adapterTwo.DistanceMatrixToSquareMatrix();
         result = fixture.TestGetDistanceMatrix(squareMatrixTwo, true);
         expect_false(result);
@@ -52,12 +52,12 @@ context("PhylipReader Test") {
     }
       test_that("Phylip Reader properly creates a list vector"){
         PhylipReaderTestFixture fixture;
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
         bool result = fixture.TestGetListVector(adapter.DistanceMatrixToSquareMatrix(), true);
         expect_true(result);
 
-        MatrixAdapter adapterTwo({}, {}, {}, 0.2);
+        MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
         std::vector<RowData> squareMatrixTwo = adapterTwo.DistanceMatrixToSquareMatrix();
         result = fixture.TestGetListVector(squareMatrixTwo, true);
         expect_false(result);

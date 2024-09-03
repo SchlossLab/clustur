@@ -6,12 +6,12 @@
 
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
-                             const std::vector<double> &dataValues, const double cutoff) {
+                             const std::vector<double> &dataValues, const double cutoff, const bool isSimularity) {
     xPosition = iIndexes;
     yPosition = jIndexes;
     data = dataValues;
     this->cutoff = cutoff;
-    phylipReader = new ReadPhylipMatrix(cutoff);
+    phylipReader = new ReadPhylipMatrix(cutoff, isSimularity);
 }
 
 ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) {

@@ -17,7 +17,7 @@ context("Cluster algorithms") {
   // to test the desired conditions.
   test_that("ClusterBins succesfully clusters bins") {
     ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
     bool result = test_fixture.TestClusterNames(listVector, dMatrix, true);
@@ -28,7 +28,7 @@ context("Cluster algorithms") {
     delete dMatrix;
     delete listVector;
 
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2);
+    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
     dMatrix = adapterTwo.CreateSparseMatrix();
     listVector = adapterTwo.GetListVector();
     result = test_fixture.TestClusterNames(listVector, dMatrix, true);
@@ -40,7 +40,7 @@ context("Cluster algorithms") {
   }
   test_that("Update map function does and does not fail") {
      ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
     bool result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
@@ -51,7 +51,7 @@ context("Cluster algorithms") {
     delete dMatrix;
     delete listVector;
 
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2);
+    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
     dMatrix = adapterTwo.CreateSparseMatrix();
     listVector = adapterTwo.GetListVector();
     result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
@@ -63,7 +63,7 @@ context("Cluster algorithms") {
   }
   test_that("Get Tag returns the tag that corresponds to the clustering type") {
     ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
 
@@ -103,7 +103,7 @@ context("Cluster algorithms") {
     }
     test_that("Get Tag returns the tag that corresponds to the clustering type") {
         ClusterTestFixture test_fixture;
-         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
         auto* dMatrix = adapter.CreateSparseMatrix();
         ListVector* listVector = adapter.GetListVector();
         auto* clust = new SingleLinkage(new RAbundVector(), listVector,

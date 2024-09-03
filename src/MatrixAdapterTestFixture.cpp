@@ -54,7 +54,7 @@ MatrixAdapterTestFixture::~MatrixAdapterTestFixture() {
 
 void MatrixAdapterTestFixture::Setup() {
     matrixAdapter = new MatrixAdapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25},
-        0.2);
+        0.2, false);
 }
 
 void MatrixAdapterTestFixture::TearDown() {

@@ -105,7 +105,7 @@ bool SparseMatrixTestFixture::TestPrint(const bool clear, const bool expectedRes
 
 
 void SparseMatrixTestFixture::Setup() {
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
     sparseDistanceMatrix = adapter.CreateSparseMatrix();
 }
 

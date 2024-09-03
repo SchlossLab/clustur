@@ -9,7 +9,7 @@ MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTa
     .Call(`_Opticluster_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle)
 }
 
-ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTable) {
-    .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable)
+ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, isSimularity, countTable) {
+    .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, isSimularity, countTable)
 }
 

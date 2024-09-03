@@ -100,7 +100,7 @@ bool RAbundVectorTestFixture::TestGetMaxRank(const int expectedResult) {
 
 void RAbundVectorTestFixture::Setup() {
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25},
-        0.2);
+        0.2, false);
     adapter.CreateSparseMatrix();
     radbund = adapter.GetListVector()->getRAbundVector();
 }

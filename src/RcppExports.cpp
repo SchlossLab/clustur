@@ -42,8 +42,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ClassicCluster
-std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable);
-RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP) {
+std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const bool isSimularity, const Rcpp::DataFrame& countTable);
+RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP isSimularitySEXP, SEXP countTableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -52,8 +52,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSimularity(isSimularitySEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method, countTable));
+    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method, isSimularity, countTable));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -63,7 +64,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 5},
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 7},
-    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 6},
+    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

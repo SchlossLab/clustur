@@ -18,10 +18,10 @@ test_that("Normal Cluster is able to properly cluster data",
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
 
   
-  cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", count_table)
-  cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table)
-  cluster_weighted <- cluster(sparse_matrix, 0.2, "weighted", count_table) # TODO Fix Label
-  cluster_nearest <- cluster(sparse_matrix, 0.2, "nearest", count_table)
+  cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", FALSE, count_table)
+  cluster_average <- cluster(sparse_matrix, 0.2, "average", FALSE, count_table)
+  cluster_weighted <- cluster(sparse_matrix, 0.2, "weighted", FALSE, count_table) # TODO Fix Label
+  cluster_nearest <- cluster(sparse_matrix, 0.3, "nearest", TRUE, count_table)
 
   expect_length(cluster_furthest, 2)
   expect_length(cluster_average, 2)
