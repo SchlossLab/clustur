@@ -134,8 +134,8 @@ validate_count_table <- function(count_table_df){
 
 
 
-# count_table_no_groups <- sampled_peak_table[, 1:2]
-# # count_table_no_groups <- validate_count_table(count_table_no_groups)
+# # count_table_no_groups <- sampled_peak_table[, 1:2]
+# # # count_table_no_groups <- validate_count_table(count_table_no_groups)
 # T2 <- new("dgTMatrix",
 #           i = as.integer(c(0,1,3,4,5)),
 #           j = as.integer(c(1,0,3,4,5)),x=10*1:5, Dim=6:7)
@@ -178,3 +178,37 @@ validate_count_table <- function(count_table_df){
 # # # Create Count Table
 # write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
 # tidy_shared <- readr::read_tsv("SharedFile_tidy.txt")
+
+
+
+# table <- readRDS("test_table.RDS")
+# T2 <- new("dgTMatrix",
+#           i = as.integer(c(0,1,3,4,5)),
+#           j = as.integer(c(1,0,3,4,5)),x=10*1:5, Dim=6:7)
+# table <- test
+# i_values  <- c()
+# y_values <- c()
+# data <-c()
+# for(i in 2:ncol(table))
+# {
+#   i_values <- c(i_values, rep(i - 1, 10))
+#   y_values <- c(y_values, 1:10)
+#   data <- c(data, table[[i]])
+# }
+
+# T2@i <- as.integer(i_values)
+# T2@j <- y_values
+# T2@x <- data
+#saveRDS(T2, "sparse_amazon.RDS")
+
+# table$Names
+ #sparse_amazon <- readRDS("sparse_amazon.RDS")
+# saveRDS(table, "test_table.RDS")
+# saveRDS(count <- data.frame(Names = table$Names, total = rep(1, 10)), "test_count.RDS")
+# test <- readRDS("test_table.RDS")
+# count <- readRDS("test_count.RDS")
+# clust <- cluster(T2, 0.3, "furthest", FALSE, count)
+
+# cluster(phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/sub_set_amazon.txt, method=nearest, cutoff=0.2)
+# WritePhylipFile(sparse_matrix@i,sparse_matrix@j, sparse_matrix@x, 0.3, "/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt")
+# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt, method=nearest, cutoff=0.2)

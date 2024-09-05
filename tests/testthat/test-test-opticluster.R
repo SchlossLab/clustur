@@ -11,6 +11,9 @@ test_that("Clustering returns proper results", {
   # expect_true(all(trueList == TRUE))
 })
 
+#Reader function
+# label, ids, bins
+# opt to remove label
 test_that("Normal Cluster is able to properly cluster data",
 {
 
@@ -21,7 +24,7 @@ test_that("Normal Cluster is able to properly cluster data",
   cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", FALSE, count_table)
   cluster_average <- cluster(sparse_matrix, 0.2, "average", FALSE, count_table)
   cluster_weighted <- cluster(sparse_matrix, 0.2, "weighted", FALSE, count_table) # TODO Fix Label
-  cluster_nearest <- cluster(sparse_matrix, 0.3, "nearest", TRUE, count_table)
+  cluster_nearest <- cluster(sparse_matrix, 0.3, "nearest", F, count_table)
 
   expect_length(cluster_furthest, 2)
   expect_length(cluster_average, 2)
@@ -36,3 +39,4 @@ test_that("Normal Cluster is able to properly cluster data",
 })
 
 # tidy_data <- reshape2::melt(shared_file, id.vars=c("label" ), variable.name = "OTU" ,value.name = "abundance")
+cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/sparse_phylip.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method=nearest, cutoff=0.2)

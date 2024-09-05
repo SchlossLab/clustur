@@ -144,6 +144,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
                                              double cutoff, ListVector *list) {
     //
     Cluster *cluster = nullptr;
+    method = clusterMethod;
     // auto* result = new ClusterResult();
     auto* clusterData = new ClusterData("");
     auto rAbund = list->getRAbundVector();
@@ -169,7 +170,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
-            data.label = std::to_string(previousDist);
+            data.label = "0.00000";
             data.numberOfOtu = oldList.getNumBins();
         } else if (!util.isEqual(rndDist, rndPreviousDist)) {
             data.label = std::to_string(rndPreviousDist);
@@ -183,8 +184,8 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             auto* vec = new ListVector(oldList);
             list->setPrintedLabels(false);
             clusterData->AddToData(data);
-            if(previousDist > highestDistLabel) {
-                highestDistLabel = previousDist;
+            if(rndPreviousDist > highestDistLabel) {
+                highestDistLabel = rndPreviousDist;
                 clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
             }
         }
