@@ -6,11 +6,9 @@
 #include <map>
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
-                             const std::vector<double> &dataValues, const double cutoff, const bool isSimularity) {
-    xPosition = iIndexes;
-    yPosition = jIndexes;
-    data = dataValues;
-    this->cutoff = cutoff;
+                             const std::vector<double> &dataValues, const double cutoff, const bool isSimularity,
+                             const CountTableAdapter& table): countTable(table),xPosition(iIndexes), yPosition(jIndexes),
+                            data(dataValues), cutoff(cutoff) {
     phylipReader = new ReadPhylipMatrix(cutoff, isSimularity);
 }
 
@@ -57,22 +55,22 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
 
 std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
-    std::set<int> names;
+    std::set<std::string> names;
     const size_t nSeqs = data.size();
     std::map<int, RowData> dataList;
     std::unordered_map<int, int> positionsOfIndexs;
-    for (size_t i = 0; i < nSeqs; i++) {
-        names.insert(xPosition[i]);
-        names.insert(yPosition[i]);
+    std::unordered_map<int, std::string> positionsToNames;
+    for (int i = 0; i < nSeqs; i++) {
+        names.insert(countTable.GetNameByIndex(i));
+        positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
     }
 
-    auto nameIter = names.begin();
     const size_t nameSize = names.size();
     matrixNames = std::vector<std::string>(nameSize);
     for (int i = 0; i < nameSize; i++) {
-        positionsOfIndexs[*nameIter] = i;
-        matrixNames[i] = std::to_string(*nameIter);
-        dataList[i].name = std::to_string(*nameIter++);
+        positionsOfIndexs[xPosition[i]] = i;
+        matrixNames[i] = positionsToNames[xPosition[i]];
+        dataList[i].name = positionsToNames[xPosition[i]];
         dataList[i].rowValues = std::vector<double>(nameSize, 0);
     }
 
@@ -82,7 +80,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         if(data[i] < 0) {
             data[i] = 0;
         }
-        double currentValueX = dataList[yIndex].rowValues[xIndex];
+        const double currentValueX = dataList[yIndex].rowValues[xIndex];
         if(currentValueX != 0){ // We already set the value and this is a sparse matrix. 
             continue;           // WE do not need to reset the values back to zero.
         }                       // This is a catch all in the case of a sparse and square matrix

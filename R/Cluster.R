@@ -11,17 +11,15 @@
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value
+#' @param count_table A table of names and the given abundance per group.
 #' @param iterations The number of iterations
 #' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
-#' @param count_table A table of abundances
-#' @return A data.frame of the clusters.
-opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE, count_table) {
-  index_one_list <- sparse_matrix@i
-  index_two_list <- sparse_matrix@j
-  value_list <- sparse_matrix@x
+#' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @return A data.frame of the cluster and cluster metrics.
+opti_cluster <- function(sparse_matrix, cutoff, count_table, iterations = 100, shuffle = TRUE, simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
-  cluster_dfs <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
-                                                       count_table, iterations, shuffle)
+  cluster_dfs <- MatrixToOpiMatrixCluster(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, cutoff,
+                                                       count_table, iterations, shuffle, simularity_matrix)
   opticluster_data <- list(abundance = cluster_dfs[[1]],
                            cluster = cluster_dfs[[4]],
                            cluster_metrics = cluster_dfs[[3]],
@@ -40,15 +38,16 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE
 #'
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
-#' @param cutoff A cutoff value
-#' @param count_table A table of abundances
-#' @param method The type of cluster you wish to conduct. There are four different types:
-#' furthest, nearest, average, weighted.
+#' @param cutoff A cutoff value.
+#' @param method The type of cluster you wish to conduct; furthest, nearest, average, weighted.
+#' @param count_table A table of names and the given abundance per group.
+#' @param simularity_matrix are you using a simularity matrix or distance matrix.
 #' @return A string of the given cluster.
-cluster <- function(sparse_matrix, cutoff, method, simularity_matrix = FALSE, count_table)
+cluster <- function(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
 {
   df <- ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method, simularity_matrix, validate_count_table(count_table))
+                          sparse_matrix@x, cutoff, method, validate_count_table(count_table),
+                          simularity_matrix)
   
   return (list(abundance = df[[1]],
                 cluster = df[[2]]))

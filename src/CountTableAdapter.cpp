@@ -47,6 +47,12 @@ double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) cons
     return dataFrameMap.at("total")[index];
 }
 
+std::string CountTableAdapter::GetNameByIndex(const int index) const {
+    if(index > sampleNames.size())
+        return "";
+    return sampleNames[index];
+}
+
 std::vector<std::string> CountTableAdapter::GetGroups() const {
     return groups;
 }

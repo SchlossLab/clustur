@@ -3,6 +3,7 @@
 //
 
 #include <testthat.h>
+#include "Adapters/CountTableAdapter.h"
 #include "Tests/ClusterTestFixture.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/WeightedLinkage.h"
@@ -17,7 +18,15 @@ context("Cluster algorithms") {
   // to test the desired conditions.
   test_that("ClusterBins succesfully clusters bins") {
     ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
+      const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+      const std::vector<double> total{10, 20, 30, 40, 50, 60};
+      const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+          Rcpp::Named("Representative Sequence") = compounds,
+          Rcpp::Named("total") = total,
+          Rcpp::Named("nogroup") = total);
+      CountTableAdapter countTable;
+      countTable.CreateDataFrameMap(dataframe);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
     bool result = test_fixture.TestClusterNames(listVector, dMatrix, true);
@@ -28,7 +37,7 @@ context("Cluster algorithms") {
     delete dMatrix;
     delete listVector;
 
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
+    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
     dMatrix = adapterTwo.CreateSparseMatrix();
     listVector = adapterTwo.GetListVector();
     result = test_fixture.TestClusterNames(listVector, dMatrix, true);
@@ -40,7 +49,15 @@ context("Cluster algorithms") {
   }
   test_that("Update map function does and does not fail") {
      ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
+      const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+      const std::vector<double> total{10, 20, 30, 40, 50, 60};
+      const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+          Rcpp::Named("Representative Sequence") = compounds,
+          Rcpp::Named("total") = total,
+          Rcpp::Named("nogroup") = total);
+      CountTableAdapter countTable;
+      countTable.CreateDataFrameMap(dataframe);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
     bool result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
@@ -51,7 +68,7 @@ context("Cluster algorithms") {
     delete dMatrix;
     delete listVector;
 
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false);
+    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
     dMatrix = adapterTwo.CreateSparseMatrix();
     listVector = adapterTwo.GetListVector();
     result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
@@ -63,7 +80,15 @@ context("Cluster algorithms") {
   }
   test_that("Get Tag returns the tag that corresponds to the clustering type") {
     ClusterTestFixture test_fixture;
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
+      const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+      const std::vector<double> total{10, 20, 30, 40, 50, 60};
+      const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+          Rcpp::Named("Representative Sequence") = compounds,
+          Rcpp::Named("total") = total,
+          Rcpp::Named("nogroup") = total);
+      CountTableAdapter countTable;
+      countTable.CreateDataFrameMap(dataframe);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
 
@@ -103,7 +128,15 @@ context("Cluster algorithms") {
     }
     test_that("Get Tag returns the tag that corresponds to the clustering type") {
         ClusterTestFixture test_fixture;
-         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false);
+      const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+      const std::vector<double> total{10, 20, 30, 40, 50, 60};
+      const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+          Rcpp::Named("Representative Sequence") = compounds,
+          Rcpp::Named("total") = total,
+          Rcpp::Named("nogroup") = total);
+      CountTableAdapter countTable;
+      countTable.CreateDataFrameMap(dataframe);
+         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
         auto* dMatrix = adapter.CreateSparseMatrix();
         ListVector* listVector = adapter.GetListVector();
         auto* clust = new SingleLinkage(new RAbundVector(), listVector,

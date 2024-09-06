@@ -46,6 +46,13 @@ bool CountTableAdapterTestFixture::TestGetGroups(const std::vector<std::string>&
     return expectedResult == groups;
 }
 
+bool CountTableAdapterTestFixture::TestGetNameByIndex(const int index, const std::string &expectedResult) {
+    Setup();
+    const auto name = countTable->GetNameByIndex(index);
+    TearDown();
+    return name == expectedResult;
+}
+
 void CountTableAdapterTestFixture::Setup() {
     countTable = new CountTableAdapter();
     const std::vector<std::string> compounds{"1", "2", "3", "4", "5"};

@@ -134,18 +134,8 @@ bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
                 const PDistCell value(i, distance);
                 DMatrix->addCell(j, value);
             }
-            else{
-                std::cout << std::to_string(i) + " : " + std::to_string(j) + " at -> " + std::to_string(distance) + "\n";
-            }
-            // else {
-            //     std::string p = "index in DMatrix: " + std::to_string(j) + " at loc " +
-            //         std::to_string(i) + " value: " +std::to_string(distance) +"\n";
-            //     TestHelper::Print(p);
-            // }
         }
     }
-   //  cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/sparse_phylip.txt, method=nearest, cutoff=0.2)
-
     list->setLabel("0");
     return true;
 }
