@@ -27,7 +27,8 @@ opti_cluster <- function(sparse_matrix, cutoff, count_table, iterations = 100, s
 
   return(opticluster_data)
 }
-
+# If count table and no phylip matrix, we will assume the order of the names are the same as the count table
+# It might be worth it to sort the names of a phylip file to that of the count table, or vice versa
 
 
 
@@ -209,5 +210,7 @@ validate_count_table <- function(count_table_df){
 # clust <- cluster(T2, 0.3, "furthest", FALSE, count)
 
 # cluster(phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/sub_set_amazon.txt, method=nearest, cutoff=0.2)
-# WritePhylipFile(sparse_matrix@i,sparse_matrix@j, sparse_matrix@x, 0.3, "/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt")
-# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt, method=nearest, cutoff=0.2)
+# ## TODO Fix furthest
+# WritePhylipFile(sparse_matrix@i,sparse_matrix@j, sparse_matrix@x, 0.2, count_table, "/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt")
+# # cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip_1.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method=average, cutoff=0.2)
+# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, cutoff=0.2, sim=false)

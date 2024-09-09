@@ -22,9 +22,11 @@ test_that("Normal Cluster is able to properly cluster data",
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
+  test_matrix <- readRDS("sparse_amazon.RDS")
+  test_count <- readRDS("test_count.RDS")
 
   cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", count_table, FALSE)
-  cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table, FALSE)
+  cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table, FALSE) ## Might actually be a rounding issue...????
   cluster_weighted <- cluster(sparse_matrix, 0.2, "weighted", count_table, FALSE) # TODO Fix Label
   cluster_nearest <- cluster(sparse_matrix, 0.2, "nearest", count_table, FALSE)
 

@@ -22,6 +22,7 @@ public:
 
 class Utils {
 public:
+    Utils();
     void mothurRandomShuffle(std::vector<int>& randomize);
     void mothurRandomShuffle(std::vector<std::string>& randomize);
     void mothurRandomShuffle(std::vector<PDistCellMin>& randomize);

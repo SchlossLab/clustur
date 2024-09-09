@@ -157,7 +157,6 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     this->cutoff = cutoff;
     float previousDist = 0.00000;
     float rndPreviousDist = 0.00000;
-
     oldList = *list;
     bool printHeaders = false;
     std::string clusterResult;
@@ -168,6 +167,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         cluster->update(cutoff);
         ClusterInformation data;
         const float dist = matrix->getSmallDist(); // Round to the third decimal place
+        //Rcpp::Rcout << dist << std::endl;
         const float rndDist = util.ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !util.isEqual(dist, previousDist)) {
             data.label = "0.00000";
@@ -176,9 +176,9 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             data.label = std::to_string(rndPreviousDist);
             data.numberOfOtu = oldList.getNumBins();
         }
-        oldList = *list;
-        previousDist = dist;
-        rndPreviousDist = rndDist;
+       
+        
+       
         if(!data.label.empty()) {
             data.clusterBins = oldList.print(listFile);
             auto* vec = new ListVector(oldList);
@@ -186,9 +186,13 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             clusterData->AddToData(data);
             if(rndPreviousDist > highestDistLabel) {
                 highestDistLabel = rndPreviousDist;
-                clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
+                //Rcpp::Rcout << std::to_string(highestDistLabel) << " : bins " << std::to_string(data.numberOfOtu) <<  std::endl;
+                clusterData->SetListVector(*vec, std::to_string(highestDistLabel)); // vec might be a shallow copy
             }
         }
+        oldList = *list;
+        previousDist = dist;
+        rndPreviousDist = rndDist;
 
     }
     ClusterInformation data;
@@ -205,8 +209,8 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
         data.clusterBins = oldList.print(listFile);
         auto* vec = new ListVector(oldList);
         clusterData->AddToData(data);
-        if(previousDist > highestDistLabel) {
-            highestDistLabel = previousDist;
+        if(rndPreviousDist > highestDistLabel) {
+            highestDistLabel = rndPreviousDist;
             clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
         }
     }
