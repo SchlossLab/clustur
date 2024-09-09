@@ -11,7 +11,7 @@
 // file providing the definition, and let R CMD INSTALL
 // handle building and linking.
 
-// Initialize a unit test context. This is similar to how you
+// Initialize a unit test contexta. This is similar to how you
 // might begin an R test file with 'context()', expect the
 // associated context should be wrapped in braced.
 

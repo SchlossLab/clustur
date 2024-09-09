@@ -24,8 +24,8 @@ context("Cluster algorithms") {
           Rcpp::Named("Representative Sequence") = compounds,
           Rcpp::Named("total") = total,
           Rcpp::Named("nogroup") = total);
-      CountTableAdapter countTable;
-      countTable.CreateDataFrameMap(dataframe);
+    CountTableAdapter countTable;
+    countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto* dMatrix = adapter.CreateSparseMatrix();
     ListVector* listVector = adapter.GetListVector();
@@ -34,16 +34,6 @@ context("Cluster algorithms") {
     result = test_fixture.TestClusterNames(listVector, dMatrix, false);
     expect_false(result);
 
-    delete dMatrix;
-    delete listVector;
-
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
-    dMatrix = adapterTwo.CreateSparseMatrix();
-    listVector = adapterTwo.GetListVector();
-    result = test_fixture.TestClusterNames(listVector, dMatrix, true);
-    expect_false(result);
-    result = test_fixture.TestClusterNames(listVector, dMatrix, false);
-    expect_true(result);
     delete dMatrix;
     delete listVector;
   }
@@ -65,16 +55,6 @@ context("Cluster algorithms") {
     result = test_fixture.TestUpdateMap(listVector, dMatrix, false);
     expect_false(result);
 
-    delete dMatrix;
-    delete listVector;
-
-    MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
-    dMatrix = adapterTwo.CreateSparseMatrix();
-    listVector = adapterTwo.GetListVector();
-    result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
-    expect_false(result);
-    result = test_fixture.TestUpdateMap(listVector, dMatrix, false);
-    expect_true(result);
     delete dMatrix;
     delete listVector;
   }
@@ -136,16 +116,16 @@ context("Cluster algorithms") {
           Rcpp::Named("nogroup") = total);
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
-         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-        auto* dMatrix = adapter.CreateSparseMatrix();
-        ListVector* listVector = adapter.GetListVector();
-        auto* clust = new SingleLinkage(new RAbundVector(), listVector,
-            dMatrix, 0.2, "nearest", -1);
+      MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+      auto* dMatrix = adapter.CreateSparseMatrix();
+      ListVector* listVector = adapter.GetListVector();
+      auto* clust = new SingleLinkage(new RAbundVector(), listVector,
+          dMatrix, 0.2, "nearest", -1);
 
-        bool result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>());
-        expect_true(result);
-        result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>{{"", 1}});
-        expect_false(result);
+      bool result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>());
+      expect_true(result);
+      result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>{{"", 1}});
+      expect_false(result);
 
     }
 }

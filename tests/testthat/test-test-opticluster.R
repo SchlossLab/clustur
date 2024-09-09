@@ -22,8 +22,6 @@ test_that("Normal Cluster is able to properly cluster data",
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
-  test_matrix <- readRDS("sparse_amazon.RDS")
-  test_count <- readRDS("test_count.RDS")
 
   cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", count_table, FALSE)
   cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table, FALSE) ## Might actually be a rounding issue...????
@@ -43,4 +41,4 @@ test_that("Normal Cluster is able to properly cluster data",
 })
 
 # tidy_data <- reshape2::melt(shared_file, id.vars=c("label" ), variable.name = "OTU" ,value.name = "abundance")
-cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, cutoff=0.2)
+# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, cutoff=0.2)

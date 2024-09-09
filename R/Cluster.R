@@ -213,4 +213,4 @@ validate_count_table <- function(count_table_df){
 # ## TODO Fix furthest
 # WritePhylipFile(sparse_matrix@i,sparse_matrix@j, sparse_matrix@x, 0.2, count_table, "/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt")
 # # cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip_1.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method=average, cutoff=0.2)
-# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, cutoff=0.2, sim=false)
+# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method = furthest, cutoff=0.2, sim=false)
