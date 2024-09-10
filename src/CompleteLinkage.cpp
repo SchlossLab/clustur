@@ -6,7 +6,8 @@
 
 /***********************************************************************/
 
-CompleteLinkage::CompleteLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, float c, std::string s, float a) :
+CompleteLinkage::CompleteLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c,
+    const std::string &s, const float a) :
     Cluster(rav, lv, dm, c, s, a)
 {}
 
