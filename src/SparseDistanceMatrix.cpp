@@ -54,8 +54,6 @@ int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long 
 /***********************************************************************/
 
 int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
-    if(row > seqVec.max_size() || col > seqVec.max_size())
-        return 0;
     numNodes-=2;
 
     unsigned long vrow = seqVec[row][col].index;
@@ -75,8 +73,8 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
     numNodes+=2;
 
     if(cell.dist < smallDist){ smallDist = cell.dist;}
+    
     seqVec[row].push_back(cell);
-    if(row == cell.index) return;
     const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
 
@@ -134,6 +132,9 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
     const unsigned long num = util.getRandomIndex(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
+    // util.mothurRandomShuffle(mins);  //randomize the order of the iterators in the mins vector
+    // row = mins[0].row;
+    // const unsigned long col = mins[0].col;
 	return col;
 
 }

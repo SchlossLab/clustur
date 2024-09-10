@@ -18,6 +18,7 @@ public:
     bool TestFindAbundance(const std::string& sampleName, bool expectedResult);
     bool TestGetColumnByName(const std::string& columnName, bool expectedResult);
     bool TestGetGroups(const std::vector<std::string> &expectedResult);
+    bool TestGetNameByIndex(int index, const std::string& expectedResult);
 private:
     CountTableAdapter* countTable = nullptr;
     Rcpp::DataFrame dataframe;

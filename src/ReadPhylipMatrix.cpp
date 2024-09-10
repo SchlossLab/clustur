@@ -4,11 +4,13 @@
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
 #include "MothurDependencies/ListVector.h"
+#include "TestHelpers/TestHelper.h"
 
-ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff) {
+ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix) {
     DMatrix = new SparseDistanceMatrix();
     list = new ListVector();
     this->cutoff = cutoff;
+    sim = simularityMatrix;
 }
 
 bool ReadPhylipMatrix::read(const std::string& filePath) {
@@ -117,8 +119,9 @@ bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
     for (int i = 1; i < nseqs; i++) {
         name = rowData[i].name;
         list->set(i, name);
-        matrixNames.push_back(name);
-        for (int j = 0; j < nseqs; j++) {
+        matrixNames.push_back(name); // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
+        // Where it should be giving me the distance between 1 and 2, its not giving me any distance, I removed them.
+        for (int j = 0; j < i; j++) {
             float distance = rowData[i].rowValues[j];
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
@@ -126,7 +129,8 @@ bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
             } else if (sim) {
                 distance = 1.0f - distance;
             }
-            if (distance <= cutoff && j < i) {
+
+            if (distance <= cutoff) {
                 const PDistCell value(i, distance);
                 DMatrix->addCell(j, value);
             }

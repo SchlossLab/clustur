@@ -5,7 +5,7 @@
 #include "Adapters/DataFrameAdapter.h"
 #include "MothurDependencies/RAbundVector.h"
 
-std::string ListVector::getOTUName(int bin) {
+std::string ListVector::getOTUName(const int bin) {
     if (binLabels.size() > bin) {
     } else { getLabels(); }
     return binLabels[bin];

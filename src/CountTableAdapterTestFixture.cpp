@@ -46,6 +46,14 @@ bool CountTableAdapterTestFixture::TestGetGroups(const std::vector<std::string>&
     return expectedResult == groups;
 }
 
+bool CountTableAdapterTestFixture::TestGetNameByIndex(const int index, const std::string &expectedResult) {
+    Setup();
+    countTable->CreateDataFrameMap(dataframe);
+    const auto name = countTable->GetNameByIndex(index);
+    TearDown();
+    return name == expectedResult;
+}
+
 void CountTableAdapterTestFixture::Setup() {
     countTable = new CountTableAdapter();
     const std::vector<std::string> compounds{"1", "2", "3", "4", "5"};
@@ -54,6 +62,7 @@ void CountTableAdapterTestFixture::Setup() {
         Rcpp::Named("Representative Sequence") = compounds,
         Rcpp::Named("total") = total,
         Rcpp::Named("nogroup") = total);
+    // countTable->CreateDataFrameMap(dataframe);
 }
 
 void CountTableAdapterTestFixture::TearDown() {

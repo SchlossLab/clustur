@@ -6,6 +6,7 @@
 #define SPARSEMATRIXTESTFIXTURE_H
 #include "TestFixture.h"
 #include <vector>
+#include <Rcpp.h>
 #include "../MothurDependencies/SparseDistanceMatrix.h"
 
 

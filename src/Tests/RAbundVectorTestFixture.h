@@ -7,6 +7,7 @@
 #include "TestFixture.h"
 #include <string>
 #include <map>
+#include <Rcpp.h>
 #include <vector>
 #include "../MothurDependencies/RAbundVector.h"
 

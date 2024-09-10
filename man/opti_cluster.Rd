@@ -7,9 +7,10 @@
 opti_cluster(
   sparse_matrix,
   cutoff,
+  count_table,
   iterations = 100,
   shuffle = TRUE,
-  count_table
+  simularity_matrix = FALSE
 )
 }
 \arguments{
@@ -17,14 +18,16 @@ opti_cluster(
 
 \item{cutoff}{A cutoff value}
 
+\item{count_table}{A table of names and the given abundance per group.}
+
 \item{iterations}{The number of iterations}
 
 \item{shuffle}{a boolean to determine whether or not you want to shuffle the data before you cluster}
 
-\item{count_table}{A table of abundances}
+\item{simularity_matrix}{are you using a simularity matrix or distance matrix}
 }
 \value{
-A data.frame of the clusters.
+A data.frame of the cluster and cluster metrics.
 }
 \description{
 Detailed description of the function.

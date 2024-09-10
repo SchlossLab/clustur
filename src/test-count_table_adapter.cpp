@@ -67,6 +67,15 @@ context("CountTable") {
         res = testFixture.TestGetGroups({"1"});
         expect_false(res);
     }
+    test_that("Count table properly returns the correct name given the index") {
+        CountTableAdapterTestFixture testFixture;
+        bool res = testFixture.TestGetNameByIndex(1, "2");
+        expect_true(res);
+        res = testFixture.TestGetNameByIndex(7, "");
+        expect_true(res);
+        res = testFixture.TestGetNameByIndex(2, "");
+        expect_false(res);
+    }
 
 
 }
