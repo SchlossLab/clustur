@@ -13,9 +13,9 @@
 class MatrixAdapter {
 public:
     MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
-        const std::vector<double> &dataValues, double cutoff, bool isSimularity, const CountTableAdapter& table);
+        const std::vector<double> &dataValues, double cutOff, bool isSimularity, const CountTableAdapter& table);
     ~MatrixAdapter() = default;
-    ReadPhylipMatrix* ReadPhylipFile(const std::string& path);
+    ReadPhylipMatrix* ReadPhylipFile(const std::string& path) const;
     SparseDistanceMatrix* CreateSparseMatrix();
     ListVector* GetListVector() const {return phylipReader->getListVector();}
     SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->getDMatrix();}
@@ -32,7 +32,6 @@ private:
     std::vector<int> yPosition;
     std::vector<double> data;
     std::vector<std::string> matrixNames;
-    double cutoff;
 };
 
 

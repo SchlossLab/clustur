@@ -70,20 +70,16 @@ public:
 
 
 private:
-	ListVector* list;
 	ListVector oldList;
-	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
     float adjust = -1;
 	string showabund, timing, metricName;
-	int precision = 100, length, maxIters = 100, processors;
+	int precision = 100, maxIters = 100;
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;
-	bool print_start;
 	time_t start;
-	unsigned long loops;
 	bool canShuffle;
 	vector<string> outputNames;
 	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;

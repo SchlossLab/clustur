@@ -5,6 +5,7 @@
 #ifndef LISTVECTOR_H
 #define LISTVECTOR_H
 #include <string>
+#include <utility>
 #include <vector>
 #include <algorithm>
 #include <fstream>
@@ -18,27 +19,27 @@
 
 
 
-class ListVector : public DataVector{
+class ListVector final : public DataVector{
 public:
 
-    ListVector() {};
+    ListVector() = default;
     ListVector(const ListVector& other);
     explicit ListVector(const int n):	DataVector(), data(n, "") ,
     maxRank(0), numBins(0), numSeqs(0), otuTag("Otu"), printListHeaders(true){}
-    ~ListVector(){};
+    ~ListVector() override = default;
 
     struct listCt{
         std::string bin;
         int binSize;
         std::string label;
-        listCt() :  bin(""), binSize(0), label("") {};
-        listCt(std::string b, int a, std::string l) :  bin(b), binSize(a), label(l) {}
+        listCt() : binSize(0) {};
+        listCt(std::string b, const int a, std::string l) :  bin(std::move(b)), binSize(a), label(std::move(l)) {}
     };
 
 
-    static bool abundNamesSort2(listCt left, listCt right){
-        if (left.bin == "") { return false; }
-        if (right.bin == "") { return true; }
+    static bool abundNamesSort2(const listCt& left, const listCt& right){
+        if (left.bin.empty()) { return false; }
+        if (right.bin.empty()) { return true; }
         if (left.binSize > right.binSize) {
             return true;
         }
@@ -47,9 +48,9 @@ public:
     // Max rank is equal to the amount of items separated by commas
     // Number of sequences is the amount of sequences added to the list, (including those separated by delimiters)
     // Num bins is the amount of bins, or the amount of times you pushed back, the size of the list basically.
-    int getNumBins()							{	return numBins;		}
-    int getNumSeqs()							{	return numSeqs;		}
-    int getMaxRank()							{	return maxRank;		}
+    int getNumBins() const							{	return numBins;		}
+    int getNumSeqs() const							{	return numSeqs;		}
+    int getMaxRank() const							{	return maxRank;		}
 
     std::string get(int);
     // The amount of labels is equal to the size of the listVectorBins
@@ -77,9 +78,9 @@ private:
     int numSeqs = 0;
     std::vector<std::string> binLabels;
     std::string otuTag;
-    bool printListHeaders;
+    bool printListHeaders{};
     Utils util;
-    void printHeaders(std::string&, std::map<std::string, int>&, bool);
+    void printHeaders(std::string&, std::map<std::string, int>&, bool) override;
 
 
 

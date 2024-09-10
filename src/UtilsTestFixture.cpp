@@ -75,7 +75,7 @@ bool UtilsTestFixture::TestMothurConvertStringToDoubleIsCorrect(const std::strin
 
 bool UtilsTestFixture::TestConvertWorksCorrectly(const std::string &str, const int expectedResult) {
     Setup();
-    int num;
+    //  int num;
     //utils->convert<int>(str, num);
     TearDown();
     return true;

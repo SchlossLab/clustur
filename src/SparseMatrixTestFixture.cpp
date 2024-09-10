@@ -59,7 +59,6 @@ bool SparseMatrixTestFixture::TestUpdateCellCompliment(const unsigned long row, 
 
 bool SparseMatrixTestFixture::TestResize(const unsigned long size, const long expectedResult) {
     Setup();
-    const size_t currentSize = sparseDistanceMatrix->seqVec.size();
     sparseDistanceMatrix->resize(size);
     const unsigned long result = sparseDistanceMatrix->seqVec.size();
     TearDown();

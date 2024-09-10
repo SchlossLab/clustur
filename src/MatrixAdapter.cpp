@@ -6,13 +6,13 @@
 #include <map>
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
-                             const std::vector<double> &dataValues, const double cutoff, const bool isSimularity,
+                             const std::vector<double> &dataValues, const double cutOff, const bool isSimularity,
                              const CountTableAdapter& table): countTable(table),xPosition(iIndexes), yPosition(jIndexes),
-                            data(dataValues), cutoff(cutoff) {
-    phylipReader = new ReadPhylipMatrix(cutoff, isSimularity);
+                            data(dataValues) {
+    phylipReader = new ReadPhylipMatrix(cutOff, isSimularity);
 }
 
-ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) {
+ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) const {
     if(path.empty())
         return nullptr;
     phylipReader->read(path);

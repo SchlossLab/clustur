@@ -19,7 +19,6 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
     if(!fileHandle.is_open())
         return false;
 
-    const ListVector *nameMap = nullptr;
     float distance;
     int square = 0;
     std::string name;
@@ -54,7 +53,6 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
 
     DMatrix->resize(nseqs);
     if (square == 0) {
-        int index = 0;
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
@@ -71,13 +69,11 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
                     const PDistCell value(i, distance);
                     DMatrix->addCell(j, value);
                 }
-                index++;
             }
 
         }
     }
     else {
-        int index = nseqs;
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
@@ -95,7 +91,6 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
                     const PDistCell value(i, distance);
                     DMatrix->addCell(j, value);
                 }
-                index++;
             }
 
         }
