@@ -12,7 +12,7 @@
 Utils::Utils() {
     constexpr long long seed = 19760620;
     mersenne_twister_engine.seed(seed);
-    srand(seed);
+    std::srand(seed);
 }
 
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
