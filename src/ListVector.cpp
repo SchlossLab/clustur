@@ -59,7 +59,7 @@ std::vector<std::string> ListVector::getLabels() {
 }
 
 std::string ListVector::get(const long long index) {
-    if (index > 0 && index < static_cast<long long>(data.size())) { return data[index]; }
+    if (index >= 0 && index < static_cast<long long>(data.size())) { return data[index]; }
     return "";
 }
 
