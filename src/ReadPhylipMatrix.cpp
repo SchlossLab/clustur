@@ -62,7 +62,7 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
             for (int j = 0; j < i; j++) {
                 fileHandle >> distance;
 
-                if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1.0 - distance; }
+                if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1 - distance; }
                 //user has entered a sim matrix that we need to convert.
 
                 if (distance <= cutoff) {
@@ -84,7 +84,7 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
                 fileHandle >> distance;
 
 
-                if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1.0 - distance; }
+                if (util.isEqual(distance, -1)) { distance = 1000000; } else if (sim) { distance = 1 - distance; }
                 //user has entered a sim matrix that we need to convert.
 
                 if (distance <= cutoff && j < i) {
@@ -106,7 +106,7 @@ bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
         return false;
     std::string name = rowData[0].name;
     std::vector<std::string> matrixNames;
-    const size_t nseqs = rowData.size();
+    const int nseqs = static_cast<int>(rowData.size());
     list = new ListVector(nseqs);
     list->set(0, name);
 
@@ -117,7 +117,7 @@ bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
         matrixNames.push_back(name); // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
         // Where it should be giving me the distance between 1 and 2, its not giving me any distance, I removed them.
         for (int j = 0; j < i; j++) {
-            float distance = rowData[i].rowValues[j];
+            auto distance = static_cast<float>(rowData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
                 distance = 1000000;

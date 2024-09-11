@@ -10,7 +10,7 @@ bool UtilsTestFixture::TestMothurRandomShufflesRandomizesData(std::vector<int> l
     //Deep copy
     const size_t count = listToRandomize.size();
     std::vector<int> copiedList(count);
-    for(int i = 0; i < count; i++) {
+    for(size_t i = 0; i < count; i++) {
         copiedList[i] = listToRandomize[i];
     }
     utils->mothurRandomShuffle(listToRandomize);
@@ -25,7 +25,7 @@ bool UtilsTestFixture::TestMotherRandomShuffleOverloadRandomizesData(std::vector
     //Deep copy
     const size_t count = listToRandomize.size();
     std::vector<std::string> copiedList(count);
-    for(int i = 0; i < count; i++) {
+    for(size_t i = 0; i < count; i++) {
         copiedList[i] = listToRandomize[i];
     }
     utils->mothurRandomShuffle(listToRandomize);
