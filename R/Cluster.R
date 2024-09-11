@@ -21,18 +21,22 @@ opti_cluster <- function(sparse_matrix, cutoff, count_table,
                          iterations = 100, shuffle = TRUE,
                          simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
-  cluster_dfs <- MatrixToOpiMatrixCluster(sparse_matrix@i,
-                                          sparse_matrix@j,
-                                          sparse_matrix@x,
-                                          cutoff,
-                                          count_table,
-                                          iterations,
-                                          shuffle,
-                                          simularity_matrix)
-  opticluster_data <- list(abundance = cluster_dfs[[1]],
-                           cluster = cluster_dfs[[4]],
-                           cluster_metrics = cluster_dfs[[3]],
-                           other_cluster_metrics = cluster_dfs[[2]])
+  cluster_dfs <- MatrixToOpiMatrixCluster(
+    sparse_matrix@i,
+    sparse_matrix@j,
+    sparse_matrix@x,
+    cutoff,
+    count_table,
+    iterations,
+    shuffle,
+    simularity_matrix
+  )
+  opticluster_data <- list(
+    abundance = cluster_dfs[[1]],
+    cluster = cluster_dfs[[4]],
+    cluster_metrics = cluster_dfs[[3]],
+    other_cluster_metrics = cluster_dfs[[2]]
+  )
 
   return(opticluster_data)
 }
@@ -53,12 +57,16 @@ opti_cluster <- function(sparse_matrix, cutoff, count_table,
 #' @return A string of the given cluster.
 cluster <- function(sparse_matrix, cutoff, method,
                     count_table, simularity_matrix = FALSE) {
-  df <- ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                       sparse_matrix@x, cutoff, method,
-                       validate_count_table(count_table),
-                       simularity_matrix)
-  return(list(abundance = df[[1]],
-              cluster = df[[2]]))
+  df <- ClassicCluster(
+    sparse_matrix@i, sparse_matrix@j,
+    sparse_matrix@x, cutoff, method,
+    validate_count_table(count_table),
+    simularity_matrix
+  )
+  return(list(
+    abundance = df[[1]],
+    cluster = df[[2]]
+  ))
 }
 
 
@@ -71,11 +79,11 @@ cluster <- function(sparse_matrix, cutoff, method,
 #' which contains all your abundance information for each sequence.
 #' @return Validated count table.
 validate_count_table <- function(count_table_df) {
-  if (ncol(count_table_df) > 2)
+  if (ncol(count_table_df) > 2) {
     return(count_table_df)
+  }
   totals <- count_table_df$total
   count_table_df <- cbind(count_table_df, totals)
   names(count_table_df)[3] <- "no_group"
   count_table_df[[1]] <- as.character(count_table_df[[1]])
-  return(count_table_df)
 }
