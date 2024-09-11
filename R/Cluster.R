@@ -41,6 +41,29 @@ opti_cluster <- function(sparse_matrix, cutoff, count_table,
   return(opticluster_data)
 }
 
+opti_cluster_phylip <- function(phylip_path, cutoff, count_table,
+  iterations = 100, shuffle = TRUE,
+  simularity_matrix = FALSE) {
+count_table <- validate_count_table(count_table)
+cluster_dfs <- MatrixToOpiMatrixCluster(
+phylip_path,
+cutoff,
+count_table,
+iterations,
+shuffle,
+simularity_matrix
+)
+opticluster_data <- list(
+abundance = cluster_dfs[[1]],
+cluster = cluster_dfs[[4]],
+cluster_metrics = cluster_dfs[[3]],
+other_cluster_metrics = cluster_dfs[[2]]
+)
+
+return(opticluster_data)
+}
+
+
 
 #' Opticluster Description
 #'
@@ -69,6 +92,21 @@ cluster <- function(sparse_matrix, cutoff, method,
   ))
 }
 
+clusterPhylip <- function(phylip_path, cutoff, method,
+  count_table, simularity_matrix = FALSE) {
+df <- ClusterWithPhylip(
+  phylip_path, 
+  cutoff, method,
+  validate_count_table(count_table),
+  simularity_matrix
+)
+return(list(
+abundance = df[[1]],
+cluster = df[[2]]
+))
+}
+
+
 
 #' Opticluster Description
 #'
@@ -87,3 +125,19 @@ validate_count_table <- function(count_table_df) {
   names(count_table_df)[3] <- "no_group"
   count_table_df[[1]] <- as.character(count_table_df[[1]])
 }
+
+clust.abc <- function(x, ...)
+{
+    print("abc")
+}
+
+clust.bc <- function(x, ...)
+{
+  print("bcd")
+}
+clust <- function(x, ...)
+{
+  print(x)
+}
+
+

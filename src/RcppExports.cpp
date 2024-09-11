@@ -60,6 +60,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ClusterWithPhylip
+std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
+RcppExport SEXP _Opticluster_ClusterWithPhylip(SEXP phylipFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type phylipFilePath(phylipFilePathSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSimularity(isSimularitySEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterWithPhylip(phylipFilePath, cutoff, method, countTable, isSimularity));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -67,6 +82,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 6},
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 8},
     {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
+    {"_Opticluster_ClusterWithPhylip", (DL_FUNC) &_Opticluster_ClusterWithPhylip, 5},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

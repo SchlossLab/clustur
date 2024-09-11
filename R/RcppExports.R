@@ -13,3 +13,7 @@ ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTabl
     .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
 }
 
+ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimularity) {
+    .Call(`_Opticluster_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
+}
+

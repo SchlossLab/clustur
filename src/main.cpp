@@ -86,6 +86,31 @@ std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int> &xPosition,
 
 }
 
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath,
+                           const double cutoff,
+                           const std::string& method,
+                           const Rcpp::DataFrame& countTable,
+                           const bool isSimularity) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    ReadPhylipMatrix reader(cutoff, isSimularity);
+    reader.read(phylipFilePath);
+    ClusterCommand command;
+    const auto sparseMatix = reader.getDMatrix();
+    const auto listVector = reader.getListVector();
+    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    delete(listVector);
+    return {tidySharedDataFrame, clusterDataFrame};
+// TODO: INSTEAD of this, we are going to create a new entry point for phylip matices. We are going to turn them into
+// TODO: a triplicate vectors (x,y,z) and use those values to call the functions. We can do this in c++, output it
+// TODO: into r and then send it back up. That way we do not need to create overloads. Just 1 function, this also
+// TODO: future proofs the code, just incase we add more functions.
+}
+
 #endif
 // int main() {
 //     CountTableAdapterTestFixture testFixture;

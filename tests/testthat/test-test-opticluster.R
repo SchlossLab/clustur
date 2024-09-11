@@ -18,7 +18,8 @@ test_that("Clustering returns proper results", {
 test_that("Normal Cluster is able to properly cluster data", {
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
-
+  path <- "/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip_1.txt"
+  cluster_phylip_ff <- clusterPhylip(path, 0.2, "furthest", count_table, FALSE)
   cluster_furthest <- cluster(
     sparse_matrix, 0.2,
     "furthest", count_table, FALSE
@@ -46,4 +47,20 @@ test_that("Normal Cluster is able to properly cluster data", {
   expect_true(any(class(cluster_average$abundance) == "data.frame"))
   expect_true(any(class(cluster_weighted$abundance) == "data.frame"))
   expect_true(any(class(cluster_nearest$abundance) == "data.frame"))
+})
+
+test_that("Normal cluster works via phylip file", {
+
+  sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
+  phylip_path <- readRDS(test_path("extdata", "updated_phylip1.txt"))
+  count_table <- readRDS(test_path("extdata", "count_table.RDS"))
+  cluster_phylip_ff <- clusterPhylip(path, 
+    0.2, "furthest",
+    count_table, 
+    FALSE)
+  cluster_furthest <- cluster(
+    sparse_matrix, 0.2,
+    "furthest", count_table, FALSE
+  )
+  expect_true(all(cluster_furthest$cluster == cluster_phylip_ff$cluster))
 })
