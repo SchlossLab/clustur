@@ -4,17 +4,18 @@
 \alias{cluster}
 \title{Opticluster Description}
 \usage{
-cluster(sparse_matrix, cutoff, method, count_table)
+cluster(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
 }
 \arguments{
 \item{sparse_matrix}{A Sparse Matrix.}
 
-\item{cutoff}{A cutoff value}
+\item{cutoff}{A cutoff value.}
 
-\item{method}{The type of cluster you wish to conduct. There are four different types:
-furthest, nearest, average, weighted.}
+\item{method}{The type of cluster you wish to conduct; furthest, nearest, average, weighted.}
 
-\item{count_table}{A table of abundances}
+\item{count_table}{A table of names and the given abundance per group.}
+
+\item{simularity_matrix}{are you using a simularity matrix or distance matrix.}
 }
 \value{
 A string of the given cluster.

@@ -5,8 +5,8 @@
 #include "Adapters/DataFrameAdapter.h"
 #include "MothurDependencies/RAbundVector.h"
 
-std::string ListVector::getOTUName(int bin) {
-    if (binLabels.size() > bin) {
+std::string ListVector::getOTUName(const long long bin) {
+    if (static_cast<long long>(binLabels.size()) > bin) {
     } else { getLabels(); }
     return binLabels[bin];
 }
@@ -58,12 +58,12 @@ std::vector<std::string> ListVector::getLabels() {
     return binLabels;
 }
 
-std::string ListVector::get(int index) {
-    if (index < data.size()) { return data[index]; }
+std::string ListVector::get(const long long index) {
+    if (index >= 0 && index < static_cast<long long>(data.size())) { return data[index]; }
     return "";
 }
 
-void ListVector::setLabels(std::vector<std::string> labels) {
+void ListVector::setLabels(const std::vector<std::string> &labels) {
     binLabels = labels;
     getLabels();
 }
@@ -76,18 +76,18 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     //TestHelper::Print(output_cluster);
     Utils util;
     std::vector<listCt> hold;
-    for (int i = 0; i < data.size(); i++) {
-        if (data[i] != "") {
+    for (const auto & i : data) {
+        if (!i.empty()) {
             std::vector<std::string> binNames;
-            std::string bin = data[i];
+            std::string bin = i;
             util.splitAtComma(bin, binNames);
             int total = 0;
-            for (int j = 0; j < binNames.size(); j++) {
-                std::map<std::string, int>::iterator it = ct.find(binNames[j]);
+            for (const auto & binName : binNames) {
+                auto it = ct.find(binName);
                 if (it == ct.end()) {
-                } else { total += ct[binNames[j]]; }
+                } else { total += ct[binName]; }
             }
-            listCt temp(data[i], total, "");
+            listCt temp(i, total, "");
             hold.push_back(temp);
         }
     }
@@ -96,10 +96,10 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     // This means that we can create an rabundvector just by sorting it by size.
     // And it should be equal. Rabund = binSize. And since it is sorted, they should be equal.
 
-    for (int i = 0; i < hold.size(); i++) {
-        if (hold[i].bin != "") {
+    for (auto & i : hold) {
+        if (!i.bin.empty()) {
             //TestHelper::Print('\t' + hold[i].bin);
-            output_cluster += "\t" + hold[i].bin;
+            output_cluster += "\t" + i.bin;
         }
     }
     output_cluster += "\n";
@@ -107,7 +107,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
 }
 
 int ListVector::size() {
-    return data.size();
+    return static_cast<int>(data.size());
 }
 
 void ListVector::clear() {
@@ -118,17 +118,16 @@ void ListVector::resize(const int size) {
 
 std::string ListVector::print(std::ostream &output) {
     std::map<std::string, int> ct;
-    for (int i = 0; i < data.size(); i++) {
-        if (data[i] != "") {
-            std::string bin = data[i];
+    for (const auto & i : data) {
+        if (!i.empty()) {
+            std::string bin = i;
             std::vector<std::string> binNames;
             util.splitAtComma(bin, binNames);
             if (!std::isdigit(bin[0])) {
                 binNames[0] = "";
                 //continue;
             }
-            for (int j = 0; j < binNames.size(); j++) {
-                std::string key = binNames[j];
+            for (const auto& key : binNames) {
                 ct[key] = 1;
             }
         }
@@ -139,8 +138,8 @@ std::string ListVector::print(std::ostream &output) {
 RAbundVector ListVector::getRAbundVector() const {
     RAbundVector rav;
     Utils util;
-    for(int i=0;i<data.size();i++){
-        const int binSize = util.getNumNames(data[i]);
+    for(const auto & i : data){
+        const int binSize = util.getNumNames(i);
         rav.push_back(binSize);
     }
     rav.setLabel(label);
@@ -150,22 +149,22 @@ RAbundVector ListVector::getRAbundVector() const {
 
 void ListVector::printHeaders(std::string &output, std::map<std::string, int> &ct, bool sortPlease) {
     if (printListHeaders) {
-        if (binLabels.size() == 0) { sortPlease = false; } //we are creating arbitary otuNames
-        std::vector<std::string> theseLabels = getLabels();
+        if (binLabels.empty()) { sortPlease = false; } //we are creating arbitary otuNames
+        const std::vector<std::string> theseLabels = getLabels();
         if (sortPlease) {
             Utils util;
             std::vector<listCt> hold;
-            for (int i = 0; i < data.size(); i++) {
-                if (data[i] != "") {
+            for (size_t i = 0; i < data.size(); i++) {
+                if (!data[i].empty()) {
                     std::vector<std::string> binNames;
                     std::string bin = data[i];
                     util.splitAtComma(bin, binNames);
                     int total = 0;
-                    for (int j = 0; j < binNames.size(); j++) {
-                        std::map<std::string, int>::iterator it = ct.find(binNames[j]);
+                    for (const auto & binName : binNames) {
+                        auto it = ct.find(binName);
                         if (it == ct.end()) {
                             //m->mothurOut("[ERROR]: " + binNames[j] + " is not in your count table. Please correct.\n"); m->setControl_pressed(true);
-                        } else { total += ct[binNames[j]]; }
+                        } else { total += ct[binName]; }
                     }
                     listCt temp(data[i], total, theseLabels[i]);
                     hold.push_back(temp);
@@ -174,9 +173,9 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
             std::sort(hold.begin(), hold.end(), abundNamesSort2);
 
             //print original label for sorted by abundance otu
-            for (int i = 0; i < hold.size(); i++) { output += ('\t' + hold[i].label); }
+            for (auto & i : hold) { output += ('\t' + i.label); }
         } else {
-            for (int i = 0; i < theseLabels.size(); i++) { output += ('\t' + theseLabels[i]); }
+            for (const auto & theseLabel : theseLabels) { output += ('\t' + theseLabel); }
         }
 
         output += "\n";
@@ -184,7 +183,7 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
     }
 }
 ///Create Test
-Rcpp::DataFrame ListVector::CreateDataFrameFromList(const std::string& label) {
+Rcpp::DataFrame ListVector::CreateDataFrameFromList(const std::string& label) const {
     std::unordered_map<std::string, std::vector<std::string>> map;
     const std::vector<std::string> headers{"otu", "bins", "label"};
     int count = 1;

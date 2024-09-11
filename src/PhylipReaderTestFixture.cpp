@@ -36,7 +36,7 @@ bool PhylipReaderTestFixture::TestGetListVector(const std::vector<RowData> &rowD
 }
 
 void PhylipReaderTestFixture::Setup() {
-    reader = new ReadPhylipMatrix(0.2);
+    reader = new ReadPhylipMatrix(0.2, false);
 }
 
 void PhylipReaderTestFixture::TearDown() {

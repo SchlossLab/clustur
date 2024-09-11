@@ -1,5 +1,5 @@
 useDynLib(Opticluster, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom("utils", "read.table")
-export(opti_cluster)
 export(cluster)
+export(opti_cluster)

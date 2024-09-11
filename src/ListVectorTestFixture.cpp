@@ -54,7 +54,7 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetLabelsValue(
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
-    const bool result = listVector->getLabels().size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getLabels().size()) == expectedResult;
     TearDown();
     return result;
 }
@@ -74,7 +74,7 @@ bool ListVectorTestFixture::TestListVectorSetsLabelsCorrectly(const std::vector<
     const int expectedResult) {
     Setup();
     listVector->setLabels(mockListOfLabels);
-    const bool result = listVector->getLabels().size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getLabels().size()) == expectedResult;
     TearDown();
     return result;
 }
@@ -119,7 +119,7 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetOtuNamesSize(const st
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
-    const bool result = listVector->getOTUName(binToTest).size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getOTUName(binToTest).size()) == expectedResult;
     TearDown();
     return result;
 }

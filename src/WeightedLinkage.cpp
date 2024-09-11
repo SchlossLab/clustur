@@ -2,13 +2,15 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
+#include <utility>
+
 #include "MothurDependencies/WeightedLinkage.h"
 /* This class implements the WPGMA, weighted average neighbor clustering algorithm */
 
 /***********************************************************************/
 
-WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, float c, std::string s, float a) :
-    Cluster(rav, lv, dm, c, s, a)
+WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c, std::string s, const float a) :
+    Cluster(rav, lv, dm, c, std::move(s), a)
 {
     saveRow = -1;
     saveCol = -1;
@@ -31,7 +33,7 @@ bool WeightedLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
         saveCol = smallCol;
     }
 
-    colCell.dist = (colCell.dist + rowCell.dist) / 2.0;
+    colCell.dist = (colCell.dist + rowCell.dist) / 2;
 
     return(true);
 

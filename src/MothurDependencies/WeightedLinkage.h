@@ -14,8 +14,8 @@ public:
     std::string getTag() override;
 
 private:
-    int saveRow;
-    int saveCol;
+    unsigned long saveRow;
+    unsigned long saveCol;
 };
 
 #endif //WEIGHTEDLINKAGE_H

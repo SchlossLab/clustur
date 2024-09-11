@@ -7,9 +7,9 @@
 #include "Cluster.h"
 #include <string>
 
-class CompleteLinkage : public Cluster {
+class CompleteLinkage final : public Cluster {
 public:
-    CompleteLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
+    CompleteLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, const std::string &, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
 

@@ -11,17 +11,15 @@
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value
+#' @param count_table A table of names and the given abundance per group.
 #' @param iterations The number of iterations
 #' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
-#' @param count_table A table of abundances
-#' @return A data.frame of the clusters.
-opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE, count_table) {
-  index_one_list <- sparse_matrix@i
-  index_two_list <- sparse_matrix@j
-  value_list <- sparse_matrix@x
+#' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @return A data.frame of the cluster and cluster metrics.
+opti_cluster <- function(sparse_matrix, cutoff, count_table, iterations = 100, shuffle = TRUE, simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
-  cluster_dfs <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
-                                                       count_table, iterations, shuffle)
+  cluster_dfs <- MatrixToOpiMatrixCluster(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, cutoff,
+                                                       count_table, iterations, shuffle, simularity_matrix)
   opticluster_data <- list(abundance = cluster_dfs[[1]],
                            cluster = cluster_dfs[[4]],
                            cluster_metrics = cluster_dfs[[3]],
@@ -29,7 +27,8 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE
 
   return(opticluster_data)
 }
-
+# If count table and no phylip matrix, we will assume the order of the names are the same as the count table
+# It might be worth it to sort the names of a phylip file to that of the count table, or vice versa
 
 
 
@@ -40,15 +39,16 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations = 100, shuffle = TRUE
 #'
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
-#' @param cutoff A cutoff value
-#' @param count_table A table of abundances
-#' @param method The type of cluster you wish to conduct. There are four different types:
-#' furthest, nearest, average, weighted.
+#' @param cutoff A cutoff value.
+#' @param method The type of cluster you wish to conduct; furthest, nearest, average, weighted.
+#' @param count_table A table of names and the given abundance per group.
+#' @param simularity_matrix are you using a simularity matrix or distance matrix.
 #' @return A string of the given cluster.
-cluster <- function(sparse_matrix, cutoff, method, count_table)
+cluster <- function(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
 {
   df <- ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method, validate_count_table(count_table))
+                          sparse_matrix@x, cutoff, method, validate_count_table(count_table),
+                          simularity_matrix)
   
   return (list(abundance = df[[1]],
                 cluster = df[[2]]))
@@ -134,8 +134,8 @@ validate_count_table <- function(count_table_df){
 
 
 
-# count_table_no_groups <- sampled_peak_table[, 1:2]
-# # count_table_no_groups <- validate_count_table(count_table_no_groups)
+# # count_table_no_groups <- sampled_peak_table[, 1:2]
+# # # count_table_no_groups <- validate_count_table(count_table_no_groups)
 # T2 <- new("dgTMatrix",
 #           i = as.integer(c(0,1,3,4,5)),
 #           j = as.integer(c(1,0,3,4,5)),x=10*1:5, Dim=6:7)
@@ -178,3 +178,39 @@ validate_count_table <- function(count_table_df){
 # # # Create Count Table
 # write.table(sampled_peak_table, "count_table_sample.count_table", quote = F, col.names = FALSE)
 # tidy_shared <- readr::read_tsv("SharedFile_tidy.txt")
+
+
+
+# table <- readRDS("test_table.RDS")
+# T2 <- new("dgTMatrix",
+#           i = as.integer(c(0,1,3,4,5)),
+#           j = as.integer(c(1,0,3,4,5)),x=10*1:5, Dim=6:7)
+# table <- test
+# i_values  <- c()
+# y_values <- c()
+# data <-c()
+# for(i in 2:ncol(table))
+# {
+#   i_values <- c(i_values, rep(i - 1, 10))
+#   y_values <- c(y_values, 1:10)
+#   data <- c(data, table[[i]])
+# }
+
+# T2@i <- as.integer(i_values)
+# T2@j <- y_values
+# T2@x <- data
+#saveRDS(T2, "sparse_amazon.RDS")
+
+# table$Names
+ #sparse_amazon <- readRDS("sparse_amazon.RDS")
+# saveRDS(table, "test_table.RDS")
+# saveRDS(count <- data.frame(Names = table$Names, total = rep(1, 10)), "test_count.RDS")
+# test <- readRDS("test_table.RDS")
+# count <- readRDS("test_count.RDS")
+# clust <- cluster(T2, 0.3, "furthest", FALSE, count)
+
+# cluster(phylip=/Users/grejoh/Documents/OptiClusterPackage/Opticluster/sub_set_amazon.txt, method=nearest, cutoff=0.2)
+# ## TODO Fix furthest
+# WritePhylipFile(sparse_matrix@i,sparse_matrix@j, sparse_matrix@x, 0.2, count_table, "/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt")
+# # cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/updated_phylip_1.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method=average, cutoff=0.2)
+# cluster(phylip=/Users/grejoh/Documents/mothur/mothur/Clustur/phylip_test.txt, count=/Users/grejoh/Documents/mothur/mothur/Clustur/count_table.count, method = furthest, cutoff=0.2, sim=false)

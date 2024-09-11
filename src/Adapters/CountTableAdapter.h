@@ -18,6 +18,7 @@ public:
     // And if there is no count table inputted, I will create a base one.
     double FindAbundanceBasedOnGroup(const std::string& group, const std::string& sampleName) const;
     double FindTotalAbundance(const std::string& sampleName) const;
+    std::string GetNameByIndex(int) const;
     std::vector<double> GetColumnByName (const std::string& name) const;
     std::vector<std::string> GetGroups() const;
 private:

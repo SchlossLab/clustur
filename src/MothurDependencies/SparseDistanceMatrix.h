@@ -21,9 +21,9 @@ class SparseDistanceMatrix {
 public:
     SparseDistanceMatrix();
     ~SparseDistanceMatrix(){ clear(); }
-    int getNNodes();
-    unsigned long getSmallestCell(unsigned long& index);		//Return the cell with the smallest distance
-    float getSmallDist();
+    int getNNodes() const;
+    unsigned long getSmallestCell(unsigned long& row);		//Return the cell with the smallest distance
+    float getSmallDist() const;
     static bool heapComparator(const PDistCell& a, const PDistCell& b);
     int rmCell(unsigned long, unsigned long);
     int updateCellCompliment(unsigned long, unsigned long);
@@ -44,7 +44,7 @@ private:
 
     bool sorted;
     int sortSeqVec();
-    int sortSeqVec(int);
+    int sortSeqVec(unsigned long);
     float smallDist, aboveCutoff;
 
     Utils util;

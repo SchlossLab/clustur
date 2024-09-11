@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <sstream>
 
+#include "../RowData.h"
+
 
 class OptimatrixAdapter {
     ///Closeness is the data represntation, it is a vector of sets that tells us which values are closes to it ->
@@ -27,6 +29,7 @@ public:
     }
     OptiMatrix* ConvertToOptimatrix(const std::vector<int>
         &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
+    OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
     std::vector<std::set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameList;}
     std::vector<std::string> GetSingletons() {return singletons;}
