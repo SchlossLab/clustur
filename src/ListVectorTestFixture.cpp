@@ -54,7 +54,7 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetLabelsValue(
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
-    const bool result = listVector->getLabels().size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getLabels().size()) == expectedResult;
     TearDown();
     return result;
 }
@@ -74,7 +74,7 @@ bool ListVectorTestFixture::TestListVectorSetsLabelsCorrectly(const std::vector<
     const int expectedResult) {
     Setup();
     listVector->setLabels(mockListOfLabels);
-    const bool result = listVector->getLabels().size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getLabels().size()) == expectedResult;
     TearDown();
     return result;
 }
@@ -102,11 +102,12 @@ bool ListVectorTestFixture::TestListVectorPrintDisplaysDataCorrectly(
     const std::vector<std::string> &mockListOfSequences, const std::string& expectedResult) {
     Setup();
     std::ofstream stream;
+    listVector->setPrintedLabels(true);
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
     // Get rid of ofstream in listVector
-    const bool result =listVector->print(stream) == expectedResult;
+    const bool result = listVector->print(stream) == expectedResult;
     TearDown();
     return result;
 }
@@ -118,10 +119,20 @@ bool ListVectorTestFixture::TestListVectorReturnsCorrectGetOtuNamesSize(const st
     for (const auto& sequences: mockListOfSequences) {
         listVector->push_back(sequences);
     }
-    const bool result = listVector->getOTUName(binToTest).size() == expectedResult;
+    const bool result = static_cast<int>(listVector->getOTUName(binToTest).size()) == expectedResult;
     TearDown();
     return result;
 }
+bool ListVectorTestFixture::TestCreateDataFrameFromList(const std::string& label, const bool expectResult) {
+    Setup();
+    listVector->push_back("2");
+    listVector->push_back("1");
+    auto df = listVector->CreateDataFrameFromList(label);
+    const std::vector<std::string> names = df.names();
+    TearDown();
+    return expectResult == !names.empty();
+}
+
 
 void ListVectorTestFixture::Setup() {
     listVector = new ListVector();

@@ -20,14 +20,14 @@ public:
     ~OptiCluster() = default;
 
     std::string getTag() { std::string tag = "opti_" + metric->getName(); return tag; }
-    long long getNumBins();
-    int initialize(double&, bool, std::string);  //randomize and place in "best" OTUs
+    long long getNumBins() const;
+    int initialize(double&, bool, const std::string&);  //randomize and place in "best" OTUs
 
     bool update(double&); //returns whether list changed and MCC
-    std::vector<double> getStats( double&,  double&,  double&,  double&);
-    std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
-    std::vector<double> getCloseFarCounts(long long seq, long long newBin);
-    ListVector* getList();
+    std::vector<double> getStats( double&,  double&,  double&,  double&) const;
+    std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
+    std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
+    ListVector* getList() const;
 
 protected:
     OptiData* matrix;
@@ -42,7 +42,7 @@ protected:
     long long  numFitSeqs, numFitSingletons;
     long long  numComboSeqs, numComboSingletons;
     double truePositives, trueNegatives, falsePositives, falseNegatives;
-    long long findInsert();
+    long long findInsert() const;
 };
 
 

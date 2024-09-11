@@ -6,7 +6,8 @@
 
 /***********************************************************************/
 
-SingleLinkage::SingleLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, float c, std::string s, float a) :
+SingleLinkage::SingleLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c,
+    const std::string& s, const float a) :
 Cluster(rav, lv, dm, c, s, a)
 {}
 
@@ -19,7 +20,7 @@ std::string SingleLinkage::getTag() {
 /***********************************************************************/
 //This function updates the distance based on the nearest neighbor method.
 bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
-    bool changed = false;
+    constexpr bool changed = false;
     if (colCell.dist > rowCell.dist) {
         colCell.dist = rowCell.dist;
     }

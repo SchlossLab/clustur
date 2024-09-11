@@ -16,7 +16,7 @@
 class ReadPhylipMatrix  {
 
 public:
-    ReadPhylipMatrix(double);
+    ReadPhylipMatrix(double, bool);
     // ReadPhylipMatrix(std::string, bool);
     ~ReadPhylipMatrix() {};
     SparseDistanceMatrix* getDMatrix() const { return DMatrix;}
@@ -28,7 +28,7 @@ private:
     SparseDistanceMatrix* DMatrix;
     ListVector* list;
     double cutoff;
-    bool sim = false;
+    bool sim = true;
     Utils util;
 };
 

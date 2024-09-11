@@ -11,7 +11,7 @@
 #include "../MothurDependencies/Utils.h"
 
 
-class UtilsTestFixture : TestFixture {
+class UtilsTestFixture final : TestFixture {
 public:
     bool TestMothurRandomShufflesRandomizesData(std::vector<int> listToRandomize,
     bool expectedResult);

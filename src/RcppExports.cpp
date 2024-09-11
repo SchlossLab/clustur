@@ -11,22 +11,23 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // WritePhylipFile
-void WritePhylipFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& saveLocation);
-RcppExport SEXP _Opticluster_WritePhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP saveLocationSEXP) {
+void WritePhylipFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation);
+RcppExport SEXP _Opticluster_WritePhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
     Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type saveLocation(saveLocationSEXP);
-    WritePhylipFile(xPosition, yPosition, data, cutoff, saveLocation);
+    WritePhylipFile(xPosition, yPosition, data, cutoff, countTable, saveLocation);
     return R_NilValue;
 END_RCPP
 }
 // MatrixToOpiMatrixCluster
-std::vector<std::string> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const int maxIterations, const bool shuffle);
-RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP) {
+std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
+RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -34,15 +35,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
     Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
     Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
-    rcpp_result_gen = Rcpp::wrap(MatrixToOpiMatrixCluster(xPosition, yPosition, data, cutoff, maxIterations, shuffle));
+    Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
+    rcpp_result_gen = Rcpp::wrap(MatrixToOpiMatrixCluster(xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim));
     return rcpp_result_gen;
 END_RCPP
 }
 // ClassicCluster
-std::string ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method);
-RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP) {
+std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
+RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,7 +54,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
-    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method));
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSimularity(isSimularitySEXP);
+    rcpp_result_gen = Rcpp::wrap(ClassicCluster(xPosition, yPosition, data, cutoff, method, countTable, isSimularity));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -59,9 +64,9 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 5},
-    {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 6},
-    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 5},
+    {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 6},
+    {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 8},
+    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

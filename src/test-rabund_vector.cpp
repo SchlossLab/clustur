@@ -60,14 +60,14 @@ context("RAdbundVector Test") {
         expect_false(result);
     }    test_that("RAbund vector can properly return its correct size") {
         RAbundVectorTestFixture fixture;
-        bool result = fixture.TestSize(6);
+        bool result = fixture.TestSize(5);
         expect_true(result);
         result = fixture.TestSize(4);
         expect_false(result);
     }
         test_that("RAbund vector can properly return its data") {
         RAbundVectorTestFixture fixture;
-        bool result = fixture.TestGetOverload({1,1,1,1,1,1});
+        bool result = fixture.TestGetOverload({1,1,1,1,1});
         expect_true(result);
         result = fixture.TestGetOverload({1,1,1,1});
         expect_false(result);
@@ -88,14 +88,14 @@ context("RAdbundVector Test") {
     }
        test_that("RAbund vector can properly return its number of bins") {
         RAbundVectorTestFixture fixture;
-        bool result = fixture.TestGetNumBins(6);
+        bool result = fixture.TestGetNumBins(5);
         expect_true(result);
-        result = fixture.TestGetNumBins(5);
+        result = fixture.TestGetNumBins(4);
         expect_false(result);
     }
            test_that("RAbund vector can properly return its number of sequences") {
         RAbundVectorTestFixture fixture;
-        bool result = fixture.TestGetNumSeqs(6);
+        bool result = fixture.TestGetNumSeqs(5);
         expect_true(result);
         result = fixture.TestGetNumSeqs(1);
         expect_false(result);

@@ -37,7 +37,11 @@
 #include "ClusterMetric.h"
 #include "OptiMatrix.h"
 #include <chrono>
+#include <Rcpp.h>
+
+#include "ClusterExport.h"
 #include "SingleLinkage.h"
+#include "../Adapters/DataFrameAdapter.h"
 using namespace std;
 
 /* The cluster() command:
@@ -56,29 +60,30 @@ public:
 	bool SetMaxIterations(const int iterations) {maxIters = iterations; return maxIters == iterations;}
 	bool SetOpticlusterRandomShuffle(const bool shuffle) {canShuffle = shuffle; return canShuffle;}
 	bool SetMetricType(const string& newMetric) {metric = newMetric; return metric == newMetric;}
-	std::vector<std::string> runOptiCluster(OptiMatrix*);
+	Rcpp::DataFrame GetSensitivityData() const {return DataFrameAdapter::UnorderedMapToDataFrame(dataframeMapSensMetrics);}
+	Rcpp::DataFrame GetClusterMetrics() const {return DataFrameAdapter::UnorderedMapToDataFrame(dataframeMapClusterMetrics);}
+	ClusterExport* runOptiCluster(OptiMatrix*, double);
 
-	std::string runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
+	ClusterExport* runMothurCluster(const std::string& clusterMethod, SparseDistanceMatrix *matrix, double cutoff, ListVector*);
 
 	std::string PrintData(const string &label, map<string, int> &counts, bool &ph);
 
+
 private:
-	ListVector* list;
 	ListVector oldList;
-	bool abort, sim, cutOffSet;
 	string method, fileroot, tag, phylipfile, columnfile, namefile, format, distfile, countfile, fastafile, inputDir, vsearchLocation, metric, initialize;
 	double cutoff, stableMetric = 0;
     float adjust = -1;
 	string showabund, timing, metricName;
-	int precision = 1000, length, maxIters = 2, processors;
+	int precision = 100, maxIters = 100;
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;
-	bool print_start;
 	time_t start;
-	unsigned long loops;
 	bool canShuffle;
 	vector<string> outputNames;
+	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;
+	std::unordered_map<std::string, std::vector<std::string>> dataframeMapSensMetrics;
 };
 
 #endif

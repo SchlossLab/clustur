@@ -22,8 +22,11 @@ public:
         int expectedResult);
     bool TestListVectorReturnsCorrectGetOtuNamesSize(const std::vector<std::string>& mockListOfSequences,
         int binToTest, int expectedResult);
+
+    bool TestCreateDataFrameFromList(const std::string &label, bool expectResult);
+
     bool TestListVectorReturnsCorrectGetOtuNames(const std::vector<std::string>& mockListOfSequences,
-        int binToTest, const std::string& expectedResult);
+                                                 int binToTest, const std::string& expectedResult);
     bool TestListVectorSetsLabelsCorrectly(const std::vector<std::string>& mockListOfLabels,
         int expectedResult);
     bool TestListVectorSetsPrintedLabelsCorrectly(bool mockValue, bool expectedResult);

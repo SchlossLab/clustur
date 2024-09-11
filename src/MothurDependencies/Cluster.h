@@ -15,11 +15,11 @@
 class ListVector;
 
 // typedef unsigned long ull;
-class Cluster {
+class Cluster  {
 
 public:
 	Cluster(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
-    Cluster() {}
+    Cluster() = default;
     virtual ~Cluster() = default;
     virtual bool update(double&);
 	virtual std::string getTag() = 0;
@@ -32,15 +32,15 @@ protected:
 	virtual bool updateMap();
 
 
-	RAbundVector* rabund;
-	ListVector* list;
-	SparseDistanceMatrix* dMatrix;
+	RAbundVector* rabund{};
+	ListVector* list{};
+	SparseDistanceMatrix* dMatrix{};
 
-	unsigned long smallRow, smallCol, nRowCells, nColCells;
-	float cutoff;
+	unsigned long smallRow{}, smallCol{}, nRowCells{}, nColCells{};
+	float cutoff{};
 	std::string method;
-	float smallDist, adjust;
-	bool mapWanted;
+	float smallDist{}, adjust{};
+	bool mapWanted{};
 	std::map<std::string, int> seq2Bin;
 
 

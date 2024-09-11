@@ -41,7 +41,7 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # CMakeCheck list via Clion
-CMakeLists.txt
+src/CMakeLists.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -192,3 +192,4 @@ fabric.properties
 # idea folder, uncomment if you don't need it
 .idea
 src/.DS_Store
+/.vscode

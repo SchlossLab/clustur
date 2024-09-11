@@ -13,19 +13,19 @@ SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX)
 
 /***********************************************************************/
 
-int SparseDistanceMatrix::getNNodes(){
+int SparseDistanceMatrix::getNNodes() const{
 	return numNodes; 
 }
 /***********************************************************************/
 
 void SparseDistanceMatrix::clear(){
-    for (int i = 0; i < seqVec.size(); i++) {  seqVec[i].clear();  }
+    for (auto & i : seqVec) {  i.clear();  }
     seqVec.clear();
 }
 
 /***********************************************************************/
 
-float SparseDistanceMatrix::getSmallDist(){
+float SparseDistanceMatrix::getSmallDist() const{
 	return smallDist;
 }
 
@@ -35,14 +35,14 @@ bool SparseDistanceMatrix::heapComparator(const PDistCell &a, const PDistCell &b
 
 /***********************************************************************/
 
-int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long col){
+int SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const unsigned long col){
 
         
-    unsigned long vrow = seqVec[row][col].index;
+    const unsigned long vrow = seqVec[row][col].index;
     unsigned long vcol = 0;
 
     //find the columns entry for this cell as well
-    for (int i = 0; i < seqVec[vrow].size(); i++) {
+    for (size_t i = 0; i < seqVec[vrow].size(); i++) {
         if (seqVec[vrow][i].index == row) { vcol = i;  break; }
     }
 
@@ -53,18 +53,16 @@ int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long 
 }
 /***********************************************************************/
 
-int SparseDistanceMatrix::rmCell(unsigned long row, unsigned long col){
-    if(row > seqVec.max_size() || col > seqVec.max_size())
-        return 0;
+int SparseDistanceMatrix::rmCell(const unsigned long row, const unsigned long col){
     numNodes-=2;
 
-    unsigned long vrow = seqVec[row][col].index;
+    const unsigned long vrow = seqVec[row][col].index;
     unsigned long vcol = 0;
 
     //find the columns entry for this cell as well
-    for (int i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
-    seqVec[vrow].erase(seqVec[vrow].begin()+vcol);
-    seqVec[row].erase(seqVec[row].begin()+col);
+    for (size_t i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
+    seqVec[vrow].erase(seqVec[vrow].begin()+static_cast<int>(vcol));
+    seqVec[row].erase(seqVec[row].begin()+static_cast<int>(col));
 
 
 	return(0);
@@ -75,28 +73,32 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
     numNodes+=2;
 
     if(cell.dist < smallDist){ smallDist = cell.dist;}
+    
     seqVec[row].push_back(cell);
-    if(row == cell.index) return;
     const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
 
     // It pushes itself back in the row, and in the column to create the sparse matrix
 }
 /***********************************************************************/
-int SparseDistanceMatrix::addCellSorted(unsigned long row, PDistCell cell){
+int SparseDistanceMatrix::addCellSorted(const unsigned long row, const PDistCell cell){
 
 	numNodes+=2;
 	if(cell.dist < smallDist){ smallDist = cell.dist; }
 
     seqVec[row].push_back(cell);
-    PDistCell temp(row, cell.dist);
+    const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
 
     sortSeqVec(row);
     sortSeqVec(cell.index);
 
     int location = -1; //find location of new cell when sorted
-    for (int i = 0; i < seqVec[row].size(); i++) {  if (seqVec[row][i].index == cell.index) { location = i; break; } }
+    for (size_t i = 0; i < seqVec[row].size(); i++) {
+        if (seqVec[row][i].index == cell.index) {
+            location = static_cast<int>(i); break;
+        }
+    }
 
     return location;
 }
@@ -110,8 +112,8 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 
     std::vector<PDistCellMin> mins;
     smallDist = MOTHURMAX;
-    for (int i = 0; i < seqVec.size(); i++) {
-        for (int j = 0; j < seqVec[i].size(); j++) {
+    for (size_t i = 0; i < seqVec.size(); i++) {
+        for (size_t j = 0; j < seqVec[i].size(); j++) {
 
             if (i < seqVec[i][j].index) {
                 const float dist = seqVec[i][j].dist;
@@ -134,6 +136,9 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
     const unsigned long num = util.getRandomIndex(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
+    // util.mothurRandomShuffle(mins);  //randomize the order of the iterators in the mins vector
+    // row = mins[0].row;
+    // const unsigned long col = mins[0].col;
 	return col;
 
 }
@@ -158,13 +163,13 @@ bool SparseDistanceMatrix::print() const{
 int SparseDistanceMatrix::sortSeqVec(){
         
         //saves time in getSmallestCell, by making it so you dont search the repeats
-    for (int i = 0; i < seqVec.size(); i++) {  sort(seqVec[i].begin(), seqVec[i].end(), PDistCell::CompareIndexes); }
+    for (auto & i : seqVec) {  sort(i.begin(), i.end(), PDistCell::CompareIndexes); }
 
     return 0;
 }
 /***********************************************************************/
 
-int SparseDistanceMatrix::sortSeqVec(int index){
+int SparseDistanceMatrix::sortSeqVec(const unsigned long index){
 
     //saves time in getSmallestCell, by making it so you dont search the repeats
     sort(seqVec[index].begin(), seqVec[index].end(), PDistCell::CompareIndexes);

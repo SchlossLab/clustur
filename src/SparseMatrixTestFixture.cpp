@@ -59,9 +59,8 @@ bool SparseMatrixTestFixture::TestUpdateCellCompliment(const unsigned long row, 
 
 bool SparseMatrixTestFixture::TestResize(const unsigned long size, const long expectedResult) {
     Setup();
-    const size_t currentSize = sparseDistanceMatrix->seqVec.size();
     sparseDistanceMatrix->resize(size);
-    const unsigned long result = sparseDistanceMatrix->seqVec.size();
+    const auto result = static_cast<int>(sparseDistanceMatrix->seqVec.size());
     TearDown();
     return result == expectedResult;
 }
@@ -105,7 +104,16 @@ bool SparseMatrixTestFixture::TestPrint(const bool clear, const bool expectedRes
 
 
 void SparseMatrixTestFixture::Setup() {
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2);
+    const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+    const std::vector<double> total{10, 20, 30, 40, 50, 60};
+    const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+        Rcpp::Named("Representative Sequence") = compounds,
+        Rcpp::Named("total") = total,
+        Rcpp::Named("nogroup") = total);
+    CountTableAdapter countTable;
+    countTable.CreateDataFrameMap(dataframe);
+    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2,
+        false, countTable);
     sparseDistanceMatrix = adapter.CreateSparseMatrix();
 }
 

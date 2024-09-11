@@ -6,6 +6,7 @@
 #define MATRIXADAPTERTESTFIXTURE_H
 #include "TestFixture.h"
 #include <vector>
+#include <Rcpp.h>
 #include "../Adapters/MatrixAdapter.h"
 
 

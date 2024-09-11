@@ -11,36 +11,35 @@
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value
+#' @param count_table A table of names and the given abundance per group.
 #' @param iterations The number of iterations
-#' @param shuffle a boolean to determine whether or not you want to shuffle the data before you cluster
-#' @return A data.frame of the clusters.
-opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
-  index_one_list <- sparse_matrix@i
-  index_two_list <- sparse_matrix@j
-  value_list <- sparse_matrix@x
-  clustering_output_string_list <- MatrixToOpiMatrixCluster(index_one_list, index_two_list, value_list, cutoff,
-                                                       iterations, shuffle)
-  clustering_output_string <- clustering_output_string_list[1]
-  clustering_metric <- clustering_output_string_list[2]
-  clustering_metric_2 <- clustering_output_string_list[3]
-  df_cluster_metrics <- (read.table(text = clustering_metric,
-                     sep = "\t", header = TRUE))
-  df_other_cluster_metrics <-  (read.table(text = clustering_metric_2,
-                     sep = "\t", header = TRUE))
-
-  df_cluster <- t(read.table(text = clustering_output_string,
-                     sep = "\t", header = TRUE))
-  df_cluster <- data.frame(df_cluster[-1, ])
-
-  colnames(df_cluster)[1] <- "cluster"
-
-  opticluster_data <- list(cluster = df_cluster,
-                           cluster_metrics = df_cluster_metrics,
-                           other_cluster_metrics = df_other_cluster_metrics)
+#' @param shuffle a boolean to determine whether or
+#'  not you want to shuffle the data before you cluster
+#' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @return A data.frame of the cluster and cluster metrics.
+opti_cluster <- function(sparse_matrix, cutoff, count_table,
+                         iterations = 100, shuffle = TRUE,
+                         simularity_matrix = FALSE) {
+  count_table <- validate_count_table(count_table)
+  cluster_dfs <- MatrixToOpiMatrixCluster(
+    sparse_matrix@i,
+    sparse_matrix@j,
+    sparse_matrix@x,
+    cutoff,
+    count_table,
+    iterations,
+    shuffle,
+    simularity_matrix
+  )
+  opticluster_data <- list(
+    abundance = cluster_dfs[[1]],
+    cluster = cluster_dfs[[4]],
+    cluster_metrics = cluster_dfs[[3]],
+    other_cluster_metrics = cluster_dfs[[2]]
+  )
 
   return(opticluster_data)
 }
-
 
 
 #' Opticluster Description
@@ -49,13 +48,42 @@ opti_cluster <- function(sparse_matrix, cutoff, iterations, shuffle = TRUE) {
 #'
 #' @export
 #' @param sparse_matrix A Sparse Matrix.
-#' @param cutoff A cutoff value
-#' @param method The type of cluster you wish to conduct. There are four different types:
-#' furthest, nearest, average, weighted.
+#' @param cutoff A cutoff value.
+#' @param method The type of cluster you wish to conduct;
+#'  furthest, nearest, average, weighted.
+#' @param count_table A table of names and the given abundance per group.
+#' @param simularity_matrix are you using a simularity matrix or
+#'  distance matrix.
 #' @return A string of the given cluster.
-cluster <- function(sparse_matrix, cutoff, method)
-{
+cluster <- function(sparse_matrix, cutoff, method,
+                    count_table, simularity_matrix = FALSE) {
+  df <- ClassicCluster(
+    sparse_matrix@i, sparse_matrix@j,
+    sparse_matrix@x, cutoff, method,
+    validate_count_table(count_table),
+    simularity_matrix
+  )
+  return(list(
+    abundance = df[[1]],
+    cluster = df[[2]]
+  ))
+}
 
-  return (ClassicCluster(sparse_matrix@i, sparse_matrix@j,
-                           sparse_matrix@x, cutoff, method))
+
+#' Opticluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param count_table_df The count table,
+#' which contains all your abundance information for each sequence.
+#' @return Validated count table.
+validate_count_table <- function(count_table_df) {
+  if (ncol(count_table_df) > 2) {
+    return(count_table_df)
+  }
+  totals <- count_table_df$total
+  count_table_df <- cbind(count_table_df, totals)
+  names(count_table_df)[3] <- "no_group"
+  count_table_df[[1]] <- as.character(count_table_df[[1]])
 }

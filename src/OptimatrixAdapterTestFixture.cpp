@@ -19,9 +19,8 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(co
                                                                               const std::vector<double> &data,
                                                                               const int expectedSizeOfList) {
     Setup();
-    bool hasPassed = false;
     adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    hasPassed = adapter->GetCloseness().size() == expectedSizeOfList;
+    const bool hasPassed = static_cast<int>(adapter->GetCloseness().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }
@@ -31,9 +30,8 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue(co
                                                                                 const std::vector<double> &data,
                                                                                 const int expectedSizeOfList) {
     Setup();
-    bool hasPassed = false;
     adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    hasPassed = adapter->GetSingletons().size() == expectedSizeOfList;
+    const bool hasPassed = static_cast<int>(adapter->GetSingletons().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }
@@ -42,13 +40,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(con
                                                                                 const std::vector<int> &yPosition,
                                                                                 const std::vector<double> &data,
                                                                                 const int expectedSizeOfList) {
-
-    // OptimatrixAdapter adapt(0.03);
-    // adapt.ConvertToOptimatrix(xVals, yVals, data);
     Setup();
-    bool hasPassed = false;
     adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    hasPassed = adapter->GetNameList().size() == expectedSizeOfList;
+    const bool hasPassed = static_cast<int>(adapter->GetNameList().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }

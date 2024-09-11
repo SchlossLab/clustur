@@ -20,15 +20,13 @@ public:
     virtual int size() = 0;
     virtual void clear() = 0;
 
-    //virtual RAbundVector getRAbundVector() = 0;
-    //virtual SAbundVector getSAbundVector() = 0;
-    //virtual OrderVector getOrderVector(std::map<std::string,int>* hold = nullptr) = 0;
     virtual void resize(int) = 0;
 
     virtual std::string print(std::ostream&, std::map<std::string, int>&) {return "";}
-    virtual std::string printHeaders(std::ostream&) {return "";}
+    virtual void printHeaders(std::string&, std::map<std::string, int>&, bool) {};
     virtual std::string print(std::ostream&, bool&) {return "";}
     virtual std::string print(std::ostream&) {return "";}
+    virtual void print() {};
 
     void setLabel(const std::string& l)		{	label = l;			}
     std::string getLabel()			    {	return label;		}
