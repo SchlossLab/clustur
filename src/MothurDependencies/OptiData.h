@@ -20,13 +20,13 @@ public:
     virtual ~OptiData(){}
 
     std::set<long long> getCloseSeqs(long long i);
-    bool isClose(long long, long long);
-    long long getNumClose(long long);
+    bool isClose(long long, long long) const;
+    long long getNumClose(long long) const;
     std::string getName(long long); //name from nameMap index
 
     long long getNumSeqs() { return closeness.size(); }
     long long getNumSingletons() { return singletons.size(); }
-    ListVector* getListSingle();
+    ListVector* getListSingle() const;
      virtual std::set<long long> getCloseRefSeqs(long long i) { std::set<long long> temp; return temp;  }
      virtual bool isCloseFit(long long j, long long i, bool&) { return false; }
 protected:

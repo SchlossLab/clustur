@@ -2,6 +2,8 @@
 // Created by Gregory Johnson on 6/14/24.
 //
 
+#include <utility>
+
 #include "MothurDependencies/Cluster.h"
 
 /*
@@ -16,8 +18,8 @@
 
 /***********************************************************************/
 
-Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, float c, std::string f,
-                 float cs) : rabund(rav), list(lv), dMatrix(dm), method(f), adjust(cs) {
+Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, const float c, std::string f,
+                 const float cs) : rabund(rav), list(lv), dMatrix(dm), method(std::move(f)), adjust(cs) {
     mapWanted = false; //set to true by mgcluster to speed up overlap merge
 
     //save so you can modify as it changes in average neighbor
@@ -28,8 +30,10 @@ Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, fl
 bool Cluster::clusterBins() {
     // if(list->size() <= 0)
     //     return false;
-    rabund->set(smallCol, rabund->get(smallRow) + rabund->get(smallCol));
-    rabund->set(smallRow, 0);
+    const int sCol = static_cast<int>(smallCol);
+    const int sRow = static_cast<int>(smallRow);
+    rabund->set(sCol, rabund->get(sRow) + rabund->get(sCol));
+    rabund->set(sRow, 0);
     rabund->setLabel(std::to_string(smallDist));
     return true;
 }
@@ -40,9 +44,10 @@ bool Cluster::clusterNames() {
     // if(list->size() <= 0)
     //     return false;
     if (mapWanted) { updateMap(); }
-
-    list->set(smallCol, list->get(smallRow) + ',' + list->get(smallCol));
-    list->set(smallRow, "");
+    const int sCol = static_cast<int>(smallCol);
+    const int sRow = static_cast<int>(smallRow);
+    list->set(sCol, list->get(sRow) + ',' + list->get(sCol));
+    list->set(sRow, "");
     list->setLabel(std::to_string(smallDist));
     return true;
     // std::ofstream stream;
@@ -52,25 +57,24 @@ bool Cluster::clusterNames() {
 /***********************************************************************/
 bool Cluster::update(double &cutOFF) {
     smallCol = dMatrix->getSmallestCell(smallRow);
-    if (smallCol == -1)
+    if (static_cast<int>(smallCol) == -1)
         return false;
     nColCells = dMatrix->seqVec[smallCol].size();
     nRowCells = dMatrix->seqVec[smallRow].size();
     std::vector<int> foundCol(nColCells, 0);
 
-    int search;
     bool changed = false;
 
-    for (int i = nRowCells - 1; i >= 0; i--) {
+    for (int i = static_cast<int>(nRowCells) - 1; i >= 0; i--) {
         //matrix indexes sorted from largest to smallest, so start at smallest index
 
 
         //if you are not the smallCell
         if (dMatrix->seqVec[smallRow][i].index != smallCol) {
-            search = dMatrix->seqVec[smallRow][i].index;
+            const unsigned long search = dMatrix->seqVec[smallRow][i].index;
 
             bool merged = false;
-            for (int j = 0; j < nColCells; j++) {
+            for (size_t j = 0; j < nColCells; j++) {
                 //go through each distance the smallCol has looking for matching distance to find
 
                 if (dMatrix->seqVec[smallCol][j].index != smallRow) {
@@ -87,14 +91,14 @@ bool Cluster::update(double &cutOFF) {
                         if (!util.isEqual(adjust, -1)) {
                             //adjust
                             merged = true;
-                            PDistCell value(search, adjust); //create a distance for the missing value
-                            int location = dMatrix->addCellSorted(smallCol, value);
+                            const PDistCell value(search, adjust); //create a distance for the missing value
+                            const int location = dMatrix->addCellSorted(smallCol, value);
                             changed = updateDistance(dMatrix->seqVec[smallCol][location], dMatrix->seqVec[smallRow][i]);
                             dMatrix->updateCellCompliment(smallCol, location);
                             nColCells++;
                             foundCol.push_back(0); //add a new found column
                             //adjust value
-                            for (int k = foundCol.size() - 1; k > location; k--) { foundCol[k] = foundCol[k - 1]; }
+                            for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                             foundCol[location] = 1;
                         }
                         j += nColCells; //jump out of loop and remove cell below
@@ -107,12 +111,12 @@ bool Cluster::update(double &cutOFF) {
             }
             if ((method == "nearest") && (!merged)) {
                 //you are a row dist without a column dist, add you as a column dist
-                PDistCell value(search, dMatrix->seqVec[smallRow][i].dist); //create a distance for the missing value
-                int location = dMatrix->addCellSorted(smallCol, value);
+                const PDistCell value(search, dMatrix->seqVec[smallRow][i].dist); //create a distance for the missing value
+                const int location = dMatrix->addCellSorted(smallCol, value);
                 nColCells++;
                 foundCol.push_back(0); //add a new found column
                 //adjust value
-                for (int k = foundCol.size() - 1; k > location; k--) { foundCol[k] = foundCol[k - 1]; }
+                for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                 foundCol[location] = 1;
             }
             dMatrix->rmCell(smallRow, i);
@@ -122,7 +126,7 @@ bool Cluster::update(double &cutOFF) {
     clusterNames();
 
     if (method == "nearest") {
-        for (int i = nColCells - 1; i >= 0; i--) {
+        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff -> keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
@@ -134,7 +138,7 @@ bool Cluster::update(double &cutOFF) {
             }
         }
     } else {
-        for (int i = nColCells - 1; i >= 0; i--) {
+        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff -> keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
@@ -164,20 +168,20 @@ bool Cluster::update(double &cutOFF) {
 /***********************************************************************/
 bool Cluster::updateMap() {
     //update location of seqs in smallRow since they move to smallCol now
-    std::string names = list->get(smallRow);
-    std::string individual = "";
-    int binNameslength = names.size();
-    if(names.size() <= 0)
+    const std::string names = list->get(static_cast<int>(smallRow));
+    std::string individual;
+    const size_t binNameslength = names.size();
+    if(names.empty())
         return false;
 
-    for (int j = 0; j < binNameslength; j++) {
+    for (size_t j = 0; j < binNameslength; j++) {
         if (names[j] == ',') {
-            seq2Bin[individual] = smallCol;
+            seq2Bin[individual] = static_cast<int>(smallCol);
             individual = "";
         } else { individual += names[j]; }
     }
     //get last name
-    seq2Bin[individual] = smallCol;
+    seq2Bin[individual] = static_cast<int>(smallCol);
     return true;
 }
 

@@ -27,32 +27,31 @@
 class RAbundFloatVector;
 class OrderVector;
 
-class RAbundVector : public DataVector {
+class RAbundVector final : public DataVector {
 
 public:
     RAbundVector();
-    RAbundVector(int);
-    ~RAbundVector();
+    explicit RAbundVector(int);
+    ~RAbundVector() override;
 
     int getNumBins();
     int getNumSeqs();
     int getMaxRank();
 
-    void print();
+    void print() override;
 
     int remove(int);
     void set(int, int);
     int get(int) const;
     std::vector<int> get() { return data; }
     void push_back(int);
-    void resize(int);
-    int size();
+    void resize(int) override;
+    int size() override;
     bool quicksort();
-    void clear();
+    void clear() override;
 
 private:
     std::vector<int> data;
-    int rAbundNumber = 0;
     int maxRank;
     int numBins;
     int numSeqs;

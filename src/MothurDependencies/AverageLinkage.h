@@ -7,18 +7,18 @@
 #include "Cluster.h"
 #include <string>
 
-class AverageLinkage : public Cluster {
+class AverageLinkage final: public Cluster {
 public:
     AverageLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
    std::string getTag() override;
 
 private:
-    int saveRow;
-    int saveCol;
-    int rowBin;
-    int colBin;
-    int totalBin;
+    unsigned long saveRow;
+    unsigned long saveCol;
+    unsigned long rowBin;
+    unsigned long colBin;
+    unsigned long totalBin;
 
 };
 

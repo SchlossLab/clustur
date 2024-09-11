@@ -42,23 +42,24 @@ int Utils::getNumNames(std::string names){
     });
     return count;
 }
-int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std::string tagHeader){
+int Utils::getOTUNames(std::vector<std::string>& currentLabels, const int numBins, const std::string& tagHeader){
 
-        if (currentLabels.size() == numBins) {  return 0; }
+        const auto currentLabelsSize = static_cast<int>(currentLabels.size());
+        if (currentLabelsSize == numBins) {  return 0; }
 
-        int maxLabelNumber = 0;
-        if (currentLabels.size() < numBins) {
+        if (currentLabelsSize < numBins) {
+            int maxLabelNumber = 0;
             const std::string snumBins = std::to_string(numBins);
 
             for (int i = 0; i < numBins; i++) {
                 std::string binLabel = tagHeader;
-                if (i < currentLabels.size()) { //label exists
+                if (i < currentLabelsSize) { //label exists
                     if (getLabelTag(currentLabels[i]) == tagHeader) { //adjust 0's??
                         std::string sbinNumber = getSimpleLabel(currentLabels[i]);
                         int tempBinNumber; mothurConvert(sbinNumber, tempBinNumber);
                         if (tempBinNumber > maxLabelNumber) { maxLabelNumber = tempBinNumber; }
                         if (sbinNumber.length() < snumBins.length()) {
-                            int diff = snumBins.length() - sbinNumber.length();
+                            const int diff = static_cast<int>(snumBins.length() - sbinNumber.length());
                             for (int h = 0; h < diff; h++) { binLabel += "0"; }
                         }
                         binLabel += sbinNumber;
@@ -67,7 +68,7 @@ int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std
                 }else{ //create new label
                     std::string sbinNumber = std::to_string(maxLabelNumber+1); maxLabelNumber++;
                     if (sbinNumber.length() < snumBins.length()) {
-                        int diff = snumBins.length() - sbinNumber.length();
+                        const int diff = static_cast<int>(snumBins.length() - sbinNumber.length());
                         for (int h = 0; h < diff; h++) { binLabel += "0"; }
                     }
                     binLabel += sbinNumber;
@@ -75,10 +76,10 @@ int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std
                 }
             }
         }
-        return currentLabels.size();
+        return static_cast<int>(currentLabels.size());
 
 }
-bool Utils::mothurConvert(std::string item, int& num){
+bool Utils::mothurConvert(const std::string& item, int& num){
     if(!isNumeric1(item)) {
         return false;
     }
@@ -87,7 +88,7 @@ bool Utils::mothurConvert(std::string item, int& num){
 
 }
 
-bool Utils::mothurConvert(std::string item, float& num){
+bool Utils::mothurConvert(const std::string &item, float& num){
     if(!isNumeric1(item)) {
         return false;
     }
@@ -95,7 +96,7 @@ bool Utils::mothurConvert(std::string item, float& num){
     return true;
 }
 /***********************************************************************/
-bool Utils::mothurConvert(std::string item, double& num){
+bool Utils::mothurConvert(const std::string &item, double& num){
 
     if(!isNumeric1(item)) {
         return false;
@@ -103,21 +104,11 @@ bool Utils::mothurConvert(std::string item, double& num){
     num = std::stod(item);
     return true;
 }
-// template<typename T>
-// void Utils::convert(const std::string& s, T& x, bool failIfLeftoverChars){
-//
-//     std::istringstream i(s);
-//     char c;
-//     if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
-//         throw BadConversion(s);
-//
-// }
-std::string Utils::getSimpleLabel(std::string label){
-        std::string simple = "";
 
-        //remove OTU or phylo tag
-        std::string newLabel1 = "";
-        for (int i = 0; i < label.length(); i++) {
+std::string Utils::getSimpleLabel(const std::string &label){
+    //remove OTU or phylo tag
+        std::string newLabel1;
+        for (size_t i = 0; i < label.length(); i++) {
             if(label[i]>47 && label[i]<58) { //is a digit
                 newLabel1 += label[i];
             }
@@ -127,15 +118,15 @@ std::string Utils::getSimpleLabel(std::string label){
 
         mothurConvert(newLabel1, num1);
 
-        simple = std::to_string(num1);
+        const std::string simple = std::to_string(num1);
 
         return simple;
 
 }
 
-std::string Utils::getLabelTag(std::string label){
+std::string Utils::getLabelTag(const std::string &label){
 
-    std::string tag = "";
+    std::string tag;
 
     for (const auto n : label) {
         if(n >47 && n <58) { //is a digit
@@ -145,7 +136,7 @@ std::string Utils::getLabelTag(std::string label){
     return tag;
 }
 
-bool Utils::isNumeric1(std::string stringToCheck){
+bool Utils::isNumeric1(const std::string& stringToCheck){
 
     bool numeric = false;
 
@@ -155,7 +146,7 @@ bool Utils::isNumeric1(std::string stringToCheck){
     return numeric;
 
 }
-void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
+void Utils::splitAtComma(const std::string& s, std::vector<std::string>& container) {
 
         //parse string by delim and store in vector
         split(s, ',', std::back_inserter(container));
@@ -165,16 +156,16 @@ void Utils::splitAtComma(std::string& s, std::vector<std::string>& container) {
 bool Utils::isEqual(const float num1, const float num2) {
     return std::fabs(num1-num2) <= std::fabs(static_cast<float>(num1 * 0.001));
 }
-float Utils::ceilDist(float dist, int precision){
-        return int(ceil(dist * precision))/float(precision);
+float Utils::ceilDist(const float dist, const int precision){
+        return static_cast<int>(ceil(dist * precision))/static_cast<float>(precision);
 }
 
 void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>>& map,
-    std::string& data, const std::vector<std::string>& headers) {
+                                 const std::string& data, const std::vector<std::string>& headers) {
     Utils utils;
     std::vector<std::string> splitStrings;
     utils.splitAtComma(data, splitStrings);
-    for(int i = 0; i < headers.size(); i++) {
+    for(size_t i = 0; i < headers.size(); i++) {
         map[headers[i]].emplace_back(splitStrings[i]);
     }
 }

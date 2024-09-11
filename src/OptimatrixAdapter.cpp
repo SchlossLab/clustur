@@ -79,17 +79,17 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
 }
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& matrixData, const bool sim) {
-    const size_t size = matrixData.size();
+    const auto size = static_cast<long long>(matrixData.size());
     Utils util;
     std::vector<bool> singletonList(size, true);
     closeness.resize(size);
     nameList.resize(size);
     std::unordered_map<long long, long long> singletonIndexSwap;
-    for(size_t i = 0; i < size; i++) {
+    for(long long i = 0; i < size; i++) {
         nameList[i] = matrixData[i].name;
         singletonIndexSwap[i] = i;
-        for(size_t j = 0; j < i; j++) {
-            float distance = matrixData[i].rowValues[j];
+        for(long long j = 0; j < i; j++) {
+            auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
                 distance = 1000000;
@@ -104,18 +104,18 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
         }
     }
     int nonSingletonCount = 0;
-    for(int i = 0; i < singletonList.size(); i ++) {
+    for(size_t i = 0; i < singletonList.size(); i ++) {
         if(!singletonList[i]) {
-            singletonIndexSwap[i] = nonSingletonCount;
+            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount;
             nonSingletonCount++;
         } //Remove all singletonss
         else
             singletons.emplace_back(matrixData[i].name);
     }
-    for(int i = 0; i < size; i++) {
+    for(long long i = 0; i < size; i++) {
         nameList[singletonIndexSwap[i]] = matrixData[i].name;
-        for(int j = 0; j < i; j++) {
-            float distance = matrixData[i].rowValues[j];
+        for(long long j = 0; j < i; j++) {
+            auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
                 distance = 1000000;

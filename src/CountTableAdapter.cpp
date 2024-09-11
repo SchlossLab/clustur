@@ -48,7 +48,7 @@ double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) cons
 }
 
 std::string CountTableAdapter::GetNameByIndex(const int index) const {
-    if(index > sampleNames.size())
+    if(index > static_cast<int>(sampleNames.size()))
         return "";
     return sampleNames[index];
 }

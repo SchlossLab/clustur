@@ -12,7 +12,7 @@
 #include "MothurDependencies/Metrics/sensitivity.hpp"
 #include "MothurDependencies/Metrics/specificity.hpp"
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, long long ns) {
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const long long ns) {
     matrix = mt;
     metric = met;
     truePositives = 0;
@@ -24,7 +24,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, long long ns) {
 
 /***********************************************************************/
 //randomly assign sequences to OTUs
-int OptiCluster::initialize(double &value, bool randomize, std::string initialize) {
+int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {
     numSeqs = matrix->getNumSeqs();
     truePositives = 0;
     falsePositives = 0;
@@ -33,7 +33,7 @@ int OptiCluster::initialize(double &value, bool randomize, std::string initializ
 
     bins.resize(numSeqs); //place seqs in own bin
 
-    std::vector<long long> temp;
+    const std::vector<long long> temp;
     bins.push_back(temp);
     seqBin[numSeqs] = -1;
     insertLocation = numSeqs;
@@ -52,15 +52,16 @@ int OptiCluster::initialize(double &value, bool randomize, std::string initializ
         if (randomize) { util.mothurRandomShuffle(randomizeSeqs); }
 
         //for each sequence (singletons removed on read)
-        for (std::map<long long, long long>::iterator it = seqBin.begin(); it != seqBin.end(); it++) {
-            if (it->second == -1) {
+        for (const auto & it : seqBin) {
+            if (it.second == -1) {
             } else {
-                long long numCloseSeqs = (matrix->getNumClose(it->first)); //does not include self
-                falseNegatives += numCloseSeqs;
+                const long long numCloseSeqs = (matrix->getNumClose(it.first)); //does not include self
+                falseNegatives += static_cast<double>(numCloseSeqs);
             }
         }
         falseNegatives /= 2; //square matrix
-        trueNegatives = numSeqs * (numSeqs - 1) / 2 - (falsePositives + falseNegatives + truePositives);
+        const auto nSeqs = static_cast<double>(numSeqs);
+        trueNegatives = nSeqs * (nSeqs - 1) / 2 - (falsePositives + falseNegatives + truePositives);
         //since everyone is a singleton no one clusters together. True negative = num far apart
     } else {
         //put everyone in first bin
@@ -73,20 +74,21 @@ int OptiCluster::initialize(double &value, bool randomize, std::string initializ
         if (randomize) { util.mothurRandomShuffle(randomizeSeqs); }
 
         //for each sequence (singletons removed on read)
-        for (std::map<long long, long long>::iterator it = seqBin.begin(); it != seqBin.end(); it++) {
-            if (it->second == -1) {
+        for (const auto & it : seqBin) {
+            if (it.second == -1) {
             } else {
-                long long numCloseSeqs = (matrix->getNumClose(it->first)); //does not include self
-                truePositives += numCloseSeqs;
+                const long long numCloseSeqs = (matrix->getNumClose(it.first)); //does not include self
+                truePositives += static_cast<double>(numCloseSeqs);
             }
         }
         truePositives /= 2; //square matrix
-        falsePositives = numSeqs * (numSeqs - 1) / 2 - (trueNegatives + falseNegatives + truePositives);
+        const auto nSeqs = static_cast<double>(numSeqs);
+        falsePositives = nSeqs * (nSeqs - 1) / 2 - (trueNegatives + falseNegatives + truePositives);
     }
 
     value = metric->getValue(truePositives, trueNegatives, falsePositives, falseNegatives);
 
-    return value;
+    return static_cast<int>(value);
 }
 
 /***********************************************************************/
@@ -95,44 +97,41 @@ int OptiCluster::initialize(double &value, bool randomize, std::string initializ
  * keep or move the sequence to the OTU where the `metric` is the largest - flip a coin on ties */
 bool OptiCluster::update(double &listMetric) {
     //for each sequence (singletons removed on read)
-    for (int i = 0; i < randomizeSeqs.size(); i++) {
-        const std::map<long long, long long>::iterator it = seqBin.find(randomizeSeqs[i]);
+    for (const int randomizeSeq : randomizeSeqs) {
+        const auto it = seqBin.find(randomizeSeq);
 
         long long seqNumber = it->first;
-        long long binNumber = it->second;
+        const long long binNumber = it->second;
 
         if (binNumber == -1) {
         } else {
-            double tn, tp, fp, fn;
-            double bestMetric = -1;
-            double bestBin, bestTp, bestTn, bestFn, bestFp;
-            tn = trueNegatives;
-            tp = truePositives;
-            fp = falsePositives;
-            fn = falseNegatives;
+            double tn = trueNegatives;
+            double tp = truePositives;
+            double fp = falsePositives;
+            double fn = falseNegatives;
 
             //close / far count in current bin
             std::vector<double> results = getCloseFarCounts(seqNumber, binNumber);
-            double cCount = results[0];
-            double fCount = results[1];
+            const double cCount = results[0];
+            const double fCount = results[1];
 
             //metric in current bin
-            bestMetric = metric->getValue(tp, tn, fp, fn);
-            bestBin = binNumber;
-            bestTp = tp;
-            bestTn = tn;
-            bestFp = fp;
-            bestFn = fn;
+            double bestMetric = metric->getValue(tp, tn, fp, fn);
+            long long bestBin = binNumber;
+            double bestTp = tp;
+            double bestTn = tn;
+            double bestFp = fp;
+            double bestFn = fn;
 
             //if not already singleton, then calc value if singleton was created
-            if (!((bins[binNumber].size()) == 1)) {
+            if ((bins[binNumber].size()) != 1) {
                 //make a singleton
                 //move out of old bin
                 fn += cCount;
                 tn += fCount;
                 fp -= fCount;
                 tp -= cCount;
-                double singleMetric = metric->getValue(tp, tn, fp, fn);
+                const double singleMetric = metric->getValue(tp, tn, fp, fn);
                 if (singleMetric > bestMetric) {
                     bestBin = -1;
                     bestTp = tp;
@@ -145,12 +144,12 @@ bool OptiCluster::update(double &listMetric) {
 
             std::set<long long> binsToTry;
             std::set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
-            for (std::set<long long>::iterator itClose = closeSeqs.begin(); itClose != closeSeqs.end(); itClose++) {
-                binsToTry.insert(seqBin[*itClose]);
+            for (long long closeSeq : closeSeqs) {
+                binsToTry.insert(seqBin[closeSeq]);
             }
 
             //merge into each "close" otu
-            for (std::set<long long>::iterator it = binsToTry.begin(); it != binsToTry.end(); it++) {
+            for (const long long bins : binsToTry) {
                 tn = trueNegatives;
                 tp = truePositives;
                 fp = falsePositives;
@@ -159,16 +158,16 @@ bool OptiCluster::update(double &listMetric) {
                 tn += fCount;
                 fp -= fCount;
                 tp -= cCount; //move out of old bin
-                results = getCloseFarCounts(seqNumber, *it);
+                results = getCloseFarCounts(seqNumber, bins);
                 fn -= results[0];
                 tn -= results[1];
                 tp += results[0];
                 fp += results[1]; //move into new bin
-                double newMetric = metric->getValue(tp, tn, fp, fn); //score when sequence is moved
+                const double newMetric = metric->getValue(tp, tn, fp, fn); //score when sequence is moved
                 //new best
                 if (newMetric > bestMetric) {
                     bestMetric = newMetric;
-                    bestBin = (*it);
+                    bestBin = bins;
                     bestTp = tp;
                     bestTn = tn;
                     bestFp = fp;
@@ -204,11 +203,11 @@ bool OptiCluster::update(double &listMetric) {
     listMetric = metric->getValue(truePositives, trueNegatives, falsePositives, falseNegatives);
 
 
-    return 0;
+    return false;
 }
 
 /***********************************************************************/
-std::vector<double> OptiCluster::getCloseFarCounts(long long seq, long long newBin) {
+std::vector<double> OptiCluster::getCloseFarCounts(const long long seq, const long long newBin) const {
     std::vector<double> results;
     results.push_back(0);
     results.push_back(0);
@@ -216,10 +215,10 @@ std::vector<double> OptiCluster::getCloseFarCounts(long long seq, long long newB
     } //making a singleton bin. Close but we are forcing apart.
     else {
         //merging a bin
-        for (int i = 0; i < bins[newBin].size(); i++) {
-            if (seq == bins[newBin][i]) {
+        for (const long long bin : bins[newBin]) {
+            if (seq == bin) {
             } //ignore self
-            else if (!matrix->isClose(seq, bins[newBin][i])) { results[1]++; }
+            else if (!matrix->isClose(seq, bin)) { results[1]++; }
             //this sequence is "far away" from sequence i - above the cutoff
             else { results[0]++; } //this sequence is "close" to sequence i - distance between them is less than cutoff
         }
@@ -228,14 +227,14 @@ std::vector<double> OptiCluster::getCloseFarCounts(long long seq, long long newB
 }
 
 //TODO figure out why the bad-allocation execption is being thrown
-ListVector *OptiCluster::getList() {
-    ListVector *list = new ListVector();
+ListVector *OptiCluster::getList() const {
+    auto *list = new ListVector();
     ListVector *singleton = matrix->getListSingle();
     // TestHelper::Print("Made it here, listVector\n");
     if (singleton != nullptr) {
         //add in any sequences above cutoff in read. Removing these saves clustering time.
         for (int i = 0; i < singleton->getNumBins(); i++) {
-            if (singleton->get(i) != "") {
+            if (!singleton->get(i).empty()) {
                 list->push_back(singleton->get(i));
             }
         }
@@ -243,13 +242,13 @@ ListVector *OptiCluster::getList() {
     }
     // TestHelper::Print("Made it here, listVector2\n");
     const std::string sizeString = "Size: " + std::to_string(bins.size());
-    for (int i = 0; i < bins.size(); i++) {
-        if (bins[i].size() != 0) {
-            std::string otu = matrix->getName(bins[i][0]);
+    for (const auto& bin : bins){
+        if (!bin.empty()) {
+            std::string otu = matrix->getName(bin[0]);
             //   TestHelper::Print(otu + "\n");
-            for (int j = 1; j < bins[i].size(); j++) {
+            for (size_t j = 1; j < bin.size(); j++) {
                 // TestHelper::Print(i + "\n");
-                otu += "," + matrix->getName(bins[i][j]);
+                otu += "," + matrix->getName(bin[j]);
             }
             list->push_back(otu);
         }
@@ -258,9 +257,9 @@ ListVector *OptiCluster::getList() {
 }
 
 /***********************************************************************/
-std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, double &fn) {
-    double singletn = matrix->getNumSingletons() + numSingletons;
-    double tempnumSeqs = numSeqs + singletn;
+std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, double &fn) const {
+    long long singletn = matrix->getNumSingletons() + numSingletons;
+    auto tempnumSeqs = static_cast<double>(numSeqs + singletn);
 
     tp = truePositives;
     fp = falsePositives;
@@ -298,7 +297,7 @@ std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, do
     return results;
 }
 
-std::vector<double> OptiCluster::getCloseFarFitCounts(long long seq, long long newBin) {
+std::vector<double> OptiCluster::getCloseFarFitCounts(const long long seq, const long long newBin) const {
     std::vector<double> results;
     results.push_back(0);
     results.push_back(0); //results[0] = close count, results[1] = far count
@@ -307,12 +306,12 @@ std::vector<double> OptiCluster::getCloseFarFitCounts(long long seq, long long n
     } //making a singleton bin. Close but we are forcing apart.
     else {
         //merging a bin
-        for (long long i = 0; i < bins[newBin].size(); i++) {
-            if (seq == bins[newBin][i]) {
+        for (const long long& bin : bins[newBin]) {
+            if (seq == bin) {
             } //ignore self
             else {
                 bool isFit = true;
-                bool closeFit = matrix->isCloseFit(seq, bins[newBin][i], isFit);
+                const bool closeFit = matrix->isCloseFit(seq, bin, isFit);
                 if (closeFit) {
                     //you are close if you are fit and close
                     results[0]++;
@@ -327,11 +326,11 @@ std::vector<double> OptiCluster::getCloseFarFitCounts(long long seq, long long n
 /***********************************************************************/
 
 /***********************************************************************/
-long long OptiCluster::getNumBins() {
+long long OptiCluster::getNumBins() const {
     long long singletn = matrix->getNumSingletons();
 
-    for (int i = 0; i < bins.size(); i++) {
-        if (bins[i].size() != 0) {
+    for (const auto & bin : bins) {
+        if (!bin.empty()) {
             singletn++;
         }
     }
@@ -340,10 +339,10 @@ long long OptiCluster::getNumBins() {
 }
 
 /***********************************************************************/
-long long OptiCluster::findInsert() {
+long long OptiCluster::findInsert() const {
     //initially there are bins for each sequence (excluding singletons removed on read)
-    for (long long i = 0; i < bins.size(); i++) {
-        if (bins[i].size() == 0) { return i; } //this bin is empty
+    for (size_t i = 0; i < bins.size(); i++) {
+        if (bins[i].empty()) { return static_cast<long long>(i); } //this bin is empty
     }
 
     return -1;
