@@ -6,7 +6,7 @@
 #include "MothurDependencies/RAbundVector.h"
 
 std::string ListVector::getOTUName(const long long bin) {
-    if (binLabels.size() > bin) {
+    if (static_cast<long long>(binLabels.size()) > bin) {
     } else { getLabels(); }
     return binLabels[bin];
 }
@@ -59,7 +59,7 @@ std::vector<std::string> ListVector::getLabels() {
 }
 
 std::string ListVector::get(const long long index) {
-    if (index < data.size()) { return data[index]; }
+    if (index < static_cast<long long>(data.size())) { return data[index]; }
     return "";
 }
 
