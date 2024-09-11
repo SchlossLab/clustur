@@ -3,6 +3,9 @@ test_that("Clustering returns proper results", {
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   df <- Opticluster::opti_cluster(sparse_matrix, 0.2, count_table)
+  start_profiler("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/profile.out")
+  df <- Opticluster::opti_cluster(sparse_matrix, 0.2, 2, FALSE, count_table)
+  stop_profiler()
   # trueList <- do.call(paste0, df$abundance) %in% do.call(paste0, expected_df)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
@@ -22,6 +25,8 @@ test_that("Normal Cluster is able to properly cluster data",
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
+  start_profiler("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/profile_classic_cluster.out")
+  stop_profiler()
 
   cluster_furthest <- cluster(sparse_matrix, 0.2, "furthest", count_table, FALSE)
   cluster_average <- cluster(sparse_matrix, 0.2, "average", count_table, FALSE) ## Might actually be a rounding issue...????

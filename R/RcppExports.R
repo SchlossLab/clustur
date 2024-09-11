@@ -13,3 +13,11 @@ ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTabl
     .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
 }
 
+start_profiler <- function(str) {
+    .Call(`_Opticluster_start_profiler`, str)
+}
+
+stop_profiler <- function() {
+    .Call(`_Opticluster_stop_profiler`)
+}
+
