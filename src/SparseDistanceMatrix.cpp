@@ -35,14 +35,14 @@ bool SparseDistanceMatrix::heapComparator(const PDistCell &a, const PDistCell &b
 
 /***********************************************************************/
 
-int SparseDistanceMatrix::updateCellCompliment(unsigned long row, unsigned long col){
+int SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const unsigned long col){
 
         
-    unsigned long vrow = seqVec[row][col].index;
+    const unsigned long vrow = seqVec[row][col].index;
     unsigned long vcol = 0;
 
     //find the columns entry for this cell as well
-    for (int i = 0; i < seqVec[vrow].size(); i++) {
+    for (size_t i = 0; i < seqVec[vrow].size(); i++) {
         if (seqVec[vrow][i].index == row) { vcol = i;  break; }
     }
 
@@ -60,7 +60,7 @@ int SparseDistanceMatrix::rmCell(const unsigned long row, const unsigned long co
     unsigned long vcol = 0;
 
     //find the columns entry for this cell as well
-    for (int i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
+    for (size_t i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
     seqVec[vrow].erase(seqVec[vrow].begin()+static_cast<int>(vcol));
     seqVec[row].erase(seqVec[row].begin()+static_cast<int>(col));
 
@@ -94,7 +94,11 @@ int SparseDistanceMatrix::addCellSorted(const unsigned long row, const PDistCell
     sortSeqVec(cell.index);
 
     int location = -1; //find location of new cell when sorted
-    for (int i = 0; i < seqVec[row].size(); i++) {  if (seqVec[row][i].index == cell.index) { location = i; break; } }
+    for (size_t i = 0; i < seqVec[row].size(); i++) {
+        if (seqVec[row][i].index == cell.index) {
+            location = static_cast<int>(i); break;
+        }
+    }
 
     return location;
 }

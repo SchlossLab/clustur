@@ -42,17 +42,18 @@ int Utils::getNumNames(std::string names){
     });
     return count;
 }
-int Utils::getOTUNames(std::vector<std::string>& currentLabels, int numBins, std::string tagHeader){
+int Utils::getOTUNames(std::vector<std::string>& currentLabels, const int numBins, const std::string& tagHeader){
 
-        if (currentLabels.size() == numBins) {  return 0; }
+        const auto currentLabelsSize = static_cast<int>(currentLabels.size());
+        if (currentLabelsSize == numBins) {  return 0; }
 
-        if (currentLabels.size() < numBins) {
+        if (currentLabelsSize < numBins) {
             int maxLabelNumber = 0;
             const std::string snumBins = std::to_string(numBins);
 
             for (int i = 0; i < numBins; i++) {
                 std::string binLabel = tagHeader;
-                if (i < currentLabels.size()) { //label exists
+                if (i < currentLabelsSize) { //label exists
                     if (getLabelTag(currentLabels[i]) == tagHeader) { //adjust 0's??
                         std::string sbinNumber = getSimpleLabel(currentLabels[i]);
                         int tempBinNumber; mothurConvert(sbinNumber, tempBinNumber);
@@ -107,7 +108,7 @@ bool Utils::mothurConvert(const std::string &item, double& num){
 std::string Utils::getSimpleLabel(const std::string &label){
     //remove OTU or phylo tag
         std::string newLabel1;
-        for (int i = 0; i < label.length(); i++) {
+        for (size_t i = 0; i < label.length(); i++) {
             if(label[i]>47 && label[i]<58) { //is a digit
                 newLabel1 += label[i];
             }
@@ -164,7 +165,7 @@ void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std
     Utils utils;
     std::vector<std::string> splitStrings;
     utils.splitAtComma(data, splitStrings);
-    for(int i = 0; i < headers.size(); i++) {
+    for(size_t i = 0; i < headers.size(); i++) {
         map[headers[i]].emplace_back(splitStrings[i]);
     }
 }

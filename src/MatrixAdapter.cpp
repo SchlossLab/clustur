@@ -75,7 +75,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         dataList[i].rowValues = std::vector<double>(nameSize, 0);
     }
 
-    for (size_t i = 0; i < nSeqs;  i++) {
+    for (int i = 0; i < nSeqs;  i++) {
         int xIndex = positionsOfIndexs[xPosition[i]]; // Coming from r -> c++, indeces start at 1 in r
         int yIndex = positionsOfIndexs[yPosition[i]];
         if(data[i] < 0) {

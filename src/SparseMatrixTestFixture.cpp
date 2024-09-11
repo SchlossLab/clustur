@@ -60,7 +60,7 @@ bool SparseMatrixTestFixture::TestUpdateCellCompliment(const unsigned long row, 
 bool SparseMatrixTestFixture::TestResize(const unsigned long size, const long expectedResult) {
     Setup();
     sparseDistanceMatrix->resize(size);
-    const unsigned long result = sparseDistanceMatrix->seqVec.size();
+    const auto result = static_cast<int>(sparseDistanceMatrix->seqVec.size());
     TearDown();
     return result == expectedResult;
 }

@@ -30,7 +30,7 @@ public:
     int getNumNames(std::string names);
     bool mothurConvert(const std::string& item, int& num);
     bool isNumeric1(const std::string& stringToCheck);
-    int getOTUNames(std::vector<std::string>& currentLabels, int numBins, std::string tagHeader);
+    int getOTUNames(std::vector<std::string>& currentLabels, int numBins, const std::string& tagHeader);
     bool mothurConvert(const std::string &item, double& num);
     bool mothurConvert(const std::string &item, float& num);
     std::string getLabelTag(const std::string &label);

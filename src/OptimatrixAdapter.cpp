@@ -79,7 +79,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
 }
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& matrixData, const bool sim) {
-    const size_t size = matrixData.size();
+    const auto size = static_cast<long long>(matrixData.size());
     Utils util;
     std::vector<bool> singletonList(size, true);
     closeness.resize(size);
@@ -88,7 +88,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     for(long long i = 0; i < size; i++) {
         nameList[i] = matrixData[i].name;
         singletonIndexSwap[i] = i;
-        for(size_t j = 0; j < i; j++) {
+        for(long long j = 0; j < i; j++) {
             auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
@@ -104,9 +104,9 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
         }
     }
     int nonSingletonCount = 0;
-    for(long long i = 0; i < singletonList.size(); i ++) {
+    for(size_t i = 0; i < singletonList.size(); i ++) {
         if(!singletonList[i]) {
-            singletonIndexSwap[i] = nonSingletonCount;
+            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount;
             nonSingletonCount++;
         } //Remove all singletonss
         else
@@ -114,7 +114,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     }
     for(long long i = 0; i < size; i++) {
         nameList[singletonIndexSwap[i]] = matrixData[i].name;
-        for(int j = 0; j < i; j++) {
+        for(long long j = 0; j < i; j++) {
             auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {

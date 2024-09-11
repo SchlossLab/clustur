@@ -246,7 +246,7 @@ ListVector *OptiCluster::getList() const {
         if (!bin.empty()) {
             std::string otu = matrix->getName(bin[0]);
             //   TestHelper::Print(otu + "\n");
-            for (int j = 1; j < bin.size(); j++) {
+            for (size_t j = 1; j < bin.size(); j++) {
                 // TestHelper::Print(i + "\n");
                 otu += "," + matrix->getName(bin[j]);
             }
@@ -341,8 +341,8 @@ long long OptiCluster::getNumBins() const {
 /***********************************************************************/
 long long OptiCluster::findInsert() const {
     //initially there are bins for each sequence (excluding singletons removed on read)
-    for (long long i = 0; i < bins.size(); i++) {
-        if (bins[i].empty()) { return i; } //this bin is empty
+    for (size_t i = 0; i < bins.size(); i++) {
+        if (bins[i].empty()) { return static_cast<long long>(i); } //this bin is empty
     }
 
     return -1;

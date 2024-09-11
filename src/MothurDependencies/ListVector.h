@@ -52,10 +52,10 @@ public:
     int getNumSeqs() const							{	return numSeqs;		}
     int getMaxRank() const							{	return maxRank;		}
 
-    std::string get(int);
+    std::string get(long long);
     // The amount of labels is equal to the size of the listVectorBins
     std::vector<std::string> getLabels();
-    std::string getOTUName(int bin);
+    std::string getOTUName(long long bin);
     void setLabels(const std::vector<std::string> &);
     bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
 

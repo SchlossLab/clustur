@@ -5,7 +5,7 @@
 #include "Adapters/DataFrameAdapter.h"
 #include "MothurDependencies/RAbundVector.h"
 
-std::string ListVector::getOTUName(const int bin) {
+std::string ListVector::getOTUName(const long long bin) {
     if (binLabels.size() > bin) {
     } else { getLabels(); }
     return binLabels[bin];
@@ -58,7 +58,7 @@ std::vector<std::string> ListVector::getLabels() {
     return binLabels;
 }
 
-std::string ListVector::get(const int index) {
+std::string ListVector::get(const long long index) {
     if (index < data.size()) { return data[index]; }
     return "";
 }
@@ -154,7 +154,7 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
         if (sortPlease) {
             Utils util;
             std::vector<listCt> hold;
-            for (int i = 0; i < data.size(); i++) {
+            for (size_t i = 0; i < data.size(); i++) {
                 if (!data[i].empty()) {
                     std::vector<std::string> binNames;
                     std::string bin = data[i];
