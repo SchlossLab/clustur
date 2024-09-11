@@ -4,10 +4,11 @@
 #include "Adapters/MatrixAdapter.h"
 #include "TestHelpers/TestHelper.h"
 #include <map>
+#include <utility>
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
                              const std::vector<double> &dataValues, const double cutOff, const bool isSimularity,
-                             const CountTableAdapter& table): countTable(table),xPosition(iIndexes), yPosition(jIndexes),
+                             CountTableAdapter table): countTable(std::move(table)),xPosition(iIndexes), yPosition(jIndexes),
                             data(dataValues) {
     phylipReader = new ReadPhylipMatrix(cutOff, isSimularity);
 }
@@ -56,7 +57,7 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
 std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;
-    const size_t nSeqs = data.size();
+    const int nSeqs = static_cast<int>(data.size());
     std::map<int, RowData> dataList;
     std::unordered_map<int, int> positionsOfIndexs;
     std::unordered_map<int, std::string> positionsToNames;
@@ -65,7 +66,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
     }
 
-    const size_t nameSize = names.size();
+    const int nameSize = static_cast<int>(names.size());
     matrixNames = std::vector<std::string>(nameSize);
     for (int i = 0; i < nameSize; i++) {
         positionsOfIndexs[xPosition[i]] = i;

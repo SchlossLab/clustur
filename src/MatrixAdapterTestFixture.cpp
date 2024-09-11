@@ -29,7 +29,7 @@ bool MatrixAdapterTestFixture::TestDistanceMatrixToSquareMatrix(const int expect
     Setup();
     const auto result = matrixAdapter->DistanceMatrixToSquareMatrix();
     TearDown();
-    return result.size() == expectedResult;
+    return static_cast<int>(result.size()) == expectedResult;
 }
 
 bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {

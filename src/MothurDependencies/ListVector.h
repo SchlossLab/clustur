@@ -56,7 +56,7 @@ public:
     // The amount of labels is equal to the size of the listVectorBins
     std::vector<std::string> getLabels();
     std::string getOTUName(int bin);
-    void setLabels(std::vector<std::string>);
+    void setLabels(const std::vector<std::string> &);
     bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
 
     void push_back(const std::string&);
@@ -69,7 +69,7 @@ public:
     int size() override;
     void clear() override;
     void resize(int) override;
-    Rcpp::DataFrame CreateDataFrameFromList(const std::string &label);
+    Rcpp::DataFrame CreateDataFrameFromList(const std::string &label) const;
 
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.

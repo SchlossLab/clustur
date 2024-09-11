@@ -57,7 +57,7 @@ bool Cluster::clusterNames() {
 /***********************************************************************/
 bool Cluster::update(double &cutOFF) {
     smallCol = dMatrix->getSmallestCell(smallRow);
-    if (smallCol == -1)
+    if (static_cast<int>(smallCol) == -1)
         return false;
     nColCells = dMatrix->seqVec[smallCol].size();
     nRowCells = dMatrix->seqVec[smallRow].size();
@@ -98,7 +98,7 @@ bool Cluster::update(double &cutOFF) {
                             nColCells++;
                             foundCol.push_back(0); //add a new found column
                             //adjust value
-                            for (size_t k = foundCol.size() - 1; k > location; k--) { foundCol[k] = foundCol[k - 1]; }
+                            for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                             foundCol[location] = 1;
                         }
                         j += nColCells; //jump out of loop and remove cell below
@@ -116,7 +116,7 @@ bool Cluster::update(double &cutOFF) {
                 nColCells++;
                 foundCol.push_back(0); //add a new found column
                 //adjust value
-                for (size_t k = foundCol.size() - 1; k > location; k--) { foundCol[k] = foundCol[k - 1]; }
+                for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                 foundCol[location] = 1;
             }
             dMatrix->rmCell(smallRow, i);
@@ -174,7 +174,7 @@ bool Cluster::updateMap() {
     if(names.empty())
         return false;
 
-    for (int j = 0; j < binNameslength; j++) {
+    for (size_t j = 0; j < binNameslength; j++) {
         if (names[j] == ',') {
             seq2Bin[individual] = static_cast<int>(smallCol);
             individual = "";
