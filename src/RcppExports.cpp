@@ -60,24 +60,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// start_profiler
-SEXP start_profiler(const SEXP& str);
-RcppExport SEXP _Opticluster_start_profiler(SEXP strSEXP) {
+// ClusterWithPhylip
+std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
+RcppExport SEXP _Opticluster_ClusterWithPhylip(SEXP phylipFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type str(strSEXP);
-    rcpp_result_gen = Rcpp::wrap(start_profiler(str));
+    Rcpp::traits::input_parameter< const std::string& >::type phylipFilePath(phylipFilePathSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSimularity(isSimularitySEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterWithPhylip(phylipFilePath, cutoff, method, countTable, isSimularity));
     return rcpp_result_gen;
 END_RCPP
 }
-// stop_profiler
-SEXP stop_profiler();
-RcppExport SEXP _Opticluster_stop_profiler() {
+// OptiClusterPhylip
+std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
+RcppExport SEXP _Opticluster_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(stop_profiler());
+    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
+    Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiClusterPhylip(filePath, cutoff, countTable, maxIterations, shuffle, isSim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -88,8 +98,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 6},
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 8},
     {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
-    {"_Opticluster_start_profiler", (DL_FUNC) &_Opticluster_start_profiler, 1},
-    {"_Opticluster_stop_profiler", (DL_FUNC) &_Opticluster_stop_profiler, 0},
+    {"_Opticluster_ClusterWithPhylip", (DL_FUNC) &_Opticluster_ClusterWithPhylip, 5},
+    {"_Opticluster_OptiClusterPhylip", (DL_FUNC) &_Opticluster_OptiClusterPhylip, 6},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

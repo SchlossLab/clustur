@@ -13,11 +13,11 @@ ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTabl
     .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
 }
 
-start_profiler <- function(str) {
-    .Call(`_Opticluster_start_profiler`, str)
+ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimularity) {
+    .Call(`_Opticluster_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
 }
 
-stop_profiler <- function() {
-    .Call(`_Opticluster_stop_profiler`)
+OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
+    .Call(`_Opticluster_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 

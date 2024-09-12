@@ -2,7 +2,7 @@
 % Please edit documentation in R/Cluster.R
 \name{cluster}
 \alias{cluster}
-\title{Opticluster Description}
+\title{Cluster Description}
 \usage{
 cluster(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
 }
@@ -11,11 +11,13 @@ cluster(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
 
 \item{cutoff}{A cutoff value.}
 
-\item{method}{The type of cluster you wish to conduct; furthest, nearest, average, weighted.}
+\item{method}{The type of cluster you wish to conduct;
+furthest, nearest, average, weighted.}
 
 \item{count_table}{A table of names and the given abundance per group.}
 
-\item{simularity_matrix}{are you using a simularity matrix or distance matrix.}
+\item{simularity_matrix}{are you using a simularity matrix or
+distance matrix.}
 }
 \value{
 A string of the given cluster.

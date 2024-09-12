@@ -22,7 +22,8 @@ opti_cluster(
 
 \item{iterations}{The number of iterations}
 
-\item{shuffle}{a boolean to determine whether or not you want to shuffle the data before you cluster}
+\item{shuffle}{a boolean to determine whether or
+not you want to shuffle the data before you cluster}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
 }
