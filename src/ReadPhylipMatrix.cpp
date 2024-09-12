@@ -6,13 +6,10 @@
 #include "MothurDependencies/ListVector.h"
 #include "TestHelpers/TestHelper.h"
 
-ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix) {
+ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix):cutoff(cutoff), sim(simularityMatrix) {
     DMatrix = new SparseDistanceMatrix();
     list = new ListVector();
-    this->cutoff = cutoff;
-    sim = simularityMatrix;
 }
-
 bool ReadPhylipMatrix::read(const std::string& filePath) {
 
     fileHandle.open(filePath);
@@ -100,6 +97,48 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
 
     return true;
 }
+
+std::vector<RowData> ReadPhylipMatrix::readToRowData(const std::string& filePath) {
+
+    fileHandle.open(filePath);
+    if(!fileHandle.is_open())
+        return {};
+
+    float distance;
+    std::string name;
+    std::vector<std::string> matrixNames;
+
+
+    std::string numTest;
+    fileHandle >> numTest >> name;
+    const int nseqs = std::stoi(numTest);
+    matrixNames.push_back(name);
+    std::vector<RowData> phylipRowData(nseqs);
+    phylipRowData[0].name = name;
+    list = new ListVector(nseqs);
+    list->set(0, name);
+
+    for (int i = 0; i < nseqs; i++) {
+        phylipRowData[i].rowValues = std::vector<double>(nseqs);
+    }
+
+    for (int i = 1; i < nseqs; i++) {
+        fileHandle >> name;
+        matrixNames.push_back(name);
+        phylipRowData[i].name = name;
+        list->set(i, name);
+        for (int j = 0; j < i; j++) {
+            fileHandle >> distance;
+            phylipRowData[i].rowValues[j] = distance;
+            phylipRowData[j].rowValues[i] = distance;
+        }
+    }
+
+    fileHandle.close();
+
+    return phylipRowData;
+}
+
 
 bool ReadPhylipMatrix::read(const std::vector<RowData> &rowData) {
     if (rowData.empty())
