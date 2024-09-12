@@ -17,3 +17,7 @@ ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimu
     .Call(`_Opticluster_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
 }
 
+OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
+    .Call(`_Opticluster_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+}
+

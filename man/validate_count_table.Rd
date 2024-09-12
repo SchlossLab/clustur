@@ -7,7 +7,8 @@
 validate_count_table(count_table_df)
 }
 \arguments{
-\item{count_table_df}{The count table, which contains all your abundance information for each sequence.}
+\item{count_table_df}{The count table,
+which contains all your abundance information for each sequence.}
 }
 \value{
 Validated count table.

@@ -75,6 +75,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptiClusterPhylip
+std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
+RcppExport SEXP _Opticluster_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
+    Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiClusterPhylip(filePath, cutoff, countTable, maxIterations, shuffle, isSim));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -83,6 +99,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 8},
     {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
     {"_Opticluster_ClusterWithPhylip", (DL_FUNC) &_Opticluster_ClusterWithPhylip, 5},
+    {"_Opticluster_OptiClusterPhylip", (DL_FUNC) &_Opticluster_OptiClusterPhylip, 6},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

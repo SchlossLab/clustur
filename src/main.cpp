@@ -105,11 +105,30 @@ std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath
     delete(result);
     delete(listVector);
     return {tidySharedDataFrame, clusterDataFrame};
-// TODO: INSTEAD of this, we are going to create a new entry point for phylip matices. We are going to turn them into
-// TODO: a triplicate vectors (x,y,z) and use those values to call the functions. We can do this in c++, output it
-// TODO: into r and then send it back up. That way we do not need to create overloads. Just 1 function, this also
-// TODO: future proofs the code, just incase we add more functions.
 }
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath,
+                                                const double cutoff, const Rcpp::DataFrame& countTable,
+                                                const int maxIterations = 100, const bool shuffle = true,
+                                                const bool isSim = false) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    ReadPhylipMatrix reader;
+    const auto sparseMatix = reader.readToRowData(filePath);
+    OptimatrixAdapter optiAdapter(cutoff);
+    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
+    ClusterCommand command;
+
+    command.SetOpticlusterRandomShuffle(shuffle);
+    command.SetMaxIterations(maxIterations);
+    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    return {tidySharedDataFrame, command.GetSensitivityData(), command.GetClusterMetrics(), clusterDataFrame};
+}
+
 
 #endif
 // int main() {
