@@ -11,6 +11,7 @@
 #include "MothurDependencies/OptiMatrix.h"
 
 #include "Adapters/CountTableAdapter.h"
+#include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 
 #if DEBUG_RCPP
@@ -25,6 +26,17 @@ void WritePhylipFile(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
     adapter.CreatePhylipFile(saveLocation);
+}
+
+//[[Rcpp::export]]
+void WriteColumnFile(const std::vector<int> &xPosition,
+                      const std::vector<int> &yPosition, const std::vector<double> &data,
+                      const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation) {
+
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
+    adapter.CreateColumnDataFile(saveLocation, cutoff);
 }
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
@@ -106,6 +118,28 @@ std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath
     delete(listVector);
     return {tidySharedDataFrame, clusterDataFrame};
 }
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> ClusterWithColumn(const std::string& columnFilePath,
+                           const double cutoff,
+                           const std::string& method,
+                           const Rcpp::DataFrame& countTable,
+                           const bool isSimularity) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    ColumnDistanceMatrixReader colReader(columnFilePath, cutoff, isSimularity);
+    colReader.Read(countTableAdapter);
+    ClusterCommand command;
+    const auto sparseMatix = colReader.GetSparseDataMatrix();
+    const auto listVector = colReader.GetListVector();
+    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    delete(listVector);
+    return {tidySharedDataFrame, clusterDataFrame};
+}
+
 
 //[[Rcpp::export]]
 std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath,

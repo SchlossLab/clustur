@@ -140,6 +140,33 @@ cluster = df[[2]]
 }
 
 
+#' Cluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param column_matrix_path A phylip file path.
+#' @param cutoff A cutoff value.
+#' @param method The type of cluster you wish to conduct;
+#'  furthest, nearest, average, weighted.
+#' @param count_table A table of names and the given abundance per group.
+#' @param simularity_matrix are you using a simularity matrix or
+#'  distance matrix.
+#' @return A string of the given cluster.
+clusterColumn <- function(column_matrix_path, cutoff, method,
+  count_table, simularity_matrix = FALSE) {
+df <- ClusterWithColumn(
+  column_matrix_path, 
+  cutoff, method,
+  validate_count_table(count_table),
+  simularity_matrix
+)
+return(list(
+abundance = df[[1]],
+cluster = df[[2]]
+)) 
+}
+
 
 #' Opticluster Description
 #'
@@ -172,5 +199,4 @@ clust <- function(x, ...)
 {
   print(x)
 }
-
 

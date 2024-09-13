@@ -14,7 +14,7 @@
 
 class ColumnDistanceMatrixReader final {
 public:
-    ColumnDistanceMatrixReader(std::string  path, double cutoff);
+    ColumnDistanceMatrixReader(std::string  path, double cutoff, bool isSimularity);
     bool Read(const CountTableAdapter& countTable);
     std::vector<RowData> readToRowData(const CountTableAdapter &countTable);
     ListVector* GetListVector() const {return list;}

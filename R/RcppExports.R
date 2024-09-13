@@ -5,6 +5,10 @@ WritePhylipFile <- function(xPosition, yPosition, data, cutoff, countTable, save
     invisible(.Call(`_Opticluster_WritePhylipFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
+WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
+    invisible(.Call(`_Opticluster_WriteColumnFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
+}
+
 MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
     .Call(`_Opticluster_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim)
 }
@@ -15,6 +19,10 @@ ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTabl
 
 ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimularity) {
     .Call(`_Opticluster_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
+}
+
+ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimularity) {
+    .Call(`_Opticluster_ClusterWithColumn`, columnFilePath, cutoff, method, countTable, isSimularity)
 }
 
 OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {

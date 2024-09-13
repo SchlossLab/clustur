@@ -64,9 +64,7 @@ bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation, do
         std::string firstCellName = cells.name;
         for(size_t i = 0; i < size; i++) {
             std::string otherCell = matrix[i].name;
-            if(cells.rowValues[i] <= cutoff) {
-                data += firstCellName + "\t" + otherCell + "\t" + std::to_string(cells.rowValues[i]) + "\n";
-            }
+            data += firstCellName + "\t" + otherCell + "\t" + std::to_string(cells.rowValues[i]) + "\n";
         }
     }
     std::ofstream writeOut(saveFileLocation);
