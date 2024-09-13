@@ -46,7 +46,7 @@ only describe the frequency.
 Lets create the sparse matrix:
 
 ```{r}
-peak_table <- readr::read_csv()
+# peak_table <- readr::read_csv()
 ```
 
 

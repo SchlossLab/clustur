@@ -30,7 +30,7 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
     return spareDistanceMatrix;
 }
 
-bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
+bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
     if(saveFileLocation.empty())
         return false;
     const auto matrix = DistanceMatrixToSquareMatrix();
@@ -50,6 +50,30 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {\
         TestHelper::Print("Failed to open: \n");
     }
     writeOut << distanceString;
+    writeOut.close();
+    return true;
+}
+
+bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation, double cutoff) {
+    if(saveFileLocation.empty())
+        return false;
+    const auto matrix = DistanceMatrixToSquareMatrix();
+    const size_t size = matrixNames.size();
+    std::string data;
+    for (const auto &cells: matrix) {
+        std::string firstCellName = cells.name;
+        for(size_t i = 0; i < size; i++) {
+            std::string otherCell = matrix[i].name;
+            if(cells.rowValues[i] <= cutoff) {
+                data += firstCellName + "\t" + otherCell + "\t" + std::to_string(cells.rowValues[i]) + "\n";
+            }
+        }
+    }
+    std::ofstream writeOut(saveFileLocation);
+    if (!writeOut.is_open()) {
+        TestHelper::Print("Failed to open: \n");
+    }
+    writeOut << data;
     writeOut.close();
     return true;
 }

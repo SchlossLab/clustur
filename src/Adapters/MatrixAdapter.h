@@ -21,6 +21,9 @@ public:
     SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->getDMatrix();}
 
     bool CreatePhylipFile(const std::string &saveFileLocation);
+
+    bool CreateColumnDataFile(const std::string &saveFileLocation, double cutoff);
+
     std::vector<RowData> DistanceMatrixToSquareMatrix();
 
 private:
