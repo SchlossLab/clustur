@@ -127,8 +127,8 @@ std::vector<Rcpp::DataFrame> ClusterWithColumn(const std::string& columnFilePath
                            const bool isSimularity) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
-    ColumnDistanceMatrixReader colReader(columnFilePath, cutoff, isSimularity);
-    colReader.Read(countTableAdapter);
+    ColumnDistanceMatrixReader colReader(cutoff, isSimularity);
+    colReader.Read(countTableAdapter, columnFilePath);
     ClusterCommand command;
     const auto sparseMatix = colReader.GetSparseDataMatrix();
     const auto listVector = colReader.GetListVector();
@@ -150,6 +150,28 @@ std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath,
     countTableAdapter.CreateDataFrameMap(countTable);
     ReadPhylipMatrix reader;
     const auto sparseMatix = reader.readToRowData(filePath);
+    OptimatrixAdapter optiAdapter(cutoff);
+    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
+    ClusterCommand command;
+
+    command.SetOpticlusterRandomShuffle(shuffle);
+    command.SetMaxIterations(maxIterations);
+    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    return {tidySharedDataFrame, command.GetSensitivityData(), command.GetClusterMetrics(), clusterDataFrame};
+}
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath,
+                                                const double cutoff, const Rcpp::DataFrame& countTable,
+                                                const int maxIterations = 100, const bool shuffle = true,
+                                                const bool isSim = false) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    ColumnDistanceMatrixReader reader(cutoff, isSim);
+    const auto sparseMatix = reader.readToRowData(countTableAdapter, filePath);
     OptimatrixAdapter optiAdapter(cutoff);
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
     ClusterCommand command;

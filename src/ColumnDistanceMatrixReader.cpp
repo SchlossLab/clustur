@@ -6,12 +6,12 @@
 
 #include <utility>
 
-ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(std::string path,
-    const double cutoff, const bool isSimularity):filePath(std::move(path)), sim(isSimularity), cutoff(cutoff) {
+ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
+:sim(isSimularity), cutoff(cutoff) {
 	sparseMatrix = new SparseDistanceMatrix();
 	list = new ListVector();
 }
-bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable) {
+bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable, const std::string& filePath) {
 	std::ifstream fileHandle;
 	fileHandle.open(filePath);
 	if(!fileHandle.is_open())
@@ -115,42 +115,104 @@ bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable) {
 }
 
 
-std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableAdapter &countTable) {
-	std::string firstName, secondName;
+std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableAdapter &countTable,
+	const std::string& filePath) {
 	std::ifstream fileHandle;
-	Utils util;
 	fileHandle.open(filePath);
 	if(!fileHandle.is_open())
 		return {};
+	Utils util;
+
+	std::string firstName, secondName;
 	float distance;
-	const std::vector<std::string> sequences = countTable.GetSamples();
-	const size_t nseqs = sequences.size();
-	std::unordered_map<std::string, int> nameToIndexMap;
+	std::vector<std::string> sequences = countTable.GetSamples();
+	size_t nseqs = sequences.size();
 	std::vector<RowData> rowData(nseqs);
-	for(size_t i = 0; i < nseqs; i++) {
-		rowData[i].name = sequences[i];
-		rowData[i].rowValues = std::vector<double>(nseqs);
-	}
-	sparseMatrix->resize(nseqs);
+    sparseMatrix->resize(nseqs);
 	list = new ListVector(static_cast<int>(nseqs));
+	std::unordered_map<std::string, int> nameToIndexMap;
 	int count = 0;
 	for(const auto &sequence : sequences) {
 		list->set(count, sequence);
+		rowData[count].rowValues = std::vector<double>(nseqs);
+		rowData[count].name = sequence;
 		nameToIndexMap[sequence] = count++;
 	}
-	while(fileHandle){  //let's assume it's a triangular matrix...
-		fileHandle >> firstName;
-		fileHandle >> secondName;
-		fileHandle >> distance;	// get the row and column names and distance
-		if(distance > 0)
-			Rcpp::Rcout << distance << std::endl;
-		int indexA = nameToIndexMap[firstName];
-		int indexB = nameToIndexMap[secondName];
-		rowData[indexA].rowValues[indexB] = distance;
-		rowData[indexB].rowValues[indexA] = distance;
-	}
-	fileHandle.close();
 
+    int lt = 1;
+	int refRow = 0;	//we'll keep track of one cell - Cell(refRow,refCol) - and see if it's transpose
+	int refCol = 0; //shows up later - Cell(refCol,refRow).  If it does, then its a square matrix
+
+	//need to see if this is a square or a triangular matrix...
+
+	while(fileHandle && lt == 1){  //let's assume it's a triangular matrix...
+
+		fileHandle >> firstName;
+        fileHandle >> secondName;
+        fileHandle >> distance;	// get the row and column names and distance
+        int itA = nameToIndexMap[firstName];
+		int itB = nameToIndexMap[secondName];
+
+        // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
+
+		if (util.isEqual(distance, -1)) { distance = 1000000; }
+		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
+
+		if(distance <= cutoff && itA != itB){
+			if(itA > itB){
+                PDistCell value(itA, distance);
+				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
+					refRow = itA;
+					refCol = itB;
+					rowData[itB].rowValues[itA] = distance;
+				}
+				else if(refRow == itA && refCol == itB){
+					lt = 0;
+				}
+				else{
+					rowData[itB].rowValues[itA] = distance;
+				}
+			}
+			else if(itA < itB){
+				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
+					refRow = itA;
+					refCol = itB;
+					rowData[itA].rowValues[itB] = distance;
+				}
+				else if(refRow == itB && refCol == itA){
+					lt = 0;
+				}
+				else{
+					rowData[itA].rowValues[itB] = distance;
+				}
+			}
+		}
+	}
+
+	if(lt == 0){  // oops, it was square
+		fileHandle.close();  //let's start over
+		sparseMatrix->clear();  //let's start over
+		fileHandle.open(filePath); //let's start over
+
+		while(fileHandle){
+			fileHandle >> firstName;
+            fileHandle >> secondName;
+            fileHandle >> distance;	// get the row and column names and distance
+
+
+			int itA = nameToIndexMap[firstName];
+			int itB = nameToIndexMap[secondName];
+
+			if (util.isEqual(distance, -1)) { distance = 1000000; }
+			else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
+
+			if(distance <= cutoff && itA > itB){
+				rowData[itB].rowValues[itA] = distance;
+			}
+		}
+	}
+
+	fileHandle.close();
 	list->setLabel("0");
 
 	return rowData;

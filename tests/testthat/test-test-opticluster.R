@@ -66,8 +66,8 @@ test_that("Normal cluster works via phylip file", {
 })
 
 test_that("Opticluster cluster works via phylip file", {
-  df_column <- clusterColumn("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/column.txt", 0.2, "furthest", count_table, F)
-  ClusterWithColumn("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/column.txt", 0.2, "furthest", count_table, F)
+  df_column <- clusterColumn("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/column.dist", 0.2, "furthest", count_table, F)
+  column_df <- OptiClusterColumnDist("F:\\Opticluster\\Clustur\\tests\\column.dist", 0.2, count_table)
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))

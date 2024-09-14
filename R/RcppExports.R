@@ -29,3 +29,7 @@ OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L
     .Call(`_Opticluster_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 
+OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
+    .Call(`_Opticluster_OptiClusterColumnDist`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+}
+
