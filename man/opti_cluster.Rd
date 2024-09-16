@@ -25,15 +25,15 @@ not you want to shuffle the data before you cluster}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
 
-\item{sparse_matrix}{Your Sparse Matrix}
-
-\item{pylip_path}{The path of your phylip file.}
-
-\item{column_path}{The path to your column distance matrix file.}
+\item{...}{Either your phylip file or column file path, or a sparse distance matrix}
 }
 \value{
 A data.frame of the cluster and cluster metrics.
 }
 \description{
+You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
+the path to your phylip and column distance file, or a sparse matrix.
+}
+\details{
 Detailed description of the function.
 }

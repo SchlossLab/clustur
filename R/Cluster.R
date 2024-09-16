@@ -9,15 +9,17 @@
 #' Detailed description of the function.
 #'
 #' @export
-#' @param sparse_matrix Your Sparse Matrix
 #' @param cutoff A cutoff value
 #' @param count_table A table of names and the given abundance per group.
 #' @param iterations The number of iterations
 #' @param shuffle a boolean to determine whether or
 #'  not you want to shuffle the data before you cluster
-#' @param pylip_path The path of your phylip file.
-#' @param column_path The path to your column distance matrix file.
 #' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @param ... Either your phylip file or column file path, or a sparse distance matrix
+#' @description
+#' You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
+#' the path to your phylip and column distance file, or a sparse matrix.
+
 #' @return A data.frame of the cluster and cluster metrics.
 opti_cluster <- function(cutoff, count_table,
                          iterations = 100, shuffle = TRUE,
@@ -27,7 +29,7 @@ opti_cluster <- function(cutoff, count_table,
   params <- names(list_params)
   cluster_dfs <- list()
   
-  if("pylip_path" %in% params && 
+  if("phylip_path" %in% params && 
     "column_path" %in% params &&
     "sparse_matrix" %in% params){
     stop("You cannot use all three input paramters at once.
@@ -88,22 +90,22 @@ opti_cluster <- function(cutoff, count_table,
 #' Detailed description of the function.
 #'
 #' @export
-#' @param sparse_matrix A Sparse Matrix.
 #' @param cutoff A cutoff value.
 #' @param method The type of cluster you wish to conduct;
 #'  furthest, nearest, average, weighted.
 #' @param count_table A table of names and the given abundance per group.
-#' @param simularity_matrix are you using a simularity matrix or
-#' @param pylip_path The path of your phylip file.
-#' @param column_path The path to your column distance matrix file.
-#'  distance matrix.
+#' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @param ... Either your phylip file or column file path, or a sparse distance matrix
+#' @description
+#' You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
+#' the path to your phylip and column distance file, or a sparse matrix.
 #' @return A string of the given cluster.
 cluster <- function(cutoff, method,
                     count_table, simularity_matrix = FALSE, ...) {
   list_params <- list(...)
   params <- names(list_params)
   cluster_dfs <- list()
-  if("pylip_path" %in% params && 
+  if("phylip_path" %in% params && 
     "column_path" %in% params &&
     "sparse_matrix" %in% params){
     stop("You cannot use all three input paramters at once.

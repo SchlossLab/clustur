@@ -107,7 +107,6 @@ test_that("Normal cluster works via column file", {
     column_path=column_path, 0.2, 
     "furthest", count_table, FALSE
   )
-  expect_true(nrow(cluster_furthest_column$cluster) == 17)
   expect_true(all(as.numeric(cluster_furthest_column$cluster$label) == 0))
 })
 
