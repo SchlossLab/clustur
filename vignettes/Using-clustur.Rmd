@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(Opticluster)
+library(Matrix)
 ```
 
 # mothur
@@ -43,17 +44,56 @@ only describe the frequency.
 
 ## To Begin
 Lets create the sparse matrix:
+The easiest way to create a sparse matrix, is to use the "dgTMatrix" class in the Matrix library.
+```{r R.options=list(max.print=10)}
+# Lets create some data
+i_values <- as.integer(1:100)
+j_values <- as.integer(sample(1:100, 100, T))
+x_values <- as.numeric(runif(100, 0, 1))
+s_matrix <- new("dgTMatrix",
+          i = i_values,
+          j = j_values,x=x_values, Dim=102:103)
+s_matrix
+```
+
+Now we have a matrix that is represented as a tripliclate. In this example we do not have any names that correspond to the indexes, so we will use the index numbers as names and create a count table.
 
 ```{r}
-# peak_table <- readr::read_csv()
-# df <- readr::read_delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", col_names = c("names", "others", "cutoff"))
-# count <- df[,1:2]
-# unique_names <-  unique(count$names) 
-# abund <- rep(1, times=length(unique_names))
-# count <- data.frame(name=unique_names, total=abund)
-# names(count)[2] <- "total"
-# amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
-#                       count_table = count, cutoff = 0.2)
+# We are using random numbers between one and 100, so that will be our first column
+# We will also give each sequence an abundance of 1
+count_table <- data.frame(sequence=as.character(i_values), total=rep(1,times=100))
+
+```
+
+There are a few ways to cluster the data, but lets start with using the opticluster method:
+
+```{r}
+cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table, sparse_matrix=s_matrix)
+```
+
+opticluster outputs a list of 4 dataframes. The clustering data, the abundance data, the cluster metrics, and additional clustering metrics. The cluster looks like this:
+
+```{r R.options=list(max.print=10)}
+cluster_results$cluster
+```
+
+otu represent the clusters, the label represents the highest cutoff, and the bin represents the sequences inside of each cluster.
+
+
+## Column Distance file
+Just like in mothur where you can input column files, we can do the same thing in clustur. By using the conditional argument, column_path, we can use it
+as input. You also have to create a count table. In this case, we just need to ensure that every name is represented inside the table. Since we do not have any abundance values, we just give each sequence an abundance of 0.
+
+```{r}
+df <- read.delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", header = FALSE)
+names(df) <- c("sequence", "total")
+count <- df[,1:2]
+unique_names <-  unique(count$sequence) 
+abund <- rep(1, times=length(unique_names))
+count <- data.frame(name=unique_names, total=abund)
+names(count)[2] <- "total"
+amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
+                      count_table = count, cutoff = 0.2)
 
 ```
 
