@@ -3,7 +3,7 @@
 //
 
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
-
+#include <Rcpp.h>
 #include <utility>
 
 ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
@@ -152,37 +152,41 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
         fileHandle >> distance;	// get the row and column names and distance
         int itA = nameToIndexMap[firstName];
 		int itB = nameToIndexMap[secondName];
-
         // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
 
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
 		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
-
-		if(distance <= cutoff && itA != itB){
+		// if(distance > 0)
+		// 	Rcpp::Rcout << "Distance: " << distance << std::endl;
+		if(itA != itB){
 			if(itA > itB){
                 PDistCell value(itA, distance);
 				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
 					refRow = itA;
 					refCol = itB;
 					rowData[itB].rowValues[itA] = distance;
+					rowData[itA].rowValues[itB] = distance;
 				}
 				else if(refRow == itA && refCol == itB){
 					lt = 0;
 				}
 				else{
 					rowData[itB].rowValues[itA] = distance;
+					rowData[itA].rowValues[itB] = distance;
 				}
 			}
 			else if(itA < itB){
 				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
 					refRow = itA;
 					refCol = itB;
+					rowData[itB].rowValues[itA] = distance;
 					rowData[itA].rowValues[itB] = distance;
 				}
 				else if(refRow == itB && refCol == itA){
 					lt = 0;
 				}
 				else{
+					rowData[itB].rowValues[itA] = distance;
 					rowData[itA].rowValues[itB] = distance;
 				}
 			}
@@ -204,11 +208,11 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
 			int itB = nameToIndexMap[secondName];
 
 			if (util.isEqual(distance, -1)) { distance = 1000000; }
-			else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
-
-			if(distance <= cutoff && itA > itB){
-				rowData[itB].rowValues[itA] = distance;
-			}
+			else if (sim) { distance = 1 - distance;  } 
+			//if(distance > 0)
+			//	Rcpp::Rcout << "Distance: " << distance << std::endl; //user has entered a sim matrix that we need to convert.
+			rowData[itB].rowValues[itA] = distance;
+			rowData[itA].rowValues[itB] = distance;
 		}
 	}
 
