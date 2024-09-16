@@ -58,7 +58,7 @@ bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable, const
 				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
 					refRow = itA;
 					refCol = itB;
-					sparseMatrix->addCell(itB, value);
+					sparseMatrix->addCell(itB, value); // This is the problem most likely...How do we fix it.
 				}
 				else if(refRow == itA && refCol == itB){
 					lt = 0;

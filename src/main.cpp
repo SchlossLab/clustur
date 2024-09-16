@@ -7,12 +7,11 @@
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
-#include "MothurDependencies/RSparseMatrix.h"
 #include "MothurDependencies/OptiMatrix.h"
-
 #include "Adapters/CountTableAdapter.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
+
 
 #if DEBUG_RCPP
 #include <Rcpp.h>

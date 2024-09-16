@@ -4,11 +4,9 @@
 \alias{cluster}
 \title{Cluster Description}
 \usage{
-cluster(sparse_matrix, cutoff, method, count_table, simularity_matrix = FALSE)
+cluster(cutoff, method, count_table, simularity_matrix = FALSE, ...)
 }
 \arguments{
-\item{sparse_matrix}{A Sparse Matrix.}
-
 \item{cutoff}{A cutoff value.}
 
 \item{method}{The type of cluster you wish to conduct;
@@ -16,7 +14,13 @@ furthest, nearest, average, weighted.}
 
 \item{count_table}{A table of names and the given abundance per group.}
 
-\item{simularity_matrix}{are you using a simularity matrix or
+\item{simularity_matrix}{are you using a simularity matrix or}
+
+\item{sparse_matrix}{A Sparse Matrix.}
+
+\item{pylip_path}{The path of your phylip file.}
+
+\item{column_path}{The path to your column distance matrix file.
 distance matrix.}
 }
 \value{
