@@ -166,6 +166,7 @@ validate_count_table <- function(count_table_df) {
   count_table_df <- cbind(count_table_df, totals)
   names(count_table_df)[3] <- "no_group"
   count_table_df[[1]] <- as.character(count_table_df[[1]])
+  return(count_table_df)
 }
 
 clust.abc <- function(x, ...)

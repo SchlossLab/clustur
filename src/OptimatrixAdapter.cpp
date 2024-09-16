@@ -99,6 +99,8 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
             if(distance <= cutoff) {
                 singletonList[i] = false; // Find out who is a singleton
                 singletonList[j] = false;
+                singletonIndexSwap[i] = i;
+                singletonIndexSwap[j] = j;
             }
 
         }
@@ -131,7 +133,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
 
         }
     }
-    return new OptiMatrix{closeness, nameList,singletons, cutoff};
+    return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
 
 

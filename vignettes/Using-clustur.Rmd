@@ -46,6 +46,15 @@ Lets create the sparse matrix:
 
 ```{r}
 # peak_table <- readr::read_csv()
+# df <- readr::read_delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", col_names = c("names", "others", "cutoff"))
+# count <- df[,1:2]
+# unique_names <-  unique(count$names) 
+# abund <- rep(1, times=length(unique_names))
+# count <- data.frame(name=unique_names, total=abund)
+# names(count)[2] <- "total"
+# amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
+#                       count_table = count, cutoff = 0.2)
+
 ```
 
 
