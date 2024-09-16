@@ -131,10 +131,11 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
     sparseMatrix->resize(nseqs);
 	list = new ListVector(static_cast<int>(nseqs));
 	std::unordered_map<std::string, int> nameToIndexMap;
+	std::unordered_map<std::string, bool> firstNameValues;
 	int count = 0;
 	for(const auto &sequence : sequences) {
 		list->set(count, sequence);
-		rowData[count].rowValues = std::vector<double>(nseqs);
+		rowData[count].rowValues = std::vector<double>(nseqs, -1); // Values that surpass the threshold will have all 1s
 		rowData[count].name = sequence;
 		nameToIndexMap[sequence] = count++;
 	}
@@ -155,7 +156,9 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
         // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
 
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
-		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
+		else if (sim) { 
+			distance = 1 - distance; 
+		}  //user has entered a sim matrix that we need to convert.
 		// if(distance > 0)
 		// 	Rcpp::Rcout << "Distance: " << distance << std::endl;
 		if(itA != itB){
@@ -196,18 +199,20 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
 	if(lt == 0){  // oops, it was square
 		fileHandle.close();  //let's start over
 		sparseMatrix->clear();  //let's start over
-		fileHandle.open(filePath); //let's start over
-
+		fileHandle.open(filePath);
+		firstName.clear();//let's start over
+	// Clear rowData
 		while(fileHandle){
 			fileHandle >> firstName;
             fileHandle >> secondName;
             fileHandle >> distance;	// get the row and column names and distance
 
-
 			int itA = nameToIndexMap[firstName];
 			int itB = nameToIndexMap[secondName];
 
-			if (util.isEqual(distance, -1)) { distance = 1000000; }
+			if (util.isEqual(distance, -1)) {
+				 distance = 1000000; 
+			}
 			else if (sim) { distance = 1 - distance;  } 
 			//if(distance > 0)
 			//	Rcpp::Rcout << "Distance: " << distance << std::endl; //user has entered a sim matrix that we need to convert.
@@ -215,7 +220,6 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
 			rowData[itA].rowValues[itB] = distance;
 		}
 	}
-
 	fileHandle.close();
 	list->setLabel("0");
 

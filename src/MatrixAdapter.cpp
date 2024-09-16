@@ -83,10 +83,12 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     std::map<int, RowData> dataList;
     std::unordered_map<int, int> positionsOfIndexs;
     std::unordered_map<int, std::string> positionsToNames;
+    auto samples = countTable.GetSamples();
+    names.insert(samples.begin(), samples.end());
     for (int i = 0; i < nSeqs; i++) {
-        names.insert(countTable.GetNameByIndex(i));
         positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
     }
+
 
     const int nameSize = static_cast<int>(names.size());
     matrixNames = std::vector<std::string>(nameSize);

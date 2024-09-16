@@ -85,15 +85,16 @@ Just like in mothur where you can input column files, we can do the same thing i
 as input. You also have to create a count table. In this case, we just need to ensure that every name is represented inside the table. Since we do not have any abundance values, we just give each sequence an abundance of 0.
 
 ```{r}
+df_count <- read.delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/amazon1.count_table")
 df <- read.delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", header = FALSE)
-names(df) <- c("sequence", "total")
+names(df) <- c("Representative_Sequence", "total")
 count <- df[,1:2]
-unique_names <-  unique(count$sequence) 
+unique_names <-  unique(count$Representative_Sequence) 
 abund <- rep(1, times=length(unique_names))
-count <- data.frame(name=unique_names, total=abund)
+count <- data.frame(Representative_Sequence=unique_names, total=abund)
 names(count)[2] <- "total"
 amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
-                      count_table = count, cutoff = 0.2)
+                      count_table = df_count, cutoff = 0.2)
 
 ```
 
