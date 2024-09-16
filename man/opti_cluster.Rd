@@ -5,17 +5,15 @@
 \title{Opticluster Description}
 \usage{
 opti_cluster(
-  sparse_matrix,
   cutoff,
   count_table,
   iterations = 100,
   shuffle = TRUE,
-  simularity_matrix = FALSE
+  simularity_matrix = FALSE,
+  ...
 )
 }
 \arguments{
-\item{sparse_matrix}{A Sparse Matrix.}
-
 \item{cutoff}{A cutoff value}
 
 \item{count_table}{A table of names and the given abundance per group.}
@@ -26,10 +24,16 @@ opti_cluster(
 not you want to shuffle the data before you cluster}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
+
+\item{...}{Either your phylip file or column file path, or a sparse distance matrix}
 }
 \value{
 A data.frame of the cluster and cluster metrics.
 }
 \description{
+You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
+the path to your phylip and column distance file, or a sparse matrix.
+}
+\details{
 Detailed description of the function.
 }

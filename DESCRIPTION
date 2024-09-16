@@ -14,7 +14,10 @@ Depends:
 LinkingTo: Rcpp,
     testthat
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0),
     xml2
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
+VignetteBuilder: knitr

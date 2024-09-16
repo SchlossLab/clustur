@@ -56,6 +56,23 @@ context("Optimatrix Adapter Test") {
     bool result = fixture.TestOptimatrixNameListReturnsCorrectValue(xVals, yVals, data, 4);
     expect_true(result);
   }
+  test_that("OptimatrixAdapter Convert properly converts rowdata into a OptimatrixAdapter"){
+    OptimatrixAdapterTestFixture test;
+    std::vector<RowData> data(3);
+    data[0].name = "0";
+    data[1].name = "1";
+    data[2].name = "2";
+    data[0].rowValues = {0,0.3,0};
+    data[1].rowValues = {0.3,0,0};
+    data[2].rowValues = {0.3,0,0};
+    std::vector<std::set<long long>> close(3);
+    close[0].insert(1);
+    close[1].insert(0);
+    bool result = test.ConvertToOptimatrixWithRowData(data, false, close);
+    expect_true(result);
+    result = test.ConvertToOptimatrixWithRowData(data, false, {});
+    expect_false(result);
+  }
 
 }
 

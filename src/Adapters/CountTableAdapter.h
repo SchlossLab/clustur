@@ -14,6 +14,7 @@ class CountTableAdapter {
 public:
     CountTableAdapter() = default;
     bool CreateDataFrameMap(const Rcpp::DataFrame& countTable);
+    std::vector<std::string> GetSamples() const {return sampleNames;}
     // Going to ensure that each count_table atleast has a group
     // And if there is no count table inputted, I will create a base one.
     double FindAbundanceBasedOnGroup(const std::string& group, const std::string& sampleName) const;
