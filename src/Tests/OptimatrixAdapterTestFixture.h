@@ -20,6 +20,10 @@ public:
         const std::vector<int> &yPosition, const std::vector<double> &data, int expectedSizeOfList);
     bool TestOptimatrixNameListReturnsCorrectValue(const std::vector<int> &xPosition,
         const std::vector<int> &yPosition, const std::vector<double> &data, int expectedSizeOfList);
+
+    bool ConvertToOptimatrixWithRowData(const std::vector<RowData> &matrixData, bool sim,
+                                        const std::vector<std::set<long long>> &expectedResult);
+
 private:
     void Setup() override;
     void TearDown() override;

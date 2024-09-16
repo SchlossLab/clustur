@@ -14,16 +14,15 @@
 
 class ColumnDistanceMatrixReader final {
 public:
-    ColumnDistanceMatrixReader(std::string  path, double cutoff, bool isSimularity);
-    bool Read(const CountTableAdapter& countTable);
-    std::vector<RowData> readToRowData(const CountTableAdapter &countTable);
+    ColumnDistanceMatrixReader(double cutoff, bool isSimularity);
+    bool Read(const CountTableAdapter &countTable, const std::string &filePath);
+    std::vector<RowData> readToRowData(const CountTableAdapter &countTable, const std::string& filePath);
     ListVector* GetListVector() const {return list;}
     SparseDistanceMatrix* GetSparseDataMatrix() const {return sparseMatrix;}
 
 private:
     SparseDistanceMatrix* sparseMatrix{};
     ListVector* list{};
-    std::string filePath;
     bool sim;
     double cutoff;
 };

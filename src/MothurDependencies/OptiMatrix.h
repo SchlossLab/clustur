@@ -11,7 +11,7 @@
 #include "OptiData.h"
 
 
-class OptiMatrix : public OptiData{
+class OptiMatrix final : public OptiData{
 
 public:
     OptiMatrix(const std::vector<std::set<long long>>& close,  const std::vector<std::string>& name,
