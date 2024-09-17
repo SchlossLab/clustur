@@ -33,7 +33,3 @@ OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 
     .Call(`_Opticluster_OptiClusterColumnDist`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 
-Test <- function() {
-    invisible(.Call(`_Opticluster_Test`))
-}
-
