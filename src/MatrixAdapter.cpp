@@ -80,17 +80,19 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;
     const int nSeqs = static_cast<int>(data.size());
+    if(nSeqs <= 0)
+        return {};
     std::map<int, RowData> dataList;
     std::unordered_map<int, int> positionsOfIndexs;
     std::unordered_map<int, std::string> positionsToNames;
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
-    for (int i = 0; i < nSeqs; i++) {
+    const int nameSize = static_cast<int>(names.size());
+    for (int i = 0; i < nameSize; i++) {
         positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
     }
 
 
-    const int nameSize = static_cast<int>(names.size());
     matrixNames = std::vector<std::string>(nameSize);
     for (int i = 0; i < nameSize; i++) {
         positionsOfIndexs[xPosition[i]] = i;

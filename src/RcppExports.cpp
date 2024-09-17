@@ -137,6 +137,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Test
+void Test();
+RcppExport SEXP _Opticluster_Test() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Test();
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -149,6 +158,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_Opticluster_ClusterWithColumn", (DL_FUNC) &_Opticluster_ClusterWithColumn, 5},
     {"_Opticluster_OptiClusterPhylip", (DL_FUNC) &_Opticluster_OptiClusterPhylip, 6},
     {"_Opticluster_OptiClusterColumnDist", (DL_FUNC) &_Opticluster_OptiClusterColumnDist, 6},
+    {"_Opticluster_Test", (DL_FUNC) &_Opticluster_Test, 0},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
