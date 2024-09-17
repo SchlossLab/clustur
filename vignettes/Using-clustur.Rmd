@@ -94,7 +94,7 @@ abund <- rep(1, times=length(unique_names))
 count <- data.frame(Representative_Sequence=unique_names, total=abund)
 names(count)[2] <- "total"
 amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
-                      count_table = df_count, cutoff = 0.2)
+                      count_table = count, cutoff = 0.2)
 
 ```
 
