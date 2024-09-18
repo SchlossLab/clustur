@@ -130,14 +130,17 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
     sparseMatrix->resize(nseqs);
 	list = new ListVector(static_cast<int>(nseqs));
 	std::unordered_map<std::string, int> nameToIndexMap;
-	int count = 0;
+	std::map<std::string, int> name;
 	for(const auto &sequence : sequences) {
-		list->set(count, sequence);
-		rowData[count].rowValues = std::vector<double>(nseqs, -1); // Values that surpass the threshold will have all 1s
-		rowData[count].name = sequence;
-		nameToIndexMap[sequence] = count++;
+		name[sequence] = 1;
 	}
-
+	int count = 0;
+	for(const auto &sequence : name) {
+		list->set(count, sequence.first);
+		rowData[count].rowValues = std::vector<double>(nseqs, -1); // Values that surpass the threshold will have all 1s
+		rowData[count].name = sequence.first;
+		nameToIndexMap[sequence.first] = count++;
+	}
     int lt = 1;
 	int refRow = 0;	//we'll keep track of one cell - Cell(refRow,refCol) - and see if it's transpose
 	int refCol = 0; //shows up later - Cell(refCol,refRow).  If it does, then its a square matrix
@@ -192,6 +195,7 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
 				}
 			}
 		}
+		else{rowData[itA].rowValues[itB] = 0;} // If itselfs, it should be zero
 	}
 
 	if(lt == 0){  // oops, it was square

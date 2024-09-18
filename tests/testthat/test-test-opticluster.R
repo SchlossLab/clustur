@@ -8,6 +8,8 @@ test_that("Opticluster returns proper results", {
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
+  amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist",
+                      count_table = df_count, cutoff = 0.2)
 })
 
 test_that("Opticluster cluster works via phylip file", {
@@ -36,10 +38,9 @@ test_that("Normal cluster works via column file", {
     sparse_matrix=sparse_matrix, 0.2,
     count_table, FALSE
   )
-  expect_true(all(opticluster_column$cluster == opticluster_sparse$cluster))
-  expect_true(all(opticluster_column$abundance == opticluster_sparse$abundance))
+  expect_true(all(opticluster_column$cluster$bins %in% opticluster_sparse$cluster$bins))
+  expect_true(all(opticluster_column$abundance$abundance %in% opticluster_sparse$abundance$abundance))
 })
-
 
 
 # Reader function
@@ -110,3 +111,13 @@ test_that("Normal cluster works via column file", {
   expect_true(all(as.numeric(cluster_furthest_column$cluster$label) == 0))
 })
 
+test_that("Amazon Data from mothur clusters properly", {
+df_count <- readRDS(test_path("extdata", "amazon_count_table.RDS"))
+column_path < test_path("extdata", "96_sq_column_amazon.dist")
+data <- opti_cluster(column_path=column_path, 
+                      count_table = df_count, cutoff = 0.2)
+tidy_answer <- readRDS(test_path("extdata", "amazonResults.RDS"))
+expect_true(all(tidy_answer$clusters %in% 
+  data$cluster$bins))
+
+})

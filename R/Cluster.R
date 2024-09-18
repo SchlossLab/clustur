@@ -76,6 +76,17 @@ opti_cluster <- function(cutoff, count_table,
     stop("The parameters should include either a sparse_matrix,
     phylip_path, column_path")
   }
+  cluster_dfs[[4]]$comma_count <- sapply(cluster_dfs[[4]]$bins, function(x){
+    ls <- gregexpr(",", x, fixed=TRUE)[[1]]
+    if(ls[[1]] == -1){
+      return(0)
+    }
+    else{
+      return(length(ls))
+    }
+  })
+  cluster_dfs[[4]] <- cluster_dfs[[4]][order(cluster_dfs[[4]]$comma_count, decreasing = T), ]
+  cluster_dfs[[4]] <- cluster_dfs[[4]][,1:3]
   opticluster_data <- list(
     abundance = cluster_dfs[[1]],
     cluster = cluster_dfs[[4]],
@@ -142,13 +153,24 @@ cluster <- function(cutoff, method,
     stop("The parameters should include either a sparse_matrix,
     phylip_path, column_path")
   }
+  
+  cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x){
+    ls <- gregexpr(",", x, fixed=TRUE)[[1]]
+    if(ls[[1]] == -1){
+      return(0)
+    }
+    else{
+      return(length(ls))
+    }
+  })
+  cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count, decreasing = T), ]
+  cluster_dfs[[2]] <- cluster_dfs[[2]][,1:3]
 
   return(list(
     abundance = cluster_dfs[[1]],
     cluster = cluster_dfs[[2]]
   ))
 }
-
 
 #' Opticluster Description
 #'
@@ -163,7 +185,9 @@ validate_count_table <- function(count_table_df) {
     return(count_table_df)
   }
   totals <- count_table_df$total
+  order <- 1:nrow(count_table_df)
   count_table_df <- cbind(count_table_df, totals)
+  count_table_df <- cbind(count_table_df, order)
   names(count_table_df)[3] <- "no_group"
   count_table_df[[1]] <- as.character(count_table_df[[1]])
   return(count_table_df)
