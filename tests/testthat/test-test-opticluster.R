@@ -115,9 +115,6 @@ test_that("Amazon Data from mothur clusters properly", {
   data <- opti_cluster(column_path=column_path, 
                         count_table = df_count, cutoff = 0.2)
   tidy_answer <- readRDS(test_path("extdata", "amazonResults.RDS"))
- 
-  # all(tidy_answer$clusters %in% 
-  #   data$cluster$bins)
   ls <- as.list(el(strsplit(data$cluster$bins[[1]], ","))) 
   ls_answer <- as.list(el(strsplit(tidy_answer$cluster[[1]], ","))) 
   expect_true(all(ls %in% ls_answer))
