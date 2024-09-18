@@ -41,12 +41,6 @@ test_that("Normal cluster works via column file", {
 })
 
 
-# Reader function
-# label, ids, bins
-# opt to remove label
-
-# For cluster
-# Sequence, Abundance, OTU
 test_that("Normal Cluster is able to properly cluster data", {
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
