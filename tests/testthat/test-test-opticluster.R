@@ -118,13 +118,8 @@ test_that("Amazon Data from mothur clusters properly", {
  
   # all(tidy_answer$clusters %in% 
   #   data$cluster$bins)
-  ls <- as.list(el(strsplit(data$cluster$bins[[2]], ","))) 
-  ls_answer <- as.list(el(strsplit(tidy_answer$cluster[[2]], ","))) 
+  ls <- as.list(el(strsplit(data$cluster$bins[[1]], ","))) 
+  ls_answer <- as.list(el(strsplit(tidy_answer$cluster[[1]], ","))) 
+  expect_true(all(ls %in% ls_answer))
+  expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
 })
-l <- list()
-a <- list()
-for(i in 1:nrow(tidy_answer)) {
-  l$i <- as.list(el(strsplit(data$cluster$bins[[i]], ",")))
-  a$i <-  as.list(el(strsplit(tidy_answer$cluster[[i]], ",")))
-}
-
