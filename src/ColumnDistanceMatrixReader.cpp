@@ -4,7 +4,6 @@
 
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include <Rcpp.h>
-#include <utility>
 
 ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
 :sim(isSimularity), cutoff(cutoff) {
@@ -131,7 +130,6 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
     sparseMatrix->resize(nseqs);
 	list = new ListVector(static_cast<int>(nseqs));
 	std::unordered_map<std::string, int> nameToIndexMap;
-	std::unordered_map<std::string, bool> firstNameValues;
 	int count = 0;
 	for(const auto &sequence : sequences) {
 		list->set(count, sequence);
