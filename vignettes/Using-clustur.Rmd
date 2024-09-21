@@ -93,9 +93,9 @@ unique_names <-  unique(count$Representative_Sequence)
 abund <- rep(1, times=length(unique_names))
 count <- data.frame(Representative_Sequence=unique_names, total=abund)
 names(count)[2] <- "total"
-amazon_data_column <- opti_cluster(column_path="/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.dist", 
+amazon_data_column <- opti_cluster(column_path="tests/testthat/extdata/96_sq_column_amazon.dist",
                       count_table = df_count, cutoff = 0.2)
-answer1 <- readr::read_delim("/Users/grejoh/Documents/mothur/mothur/AmazonData/96_sq_column_amazon.opti_mcc.list",delim="\t")
+answer1 <- readr::read_delim("tests/testthat/extdata/Clustur/96_sq_column_amazon.opti_mcc.list",delim="\t")
 tidy_answer_shuffle <- reshape2::melt(answer1, id=c("label","numOtus"), variable.names="OTU", value.name="clusters")
 saveRDS(tidy_answer_shuffle, "tests/testthat/extdata/amazonResults.RDS")
 saveRDS(df_count, "tests/testthat/extdata/amazon_count_table.RDS")
