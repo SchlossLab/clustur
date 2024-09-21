@@ -114,3 +114,17 @@ test_that("Amazon Data from mothur clusters properly", {
   expect_true(all(ls %in% ls_answer))
   expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
 })
+
+# for(i in 1:nrow(tidy_answer_shuffle)){
+#   ls <- as.list(el(strsplit(data$cluster$bins[[i]], ",")))
+#   for(j in 1:nrow(tidy_answer_shuffle)){
+#     ls_answer <- as.list(el(strsplit(tidy_answer_shuffle$cluster[[j]], ",")))
+#     if(all(ls %in% ls_answer))
+#     {
+#        print(all(ls %in% ls_answer))
+#        print(i)
+#        break;
+#     }
+#
+#   }
+#
