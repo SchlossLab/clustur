@@ -208,3 +208,12 @@ clust <- function(x, ...)
 }
 
 
+example <- function(file = NULL) {
+  path <- ""
+  if (is.null(file)) {
+    path <- dir(system.file("extdata", package = "Opticluster"))
+  } else {
+    path <- system.file("extdata", file, package = "Opticluster", mustWork = TRUE)
+  }
+  return(path)
+}
