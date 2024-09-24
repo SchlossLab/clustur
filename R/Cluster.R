@@ -193,22 +193,13 @@ validate_count_table <- function(count_table_df) {
   return(count_table_df)
 }
 
-clust.abc <- function(x, ...)
-{
-    print("abc")
-}
-
-clust.bc <- function(x, ...)
-{
-  print("bcd")
-}
-clust <- function(x, ...)
-{
-  print(x)
-}
-
-
-example <- function(file = NULL) {
+#' Opticluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @return path
+example_path <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
     path <- dir(system.file("extdata", package = "Opticluster"))

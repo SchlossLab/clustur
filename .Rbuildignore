@@ -5,3 +5,5 @@
 ^cmake-build-release$
 ^CMakeLists\.txt$
 ^\.idea$
+^doc$
+^Meta$
