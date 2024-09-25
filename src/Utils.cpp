@@ -10,15 +10,19 @@
 #include <unordered_set>
 
 Utils::Utils() {
-    constexpr long long seed = 19760620;
-    mersenne_twister_engine.seed(seed);
 }
 
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
-    std::shuffle(randomize.begin(), randomize.end(), mersenne_twister_engine);
+    Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
+    const int size = static_cast<int>(randomize.size());
+    randomValues = Rcpp::sample(randomValues, size);
+    randomize = Rcpp::as<std::vector<int>>(randomValues);
 }
 void Utils::mothurRandomShuffle(std::vector<std::string>& randomize){
-    std::shuffle(randomize.begin(), randomize.end(), mersenne_twister_engine);
+    Rcpp::CharacterVector randomValues = Rcpp::wrap(randomize);
+    const int size = static_cast<int>(randomize.size());
+    randomValues = Rcpp::sample(randomValues, size);
+    randomize = Rcpp::as<std::vector<std::string>>(randomValues);
 }
 
 void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
