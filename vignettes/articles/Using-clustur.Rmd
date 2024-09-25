@@ -186,7 +186,7 @@ amazon_data_phylip_opti$cluster
 ```
 
 Abundance:
-```{r R.options=list(max.print=15)}
+```{r}
 amazon_data_phylip_opti$abundance
 ```
 
@@ -198,5 +198,4 @@ amazon_data_phylip_opti$cluster_metrics
 Other Clustering Metrics:
 ```{r R.options=list(max.print=15)}
 amazon_data_phylip_opti$other_cluster_metrics
-print("more")
 ```
