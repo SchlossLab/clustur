@@ -114,21 +114,3 @@ test_that("Amazon Data from mothur clusters properly", {
   expect_true(all(ls %in% ls_answer))
   expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
 })
-# result_mac <- readr::read_delim("tests/testthat/extdata/Clustur/96_sq_column_results_mac.list",delim="\t")
-# result_mac <- reshape2::melt(result_mac, id=c("label","numOtus"), variable.names="OTU", value.name="clusters")
-
-# result_win <- readr::read_delim("tests/testthat/extdata/Clustur/96_sq_column_result_win.list",delim="\t")
-# result_win <- reshape2::melt(result_win, id=c("label","numOtus"), variable.names="OTU", value.name="clusters")
-# for(i in 1:nrow(tidy_answer_shuffle)){
-#   ls <- as.list(el(strsplit(data$cluster$bins[[i]], ",")))
-#   for(j in 1:nrow(tidy_answer_shuffle)){
-#     ls_answer <- as.list(el(strsplit(tidy_answer_shuffle$cluster[[j]], ",")))
-#     if(all(ls %in% ls_answer))
-#     {
-#        print(all(ls %in% ls_answer))
-#        print(i)
-#        break;
-#     }
-#
-#   }
-#
