@@ -2,14 +2,18 @@
 % Please edit documentation in R/Cluster.R
 \name{example_path}
 \alias{example_path}
-\title{Example Path Description}
+\title{Example Path}
 \usage{
 example_path(file = NULL)
 }
 \value{
-path
+the path inside of the package of the file.
 }
 \description{
-This function was created as a helper function to generate file paths to our internal data. You are able to access
-this function if you want to follow along with the example.
+Example Path
+}
+\examples{
+# This will return the path to our example file
+example_path("98_sq_phylip_amazon.dist")
+
 }

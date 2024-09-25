@@ -14,6 +14,7 @@
 #' 
 #' @examples
 #'  # Using a sparse matrix
+#'  library(Matrix)
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, T))
 #'  x_values <- as.numeric(runif(100, 0, 1))
@@ -25,7 +26,7 @@
 #'  count_table_sparse <- data.frame(sequence=as.character(i_values), 
 #'                                  total=rep(1,times=100))
 #' 
-#'  cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table, sparse_matrix=s_matrix)
+#'  cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table_sparse, sparse_matrix=s_matrix)
 #' 
 #'  # With a column file
 #'  count_table <- read.delim(example_path("amazon1.count_table"))
@@ -131,8 +132,8 @@ opti_cluster <- function(cutoff, count_table,
 #' @return A string of the given cluster.
 #' 
 #' @examples
-#' #' @examples
 #'  # Using a sparse matrix
+#' library(Matrix)
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, T))
 #'  x_values <- as.numeric(runif(100, 0, 1))
@@ -144,7 +145,7 @@ opti_cluster <- function(cutoff, count_table,
 #'  count_table_sparse <- data.frame(sequence=as.character(i_values), 
 #'                                  total=rep(1,times=100))
 #'  # furthest method
-#'  cluster_results <- cluster(cutoff=0.2, count_table = count_table, 
+#'  cluster_results <- cluster(cutoff=0.2, count_table = count_table_sparse, 
 #'                             sparse_matrix=s_matrix, method="furthest")
 #' 
 #'  # With a phylip file and nearest methods
@@ -236,12 +237,16 @@ validate_count_table <- function(count_table_df) {
   return(count_table_df)
 }
 
+
+#' Example Path
+#' 
 #' @export
-#' Example Path Description
-#'
 #' This function was created as a helper function to generate file paths to our internal data. You are able to access
 #' this function if you want to follow along with the example.
 #'
+#' @examples
+#' # This will return the path to our example file
+#' example_path("98_sq_phylip_amazon.dist")
 #' 
 #' @return the path inside of the package of the file.
 example_path <- function(file = NULL) {

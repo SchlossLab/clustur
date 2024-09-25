@@ -198,4 +198,5 @@ amazon_data_phylip_opti$cluster_metrics
 Other Clustering Metrics:
 ```{r R.options=list(max.print=15)}
 amazon_data_phylip_opti$other_cluster_metrics
+print("more")
 ```

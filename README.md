@@ -1,23 +1,3 @@
----
-title: "About-clustur"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{About-clustur}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-```{r setup}
-library(Opticluster)
-```
-
 # mothur
 
 mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.
@@ -29,12 +9,13 @@ clustur was developed for two main reasons: to allow developers to easily create
 
 ## Installation
 
-```{r}
+```r
+# install via cran
 install.packages("clustur")
 ```
 
-```{r}
-# or via github
+```r
+# install via github
 remotes::install_github("SchlossLab/Clustur")
 ```
 

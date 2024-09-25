@@ -36,6 +36,7 @@ the path to your phylip and column distance file, or a sparse matrix.
 }
 \examples{
  # Using a sparse matrix
+ library(Matrix)
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, T))
  x_values <- as.numeric(runif(100, 0, 1))
@@ -47,7 +48,7 @@ the path to your phylip and column distance file, or a sparse matrix.
  count_table_sparse <- data.frame(sequence=as.character(i_values), 
                                  total=rep(1,times=100))
 
- cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table, sparse_matrix=s_matrix)
+ cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table_sparse, sparse_matrix=s_matrix)
 
  # With a column file
  count_table <- read.delim(example_path("amazon1.count_table"))
