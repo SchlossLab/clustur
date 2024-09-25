@@ -87,7 +87,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     for(long long i = 0; i < size; i++) {
         nameList[i] = matrixData[i].name;
         singletonIndexSwap[i] = i;
-        for(long long j = 0; j < size; j++) {
+        for(long long j = 0; j < i; j++) {
             auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
