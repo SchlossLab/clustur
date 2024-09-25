@@ -16,7 +16,7 @@
 #'  # Using a sparse matrix
 #'  library(Matrix)
 #'  i_values <- as.integer(1:100)
-#'  j_values <- as.integer(sample(1:100, 100, T))
+#'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- new("dgTMatrix",
 #'          i = i_values,
@@ -135,7 +135,7 @@ opti_cluster <- function(cutoff, count_table,
 #'  # Using a sparse matrix
 #' library(Matrix)
 #'  i_values <- as.integer(1:100)
-#'  j_values <- as.integer(sample(1:100, 100, T))
+#'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- new("dgTMatrix",
 #'          i = i_values,
@@ -240,7 +240,7 @@ validate_count_table <- function(count_table_df) {
 #' 
 #' @export
 #' This function was created as a helper function to generate file paths to our internal data. You are able to access this function if you want to follow along with the example.
-#'
+#' @param file The data of the path you are looking to find.
 #' @examples
 #' # This will return the path to our example file
 #' example_path("98_sq_phylip_amazon.dist")
