@@ -19,17 +19,10 @@ library(Opticluster)
 library(Matrix)
 ```
 
-# mothur
-
-mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.
-
-# clustur
-
-clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful clustering algorithm from mothur without having to download it. Because mothur is built using rcpp, it benefits from the speed of c++ and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.
-
 # Starting Up
 
 clustur was developed similarly to the traditional c++ implementation, however there are a few differences to note. In order to clustur your data, we are requiring users to build out there own sparse matrix (we also support phylip files) and count table in R. Once these objects are built out you can call the cluster function. We currently support 5 cluster functions from mothur: furthest, nearest, weighted, average, and opticluster. Each of these clusters will produce data comparable to mothur efficiently. Below I will show you how to create your sparse matrix and count table. Do not worry if you do not have a count table, as long as you have the data, we can create a blank count table. The blank count table will still output cluster results, but your abundance information will only describe the frequency.
+
 
 ## To Begin
 
@@ -48,12 +41,14 @@ s_matrix
 
 Now we have a matrix that is represented as a tripliclate. In this example we do not have any names that correspond to the indexes, so we will use the index numbers as names and create a count table.
 
+
 ```{r}
 # We are using random numbers between one and 100, so that will be our first column
 # We will also give each sequence an abundance of 1
 count_table <- data.frame(sequence=as.character(i_values), total=rep(1,times=100))
 
 ```
+
 
 There are a few ways to cluster the data, but lets start with using the opticluster method:
 
@@ -63,11 +58,27 @@ cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table, sparse_ma
 
 opticluster outputs a list of 4 dataframes. The clustering data, the abundance data, the cluster metrics, and additional clustering metrics. The cluster looks like this:
 
-```{r R.options=list(max.print=10)}
+```{r R.options=list(max.print=15)}
 cluster_results$cluster
 ```
 
 otu represent the clusters, the label represents the highest cutoff, and the bin represents the sequences inside of each cluster.
+
+### Count table
+
+A count table is required for every clustering method. The count file is used to calculate the group abundance of each seqeunces. This is how we determine how abundant and create a shared file (additional information from the Mothur documentation [Shared file](https://mothur.org/wiki/shared_file/)). We created one earlier, but lets revisit the topic.
+
+Lets take a look at the count_table we created earlier
+
+```{r R.options=list(max.print=15)}
+count_table
+```
+
+This count table contains two headers, sequence and total. The sequence header contains the names of the sequences and the total is its total abundance. In our case we do not have abundance based on groups in this count table. But there are many different count tables that do. 
+
+We were able to create this count table because we had a ***unique*** count of sequences (1-100), and we were able to use those to generate the table. ***If a sequence in your distance table is not present, it will return as a 0 and may disrupt your results. ***
+
+
 
 ## Column Distance file
 
@@ -77,7 +88,7 @@ Additional information:[column distance file](https://mothur.org/wiki/column-for
 
 To start let me show you a typically count table:
 
-```{r}
+```{r R.options=list(max.print=15)}
 df_count <- read.delim(example_path("amazon1.count_table"))
 df_count
 # names(df_count) <- c("Representative_Sequence", "total")
@@ -102,7 +113,7 @@ amazon_data_column$cluster$bins
 ```
 
 
-### Phylip distance file
+## Phylip distance file
 
 Just like Mothur we allow the use of column distance matrices and phylip distance files.
 
@@ -114,3 +125,41 @@ amazon_data_phylip$clusters$bin
 ```
 
 
+## Other clustering methods
+
+For most of the examples we have been using the opti-clust method but we can also use furthest, nearest, average, and weighted.
+Furthest:
+
+```{R R.options=list(max.print=15)}
+
+amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                      count_table = df_count, method="furthest", cutoff = 0.2)
+amazon_data_phylip$cluster$bins
+```
+
+Nearest:
+
+```{R R.options=list(max.print=15)}
+
+amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                      count_table = df_count, method="nearest", cutoff = 0.2)
+amazon_data_phylip$cluster$bins
+```
+
+Average:
+
+```{R R.options=list(max.print=15)}
+
+amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                      count_table = df_count, method="average", cutoff = 0.2)
+amazon_data_phylip$cluster$bins
+```
+
+Weighted:
+
+```{R R.options=list(max.print=15)}
+
+amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                      count_table = df_count, method="weighted", cutoff = 0.2)
+amazon_data_phylip$cluster$bins
+```
