@@ -2,7 +2,7 @@
 % Please edit documentation in R/Cluster.R
 \name{opti_cluster}
 \alias{opti_cluster}
-\title{Opticluster Description}
+\title{clustur Description}
 \usage{
 opti_cluster(
   cutoff,

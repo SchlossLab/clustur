@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // WritePhylipFile
 void WritePhylipFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation);
-RcppExport SEXP _Opticluster_WritePhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
+RcppExport SEXP _clustur_WritePhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
@@ -27,7 +27,7 @@ END_RCPP
 }
 // WriteColumnFile
 void WriteColumnFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation);
-RcppExport SEXP _Opticluster_WriteColumnFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
+RcppExport SEXP _clustur_WriteColumnFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
@@ -42,7 +42,7 @@ END_RCPP
 }
 // MatrixToOpiMatrixCluster
 std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _Opticluster_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+RcppExport SEXP _clustur_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -60,7 +60,7 @@ END_RCPP
 }
 // ClassicCluster
 std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
-RcppExport SEXP _Opticluster_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
+RcppExport SEXP _clustur_ClassicCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,7 +77,7 @@ END_RCPP
 }
 // ClusterWithPhylip
 std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
-RcppExport SEXP _Opticluster_ClusterWithPhylip(SEXP phylipFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
+RcppExport SEXP _clustur_ClusterWithPhylip(SEXP phylipFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -92,7 +92,7 @@ END_RCPP
 }
 // ClusterWithColumn
 std::vector<Rcpp::DataFrame> ClusterWithColumn(const std::string& columnFilePath, const double cutoff, const std::string& method, const Rcpp::DataFrame& countTable, const bool isSimularity);
-RcppExport SEXP _Opticluster_ClusterWithColumn(SEXP columnFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
+RcppExport SEXP _clustur_ClusterWithColumn(SEXP columnFilePathSEXP, SEXP cutoffSEXP, SEXP methodSEXP, SEXP countTableSEXP, SEXP isSimularitySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -107,7 +107,7 @@ END_RCPP
 }
 // OptiClusterPhylip
 std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _Opticluster_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+RcppExport SEXP _clustur_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -123,7 +123,7 @@ END_RCPP
 }
 // OptiClusterColumnDist
 std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _Opticluster_OptiClusterColumnDist(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+RcppExport SEXP _clustur_OptiClusterColumnDist(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -141,19 +141,19 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_Opticluster_WritePhylipFile", (DL_FUNC) &_Opticluster_WritePhylipFile, 6},
-    {"_Opticluster_WriteColumnFile", (DL_FUNC) &_Opticluster_WriteColumnFile, 6},
-    {"_Opticluster_MatrixToOpiMatrixCluster", (DL_FUNC) &_Opticluster_MatrixToOpiMatrixCluster, 8},
-    {"_Opticluster_ClassicCluster", (DL_FUNC) &_Opticluster_ClassicCluster, 7},
-    {"_Opticluster_ClusterWithPhylip", (DL_FUNC) &_Opticluster_ClusterWithPhylip, 5},
-    {"_Opticluster_ClusterWithColumn", (DL_FUNC) &_Opticluster_ClusterWithColumn, 5},
-    {"_Opticluster_OptiClusterPhylip", (DL_FUNC) &_Opticluster_OptiClusterPhylip, 6},
-    {"_Opticluster_OptiClusterColumnDist", (DL_FUNC) &_Opticluster_OptiClusterColumnDist, 6},
+    {"_clustur_WritePhylipFile", (DL_FUNC) &_clustur_WritePhylipFile, 6},
+    {"_clustur_WriteColumnFile", (DL_FUNC) &_clustur_WriteColumnFile, 6},
+    {"_clustur_MatrixToOpiMatrixCluster", (DL_FUNC) &_clustur_MatrixToOpiMatrixCluster, 8},
+    {"_clustur_ClassicCluster", (DL_FUNC) &_clustur_ClassicCluster, 7},
+    {"_clustur_ClusterWithPhylip", (DL_FUNC) &_clustur_ClusterWithPhylip, 5},
+    {"_clustur_ClusterWithColumn", (DL_FUNC) &_clustur_ClusterWithColumn, 5},
+    {"_clustur_OptiClusterPhylip", (DL_FUNC) &_clustur_OptiClusterPhylip, 6},
+    {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 6},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_Opticluster(DllInfo *dll) {
+RcppExport void R_init_clustur(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

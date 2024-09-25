@@ -1,4 +1,4 @@
-#' Opticluster Description
+#' clustur Description
 #'
 #' @export
 #' @param cutoff A cutoff value
@@ -241,8 +241,7 @@ validate_count_table <- function(count_table_df) {
 #' Example Path
 #' 
 #' @export
-#' This function was created as a helper function to generate file paths to our internal data. You are able to access
-#' this function if you want to follow along with the example.
+#' This function was created as a helper function to generate file paths to our internal data. You are able to access this function if you want to follow along with the example.
 #'
 #' @examples
 #' # This will return the path to our example file
@@ -252,9 +251,9 @@ validate_count_table <- function(count_table_df) {
 example_path <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
-    path <- dir(system.file("ext data", package = "Opticluster"))
+    path <- dir(system.file("extdata", package = "clustur"))
   } else {
-    path <- system.file("extdata", file, package = "Opticluster", mustWork = TRUE)
+    path <- system.file("extdata", file, package = "clustur", mustWork = TRUE)
   }
   return(path)
 }

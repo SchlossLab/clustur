@@ -1,24 +1,24 @@
-test_that("Opticluster returns proper results", {
+test_that("clustur returns proper results", {
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
-  df <- Opticluster::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
+  df <- clustur::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
 })
 
-test_that("Opticluster cluster works via phylip file", {
+test_that("clustur cluster works via phylip file", {
 
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   phylip_path <- test_path("extdata", "updated_phylip_1.txt")
   cutoff <- 0.2
-  df <- Opticluster::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
-  df2 <- Opticluster::opti_cluster(phylip_path=phylip_path, cutoff, count_table)
+  df <- clustur::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
+  df2 <- clustur::opti_cluster(phylip_path=phylip_path, cutoff, count_table)
   expect_true(all(df$cluster == df2$cluster))
   expect_true(all(df$abundance == df2$abundance))
 })
