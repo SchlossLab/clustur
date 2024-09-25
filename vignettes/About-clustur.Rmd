@@ -26,3 +26,22 @@ mothur is an open-sourced software used for the analysis of ecological data. It 
 
 clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful clustering algorithm from mothur without having to download it. Because mothur is built using rcpp, it benefits from the speed of c++ and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.
 
+
+## Installation
+
+```{r}
+install.packages("clustur")
+```
+
+```{r}
+# or via github
+remotes::install_github("SchlossLab/Clustur")
+```
+
+## Getting Started
+
+To get started, look at our "Using Clustur" article. 
+
+## Contributions
+
+For feature requrest please visit the issue page in github and use the feature tag. If you would like to contribute pull request are welcomed!

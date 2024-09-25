@@ -28,3 +28,35 @@ the path to your phylip and column distance file, or a sparse matrix.
 \details{
 Detailed description of the function.
 }
+\examples{
+#' @examples
+ # Using a sparse matrix
+ i_values <- as.integer(1:100)
+ j_values <- as.integer(sample(1:100, 100, T))
+ x_values <- as.numeric(runif(100, 0, 1))
+ s_matrix <- new("dgTMatrix",
+         i = i_values,
+         j = j_values,x=x_values, Dim=102:103)
+
+ # Creating a count table using the sparse matrix
+ count_table_sparse <- data.frame(sequence=as.character(i_values), 
+                                 total=rep(1,times=100))
+ # furthest method
+ cluster_results <- cluster(cutoff=0.2, count_table = count_table, 
+                            sparse_matrix=s_matrix, method="furthest")
+
+ # With a phylip file and nearest methods
+ count_table <- read.delim(example_path("amazon1.count_table"))
+ amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                               count_table = count_table, method="nearest", cutoff = 0.2)
+
+ # With a column file and average methods 
+ amazon_data_column <- cluster(column_path=example_path("96_sq_column_amazon.dist"),
+                               count_table = count_table, method="average", cutoff = 0.2)
+
+ # Weighted method
+ amazon_data_column <- cluster(column_path=example_path("96_sq_column_amazon.dist"),
+                               count_table = count_table, method="weighted", cutoff = 0.2)
+
+
+}

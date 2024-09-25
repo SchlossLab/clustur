@@ -1,0 +1,5 @@
+url: http://www.schlosslab.org/Clustur/
+template:
+  bootstrap: 5
+  light-switch: true
+

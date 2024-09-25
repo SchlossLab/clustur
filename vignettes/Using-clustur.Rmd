@@ -91,13 +91,6 @@ To start let me show you a typically count table:
 ```{r R.options=list(max.print=15)}
 df_count <- read.delim(example_path("amazon1.count_table"))
 df_count
-# names(df_count) <- c("Representative_Sequence", "total")
-# count <- df_count[,1:2]
-# unique_names <-  unique(count$Representative_Sequence) 
-# abund <- rep(1, times=length(unique_names))
-# count <- data.frame(Representative_Sequence=unique_names, total=abund)
-# names(count)[2] <- "total"
-
 ```
 
 A normal count table consists of the names of each sequence, the total amount of abundance (the total), and groups. This count table does not display any group information, however, it is common to include the abundance per group when dealing with numerous sequences. For the sake of this demonstration, we will not include any group information. Therefore this format is similar to the name file in Mothur. Keep in mind, inside the code, when we detect that no groups are present, we will add a no-group tag for processing. 
@@ -117,7 +110,7 @@ amazon_data_column$cluster$bins
 
 Just like Mothur we allow the use of column distance matrices and phylip distance files.
 
-```{R R.options=list(max.print=15)}
+```{r R.options=list(max.print=15)}
 
 amazon_data_phylip <- opti_cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
                       count_table = df_count, cutoff = 0.2)
@@ -128,9 +121,10 @@ amazon_data_phylip$clusters$bin
 ## Other clustering methods
 
 For most of the examples we have been using the opti-clust method but we can also use furthest, nearest, average, and weighted.
+
 Furthest:
 
-```{R R.options=list(max.print=15)}
+```{r R.options=list(max.print=15)}
 
 amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
                       count_table = df_count, method="furthest", cutoff = 0.2)
@@ -139,7 +133,7 @@ amazon_data_phylip$cluster$bins
 
 Nearest:
 
-```{R R.options=list(max.print=15)}
+```{r R.options=list(max.print=15)}
 
 amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
                       count_table = df_count, method="nearest", cutoff = 0.2)
@@ -148,7 +142,7 @@ amazon_data_phylip$cluster$bins
 
 Average:
 
-```{R R.options=list(max.print=15)}
+```{r R.options=list(max.print=15)}
 
 amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
                       count_table = df_count, method="average", cutoff = 0.2)
@@ -157,9 +151,51 @@ amazon_data_phylip$cluster$bins
 
 Weighted:
 
-```{R R.options=list(max.print=15)}
+```{r R.options=list(max.print=15)}
 
 amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
                       count_table = df_count, method="weighted", cutoff = 0.2)
 amazon_data_phylip$cluster$bins
+```
+
+## Results
+
+The results from the clustering algorithm are presented as a list of dataframes. The cluster function returns two dataframes named abundance, and cluster. The aundance dataframe contains the abundance per group in each otu. The cluster dataframe shows how each sequence cluster together. Opticluster contains four dataframes: abundance, cluster, cluster_metrics, and other_cluster_metrics. Abundance and cluster contain the same data as the base cluster functioin, cluster_metrics contains information describing how everything clustered. This includes f1score, and mcc. Other cluster metrics only contains information related to the f1score, accuracy, etc.
+
+Below are some examples:
+
+### Cluster function
+Cluster:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip$cluster
+```
+
+Abundance:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip$abundance
+```
+
+
+### Opticluster function
+
+Cluster:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip_opti <- opti_cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
+                      count_table = df_count, cutoff = 0.2)
+amazon_data_phylip_opti$cluster
+```
+
+Abundance:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip_opti$abundance
+```
+
+Clustering Metics:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip_opti$cluster_metrics
+```
+
+Other Clustering Metrics:
+```{r R.options=list(max.print=15)}
+amazon_data_phylip_opti$other_cluster_metrics
 ```

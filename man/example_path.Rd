@@ -2,7 +2,7 @@
 % Please edit documentation in R/Cluster.R
 \name{example_path}
 \alias{example_path}
-\title{Opticluster Description}
+\title{Example Path Description}
 \usage{
 example_path(file = NULL)
 }
@@ -10,5 +10,6 @@ example_path(file = NULL)
 path
 }
 \description{
-Detailed description of the function.
+This function was created as a helper function to generate file paths to our internal data. You are able to access
+this function if you want to follow along with the example.
 }
