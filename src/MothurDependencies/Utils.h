@@ -13,6 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
+#include <Rcpp.h>
 #include "PDistCell.h"
 
 class BadConversion : public std::runtime_error {
@@ -22,7 +23,7 @@ public:
 
 class Utils {
 public:
-    Utils();
+    Utils() = default;
     void mothurRandomShuffle(std::vector<int>& randomize);
     void mothurRandomShuffle(std::vector<std::string>& randomize);
     void mothurRandomShuffle(std::vector<PDistCellMin>& randomize);
@@ -44,7 +45,7 @@ public:
                               const std::vector<std::string> &headers);
 
     template <typename Out>
-    void split(const std::string &s, char delim, Out result) {
+    void split(const std::string &s, const char delim, Out result) {
         std::istringstream iss(s);
         std::string item;
         while (getline(iss, item, delim)) {

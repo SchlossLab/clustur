@@ -4,7 +4,14 @@
 \alias{cluster}
 \title{Cluster Description}
 \usage{
-cluster(cutoff, method, count_table, simularity_matrix = FALSE, ...)
+cluster(
+  cutoff,
+  method,
+  count_table,
+  simularity_matrix = FALSE,
+  random_seed = 123,
+  ...
+)
 }
 \arguments{
 \item{cutoff}{A cutoff value.}
@@ -15,6 +22,8 @@ furthest, nearest, average, weighted.}
 \item{count_table}{A table of names and the given abundance per group.}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
+
+\item{random_seed}{you can set your own random seed for consistent results, if not it will be set to 123}
 
 \item{...}{Either your phylip file or column file path, or a sparse distance matrix}
 }
@@ -30,13 +39,14 @@ Detailed description of the function.
 }
 \examples{
  # Using a sparse matrix
-library(Matrix)
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
- s_matrix <- new("dgTMatrix",
-         i = i_values,
-         j = j_values,x=x_values, Dim=102:103)
+ s_matrix <- Matrix::spMatrix(nrow=max(i_values), 
+                              ncol=max(i_values), 
+                              i=i_values, 
+                              j=j_values, 
+                              x=x_values)
 
  # Creating a count table using the sparse matrix
  count_table_sparse <- data.frame(sequence=as.character(i_values), 

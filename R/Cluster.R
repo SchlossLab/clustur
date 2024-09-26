@@ -7,6 +7,7 @@
 #' @param shuffle a boolean to determine whether or
 #'  not you want to shuffle the data before you cluster
 #' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @param random_seed you can set your own random seed for consistent results, if not it will be set to 123
 #' @param ... Either your phylip file or column file path, or a sparse distance matrix
 #' @description
 #' You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
@@ -14,19 +15,22 @@
 #' 
 #' @examples
 #'  # Using a sparse matrix
-#'  library(Matrix)
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
-#'  s_matrix <- new("dgTMatrix",
-#'          i = i_values,
-#'          j = j_values,x=x_values, Dim=102:103)
+#'  s_matrix <- Matrix::spMatrix(nrow=max(i_values), 
+#'                               ncol=max(i_values), 
+#'                               i=i_values, 
+#'                               j=j_values, 
+#'                               x=x_values)
 #' 
 #'  # Creating a count table using the sparse matrix
 #'  count_table_sparse <- data.frame(sequence=as.character(i_values), 
 #'                                  total=rep(1,times=100))
 #' 
-#'  cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table_sparse, sparse_matrix=s_matrix)
+#'  cluster_results <- opti_cluster(cutoff=0.2, 
+#'                                  count_table = count_table_sparse,
+#'                                  sparse_matrix=s_matrix)
 #' 
 #'  # With a column file
 #'  count_table <- read.delim(example_path("amazon1.count_table"))
@@ -42,7 +46,7 @@
 #' @return A data.frame of the cluster and cluster metrics.
 opti_cluster <- function(cutoff, count_table,
                          iterations = 100, shuffle = TRUE,
-                         simularity_matrix = FALSE, ...) {
+                         simularity_matrix = FALSE, random_seed = 123, ...) {
   count_table <- validate_count_table(count_table)
   list_params <- list(...)
   params <- names(list_params)
@@ -54,7 +58,7 @@ opti_cluster <- function(cutoff, count_table,
     stop("You cannot use all three input paramters at once.
     Use either phylip_path, column_path, or sparse_matrix.")
   }
-  
+  set.seed(random_seed)
   if("sparse_matrix" %in% params)
   {
     sparse_matrix <- list_params$sparse_matrix
@@ -125,6 +129,7 @@ opti_cluster <- function(cutoff, count_table,
 #'  furthest, nearest, average, weighted.
 #' @param count_table A table of names and the given abundance per group.
 #' @param simularity_matrix are you using a simularity matrix or distance matrix
+#' @param random_seed you can set your own random seed for consistent results, if not it will be set to 123
 #' @param ... Either your phylip file or column file path, or a sparse distance matrix
 #' @description
 #' You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
@@ -133,13 +138,14 @@ opti_cluster <- function(cutoff, count_table,
 #' 
 #' @examples
 #'  # Using a sparse matrix
-#' library(Matrix)
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
-#'  s_matrix <- new("dgTMatrix",
-#'          i = i_values,
-#'          j = j_values,x=x_values, Dim=102:103)
+#'  s_matrix <- Matrix::spMatrix(nrow=max(i_values), 
+#'                               ncol=max(i_values), 
+#'                               i=i_values, 
+#'                               j=j_values, 
+#'                               x=x_values)
 #' 
 #'  # Creating a count table using the sparse matrix
 #'  count_table_sparse <- data.frame(sequence=as.character(i_values), 
@@ -163,7 +169,7 @@ opti_cluster <- function(cutoff, count_table,
 #' 
 #' 
 cluster <- function(cutoff, method,
-                    count_table, simularity_matrix = FALSE, ...) {
+                    count_table, simularity_matrix = FALSE, random_seed = 123, ...) {
   list_params <- list(...)
   params <- names(list_params)
   cluster_dfs <- list()
@@ -173,7 +179,7 @@ cluster <- function(cutoff, method,
     stop("You cannot use all three input paramters at once.
     Use either phylip_path, column_path, or sparse_matrix.")
   }
-  
+  set.seed(random_seed)
   if("sparse_matrix" %in% params)
   {
     sparse_matrix <- list_params$sparse_matrix

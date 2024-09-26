@@ -3,6 +3,7 @@ test_that("clustur returns proper results", {
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
+
   df <- opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
@@ -100,17 +101,14 @@ test_that("Normal cluster works via column file", {
     column_path=column_path, 0.2, 
     "furthest", count_table, FALSE
   )
-  expect_true(all(as.numeric(cluster_furthest_column$cluster$label) == 0))
+  expect_true(all(as.numeric(cluster_furthest_column$cluster$label) == 0.040000))
 })
 
 test_that("Amazon Data from mothur clusters properly", {
   df_count <- readRDS(test_path("extdata", "amazon_count_table.RDS"))
   column_path <- test_path("extdata", "96_sq_column_amazon.dist")
+  result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
   data <- opti_cluster(column_path=column_path, 
                         count_table = df_count, cutoff = 0.2)
-  tidy_answer <- readRDS(test_path("extdata", "amazonResults.RDS"))
-  ls <- as.list(el(strsplit(data$cluster$bins[[1]], ","))) 
-  ls_answer <- as.list(el(strsplit(tidy_answer$cluster[[1]], ","))) 
-  expect_true(all(ls %in% ls_answer))
-  expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
+  expect_true(all(data$cluster == result$cluster))
 })

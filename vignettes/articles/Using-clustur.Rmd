@@ -17,6 +17,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 library(clustur)
 library(Matrix)
+set.seed(123)
 ```
 
 # Starting Up
@@ -33,9 +34,7 @@ Lets create the sparse matrix: The easiest way to create a sparse matrix, is to 
 i_values <- as.integer(1:100)
 j_values <- as.integer(sample(1:100, 100, T))
 x_values <- as.numeric(runif(100, 0, 1))
-s_matrix <- new("dgTMatrix",
-          i = i_values,
-          j = j_values,x=x_values, Dim=102:103)
+s_matrix <- spMatrix(nrow=max(i_values), ncol=max(i_values), i=i_values, j=j_values, x=x_values)
 s_matrix
 ```
 
