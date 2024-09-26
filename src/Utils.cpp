@@ -9,9 +9,6 @@
 #include <sstream>
 #include <unordered_set>
 
-Utils::Utils() {
-}
-
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
     Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
     const int size = static_cast<int>(randomize.size());
@@ -31,9 +28,7 @@ void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
 
 int Utils::getRandomIndex(const int highest){
         if (highest == 0) { return 0; }
-    std::uniform_int_distribution<int> dis(0, highest);
-    return dis(mersenne_twister_engine);
-
+    return static_cast<int>(R::runif(0, highest));
 }
 int Utils::getNumNames(std::string names){
 

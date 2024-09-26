@@ -10,6 +10,7 @@ opti_cluster(
   iterations = 100,
   shuffle = TRUE,
   simularity_matrix = FALSE,
+  random_seed = 123,
   ...
 )
 }
@@ -24,6 +25,8 @@ opti_cluster(
 not you want to shuffle the data before you cluster}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
+
+\item{random_seed}{you can set your own random seed for consistent results, if not it will be set to 123}
 
 \item{...}{Either your phylip file or column file path, or a sparse distance matrix}
 }

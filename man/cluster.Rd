@@ -4,7 +4,14 @@
 \alias{cluster}
 \title{Cluster Description}
 \usage{
-cluster(cutoff, method, count_table, simularity_matrix = FALSE, ...)
+cluster(
+  cutoff,
+  method,
+  count_table,
+  simularity_matrix = FALSE,
+  random_seed = 123,
+  ...
+)
 }
 \arguments{
 \item{cutoff}{A cutoff value.}
@@ -15,6 +22,8 @@ furthest, nearest, average, weighted.}
 \item{count_table}{A table of names and the given abundance per group.}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
+
+\item{random_seed}{you can set your own random seed for consistent results, if not it will be set to 123}
 
 \item{...}{Either your phylip file or column file path, or a sparse distance matrix}
 }
