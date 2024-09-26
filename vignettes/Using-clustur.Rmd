@@ -1,0 +1,55 @@
+---
+title: "Using clustur"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using-clustur}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(Opticluster)
+```
+
+# mothur
+mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences.
+mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity,
+and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of
+mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines
+utilizing this package.
+
+
+# clustur
+clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful
+clustering algorithm from mothur without having to download it. Because mothur is built using rcpp, it benefits from the speed of c++
+and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only
+help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.
+
+# Starting Up
+clustur was developed similarly to the traditional c++ implementation, however there are a few differences to note. In order to clustur
+your data, we are requiring users to build out there own sparse matrix (we also support phylip files) and count table in R. Once these
+objects are built out you can call the cluster function. We currently support 5 cluster functions from mothur: furthest, nearest,
+weighted, average, and opticlust. Each of these clusters will produce data comparable to mothur efficiently. Below I will show you
+how to create your sparse matrix and count table. Do not worry if you do not have a count table, as long as you have the data,
+we can create a blank count table. The blank count table will still output cluster results, but your abundance information will
+only describe the frequency.
+
+## To Begin
+Lets create the sparse matrix:
+
+```{r}
+# peak_table <- readr::read_csv()
+```
+
+
+
+
+
+
