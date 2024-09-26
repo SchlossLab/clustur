@@ -121,19 +121,48 @@ std::vector<RowData> ReadPhylipMatrix::readToRowData(const std::string& filePath
     for (int i = 0; i < nseqs; i++) {
         phylipRowData[i].rowValues = std::vector<double>(nseqs);
     }
-
-    for (int i = 1; i < nseqs; i++) {
-        fileHandle >> name;
-        matrixNames.push_back(name);
-        phylipRowData[i].name = name;
-        list->set(i, name);
-        for (int j = 0; j < i; j++) {
-            fileHandle >> distance;
-            phylipRowData[i].rowValues[j] = distance;
-            phylipRowData[j].rowValues[i] = distance;
+    bool square = false;
+    char d;
+    while ((d = fileHandle.get()) != EOF) {
+        if (isalnum(d)) {
+            square = true;
+            fileHandle.putback(d);
+            for (int i = 0; i < nseqs; i++) {
+                fileHandle >> distance;
+            }
+            break;
+        }
+        if (d == '\n') {
+            square = false;
+            break;
         }
     }
-
+    if(!square) {
+        for (int i = 1; i < nseqs; i++) {
+            fileHandle >> name;
+            matrixNames.push_back(name);
+            phylipRowData[i].name = name;
+            list->set(i, name);
+            for (int j = 0; j < i; j++) {
+                fileHandle >> distance;
+                phylipRowData[i].rowValues[j] = distance;
+                phylipRowData[j].rowValues[i] = distance;
+            }
+        }
+    }
+    else {
+        for (int i = 1; i < nseqs; i++) {
+            fileHandle >> name;
+            matrixNames.push_back(name);
+            phylipRowData[i].name = name;
+            list->set(i, name);
+            for (int j = 0; j < nseqs; j++) {
+                fileHandle >> distance;
+                phylipRowData[i].rowValues[j] = distance;
+                phylipRowData[j].rowValues[i] = distance;
+            }
+        }
+    }
     fileHandle.close();
 
     return phylipRowData;

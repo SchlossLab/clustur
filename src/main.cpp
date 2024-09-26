@@ -183,16 +183,4 @@ std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath,
     delete(result);
     return {tidySharedDataFrame, command.GetSensitivityData(), command.GetClusterMetrics(), clusterDataFrame};
 }
-
-
 #endif
-// int main() {
-//     CountTableAdapterTestFixture testFixture;
-//     bool res = testFixture.TestGetGroups({"no-group"});
-//     res = testFixture.TestGetGroups({});
-//     res = testFixture.TestGetGroups({"1"});
-//
-//
-//
-//     return 0;
-// }

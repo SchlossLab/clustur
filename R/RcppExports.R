@@ -2,7 +2,11 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 WritePhylipFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
-    invisible(.Call(`_Opticluster_WritePhylipFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
+    invisible(.Call(`_clustur_WritePhylipFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
+}
+
+WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
+    invisible(.Call(`_clustur_WriteColumnFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
 WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
@@ -10,15 +14,19 @@ WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, save
 }
 
 MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
-    .Call(`_Opticluster_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim)
+    .Call(`_clustur_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 
 ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTable, isSimularity) {
-    .Call(`_Opticluster_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
+    .Call(`_clustur_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
 }
 
 ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimularity) {
-    .Call(`_Opticluster_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
+    .Call(`_clustur_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
+}
+
+ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimularity) {
+    .Call(`_clustur_ClusterWithColumn`, columnFilePath, cutoff, method, countTable, isSimularity)
 }
 
 ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimularity) {
@@ -26,7 +34,11 @@ ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimu
 }
 
 OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
-    .Call(`_Opticluster_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+    .Call(`_clustur_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+}
+
+OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
+    .Call(`_clustur_OptiClusterColumnDist`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 
 OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {

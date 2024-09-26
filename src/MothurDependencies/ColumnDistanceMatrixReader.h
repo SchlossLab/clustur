@@ -7,6 +7,7 @@
 #include <string>
 #include <fstream>
 #include <map>
+#include <vector>
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"
 #include "../RowData.h"

@@ -82,7 +82,6 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     const auto size = static_cast<long long>(matrixData.size());
     Utils util;
     std::vector<bool> singletonList(size, true);
-    closeness.resize(size);
     nameList.resize(size);
     std::unordered_map<long long, long long> singletonIndexSwap;
     for(long long i = 0; i < size; i++) {
@@ -99,6 +98,8 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
             if(distance <= cutoff) {
                 singletonList[i] = false; // Find out who is a singleton
                 singletonList[j] = false;
+                singletonIndexSwap[i] = i;
+                singletonIndexSwap[j] = j;
             }
 
         }
@@ -112,9 +113,10 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
         else
             singletons.emplace_back(matrixData[i].name);
     }
+    closeness.resize(nonSingletonCount);
     for(long long i = 0; i < size; i++) {
         nameList[singletonIndexSwap[i]] = matrixData[i].name;
-        for(long long j = 0; j < i; j++) {
+        for(long long j = 0; j < size; j++) {
             auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
@@ -131,7 +133,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
 
         }
     }
-    return new OptiMatrix{closeness, nameList,singletons, cutoff};
+    return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
 
 

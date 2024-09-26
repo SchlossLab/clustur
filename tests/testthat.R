@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(Opticluster)
+library(clustur)
 
-test_check("Opticluster")
+test_check("clustur")
