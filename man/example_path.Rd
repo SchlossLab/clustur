@@ -6,6 +6,9 @@
 \usage{
 example_path(file = NULL)
 }
+\arguments{
+\item{file}{The data of the path you are looking to find.}
+}
 \value{
 the path inside of the package of the file.
 }

@@ -19,5 +19,3 @@ navbar:
     menu:
     - text: Using clustur
       href: articles/Using-clustur.html
-    - text: Metabolomic Data Analysis
-      href: articles/For-Metabolomic-Data.html

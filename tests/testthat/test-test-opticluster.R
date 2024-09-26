@@ -1,24 +1,24 @@
-test_that("Opticluster returns proper results", {
+test_that("clustur returns proper results", {
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
-  df <- Opticluster::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
+  df <- opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
 })
 
-test_that("Opticluster cluster works via phylip file", {
+test_that("clustur cluster works via phylip file", {
 
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   phylip_path <- test_path("extdata", "updated_phylip_1.txt")
   cutoff <- 0.2
-  df <- Opticluster::opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
-  df2 <- Opticluster::opti_cluster(phylip_path=phylip_path, cutoff, count_table)
+  df <- opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
+  df2 <- opti_cluster(phylip_path=phylip_path, cutoff, count_table)
   expect_true(all(df$cluster == df2$cluster))
   expect_true(all(df$abundance == df2$abundance))
 })
@@ -114,21 +114,3 @@ test_that("Amazon Data from mothur clusters properly", {
   expect_true(all(ls %in% ls_answer))
   expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
 })
-# result_mac <- readr::read_delim("tests/testthat/extdata/Clustur/96_sq_column_results_mac.list",delim="\t")
-# result_mac <- reshape2::melt(result_mac, id=c("label","numOtus"), variable.names="OTU", value.name="clusters")
-
-# result_win <- readr::read_delim("tests/testthat/extdata/Clustur/96_sq_column_result_win.list",delim="\t")
-# result_win <- reshape2::melt(result_win, id=c("label","numOtus"), variable.names="OTU", value.name="clusters")
-# for(i in 1:nrow(tidy_answer_shuffle)){
-#   ls <- as.list(el(strsplit(data$cluster$bins[[i]], ",")))
-#   for(j in 1:nrow(tidy_answer_shuffle)){
-#     ls_answer <- as.list(el(strsplit(tidy_answer_shuffle$cluster[[j]], ",")))
-#     if(all(ls %in% ls_answer))
-#     {
-#        print(all(ls %in% ls_answer))
-#        print(i)
-#        break;
-#     }
-#
-#   }
-#
