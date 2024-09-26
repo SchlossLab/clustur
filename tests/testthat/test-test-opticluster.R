@@ -106,11 +106,8 @@ test_that("Normal cluster works via column file", {
 test_that("Amazon Data from mothur clusters properly", {
   df_count <- readRDS(test_path("extdata", "amazon_count_table.RDS"))
   column_path <- test_path("extdata", "96_sq_column_amazon.dist")
+  result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
   data <- opti_cluster(column_path=column_path, 
                         count_table = df_count, cutoff = 0.2)
-  tidy_answer <- readRDS(test_path("extdata", "amazonResults.RDS"))
-  ls <- as.list(el(strsplit(data$cluster$bins[[1]], ","))) 
-  ls_answer <- as.list(el(strsplit(tidy_answer$cluster[[1]], ","))) 
-  expect_true(all(ls %in% ls_answer))
-  expect_true(length(tidy_answer$clusters) ==length(data$cluster$bins))
+  expect_true(all(data$cluster == result$cluster))
 })
