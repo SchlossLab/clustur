@@ -27,7 +27,9 @@
 #'  count_table_sparse <- data.frame(sequence=as.character(i_values), 
 #'                                  total=rep(1,times=100))
 #' 
-#'  cluster_results <- opti_cluster(cutoff=0.2, count_table = count_table_sparse, sparse_matrix=s_matrix)
+#'  cluster_results <- opti_cluster(cutoff=0.2, 
+#'                                  count_table = count_table_sparse,
+#'                                  sparse_matrix=s_matrix)
 #' 
 #'  # With a column file
 #'  count_table <- read.delim(example_path("amazon1.count_table"))
