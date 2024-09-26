@@ -39,13 +39,14 @@ the path to your phylip and column distance file, or a sparse matrix.
 }
 \examples{
  # Using a sparse matrix
- library(Matrix)
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
- s_matrix <- new("dgTMatrix",
-         i = i_values,
-         j = j_values,x=x_values, Dim=102:103)
+ s_matrix <- Matrix::spMatrix(nrow=max(i_values), 
+                              ncol=max(i_values), 
+                              i=i_values, 
+                              j=j_values, 
+                              x=x_values)
 
  # Creating a count table using the sparse matrix
  count_table_sparse <- data.frame(sequence=as.character(i_values), 

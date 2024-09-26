@@ -3,6 +3,7 @@ test_that("clustur returns proper results", {
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
+
   df <- opti_cluster(sparse_matrix=sparse_matrix, cutoff, count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
