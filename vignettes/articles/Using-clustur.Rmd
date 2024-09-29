@@ -27,7 +27,7 @@ clustur was developed similarly to the traditional c++ implementation, however t
 
 ## To Begin
 
-Lets create the sparse matrix: The easiest way to create a sparse matrix, is to use the "dgTMatrix" class in the Matrix library.
+Lets create the sparse matrix: The easiest way to create a sparse matrix, is to use the spMatrix function in the Matrix library.
 
 ```{r R.options=list(max.print=10)}
 # Lets create some data
@@ -62,6 +62,7 @@ cluster_results$cluster
 ```
 
 otu represent the clusters, the label represents the highest cutoff, and the bin represents the sequences inside of each cluster.
+
 
 ### Count table
 
@@ -198,3 +199,7 @@ Other Clustering Metrics:
 ```{r R.options=list(max.print=15)}
 amazon_data_phylip_opti$other_cluster_metrics
 ```
+
+## Small Disclaimer
+
+As you may have noticed, there are a few parameters that are required before you can call the cluster function. You **MUST** specifiy whether you are inputting a sparse matrix, column file, or phylip file. You also have to pass a count table, and a cutoff. 
