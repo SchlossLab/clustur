@@ -108,7 +108,7 @@ amazon_data_column$cluster$bins
 
 ## Phylip distance file
 
-Just like Mothur we allow the use of column distance matrices and phylip distance files.
+Just like Mothur we allow the use of column distance matrices and phylip distance files. [Phylip Files](https://mothur.org/wiki/phylip-formatted_distance_matrix/)
 
 ```{r R.options=list(max.print=15)}
 
@@ -199,7 +199,3 @@ Other Clustering Metrics:
 ```{r R.options=list(max.print=15)}
 amazon_data_phylip_opti$other_cluster_metrics
 ```
-
-## Small Disclaimer
-
-As you may have noticed, there are a few parameters that are required before you can call the cluster function. You **MUST** specifiy whether you are inputting a sparse matrix, column file, or phylip file. You also have to pass a count table, and a cutoff. 
