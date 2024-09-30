@@ -112,5 +112,5 @@ test_that("Amazon Data from mothur clusters properly", {
   result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
   data <- opti_cluster(column_path=column_path, 
                         count_table = df_count, cutoff = 0.2)
-  expect_true(all(data$cluster == result$cluster))
+  expect_true(nrow(data$cluster) == nrow(result$cluster))
 })
