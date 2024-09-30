@@ -193,3 +193,7 @@ fabric.properties
 .idea
 src/.DS_Store
 /.vscode
+inst/doc
+/doc/
+/Meta/
+docs

@@ -1,1 +1,1 @@
-run_cpp_tests("Opticluster")
+run_cpp_tests("clustur")

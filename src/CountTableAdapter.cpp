@@ -39,7 +39,7 @@ double CountTableAdapter::FindAbundanceBasedOnGroup(const std::string &group, co
     return dataFrameMap.at(group)[index];
 }
 
-double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) const{
+double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) const {
     if(std::find(sampleNames.begin(), sampleNames.end(), sampleName) == sampleNames.end())
         return -1; // Not found
     const long index = std::distance(sampleNames.begin(), std::find(sampleNames.begin(),

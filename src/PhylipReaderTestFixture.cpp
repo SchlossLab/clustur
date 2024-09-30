@@ -18,6 +18,14 @@ bool PhylipReaderTestFixture::TestReadPhylipFile(const std::vector<RowData> &row
     return result == expectedResult;
 }
 
+bool PhylipReaderTestFixture::TestReadPhylipFileToRowData(const std::string& filePath,
+    const std::vector<RowData>& expectedResult) {
+    Setup();
+    const auto result = reader->readToRowData(filePath);
+    TearDown();
+    return !result.empty() && !expectedResult.empty();
+}
+
 bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::vector<RowData> &rowData, const bool expectedResult) {
     Setup();
     reader->read(rowData);
@@ -34,6 +42,7 @@ bool PhylipReaderTestFixture::TestGetListVector(const std::vector<RowData> &rowD
     TearDown();
     return result == expectedResult;
 }
+
 
 void PhylipReaderTestFixture::Setup() {
     reader = new ReadPhylipMatrix(0.2, false);

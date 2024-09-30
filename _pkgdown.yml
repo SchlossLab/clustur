@@ -1,0 +1,21 @@
+url: http://www.schlosslab.org/Clustur/
+template:
+  bootstrap: 5
+  light-switch: true
+  bootswatch: materia
+reference:
+- title: Clustering
+  contents:
+  - cluster
+  - opti_cluster
+- title: Helper Functions
+  contents: example_path
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Articles
+    menu:
+    - text: Using clustur
+      href: articles/Using-clustur.html

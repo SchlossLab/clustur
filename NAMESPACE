@@ -1,5 +1,8 @@
-useDynLib(Opticluster, .registration=TRUE)
+useDynLib(clustur, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 importFrom("utils", "read.table")
+importFrom("Matrix", "spMatrix")
 export(cluster)
 export(opti_cluster)
+export(example_path)
+

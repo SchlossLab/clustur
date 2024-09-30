@@ -32,6 +32,7 @@ ClusterCommand::~ClusterCommand() {
 ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const double cutoffValue) {
     cutoff = cutoffValue;
     // clusterMetrics += ("\nClustering " + distfile + "\n");
+    initialize = "singleton";
     auto* data = new OpticlusterData("", cutoff);
     ClusterMetric *metric = nullptr;
     std::string clusterMetrics;

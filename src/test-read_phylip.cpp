@@ -22,10 +22,12 @@ context("PhylipReader Test") {
     // to test the desired conditions.
     test_that("Phylip Reader reads phylip files") {
         PhylipReaderTestFixture fixture;
-        //bool result = fixture.TestReadPhylipFile
-        //("/Users/grejoh/Documents/OptiClusterPackage/Opticluster/tests/testthat/extdata/matrix_phylip.txt", true);
-        // expect_true(result);
         bool result = fixture.TestReadPhylipFile("", true);
+        expect_false(result);
+    }
+    test_that("Phylip Reader reads phylip files to rowdata information") {
+        PhylipReaderTestFixture fixture;
+        bool result = fixture.TestReadPhylipFileToRowData("", {});
         expect_false(result);
     }
     test_that("Phylip Reader reads phylip file from created RowData Vectors") {
