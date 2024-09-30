@@ -59,7 +59,7 @@ context("MatrixAdapter Test") {
      }
      test_that("Matrix Adapter can create proper square matrices from distance matrices") {
          MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestDistanceMatrixToSquareMatrix(6);
+         bool result = fixture.TestDistanceMatrixToSquareMatrix(5);
          expect_true(result);
          result = fixture.TestDistanceMatrixToSquareMatrix(0);
          expect_false(result);

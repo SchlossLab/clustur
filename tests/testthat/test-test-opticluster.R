@@ -14,6 +14,7 @@ test_that("clustur returns proper results", {
 test_that("clustur cluster works via phylip file", {
 
   expected_df <- readRDS(test_path("extdata", "abundanceResult.RDS"))
+
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   phylip_path <- test_path("extdata", "updated_phylip_1.txt")
@@ -43,6 +44,7 @@ test_that("Normal cluster works via column file", {
 
 
 test_that("Normal Cluster is able to properly cluster data", {
+
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cluster_furthest <- cluster(
