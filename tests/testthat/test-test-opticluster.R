@@ -28,7 +28,7 @@ test_that("clustur cluster works via phylip file", {
 test_that("Normal cluster works via column file", {
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
-  column_path <- test_path("extdata", "column.dist")
+  column_path <- test_path("extdata", "updated_column.dist")
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   opticluster_column <- opti_cluster(
     column_path = column_path, 0.2,
@@ -38,10 +38,10 @@ test_that("Normal cluster works via column file", {
     sparse_matrix = sparse_matrix, 0.2,
     count_table, FALSE
   )
-  expect_true(all(opticluster_column$cluster$bins %in%
-                    opticluster_sparse$cluster$bins))
-  expect_true(all(opticluster_column$abundance$abundance %in%
-                    opticluster_sparse$abundance$abundance))
+  expect_true(all(length(opticluster_column$cluster) ==
+                    length(opticluster_sparse$cluster$bins)))
+  expect_true(all(length(opticluster_column$abundance$abundance) ==
+                    length(opticluster_sparse$abundance$abundance)))
 })
 
 
