@@ -285,14 +285,19 @@ example_path <- function(file = NULL) {
 #' column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
 #' @return a sparse matrix based off the data provided
 convert_distance_file_to_sparse <- function(count_table, distance_file_path,  type_of_file) {
-  if(type_of_file != "phylip" && type_of_file != "column")
-  {
+  if(type_of_file != "phylip" && type_of_file != "column") {
     stop("The type_of_file parameter has to be 'phylip' or 'column.'")
   }
   # Have to convert c++ indexes to r indexes, so we add one to the i and j list
   triplicate_list <- DistanceFileToSparseMatrix(count_table, distance_file_path, type_of_file)
-  named_triplicates <- list(i_values = triplicate_list[[1]] + 1, j_values = triplicate_list [[2]] + 1, data = triplicate_list[[3]])
+  named_triplicates <- list(i_values = triplicate_list[[1]] + 1,
+                            j_values = triplicate_list [[2]] + 1,
+                            data = triplicate_list[[3]])
   max_size <- max(named_triplicates$i_values, named_triplicates$j_values)
-  return(spMatrix(nrow = max_size, ncol = max_size,
-   i = named_triplicates$i_values, j = named_triplicates$j_values, x = named_triplicates$data))
+  return(spMatrix(
+    nrow = max_size,
+    ncol = max_size,
+    i = named_triplicates$i_values,
+    j = named_triplicates$j_values,
+    x = named_triplicates$data))
 }
