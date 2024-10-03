@@ -80,7 +80,7 @@ private:
     set<string> cutoffs;
 	Utils util;
 	time_t start;
-	bool canShuffle;
+	bool canShuffle = true;
 	vector<string> outputNames;
 	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;
 	std::unordered_map<std::string, std::vector<std::string>> dataframeMapSensMetrics;

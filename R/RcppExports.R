@@ -9,8 +9,8 @@ WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, save
     invisible(.Call(`_clustur_WriteColumnFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
-MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
-    .Call(`_clustur_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim)
+MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTable, isSim = FALSE) {
+    .Call(`_clustur_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, isSim)
 }
 
 ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTable, isSimularity) {
@@ -25,12 +25,12 @@ ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimu
     .Call(`_clustur_ClusterWithColumn`, columnFilePath, cutoff, method, countTable, isSimularity)
 }
 
-OptiClusterPhylip <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
-    .Call(`_clustur_OptiClusterPhylip`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+OptiClusterPhylip <- function(filePath, cutoff, countTable, isSim = FALSE) {
+    .Call(`_clustur_OptiClusterPhylip`, filePath, cutoff, countTable, isSim)
 }
 
-OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 100L, shuffle = TRUE, isSim = FALSE) {
-    .Call(`_clustur_OptiClusterColumnDist`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
+OptiClusterColumnDist <- function(filePath, cutoff, countTable, isSim = FALSE) {
+    .Call(`_clustur_OptiClusterColumnDist`, filePath, cutoff, countTable, isSim)
 }
 
 DistanceFileToSparseMatrix <- function(countTable, filePath, method) {

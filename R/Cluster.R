@@ -3,9 +3,6 @@
 #' @export
 #' @param cutoff A cutoff value
 #' @param count_table A table of names and the given abundance per group.
-#' @param iterations The number of iterations
-#' @param shuffle a boolean to determine whether or
-#'  not you want to shuffle the data before you cluster
 #' @param simularity_matrix are you using a simularity matrix or distance matrix
 #' @param random_seed you can set your own random
 #' seed for consistent results, if not it will be set to 123
@@ -50,7 +47,6 @@
 #'
 #' @return A data.frame of the cluster and cluster metrics.
 opti_cluster <- function(cutoff, count_table,
-                         iterations = 100, shuffle = TRUE,
                          simularity_matrix = FALSE, random_seed = 123, ...) {
   count_table <- validate_count_table(count_table)
   list_params <- list(...)
@@ -72,8 +68,6 @@ opti_cluster <- function(cutoff, count_table,
       sparse_matrix@x,
       cutoff,
       count_table,
-      iterations,
-      shuffle,
       simularity_matrix
     )
   } else if ("phylip_path" %in% params) {
@@ -82,8 +76,6 @@ opti_cluster <- function(cutoff, count_table,
       phylip_path,
       cutoff,
       count_table,
-      iterations,
-      shuffle,
       simularity_matrix
     )
   } else if ("column_path" %in% params) {
@@ -92,15 +84,13 @@ opti_cluster <- function(cutoff, count_table,
       column_path,
       cutoff,
       count_table,
-      iterations,
-      shuffle,
       simularity_matrix
     )
   } else {
     stop("The parameters should include either a sparse_matrix,
     phylip_path, column_path")
   }
-  cluster_dfs[[4]]$comma_count <- sapply(cluster_dfs[[4]]$bins, function(x) {
+  cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
     ls <- gregexpr(",", x, fixed = TRUE)[[1]]
     if (ls[[1]] == -1) {
       return(0)
@@ -108,14 +98,14 @@ opti_cluster <- function(cutoff, count_table,
       return(length(ls))
     }
   })
-  cluster_dfs[[4]] <- cluster_dfs[[4]][order(cluster_dfs[[4]]$comma_count,
+  cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
                                              decreasing = TRUE), ]
-  cluster_dfs[[4]] <- cluster_dfs[[4]][, 1:3]
+  cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
   opticluster_data <- list(
     abundance = cluster_dfs[[1]],
-    cluster = cluster_dfs[[4]],
+    cluster = cluster_dfs[[2]],
     cluster_metrics = cluster_dfs[[3]],
-    other_cluster_metrics = cluster_dfs[[2]]
+    other_cluster_metrics = cluster_dfs[[4]]
   )
   return(opticluster_data)
 }
@@ -300,4 +290,107 @@ convert_distance_file_to_sparse <- function(count_table, distance_file_path,  ty
     i = named_triplicates$i_values,
     j = named_triplicates$j_values,
     x = named_triplicates$data))
+}
+
+#' Clustur Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param sparse_matrix The sparse matrix that you want to cluster with.
+#' @param cutoff The value you wish to use as a cutoff when clustering.
+#' @param method The type of cluster you wish to conduct;
+#'  opti, furthest, nearest, average, or weighted.
+#' @param count_table A table of names and the given abundance per group.
+#' @param simularity_matrix are you using a simularity matrix or distance matrix?
+#' @param random_seed the random seed you wish to use, defaulted at 123.
+#' @description
+#' You must specfiy the type of matrix you are inputting
+#'  to cluster your object and we support three types:
+#' the path to your phylip and column distance file, or a sparse matrix.
+#' @return A string of the given cluster.
+#'
+#' @examples
+#'
+#'  # Convert Phylip of column file to a sparse matrix
+#'  column_path <- example_path("updated_column.dist")
+#'  phylip_path <- example_path("updated_phylip_1.txt")
+#'  count_table <- readRDS(example_path("count_table.RDS"))
+#' 
+#'  phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
+#'  column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
+#'  cutoff <- 0.2
+#'  # The clustur using one of the 5 methods
+#'  # opti
+#'  cluster_results <- clustur(column_sparse, cutoff, "opti", count_table)
+#'  # furthest 
+#'  cluster_results <- clustur(phylip_sparse, cutoff, "furthest", count_table)
+#'  # nearest
+#'  cluster_results <- clustur(column_sparse, cutoff, "nearest", count_table)
+#'  # average
+#'  cluster_results <- clustur(phylip_sparse, cutoff, "average", count_table)
+#'  # weighted
+#'  cluster_results <- clustur(column_sparse, cutoff, "weighted", count_table)
+#' 
+#'
+#'
+clustur <- function(sparse_matrix, cutoff, method, count_table,
+  simularity_matrix = FALSE, random_seed = 123) {
+    methodList <- c("opti", "furthest","nearest", "weighted", "average")
+    if(!(method %in% methodList)) {
+      stop("Incorrect method, method must be: 'opti', 'furthest', 'nearest', 'weighted', or 'average.'")
+    }
+  set.seed(random_seed)
+  if(method == "opti"){
+      cluster_dfs <- MatrixToOpiMatrixCluster(
+      sparse_matrix@i,
+      sparse_matrix@j,
+      sparse_matrix@x,
+      cutoff,
+      count_table,
+      simularity_matrix 
+    )
+    #order clusters by otu size
+    cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
+      ls <- gregexpr(",", x, fixed = TRUE)[[1]]
+      if (ls[[1]] == -1) {
+        return(0)
+      } else {
+        return(length(ls))
+      }
+    })
+    cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
+                                               decreasing = TRUE), ]
+    cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
+    return(list(
+      abundance = cluster_dfs[[1]],
+      cluster = cluster_dfs[[2]],
+      cluster_metrics = cluster_dfs[[3]],
+      other_cluster_metrics = cluster_dfs[[4]]
+    ))
+  }
+  else{
+      cluster_dfs <- ClassicCluster(
+      sparse_matrix@i, sparse_matrix@j,
+      sparse_matrix@x, cutoff, method,
+      validate_count_table(count_table),
+      simularity_matrix)
+    # Order the clusters by otu size
+      cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
+        ls <- gregexpr(",", x, fixed = TRUE)[[1]]
+        if (ls[[1]] == -1) {
+          return(0)
+        } else {
+          return(length(ls))
+        }
+      })
+      cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
+                                                 decreasing = TRUE), ]
+      cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
+      return(list(
+        abundance = cluster_dfs[[1]],
+        cluster = cluster_dfs[[2]]
+      ))
+  }
+  
 }

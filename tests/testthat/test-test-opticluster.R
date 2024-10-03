@@ -4,7 +4,7 @@ test_that("clustur returns proper results", {
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
 
-  df <- opti_cluster(sparse_matrix = sparse_matrix, cutoff, count_table)
+  df <- clustur(sparse_matrix, cutoff, "opti", count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
@@ -49,19 +49,19 @@ test_that("Normal Cluster is able to properly cluster data", {
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
-  cluster_furthest <- cluster(
+  cluster_furthest <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
-    "furthest", count_table, FALSE
+    "furthest", count_table,  FALSE
   )
-  cluster_average <- cluster(
+  cluster_average <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "average", count_table, FALSE
   )
-  cluster_weighted <- cluster(
+  cluster_weighted <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "weighted", count_table, FALSE
   )
-  cluster_nearest <- cluster(
+  cluster_nearest <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "nearest", count_table, FALSE
   )
