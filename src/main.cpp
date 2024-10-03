@@ -9,6 +9,7 @@
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/OptiMatrix.h"
 #include "Adapters/CountTableAdapter.h"
+#include "Adapters/DistanceFilesToSparse.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 
@@ -182,5 +183,14 @@ std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath,
     Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     return {tidySharedDataFrame, command.GetSensitivityData(), command.GetClusterMetrics(), clusterDataFrame};
+}
+
+//[[Rcpp::export]]
+std::vector<std::vector<double>> DistanceFileToSparseMatrix(const Rcpp::DataFrame& countTable, const std::string& filePath,
+    const std::string& method) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    const DistanceFilesToSparse sparseConverter(countTableAdapter, method, filePath);
+    return sparseConverter.CreateSparseList();
 }
 #endif

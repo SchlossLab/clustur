@@ -33,3 +33,7 @@ OptiClusterColumnDist <- function(filePath, cutoff, countTable, maxIterations = 
     .Call(`_clustur_OptiClusterColumnDist`, filePath, cutoff, countTable, maxIterations, shuffle, isSim)
 }
 
+DistanceFileToSparseMatrix <- function(countTable, filePath, method) {
+    .Call(`_clustur_DistanceFileToSparseMatrix`, countTable, filePath, method)
+}
+

@@ -137,6 +137,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// DistanceFileToSparseMatrix
+std::vector<std::vector<double>> DistanceFileToSparseMatrix(const Rcpp::DataFrame& countTable, const std::string& filePath, const std::string& method);
+RcppExport SEXP _clustur_DistanceFileToSparseMatrix(SEXP countTableSEXP, SEXP filePathSEXP, SEXP methodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    rcpp_result_gen = Rcpp::wrap(DistanceFileToSparseMatrix(countTable, filePath, method));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -149,6 +162,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_ClusterWithColumn", (DL_FUNC) &_clustur_ClusterWithColumn, 5},
     {"_clustur_OptiClusterPhylip", (DL_FUNC) &_clustur_OptiClusterPhylip, 6},
     {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 6},
+    {"_clustur_DistanceFileToSparseMatrix", (DL_FUNC) &_clustur_DistanceFileToSparseMatrix, 3},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

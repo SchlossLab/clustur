@@ -265,3 +265,34 @@ example_path <- function(file = NULL) {
   }
   return(path)
 }
+
+
+#' Convert Distance File To Sparse
+#'
+#' @export
+#' This function will take your phylip or column distance file and convert it to a sparse matrix for easier use
+#' in clustur
+#' @param count_table Your count table based on the data.
+#' @param distance_file_path The path to the data file.
+#' @param type_of_file What type of file you are passing to the function, has to be "phylip", or "column".
+#' @examples
+#' # This will return the path to our example file
+#' column_path <- example_path("updated_column.dist")
+#' phylip_path <- example_path("updated_phylip_1.txt")
+#' count_table <- readRDS(example_path("count_table.RDS"))
+#' 
+#' phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
+#' column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
+#' @return a sparse matrix based off the data provided
+convert_distance_file_to_sparse <- function(count_table, distance_file_path,  type_of_file) {
+  if(type_of_file != "phylip" && type_of_file != "column")
+  {
+    stop("The type_of_file parameter has to be 'phylip' or 'column.'")
+  }
+  # Have to convert c++ indexes to r indexes, so we add one to the i and j list
+  triplicate_list <- DistanceFileToSparseMatrix(count_table, distance_file_path, type_of_file)
+  named_triplicates <- list(i_values = triplicate_list[[1]] + 1, j_values = triplicate_list [[2]] + 1, data = triplicate_list[[3]])
+  max_size <- max(named_triplicates$i_values, named_triplicates$j_values)
+  return(spMatrix(nrow = max_size, ncol = max_size,
+   i = named_triplicates$i_values, j = named_triplicates$j_values, x = named_triplicates$data))
+}

@@ -117,3 +117,17 @@ test_that("Amazon Data from mothur clusters properly", {
                        count_table = df_count, cutoff = 0.2)
   expect_true(nrow(data$cluster) == nrow(result$cluster))
 })
+
+test_that("The distance file conversion creates similar clusters",{
+  column_path <- test_path("extdata", "updated_column.dist")
+  phylip_path <- test_path("extdata", "updated_phylip_1.txt")
+  count_table <- readRDS(test_path("extdata", "count_table.RDS"))
+  
+  phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
+  column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
+
+  column_df <- opti_cluster(sparse_matrix = column_sparse, count_table = count_table, cutoff = 0.2)
+  phylip_df <- opti_cluster(sparse_matrix = phylip_sparse, count_table = count_table, cutoff = 0.2)
+
+  expect_true(length(column_df$cluster$bins) == length(phylip_df$cluster$bins))
+})

@@ -23,15 +23,18 @@ furthest, nearest, average, weighted.}
 
 \item{simularity_matrix}{are you using a simularity matrix or distance matrix}
 
-\item{random_seed}{you can set your own random seed for consistent results, if not it will be set to 123}
+\item{random_seed}{you can set your own random seed
+for consistent results, if not it will be set to 123}
 
-\item{...}{Either your phylip file or column file path, or a sparse distance matrix}
+\item{...}{Either your phylip file or column file path,
+or a sparse distance matrix}
 }
 \value{
 A string of the given cluster.
 }
 \description{
-You must specfiy the type of matrix you are inputting to cluster your object and we support three types:
+You must specfiy the type of matrix you are inputting
+ to cluster your object and we support three types:
 the path to your phylip and column distance file, or a sparse matrix.
 }
 \details{
@@ -42,31 +45,34 @@ Detailed description of the function.
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
- s_matrix <- Matrix::spMatrix(nrow=max(i_values), 
-                              ncol=max(i_values), 
-                              i=i_values, 
-                              j=j_values, 
+ s_matrix <- Matrix::spMatrix(nrow=max(i_values),
+                              ncol=max(i_values),
+                              i=i_values,
+                              j=j_values,
                               x=x_values)
 
  # Creating a count table using the sparse matrix
- count_table_sparse <- data.frame(sequence=as.character(i_values), 
+ count_table_sparse <- data.frame(sequence=as.character(i_values),
                                  total=rep(1,times=100))
  # furthest method
- cluster_results <- cluster(cutoff=0.2, count_table = count_table_sparse, 
+ cluster_results <- cluster(cutoff=0.2, count_table = count_table_sparse,
                             sparse_matrix=s_matrix, method="furthest")
 
  # With a phylip file and nearest methods
  count_table <- read.delim(example_path("amazon1.count_table"))
- amazon_data_phylip <- cluster(phylip_path=example_path("98_sq_phylip_amazon.dist"),
-                               count_table = count_table, method="nearest", cutoff = 0.2)
+ amazon_data_phylip <- cluster(phylip_path=
+                               example_path("98_sq_phylip_amazon.dist"),
+              count_table = count_table, method="nearest", cutoff = 0.2)
 
- # With a column file and average methods 
- amazon_data_column <- cluster(column_path=example_path("96_sq_column_amazon.dist"),
-                               count_table = count_table, method="average", cutoff = 0.2)
+ # With a column file and average methods
+ amazon_data_column <- cluster(column_path=
+                               example_path("96_sq_column_amazon.dist"),
+              count_table = count_table, method="average", cutoff = 0.2)
 
  # Weighted method
- amazon_data_column <- cluster(column_path=example_path("96_sq_column_amazon.dist"),
-                               count_table = count_table, method="weighted", cutoff = 0.2)
+ amazon_data_column <- cluster(column_path=
+                               example_path("96_sq_column_amazon.dist"),
+             count_table = count_table, method="weighted", cutoff = 0.2)
 
 
 }

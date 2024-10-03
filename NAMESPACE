@@ -5,4 +5,5 @@ importFrom("Matrix", "spMatrix")
 export(cluster)
 export(opti_cluster)
 export(example_path)
+export(convert_distance_file_to_sparse)
 
