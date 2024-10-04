@@ -1,0 +1,92 @@
+---
+title: "Using clustur"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using-clustur}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(clustur)
+library(Matrix)
+set.seed(123)
+```
+
+# Starting Up
+
+```r
+# install via cran
+install.packages("clustur")
+```
+
+```r
+# install via github
+remotes::install_github("SchlossLab/Clustur")
+```
+
+clustur was developed to be similar to the [mothur implementation](https://www.mothur.org) that was written in C++, however there are a few differences to note. In order to cluster your data, we are requiring users to build out there own sparse matrix (we also support phylip files) and count table in R or mothur. Once these objects are built out you can call the cluster function. We currently support 5 cluster methods from mothur: furthest, nearest, weighted, and average neighbor and opticlust, which is mothur's default. Each of these methods will produce data comparable to mothur. The speed of the clustur and mothur are comparable. Below we will show you how to create your sparse matrix and count table. If you do not have a count table, clustur can produce one from you, but it will assume the abundance of each sequence is one and it will only cluster the sequences in the distance matrix.
+
+## Read distance matrix file
+mothur produces [column/sparse distance matrix](https://mothur.org/wiki/column-formatted_distance_matrix/) and [Phylip-formatted distance matrix files](https://mothur.org/wiki/phylip-formatted_distance_matrix/). clustur will read both formats and will figure out which you have.
+
+```{r}
+distance_data <- read_dist(example_path("amazon_column.dist"), cutoff = 0.03)
+```
+
+```{r}
+distance_data <- read_dist(example_path("amazon_phylip.dist"), cutoff = 0.03)
+```
+
+The return value of `distance_data` will be a memory address. If you want a data frame version of the distances, you can use `get_distances(distance_data)`.
+
+## Read count files
+
+mothur used to produce a tabular count table and now produces a compressed verion, clustur will read both formats and figure out which you have...
+
+```{r}
+count_table <- read_count(example_plath("amazon.tabular.count_table")) #should be a tsv or mothur-native count file
+```
+
+```{r}
+count_table <- read_count(example_plath("amazon.compressed.count_table")) #should be a tsv or mothur-native count file
+```
+
+
+## Cluster data
+
+* opticlust is the default
+
+```{r}
+cluster_data <- cluster(distance_data, count_table, cutoff=0.03, method = "opticlust") # this needs to make sure that dist_data and count_table are compatible
+```
+
+### Selecting different clustering methods
+
+```{r}
+cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "furthest")
+cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "nearest")
+cluster_data <- cluster(distances, count_table, cutoff=0.10, method = "average")
+cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "weighted")
+```
+
+
+## Output data from clustering
+
+All methods produce a list object with an indicator of the cutoff that was used (`cutoff`), as well as cluster (`clusters`) and shared (`shared`) data frames. The `clusters` data frame shows how each sequence cluster together with a column for the cluster identifiers (`cluster`) and a column of lists indicating the identifiers within each cluster (`identifiers`). The `shared` data frame contains columns indicating the `cluster` and the `sample` identifiers and the abundance of each cluster in each sample; the `cluster` identifier in the `shared` data frame is the same as that in the `clusters` data frame. The `metrics` data frame. The OptiClust method also includes the `metrics` data frame, which describe the optimization value for each iteration in the fitting process; the data in `clusters` and `shared` are taken from the last iteration. clustur provides getter functions, `get_cutoff()`, `get_clusters()`, `get_shared()`, and `get_metrics()`, which will be demonstrated below.
+
+```{r R.options=list(max.print=15)}
+clusters <- cluster(distances, count_table, cutoff=0.03, method = "opticlust")
+
+get_cutoff(cluster_data)
+get_clusters(cluster_data)
+get_shared(cluster_data)
+get_metrics(cluster_data)
+```

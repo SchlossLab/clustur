@@ -41,8 +41,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // MatrixToOpiMatrixCluster
-std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _clustur_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const bool isSim);
+RcppExport SEXP _clustur_MatrixToOpiMatrixCluster(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -51,10 +51,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
-    Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
     Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
-    rcpp_result_gen = Rcpp::wrap(MatrixToOpiMatrixCluster(xPosition, yPosition, data, cutoff, countTable, maxIterations, shuffle, isSim));
+    rcpp_result_gen = Rcpp::wrap(MatrixToOpiMatrixCluster(xPosition, yPosition, data, cutoff, countTable, isSim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -106,34 +104,30 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiClusterPhylip
-std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _clustur_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const bool isSim);
+RcppExport SEXP _clustur_OptiClusterPhylip(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
-    Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
     Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiClusterPhylip(filePath, cutoff, countTable, maxIterations, shuffle, isSim));
+    rcpp_result_gen = Rcpp::wrap(OptiClusterPhylip(filePath, cutoff, countTable, isSim));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiClusterColumnDist
-std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const int maxIterations, const bool shuffle, const bool isSim);
-RcppExport SEXP _clustur_OptiClusterColumnDist(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP maxIterationsSEXP, SEXP shuffleSEXP, SEXP isSimSEXP) {
+std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath, const double cutoff, const Rcpp::DataFrame& countTable, const bool isSim);
+RcppExport SEXP _clustur_OptiClusterColumnDist(SEXP filePathSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< const int >::type maxIterations(maxIterationsSEXP);
-    Rcpp::traits::input_parameter< const bool >::type shuffle(shuffleSEXP);
     Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiClusterColumnDist(filePath, cutoff, countTable, maxIterations, shuffle, isSim));
+    rcpp_result_gen = Rcpp::wrap(OptiClusterColumnDist(filePath, cutoff, countTable, isSim));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -156,12 +150,12 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_clustur_WritePhylipFile", (DL_FUNC) &_clustur_WritePhylipFile, 6},
     {"_clustur_WriteColumnFile", (DL_FUNC) &_clustur_WriteColumnFile, 6},
-    {"_clustur_MatrixToOpiMatrixCluster", (DL_FUNC) &_clustur_MatrixToOpiMatrixCluster, 8},
+    {"_clustur_MatrixToOpiMatrixCluster", (DL_FUNC) &_clustur_MatrixToOpiMatrixCluster, 6},
     {"_clustur_ClassicCluster", (DL_FUNC) &_clustur_ClassicCluster, 7},
     {"_clustur_ClusterWithPhylip", (DL_FUNC) &_clustur_ClusterWithPhylip, 5},
     {"_clustur_ClusterWithColumn", (DL_FUNC) &_clustur_ClusterWithColumn, 5},
-    {"_clustur_OptiClusterPhylip", (DL_FUNC) &_clustur_OptiClusterPhylip, 6},
-    {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 6},
+    {"_clustur_OptiClusterPhylip", (DL_FUNC) &_clustur_OptiClusterPhylip, 4},
+    {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 4},
     {"_clustur_DistanceFileToSparseMatrix", (DL_FUNC) &_clustur_DistanceFileToSparseMatrix, 3},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

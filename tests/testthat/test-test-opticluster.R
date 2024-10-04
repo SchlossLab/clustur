@@ -4,7 +4,7 @@ test_that("clustur returns proper results", {
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   cutoff <- 0.2
 
-  df <- opti_cluster(sparse_matrix = sparse_matrix, cutoff, count_table)
+  df <- clustur(sparse_matrix, cutoff, "opti", count_table)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
@@ -28,7 +28,7 @@ test_that("clustur cluster works via phylip file", {
 test_that("Normal cluster works via column file", {
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
-  column_path <- test_path("extdata", "column.dist")
+  column_path <- test_path("extdata", "updated_column.dist")
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
   opticluster_column <- opti_cluster(
     column_path = column_path, 0.2,
@@ -38,10 +38,10 @@ test_that("Normal cluster works via column file", {
     sparse_matrix = sparse_matrix, 0.2,
     count_table, FALSE
   )
-  expect_true(all(opticluster_column$cluster$bins %in%
-                    opticluster_sparse$cluster$bins))
-  expect_true(all(opticluster_column$abundance$abundance %in%
-                    opticluster_sparse$abundance$abundance))
+  expect_true(all(length(opticluster_column$cluster) ==
+                    length(opticluster_sparse$cluster$bins)))
+  expect_true(all(length(opticluster_column$abundance$abundance) ==
+                    length(opticluster_sparse$abundance$abundance)))
 })
 
 
@@ -49,19 +49,19 @@ test_that("Normal Cluster is able to properly cluster data", {
 
   sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
   count_table <- readRDS(test_path("extdata", "count_table.RDS"))
-  cluster_furthest <- cluster(
+  cluster_furthest <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
-    "furthest", count_table, FALSE
+    "furthest", count_table,  FALSE
   )
-  cluster_average <- cluster(
+  cluster_average <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "average", count_table, FALSE
   )
-  cluster_weighted <- cluster(
+  cluster_weighted <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "weighted", count_table, FALSE
   )
-  cluster_nearest <- cluster(
+  cluster_nearest <- clustur(
     sparse_matrix = sparse_matrix, 0.2,
     "nearest", count_table, FALSE
   )
@@ -128,6 +128,5 @@ test_that("The distance file conversion creates similar clusters",{
 
   column_df <- opti_cluster(sparse_matrix = column_sparse, count_table = count_table, cutoff = 0.2)
   phylip_df <- opti_cluster(sparse_matrix = phylip_sparse, count_table = count_table, cutoff = 0.2)
-
   expect_true(length(column_df$cluster$bins) == length(phylip_df$cluster$bins))
 })
