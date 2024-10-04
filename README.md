@@ -21,7 +21,7 @@ remotes::install_github("SchlossLab/Clustur")
 
 ## Getting Started
 
-To get started, look at our "Using Clustur" article. 
+To get started, look at the ["Getting started"]() page.
 
 ## Contributions
 
