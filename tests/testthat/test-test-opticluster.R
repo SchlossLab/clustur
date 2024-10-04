@@ -128,6 +128,5 @@ test_that("The distance file conversion creates similar clusters",{
 
   column_df <- opti_cluster(sparse_matrix = column_sparse, count_table = count_table, cutoff = 0.2)
   phylip_df <- opti_cluster(sparse_matrix = phylip_sparse, count_table = count_table, cutoff = 0.2)
-
   expect_true(length(column_df$cluster$bins) == length(phylip_df$cluster$bins))
 })
