@@ -38,11 +38,11 @@ clustur was developed to be similar to the [mothur implementation](https://www.m
 mothur produces [column/sparse distance matrix](https://mothur.org/wiki/column-formatted_distance_matrix/) and [Phylip-formatted distance matrix files](https://mothur.org/wiki/phylip-formatted_distance_matrix/). clustur will read both formats and will figure out which you have.
 
 ```{r}
-distance_data <- read_dist(example_path("amazon_column.dist"), cutoff = 0.03)
+distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff = 0.03)
 ```
 
 ```{r}
-distance_data <- read_dist(example_path("amazon_phylip.dist"), cutoff = 0.03)
+distance_data <- read_dist(example_path("amazon_phylip.dist"), count_table, cutoff = 0.03)
 ```
 
 The return value of `distance_data` will be a memory address. If you want a data frame version of the distances, you can use `get_distances(distance_data)`.

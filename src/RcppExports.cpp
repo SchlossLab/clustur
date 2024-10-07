@@ -144,6 +144,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ProcessDistanceFiles
+SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, double cutoff, bool isSim);
+RcppExport SEXP _clustur_ProcessDistanceFiles(SEXP filePathSEXP, SEXP countTableSEXP, SEXP cutoffSEXP, SEXP isSimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
+    Rcpp::traits::input_parameter< double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< bool >::type isSim(isSimSEXP);
+    rcpp_result_gen = Rcpp::wrap(ProcessDistanceFiles(filePath, countTable, cutoff, isSim));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GetSparseMatrix
+void GetSparseMatrix(const SEXP& fileReader);
+RcppExport SEXP _clustur_GetSparseMatrix(SEXP fileReaderSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type fileReader(fileReaderSEXP);
+    GetSparseMatrix(fileReader);
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -157,6 +181,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiClusterPhylip", (DL_FUNC) &_clustur_OptiClusterPhylip, 4},
     {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 4},
     {"_clustur_DistanceFileToSparseMatrix", (DL_FUNC) &_clustur_DistanceFileToSparseMatrix, 3},
+    {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
+    {"_clustur_GetSparseMatrix", (DL_FUNC) &_clustur_GetSparseMatrix, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

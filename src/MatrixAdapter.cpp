@@ -25,7 +25,7 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
         return spareDistanceMatrix;
     const auto phylipMatrix = DistanceMatrixToSquareMatrix();
     phylipReader->read(phylipMatrix);
-    spareDistanceMatrix = phylipReader->getDMatrix();
+    spareDistanceMatrix = phylipReader->GetSparseMatrix();
 
     return spareDistanceMatrix;
 }

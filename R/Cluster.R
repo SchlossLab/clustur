@@ -394,3 +394,11 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
   }
   
 }
+# add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
+# address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
+# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
+# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
+
+# count_table <- validate_count_table(readr::read_delim("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/amazon1.count_table"))
+# data <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist",
+#                              count_table, 0.2, F)

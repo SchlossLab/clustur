@@ -16,7 +16,7 @@ bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const 
 bool ColumnReaderTestFixture::TestReadColumnFileToRowData(const std::string &filePath, const CountTableAdapter& adapter,
     const std::vector<RowData> &expectedResult) {
     Setup();
-    const auto result = reader->readToRowData(adapter, filePath);
+    const auto result = reader->ReadToRowData(adapter, filePath);
     TearDown();
     return !result.empty() && !expectedResult.empty();
 }
@@ -25,7 +25,7 @@ bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
     const CountTableAdapter& adapter, const bool expectedResult) {
     Setup();
     reader->Read(adapter, filePath);
-    const auto result = !reader->GetSparseDataMatrix()->seqVec.empty();
+    const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
     return result == expectedResult;
 }

@@ -98,7 +98,7 @@ bool ReadPhylipMatrix::read(const std::string& filePath) {
     return true;
 }
 
-std::vector<RowData> ReadPhylipMatrix::readToRowData(const std::string& filePath) {
+std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath) {
 
     fileHandle.open(filePath);
     if(!fileHandle.is_open())

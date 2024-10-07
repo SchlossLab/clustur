@@ -12,14 +12,15 @@
 #include "SparseDistanceMatrix.h"
 #include "../RowData.h"
 #include "../Adapters/CountTableAdapter.h"
+#include "../Adapters/DistanceFileReader.h"
 
-class ColumnDistanceMatrixReader final {
+class ColumnDistanceMatrixReader final : public DistanceFileReader {
 public:
     ColumnDistanceMatrixReader(double cutoff, bool isSimularity);
     bool Read(const CountTableAdapter &countTable, const std::string &filePath);
-    std::vector<RowData> readToRowData(const CountTableAdapter &countTable, const std::string& filePath);
-    ListVector* GetListVector() const {return list;}
-    SparseDistanceMatrix* GetSparseDataMatrix() const {return sparseMatrix;}
+    std::vector<RowData> ReadToRowData(const CountTableAdapter &countTable, const std::string& filePath) override;
+    ListVector* GetListVector() const override {return list;}
+    SparseDistanceMatrix* GetSparseMatrix() const override {return sparseMatrix;}
 
 private:
     SparseDistanceMatrix* sparseMatrix{};

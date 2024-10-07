@@ -114,7 +114,7 @@ bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable, const
 }
 
 
-std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableAdapter &countTable,
+std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableAdapter &countTable,
 	const std::string& filePath) {
 	std::ifstream fileHandle;
 	fileHandle.open(filePath);

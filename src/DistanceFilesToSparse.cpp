@@ -18,12 +18,12 @@ std::vector<std::vector<double>> DistanceFilesToSparse::CreateSparseList() const
     std::vector<RowData> data;
     if(method == "column") {
         ColumnDistanceMatrixReader reader(1.1, false);
-        data = reader.readToRowData(countTable, filePath);
+        data = reader.ReadToRowData(countTable, filePath);
     }
     else {
         //phylip
         ReadPhylipMatrix reader(1.1, false); // We want every value
-        data = reader.readToRowData(filePath);
+        data = reader.ReadToRowData(filePath);
     }
     const size_t size = data[0].rowValues.size();
     std::vector<double> iValues;

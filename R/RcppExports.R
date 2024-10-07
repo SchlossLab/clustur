@@ -37,3 +37,11 @@ DistanceFileToSparseMatrix <- function(countTable, filePath, method) {
     .Call(`_clustur_DistanceFileToSparseMatrix`, countTable, filePath, method)
 }
 
+ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
+    .Call(`_clustur_ProcessDistanceFiles`, filePath, countTable, cutoff, isSim)
+}
+
+GetSparseMatrix <- function(fileReader) {
+    invisible(.Call(`_clustur_GetSparseMatrix`, fileReader))
+}
+
