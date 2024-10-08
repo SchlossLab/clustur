@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "CountTableAdapter.h"
+#include "../MothurDependencies/ListVector.h"
 #include "../RowData.h"
 #include "../MothurDependencies/SparseDistanceMatrix.h"
 
@@ -25,9 +26,17 @@ public:
     void SetCountTable(CountTableAdapter data);
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;
+    bool ReadRowDataMatrix(const std::vector<RowData>& rowData);
 
+
+
+protected:
+    SparseDistanceMatrix* sparseMatrix{};
+    ListVector* list{};
+    double cutoff = 0;
+    bool sim = true;
 private:
-    std::vector<RowData> sparseMatrix;
+    std::vector<RowData> rowDataMatrix;
     CountTableAdapter countTable;
 };
 

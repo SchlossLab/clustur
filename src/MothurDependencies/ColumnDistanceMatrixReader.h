@@ -22,11 +22,6 @@ public:
     ListVector* GetListVector() const override {return list;}
     SparseDistanceMatrix* GetSparseMatrix() const override {return sparseMatrix;}
 
-private:
-    SparseDistanceMatrix* sparseMatrix{};
-    ListVector* list{};
-    bool sim;
-    double cutoff;
 };
 
 

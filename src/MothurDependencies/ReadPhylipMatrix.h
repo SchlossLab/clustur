@@ -20,21 +20,15 @@ public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
     ~ReadPhylipMatrix() override = default;
-    SparseDistanceMatrix* GetSparseMatrix() const override { return DMatrix;}
+    SparseDistanceMatrix* GetSparseMatrix() const override { return sparseMatrix;}
     ListVector* GetListVector()	const override{	return list;}
-    bool read(const std::string&);
-    bool read(const std::vector<RowData>& rowData);
+    bool Read(const std::string&);
     std::vector<RowData> ReadToRowData(const std::string&) override;
 
     std::vector<RowData> ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) override { return {};};
 
 private:
     std::ifstream fileHandle;
-    SparseDistanceMatrix* DMatrix{};
-    ListVector* list{};
-    double cutoff = 0;
-    bool sim = true;
-    Utils util;
 };
 
 #endif //READPHYLIPMATRIX_H

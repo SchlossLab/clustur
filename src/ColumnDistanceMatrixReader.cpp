@@ -6,7 +6,9 @@
 #include <Rcpp.h>
 
 ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
-:sim(isSimularity), cutoff(cutoff) {
+:DistanceFileReader() {
+	this->cutoff = cutoff;
+	this->sim = isSimularity;
 	sparseMatrix = new SparseDistanceMatrix();
 	list = new ListVector();
 }

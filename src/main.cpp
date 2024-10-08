@@ -102,7 +102,7 @@ std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     ReadPhylipMatrix reader(cutoff, isSimularity);
-    reader.read(phylipFilePath);
+    reader.Read(phylipFilePath);
     ClusterCommand command;
     const auto sparseMatix = reader.GetSparseMatrix();
     const auto listVector = reader.GetListVector();
@@ -219,6 +219,13 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
+SEXP ReadSparseMatrix(const CountTableAdapter& countTableAdapter, const std::vector<int> &xPosition,
+    const std::vector<int> &yPosition, const std::vector<double> &data,
+    const double cutoff, const bool isSim) {
+    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
+    const auto sparseMatix = adapter.CreateSparseMatrix();
+    const auto listVector = adapter.GetListVector();
+}
 
 //[[Rcpp::export]]
 Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader) {
