@@ -219,12 +219,19 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
-SEXP ReadSparseMatrix(const CountTableAdapter& countTableAdapter, const std::vector<int> &xPosition,
-    const std::vector<int> &yPosition, const std::vector<double> &data,
+//[[Rcpp::export]]
+SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
+    const std::vector<int> &yPosition, const std::vector<double> &data, const Rcpp::DataFrame& countTable,
     const double cutoff, const bool isSim) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    const auto sparseMatix = adapter.CreateSparseMatrix();
-    const auto listVector = adapter.GetListVector();
+    const std::vector<RowData> rowDataMatrix = adapter.DistanceMatrixToSquareMatrix();
+    read->ReadRowDataMatrix(rowDataMatrix);
+    read->SetSparseMatrix(rowDataMatrix);
+    read->SetCountTable(countTableAdapter);
+    return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
 //[[Rcpp::export]]
