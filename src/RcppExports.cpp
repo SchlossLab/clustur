@@ -158,14 +158,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// GetSparseMatrix
-void GetSparseMatrix(const SEXP& fileReader);
-RcppExport SEXP _clustur_GetSparseMatrix(SEXP fileReaderSEXP) {
+// GetDistanceDataFrame
+Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader);
+RcppExport SEXP _clustur_GetDistanceDataFrame(SEXP fileReaderSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const SEXP& >::type fileReader(fileReaderSEXP);
-    GetSparseMatrix(fileReader);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(GetDistanceDataFrame(fileReader));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GetCountTable
+Rcpp::DataFrame GetCountTable(const SEXP& fileReader);
+RcppExport SEXP _clustur_GetCountTable(SEXP fileReaderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type fileReader(fileReaderSEXP);
+    rcpp_result_gen = Rcpp::wrap(GetCountTable(fileReader));
+    return rcpp_result_gen;
 END_RCPP
 }
 
@@ -182,7 +194,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiClusterColumnDist", (DL_FUNC) &_clustur_OptiClusterColumnDist, 4},
     {"_clustur_DistanceFileToSparseMatrix", (DL_FUNC) &_clustur_DistanceFileToSparseMatrix, 3},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
-    {"_clustur_GetSparseMatrix", (DL_FUNC) &_clustur_GetSparseMatrix, 1},
+    {"_clustur_GetDistanceDataFrame", (DL_FUNC) &_clustur_GetDistanceDataFrame, 1},
+    {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

@@ -22,10 +22,9 @@ public:
     virtual SparseDistanceMatrix* GetSparseMatrix() const = 0;
     virtual ListVector* GetListVector() const = 0;
     void SetSparseMatrix(const std::vector<RowData>& data);
-    void SetCountTable(const CountTableAdapter& data);
+    void SetCountTable(CountTableAdapter data);
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;
-    void PrintHello() const {Rcpp::Rcout << "Hello";}
 
 private:
     std::vector<RowData> sparseMatrix;

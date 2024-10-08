@@ -22,10 +22,12 @@ public:
     std::string GetNameByIndex(int) const;
     std::vector<double> GetColumnByName (const std::string& name) const;
     std::vector<std::string> GetGroups() const;
+    Rcpp::DataFrame GetCountTable() const {return countTable;}
 private:
     std::vector<std::string> sampleNames;
     std::unordered_map<std::string, std::vector<double>> dataFrameMap;
     std::vector<std::string> groups;
+    Rcpp::DataFrame countTable{};
 };
 
 

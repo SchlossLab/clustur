@@ -25,6 +25,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
+    this->countTable = countTable;
     return true;
 }
 

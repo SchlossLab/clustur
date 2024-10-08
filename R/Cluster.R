@@ -399,6 +399,7 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
 # ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
 # ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
 
-# count_table <- validate_count_table(readr::read_delim("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/amazon1.count_table"))
-# data <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist",
-#                              count_table, 0.2, F)
+count_table <- validate_count_table(readr::read_delim("inst/extdata/amazon1.count_table"))
+data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
+                             count_table, 0.2, F)
+dist <- GetDistanceDataFrame()(data)

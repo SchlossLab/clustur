@@ -204,22 +204,31 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
         isPhylip = false;
     Rcpp::Rcout << map[isPhylip] << "\n";
     data.close();
+
+    CountTableAdapter adapter;
+    adapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
+        read->SetCountTable(adapter);
         read->SetSparseMatrix(read->ReadToRowData(filePath));
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
-    CountTableAdapter adapter;
-    adapter.CreateDataFrameMap(countTable);
+    read->SetCountTable(adapter);
     read->SetSparseMatrix(read->ReadToRowData(adapter, filePath));
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
 
 //[[Rcpp::export]]
-void GetSparseMatrix(const SEXP& fileReader) {
+Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader) {
     const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
-    ptr.get()->PrintHello();
+    return ptr.get()->SparseMatrixToDataFrame();
+}
+
+//[[Rcpp::export]]
+Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
+    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
+    return ptr.get()->GetCountTable();
 }
 #endif

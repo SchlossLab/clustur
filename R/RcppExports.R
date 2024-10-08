@@ -41,7 +41,11 @@ ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
     .Call(`_clustur_ProcessDistanceFiles`, filePath, countTable, cutoff, isSim)
 }
 
-GetSparseMatrix <- function(fileReader) {
-    invisible(.Call(`_clustur_GetSparseMatrix`, fileReader))
+GetDistanceDataFrame <- function(fileReader) {
+    .Call(`_clustur_GetDistanceDataFrame`, fileReader)
+}
+
+GetCountTable <- function(fileReader) {
+    .Call(`_clustur_GetCountTable`, fileReader)
 }
 

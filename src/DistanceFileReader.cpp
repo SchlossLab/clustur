@@ -15,7 +15,7 @@ Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
         const std::string firstName = value.name;
         for(size_t i = 0; i < size; i++) {
             indexOneNames[counter] = firstName;
-            indexTwoNames[counter] = sparseMatrix[counter].name;
+            indexTwoNames[counter] = sparseMatrix[i].name;
             distances[counter++] = value.rowValues[i];
         }
     }
@@ -29,11 +29,11 @@ Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     // Recreate and return the count table
     // Might actually just store it in memory and return it
     // return countTable.GetCountTable();
-    return {};
+    return countTable.GetCountTable();
 }
 void DistanceFileReader::SetSparseMatrix(const std::vector<RowData>& data) {
     sparseMatrix = data;
 }
-void DistanceFileReader::SetCountTable(const CountTableAdapter& data) {
+void DistanceFileReader::SetCountTable(CountTableAdapter data) {
     countTable = data;
 }
