@@ -20,8 +20,8 @@ public:
     virtual std::vector<RowData> ReadToRowData(const CountTableAdapter& adapter, const std::string& filePath) {return {};};
     // Phylip files do not need a count table
     virtual std::vector<RowData> ReadToRowData(const std::string& filePath) { return {};};
-    virtual SparseDistanceMatrix* GetSparseMatrix() const = 0;
-    virtual ListVector* GetListVector() const = 0;
+    SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(*sparseMatrix);}
+    ListVector* GetListVector() const {return new ListVector(*list);}
     void SetRowDataMatrix(const std::vector<RowData>& data);
     void SetCountTable(CountTableAdapter data);
 

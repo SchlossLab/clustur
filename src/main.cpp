@@ -254,8 +254,8 @@ std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
     const double cutoff = distanceData.get()->GetCutoff();
-    const auto sparseMatix = distanceData.get()->GetSparseMatrix();
-    const auto listVector = distanceData.get()->GetListVector();
+    const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
     Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);

@@ -399,21 +399,21 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
 
 
 
-# sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
-# add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
-# address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
-# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
-# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
-# count_sparse <- readRDS(test_path("extdata", "count_table.RDS"))
-# count_table <- validate_count_table(readr::read_delim("inst/extdata/amazon1.count_table"))
-# # I need this to read sparse matrices as well tbh. 
-# sparse <- ProcessSparseMatrix(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, count_sparse, 0.2, F)
-# sparse_dist <- GetDistanceDataFrame(sparse)
-# spare_count <- GetCountTable(sparse)
-# data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
-#                                count_table, 0.2, F)
-# # dist <- GetDistanceDataFrame(data)
-# # count <- GetCountTable(data)
+sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
+add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
+address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
+ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
+ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
+count_sparse <- readRDS(test_path("extdata", "count_table.RDS"))
+count_table <- validate_count_table(readr::read_delim("inst/extdata/amazon1.count_table"))
+# I need this to read sparse matrices as well tbh. 
+sparse <- ProcessSparseMatrix(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, count_sparse, 0.2, F)
+sparse_dist <- GetDistanceDataFrame(sparse)
+spare_count <- GetCountTable(sparse)
+data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
+                               count_table, 0.2, F)
+# dist <- GetDistanceDataFrame(data)
+# count <- GetCountTable(data)
 
 
 
@@ -461,5 +461,7 @@ cluster <- function(distance_object, method, random_seed = 123) {
   ))
 
 }
-debugonce(cluster)
-d <- cluster(data, "furthest")
+
+# # debugonce(cluster)
+# d <- cluster(data, "furthest")
+# a <- cluster(data, "opti")

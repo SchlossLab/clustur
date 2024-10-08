@@ -17,8 +17,15 @@ class ListVector;
 
 
 class SparseDistanceMatrix {
-
 public:
+    SparseDistanceMatrix(const SparseDistanceMatrix &other)
+        : seqVec(other.seqVec),
+          smallCell(other.smallCell),
+          numNodes(other.numNodes),
+          sorted(other.sorted),
+          smallDist(other.smallDist),
+          aboveCutoff(other.aboveCutoff),
+          util(other.util) {}
     SparseDistanceMatrix();
     ~SparseDistanceMatrix(){ clear(); }
     int getNNodes() const;

@@ -20,8 +20,6 @@ public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
     ~ReadPhylipMatrix() override = default;
-    SparseDistanceMatrix* GetSparseMatrix() const override { return sparseMatrix;}
-    ListVector* GetListVector()	const override{	return list;}
     bool Read(const std::string&);
     std::vector<RowData> ReadToRowData(const std::string&) override;
 

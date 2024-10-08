@@ -19,8 +19,6 @@ public:
     ColumnDistanceMatrixReader(double cutoff, bool isSimularity);
     bool Read(const CountTableAdapter &countTable, const std::string &filePath);
     std::vector<RowData> ReadToRowData(const CountTableAdapter &countTable, const std::string& filePath) override;
-    ListVector* GetListVector() const override {return list;}
-    SparseDistanceMatrix* GetSparseMatrix() const override {return sparseMatrix;}
 
 };
 
