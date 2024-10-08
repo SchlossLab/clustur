@@ -53,3 +53,11 @@ GetCountTable <- function(fileReader) {
     .Call(`_clustur_GetCountTable`, fileReader)
 }
 
+Cluster <- function(DistanceData, method) {
+    .Call(`_clustur_Cluster`, DistanceData, method)
+}
+
+OptiCluster <- function(DistanceData) {
+    .Call(`_clustur_OptiCluster`, DistanceData)
+}
+

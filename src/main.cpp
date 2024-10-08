@@ -210,12 +210,14 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
         read->SetCountTable(adapter);
-        read->SetSparseMatrix(read->ReadToRowData(filePath));
+        read->SetRowDataMatrix(read->ReadToRowData(filePath));
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
+    std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
     read->SetCountTable(adapter);
-    read->SetSparseMatrix(read->ReadToRowData(adapter, filePath));
+    read->SetRowDataMatrix(rowDataMatrix);
+    read->ReadRowDataMatrix(rowDataMatrix);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
@@ -229,7 +231,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     const std::vector<RowData> rowDataMatrix = adapter.DistanceMatrixToSquareMatrix();
     read->ReadRowDataMatrix(rowDataMatrix);
-    read->SetSparseMatrix(rowDataMatrix);
+    read->SetRowDataMatrix(rowDataMatrix);
     read->SetCountTable(countTableAdapter);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
@@ -244,5 +246,38 @@ Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader) {
 Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
     const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
     return ptr.get()->GetCountTable();
+}
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string& method) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    ClusterCommand command;
+    const double cutoff = distanceData.get()->GetCutoff();
+    const auto sparseMatix = distanceData.get()->GetSparseMatrix();
+    const auto listVector = distanceData.get()->GetListVector();
+    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    delete(listVector);
+    return {tidySharedDataFrame, clusterDataFrame};
+}
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
+    const double cutoff = distanceData.get()->GetCutoff();
+    const bool isSim = distanceData.get()->GetIsSimularity();
+    OptimatrixAdapter optiAdapter(cutoff);
+    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
+    ClusterCommand command;
+    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
+    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
+    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    delete(result);
+    return {tidySharedDataFrame, clusterDataFrame,command.GetSensitivityData(), command.GetClusterMetrics()};
 }
 #endif

@@ -22,10 +22,16 @@ public:
     virtual std::vector<RowData> ReadToRowData(const std::string& filePath) { return {};};
     virtual SparseDistanceMatrix* GetSparseMatrix() const = 0;
     virtual ListVector* GetListVector() const = 0;
-    void SetSparseMatrix(const std::vector<RowData>& data);
+    void SetRowDataMatrix(const std::vector<RowData>& data);
     void SetCountTable(CountTableAdapter data);
+
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;
+    CountTableAdapter GetCountTableAdapter() const {return countTable;}
+    double GetCutoff() const {return cutoff;}
+    bool GetIsSimularity() const {return sim;}
+    std::vector<RowData> GetRowDataMatrix() const {return rowDataMatrix;}
+
     bool ReadRowDataMatrix(const std::vector<RowData>& rowData);
 
 

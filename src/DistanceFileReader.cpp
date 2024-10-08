@@ -31,7 +31,7 @@ Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     // return countTable.GetCountTable();
     return countTable.GetCountTable();
 }
-void DistanceFileReader::SetSparseMatrix(const std::vector<RowData>& data) {
+void DistanceFileReader::SetRowDataMatrix(const std::vector<RowData>& data) {
     rowDataMatrix = data;
 }
 void DistanceFileReader::SetCountTable(CountTableAdapter data) {

@@ -395,6 +395,10 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
   
 }
 
+# Create New Cluster function on R and C++
+
+
+
 # sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
 # add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
 # address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
@@ -410,3 +414,17 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
 #                              count_table, 0.2, F)
 # dist <- GetDistanceDataFrame(data)
 # count <- GetCountTable(data)
+
+# cluster_dfs <- OptiCluster(data)
+# cluster_d <- Cluster(data, "furthest")
+# cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
+#   ls <- gregexpr(",", x, fixed = TRUE)[[1]]
+#   if (ls[[1]] == -1) {
+#     return(0)
+#   } else {
+#     return(length(ls))
+#   }
+# })
+# cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
+#                                            decreasing = TRUE), ]
+# cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
