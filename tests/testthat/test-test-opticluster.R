@@ -113,9 +113,9 @@ test_that("Amazon Data from mothur clusters properly", {
   df_count <- readRDS(test_path("extdata", "amazon_count_table.RDS"))
   column_path <- test_path("extdata", "96_sq_column_amazon.dist")
   result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
-  data <- opti_cluster(column_path = column_path,
+  data1 <- opti_cluster(column_path = column_path,
                        count_table = df_count, cutoff = 0.2)
-  expect_true(nrow(data$cluster) == nrow(result$cluster))
+  expect_true(nrow(data1$cluster) == nrow(result$cluster))
 })
 
 test_that("The distance file conversion creates similar clusters",{

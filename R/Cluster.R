@@ -411,20 +411,55 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
 # sparse_dist <- GetDistanceDataFrame(sparse)
 # spare_count <- GetCountTable(sparse)
 # data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
-#                              count_table, 0.2, F)
-# dist <- GetDistanceDataFrame(data)
-# count <- GetCountTable(data)
+#                                count_table, 0.2, F)
+# # dist <- GetDistanceDataFrame(data)
+# # count <- GetCountTable(data)
 
-# cluster_dfs <- OptiCluster(data)
-# cluster_d <- Cluster(data, "furthest")
-# cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-#   ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-#   if (ls[[1]] == -1) {
-#     return(0)
-#   } else {
-#     return(length(ls))
-#   }
-# })
-# cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-#                                            decreasing = TRUE), ]
-# cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
+
+
+read_dist <- function(distance_file, count_table, cutoff, is_simularity_matrix){
+  return(ProcessDistanceFiles(distance_file, count_table, cutoff, is_simularity_matrix))
+}
+
+cluster <- function(distance_object, method, random_seed = 123) {
+  set.seed(random_seed)
+  cluster_dfs <- c()
+  if(method != "opti"){
+    cluster_dfs <- Cluster(distance_object, method)
+  }
+  else
+  {
+    cluster_dfs <- OptiCluster(distance_object)  
+  }
+
+  # Order by OTU size
+  cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
+    ls <- gregexpr(",", x, fixed = TRUE)[[1]]
+    if (ls[[1]] == -1) {
+      return(0)
+    } else {
+      return(length(ls))
+    }
+  })
+  cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
+                                          decreasing = TRUE), ]
+  cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
+
+
+  # Return
+  if(method != "opti"){
+    return(list(
+      abundance = cluster_dfs[[1]],
+      cluster = cluster_dfs[[2]]
+    ))
+  }
+  return(list(
+    abundance = cluster_dfs[[1]],
+    cluster = cluster_dfs[[2]],
+    cluster_metrics = cluster_dfs[[3]],
+    other_cluster_metrics = cluster_dfs[[4]]
+  ))
+
+}
+debugonce(cluster)
+d <- cluster(data, "furthest")
