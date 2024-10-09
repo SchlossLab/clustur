@@ -399,28 +399,107 @@ clustur <- function(sparse_matrix, cutoff, method, count_table,
 
 
 
-sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
-add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
-address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
-ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
-ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
-count_sparse <- readRDS(test_path("extdata", "count_table.RDS"))
-count_table <- validate_count_table(readr::read_delim("inst/extdata/amazon1.count_table"))
-# I need this to read sparse matrices as well tbh. 
-sparse <- ProcessSparseMatrix(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, count_sparse, 0.2, F)
-sparse_dist <- GetDistanceDataFrame(sparse)
-spare_count <- GetCountTable(sparse)
-data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
-                               count_table, 0.2, F)
+# sparse_matrix <- readRDS(test_path("extdata", "sparse_matrix_data.RDS"))
+# add <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist", data.frame())
+# address <- ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/98_sq_phylip_amazon.dist", data.frame(), 0.2, F)
+# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/updated_column.dist", data.frame())
+# ProcessDistanceFiles("/Users/grejoh/Documents/OptiClusterPackage/clustur/tests/testthat/extdata/updated_phylip_1.txt", data.frame())
+# count_sparse <- readRDS(test_path("extdata", "count_table.RDS"))
+# count_table <- validate_count_table(readr::read_delim("inst/extdata/amazon1.count_table"))
+# # I need this to read sparse matrices as well tbh. 
+# sparse <- ProcessSparseMatrix(sparse_matrix@i, sparse_matrix@j, sparse_matrix@x, count_sparse, 0.2, F)
+# sparse_dist <- GetDistanceDataFrame(sparse)
+# spare_count <- GetCountTable(sparse)
+# data <- ProcessDistanceFiles("F:\\Opticluster\\Clustur\\inst\\extdata\\96_sq_column_amazon.dist",
+#                                count_table, 0.2, F)
 # dist <- GetDistanceDataFrame(data)
-# count <- GetCountTable(data)
+# # count <- GetCountTable(data)
+
+
+# ls <- unique(dist$FirstName)
 
 
 
+
+#' Read Dist Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param distance_file Either a phylip or column distance file, or a sparse matrix.
+#' @param count_table A table of names and the given abundance per group.
+#' @param cutoff The value you wish to use as a cutoff when clustering.
+#'  opti, furthest, nearest, average, or weighted.
+#' @param is_simularity_matrix are you using a simularity matrix or distance matrix?
+#' @return A distance object that contains all your distance information
+#'
+#' @examples
+#'
+#'  # Convert Phylip of column file to a sparse matrix
+#' 
+#'  i_values <- as.integer(1:100)
+#'  j_values <- as.integer(sample(1:100, 100, TRUE))
+#'  x_values <- as.numeric(runif(100, 0, 1))
+#'  s_matrix <- Matrix::spMatrix(nrow=max(i_values),
+#'                               ncol=max(i_values),
+#'                               i=i_values,
+#'                               j=j_values,
+#'                               x=x_values)
+#'  column_path <- example_path("96_sq_column_amazon.dist")
+#'  phylip_path <- example_path("98_sq_phylip_amazon.dist")
+#'  count_table <- readRDS(example_path("amazon1.count_table"))
+#'
+#' data_column <- ProcessDistanceFiles(column_path, count_table, 0.2, F) 
+#' data_phylip <- ProcessDistanceFiles(phylip_path, count_table, 0.2, F) 
+#                               
+#'
+#'
 read_dist <- function(distance_file, count_table, cutoff, is_simularity_matrix){
-  return(ProcessDistanceFiles(distance_file, count_table, cutoff, is_simularity_matrix))
+  if("character" %in% class(distance_file))
+    return(ProcessDistanceFiles(distance_file, count_table, cutoff, is_simularity_matrix))
+  # Its a sparse matrix not a path
+  
+  return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
+     count_table, cutoff, is_simularity_matrix))
 }
 
+
+#' Cluster Description
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param distance_object The distance object that was created using the read_dist function.
+#' @param method The type of cluster you wish to conduct;
+#'  opti, furthest, nearest, average, or weighted.
+#' @param random_seed the random seed you wish to use, defaulted at 123.
+#' @description
+#' @return A list of dataframes that contain abundance, and clustering results.
+#'
+#' @examples
+#'
+#'  # Convert Phylip of column file to a sparse matrix
+#'  column_path <- example_path("updated_column.dist")
+#'  phylip_path <- example_path("updated_phylip_1.txt")
+#'  count_table <- readRDS(example_path("count_table.RDS"))
+#' 
+#'  phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
+#'  column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
+#'  cutoff <- 0.2
+#'  # The clustur using one of the 5 methods
+#'  # opti
+#'  cluster_results <- clustur(column_sparse, cutoff, "opti", count_table)
+#'  # furthest 
+#'  cluster_results <- clustur(phylip_sparse, cutoff, "furthest", count_table)
+#'  # nearest
+#'  cluster_results <- clustur(column_sparse, cutoff, "nearest", count_table)
+#'  # average
+#'  cluster_results <- clustur(phylip_sparse, cutoff, "average", count_table)
+#'  # weighted
+#'  cluster_results <- clustur(column_sparse, cutoff, "weighted", count_table)
+#' 
+#'
+#'
 cluster <- function(distance_object, method, random_seed = 123) {
   set.seed(random_seed)
   cluster_dfs <- c()
@@ -462,6 +541,15 @@ cluster <- function(distance_object, method, random_seed = 123) {
 
 }
 
-# # debugonce(cluster)
-# d <- cluster(data, "furthest")
-# a <- cluster(data, "opti")
+#   i_values <- as.integer(1:100)
+#   j_values <- as.integer(sample(1:100, 100, TRUE))
+#   x_values <- as.numeric(runif(100, 0, 1))
+#   s_matrix <- Matrix::spMatrix(nrow=max(i_values),
+#                                ncol=max(i_values),
+#                                i=i_values,
+#                                j=j_values,
+#                                x=x_values)
+#   count_table_sparse <- data.frame(sequence=as.character(i_values),
+#                                  total=rep(1,times=100))
+
+# dist <- read_dist(s_matrix, count_table_sparse, 0.2, F)
