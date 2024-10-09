@@ -13,7 +13,9 @@ example_path(file = NULL)
 the path inside of the package of the file.
 }
 \description{
-Example Path
+This function was created as a helper function to generate file paths to our
+ internal data. You are able to access this function if you
+ want to follow along with the example.
 }
 \examples{
 # This will return the path to our example file
