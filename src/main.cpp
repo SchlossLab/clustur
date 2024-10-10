@@ -282,4 +282,11 @@ std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData) {
     delete(result);
     return {tidySharedDataFrame, clusterDataFrame,command.GetSensitivityData(), command.GetClusterMetrics()};
 }
+
+//[[Rcpp::export]]
+Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
+    CountTableAdapter adapter;
+    adapter.CreateDataFrameMapFromSparseCountTable(countTable);
+    return adapter.ReCreateDataFrame();
+}
 #endif

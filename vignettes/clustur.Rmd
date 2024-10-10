@@ -71,10 +71,10 @@ cluster_data <- cluster(distance_data, method = "opticlust") # this needs to mak
 ### Selecting different clustering methods
 
 ```{r}
-cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "furthest")
-cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "nearest")
-cluster_data <- cluster(distances, count_table, cutoff=0.10, method = "average")
-cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "weighted")
+cluster_data <- cluster(distance_data, method = "furthest")
+cluster_data <- cluster(distance_data, method = "nearest")
+cluster_data <- cluster(distance_data, method = "average")
+cluster_data <- cluster(distance_data, method = "weighted")
 ```
 
 
@@ -83,7 +83,7 @@ cluster_data <- cluster(distances, count_table, cutoff=0.03, method = "weighted"
 All methods produce a list object with an indicator of the cutoff that was used (`cutoff`), as well as cluster (`clusters`) and shared (`shared`) data frames. The `clusters` data frame shows how each sequence cluster together with a column for the cluster identifiers (`cluster`) and a column of lists indicating the identifiers within each cluster (`identifiers`). The `shared` data frame contains columns indicating the `cluster` and the `sample` identifiers and the abundance of each cluster in each sample; the `cluster` identifier in the `shared` data frame is the same as that in the `clusters` data frame. The `metrics` data frame. The OptiClust method also includes the `metrics` data frame, which describe the optimization value for each iteration in the fitting process; the data in `clusters` and `shared` are taken from the last iteration. clustur provides getter functions, `get_cutoff()`, `get_clusters()`, `get_shared()`, and `get_metrics()`, which will be demonstrated below.
 
 ```{r R.options=list(max.print=15)}
-clusters <- cluster(distances, count_table, cutoff=0.03, method = "opticlust")
+clusters <- cluster(distance_data, method = "opticlust")
 
 get_cutoff(cluster_data)
 get_clusters(cluster_data)

@@ -61,3 +61,7 @@ OptiCluster <- function(DistanceData) {
     .Call(`_clustur_OptiCluster`, DistanceData)
 }
 
+CreateDataFrameFromSparse <- function(countTable) {
+    .Call(`_clustur_CreateDataFrameFromSparse`, countTable)
+}
+

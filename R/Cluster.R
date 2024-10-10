@@ -175,6 +175,13 @@ example_path <- function(file = NULL) {
 #' @return a count table data frame.
 read_count <- function(count_table_path) {
   # We will have to determine if its a sparse or not
+  # Check if the first value of test_read had a comment
+  test_read <- read.delim(count_table_path, sep="\t", header=FALSE)
+  if(grepl("#", test_read[1,1], fixed=TRUE)) {
+    count_table_sparse <- read.delim(count_table_path, sep="\t", skip=2)
+    count_table_sparse <- lapply(count_table_sparse, as.character)
+    return(CreateDataFrameFromSparse(count_table_sparse))
+  }  
   return(read.delim(count_table_path, sep="\t"))
 }
 
@@ -212,3 +219,16 @@ read_count <- function(count_table_path) {
 # count_table <- read_count(example_path("amazon1.count_table")) #should be a tsv or mothur-native count file
 # distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff = 0.2, FALSE)
 # cluster_data <- cluster(distance_data, method = "opticlust") # this needs to make sure that dist_data and count_table are compatible
+
+# write.table(c, "count_table.count", quote=F, row.names = F, sep="\t")
+# r <- read.delim("count_table.sparse.count_table", sep="\t", header=FALSE)
+
+# if(grepl("#", r[3,1], fixed=TRUE)) {
+#   is_sparse
+# }
+
+# debugonce(read_count)
+# read_count(example_path("amazon1.count_table"))
+# read_count("count_table.sparse.count_table")
+# count_table_sparse <- read.delim("count_table.sparse.count_table", sep="\t", skip=2)
+# a <- lapply(count_table_sparse, as.character)
