@@ -34,8 +34,8 @@ Detailed description of the function.
                               i=i_values,
                               j=j_values,
                               x=x_values)
- column_path <- example_path("column_amazon.dist")
- phylip_path <- example_path("phylip_amazon.dist")
+ column_path <- example_path("amazon_column.dist")
+ phylip_path <- example_path("amazon_phylip.dist")
  count_table <- read_count(example_path("amazon.count_table"))
 
 data_column <- read_dist(column_path, count_table, 0.2, FALSE) 

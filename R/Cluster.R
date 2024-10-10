@@ -22,8 +22,8 @@
 #'                               i=i_values,
 #'                               j=j_values,
 #'                               x=x_values)
-#'  column_path <- example_path("column_amazon.dist")
-#'  phylip_path <- example_path("phylip_amazon.dist")
+#'  column_path <- example_path("amazon_column.dist")
+#'  phylip_path <- example_path("amazon_phylip.dist")
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'
 #' data_column <- read_dist(column_path, count_table, 0.2, FALSE) 
@@ -61,8 +61,8 @@ read_dist <- function(distance_file, count_table, cutoff, is_simularity_matrix){
 #' @examples
 #'  # Convert Phylip of column file to a sparse matrix
 #'  cutoff <- 0.2
-#'  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-#'  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+#'  count_table <- read_count(example_path("amazon.count_table"))
+#'  distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 #' 
 #'  # The clustur using one of the 5 methods
 #'  # opti
@@ -142,7 +142,7 @@ validate_count_table <- function(count_table_df) {
 #' @param file The data of the path you are looking to find.
 #' @examples
 #' # This will return the path to our example file
-#' example_path("98_sq_phylip_amazon.dist")
+#' example_path("amazon_phylip.dist")
 #'
 #' @return the path inside of the package of the file.
 example_path <- function(file = NULL) {

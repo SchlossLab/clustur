@@ -16,6 +16,7 @@ the cutoff value
 This function returns the cutoff of the cluster object
 }
 \examples{
+cutoff <- 0.2
 count_table <- read_count(example_path("amazon.count_table"))
 distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 df_clusters <- cluster(distance_data, method = "opti")

@@ -19,6 +19,6 @@ This function was created as a helper function to generate file paths to our
 }
 \examples{
 # This will return the path to our example file
-example_path("98_sq_phylip_amazon.dist")
+example_path("amazon_phylip.dist")
 
 }

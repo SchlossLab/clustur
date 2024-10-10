@@ -6,6 +6,7 @@
 #' This function returns the cutoff of the cluster object
 #' @param cluster_data The cluster method output
 #' @examples
+#' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 #' df_clusters <- cluster(distance_data, method = "opti")
@@ -24,6 +25,7 @@ get_cutoff <- function(cluster_data) {
 #' This function returns the cluster data.frame of the cluster object
 #' @param cluster_data The cluster method output
 #' @examples
+#' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 #' df_clusters <- cluster(distance_data, method = "opti")
@@ -42,6 +44,7 @@ get_clusters <- function(cluster_data) {
 #' This function returns the shared data.frame of the cluster object
 #' @param cluster_data The cluster method output
 #' @examples
+#' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 #' df_clusters <- cluster(distance_data, method = "opti")
@@ -60,6 +63,7 @@ get_shared <- function(cluster_data) {
 #' This function returns the all of the metrics from the cluster object
 #' @param cluster_data The cluster method output
 #' @examples
+#' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
 #' df_clusters <- cluster(distance_data, method = "opti")
