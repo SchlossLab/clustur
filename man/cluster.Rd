@@ -21,27 +21,22 @@ A list of dataframes that contain abundance, and clustering results.
 Detailed description of the function.
 }
 \examples{
-
  # Convert Phylip of column file to a sparse matrix
- column_path <- example_path("updated_column.dist")
- phylip_path <- example_path("updated_phylip_1.txt")
- count_table <- readRDS(example_path("count_table.RDS"))
-
- phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
- column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
  cutoff <- 0.2
+ count_table <- read_count(test_path("extdata", "amazon.count_table")) 
+ distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+
  # The clustur using one of the 5 methods
  # opti
- cluster_results <- clustur(column_sparse, cutoff, "opti", count_table)
+ cluster_results <- cluster(distance_data, method = "opti")
  # furthest 
- cluster_results <- clustur(phylip_sparse, cutoff, "furthest", count_table)
+ cluster_results <- cluster(distance_data, method = "furthest")
  # nearest
- cluster_results <- clustur(column_sparse, cutoff, "nearest", count_table)
+ cluster_results <- cluster(distance_data, method = "nearest")
  # average
- cluster_results <- clustur(phylip_sparse, cutoff, "average", count_table)
+ cluster_results <- cluster(distance_data, method = "average")
  # weighted
- cluster_results <- clustur(column_sparse, cutoff, "weighted", count_table)
-
+ cluster_results <- cluster(distance_data, method = "weighted")
 
 
 }

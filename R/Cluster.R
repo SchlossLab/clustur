@@ -22,12 +22,12 @@
 #'                               i=i_values,
 #'                               j=j_values,
 #'                               x=x_values)
-#'  column_path <- example_path("96_sq_column_amazon.dist")
-#'  phylip_path <- example_path("98_sq_phylip_amazon.dist")
-#'  count_table <- readRDS(example_path("amazon1.count_table"))
+#'  column_path <- example_path("column_amazon.dist")
+#'  phylip_path <- example_path("phylip_amazon.dist")
+#'  count_table <- read_count(example_path("amazon.count_table"))
 #'
-#' data_column <- ProcessDistanceFiles(column_path, count_table, 0.2, F) 
-#' data_phylip <- ProcessDistanceFiles(phylip_path, count_table, 0.2, F) 
+#' data_column <- read_dist(column_path, count_table, 0.2, FALSE) 
+#' data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE) 
 #                               
 #'
 #'
@@ -59,27 +59,22 @@ read_dist <- function(distance_file, count_table, cutoff, is_simularity_matrix){
 #' @return A list of dataframes that contain abundance, and clustering results.
 #'
 #' @examples
-#'
 #'  # Convert Phylip of column file to a sparse matrix
-#'  column_path <- example_path("updated_column.dist")
-#'  phylip_path <- example_path("updated_phylip_1.txt")
-#'  count_table <- readRDS(example_path("count_table.RDS"))
-#' 
-#'  phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
-#'  column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
 #'  cutoff <- 0.2
+#'  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
+#'  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+#' 
 #'  # The clustur using one of the 5 methods
 #'  # opti
-#'  cluster_results <- clustur(column_sparse, cutoff, "opti", count_table)
+#'  cluster_results <- cluster(distance_data, method = "opti")
 #'  # furthest 
-#'  cluster_results <- clustur(phylip_sparse, cutoff, "furthest", count_table)
+#'  cluster_results <- cluster(distance_data, method = "furthest")
 #'  # nearest
-#'  cluster_results <- clustur(column_sparse, cutoff, "nearest", count_table)
+#'  cluster_results <- cluster(distance_data, method = "nearest")
 #'  # average
-#'  cluster_results <- clustur(phylip_sparse, cutoff, "average", count_table)
+#'  cluster_results <- cluster(distance_data, method = "average")
 #'  # weighted
-#'  cluster_results <- clustur(column_sparse, cutoff, "weighted", count_table)
-#' 
+#'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
 cluster <- function(distance_object, method, random_seed = 123) {
@@ -126,7 +121,6 @@ cluster <- function(distance_object, method, random_seed = 123) {
 
 }
 
-
 validate_count_table <- function(count_table_df) {
   if (ncol(count_table_df) > 2) {
     return(count_table_df)
@@ -170,7 +164,7 @@ example_path <- function(file = NULL) {
 #' @param count_table_path The file path of your count table.
 #' @examples
 #' # This will return the path to our example file
-#' count_table <- read_count("inst/extdata/amazon1.count_table")
+#' count_table <- read_count(example_path("amazon.count_table"))
 #'
 #' @return a count table data frame.
 read_count <- function(count_table_path) {
@@ -180,55 +174,7 @@ read_count <- function(count_table_path) {
   if(grepl("#", test_read[1,1], fixed=TRUE)) {
     count_table_sparse <- read.delim(count_table_path, sep="\t", skip=2)
     count_table_sparse <- lapply(count_table_sparse, as.character)
-    return(CreateDataFrameFromSparse(count_table_sparse))
+    return(validate_count_table(CreateDataFrameFromSparse(count_table_sparse)))
   }  
-  return(read.delim(count_table_path, sep="\t"))
+  return(validate_count_table(read.delim(count_table_path, sep="\t")))
 }
-
-
-
-# count <- read_count_table(example_path("amazon1.count_table"))
-#   i_values <- as.integer(1:100)
-#   j_values <- as.integer(sample(1:100, 100, TRUE))
-#   x_values <- as.numeric(runif(100, 0, 1))
-#   s_matrix <- Matrix::spMatrix(nrow=max(i_values),
-#                                ncol=max(i_values),
-#                                i=i_values,
-#                                j=j_values,
-#                                x=x_values)
-#   count_table_sparse <- data.frame(sequence=as.character(i_values),
-#                                  total=rep(1,times=100))
-
-# dist <- read_dist(s_matrix, count_table_sparse, 0.2, F)
-# furthest_dist <- cluster(dist, "furthest")
-# opti_dist <- cluster(dist, "opti")
-# nearest_dist <- cluster(dist, "nearest")
-
-# class(dist)
-# class(dist) <- c(class(dist), "distance_object")
-
-# class("")
-
-# count_table <- read_count("inst/extdata/amazon1.count_table")
-# data <- read_dist("/Users/grejoh/Documents/OptiClusterPackage/clustur/inst/extdata/96_sq_column_amazon.dist",
-#                                count_table, 0.2, F)
-
-# write.table(count_table, "amazon")
-
-
-# count_table <- read_count(example_path("amazon1.count_table")) #should be a tsv or mothur-native count file
-# distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff = 0.2, FALSE)
-# cluster_data <- cluster(distance_data, method = "opticlust") # this needs to make sure that dist_data and count_table are compatible
-
-# write.table(c, "count_table.count", quote=F, row.names = F, sep="\t")
-# r <- read.delim("count_table.sparse.count_table", sep="\t", header=FALSE)
-
-# if(grepl("#", r[3,1], fixed=TRUE)) {
-#   is_sparse
-# }
-
-# debugonce(read_count)
-# read_count(example_path("amazon1.count_table"))
-# read_count("count_table.sparse.count_table")
-# count_table_sparse <- read.delim("count_table.sparse.count_table", sep="\t", skip=2)
-# a <- lapply(count_table_sparse, as.character)

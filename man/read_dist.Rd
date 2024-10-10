@@ -34,12 +34,12 @@ Detailed description of the function.
                               i=i_values,
                               j=j_values,
                               x=x_values)
- column_path <- example_path("96_sq_column_amazon.dist")
- phylip_path <- example_path("98_sq_phylip_amazon.dist")
- count_table <- readRDS(example_path("amazon1.count_table"))
+ column_path <- example_path("column_amazon.dist")
+ phylip_path <- example_path("phylip_amazon.dist")
+ count_table <- read_count(example_path("amazon.count_table"))
 
-data_column <- ProcessDistanceFiles(column_path, count_table, 0.2, F) 
-data_phylip <- ProcessDistanceFiles(phylip_path, count_table, 0.2, F) 
+data_column <- read_dist(column_path, count_table, 0.2, FALSE) 
+data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE) 
 
 
 }

@@ -18,6 +18,6 @@ sparse and normal count tables.
 }
 \examples{
 # This will return the path to our example file
-count_table <- read_count("inst/extdata/amazon1.count_table")
+count_table <- read_count(example_path("amazon.count_table"))
 
 }
