@@ -139,3 +139,20 @@ test_that("Read dist can read column and phylip files", {
   expect_true(nrow(get_distance_data_frame(distance_data_column)) == 9604)
   expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
 })
+
+test_that("Validate Count Table returns a valid count table",{
+  count_table <- read.delim(test_path("extdata", "amazon.count_table"))
+  validated_count_table <- validate_count_table(count_table)
+
+  expect_true(ncol(validated_count_table) == 3)
+  expect_true("data.frame" %in% class(validated_count_table))
+  expect_true("no_group" %in% colnames(validated_count_table))
+  expect_false("no-group" %in% colnames(count_table))
+})
+
+test_that("Validate Count table does not change valid count tables", {
+  count_table <- read.delim(test_path("extdata", "amazon.count_table"))
+  validated_count_table <- validate_count_table(count_table)
+  valid_count_table <- validate_count_table(validated_count_table)
+  expect_true(ncol(valid_count_table) == ncol(valid_count_table))
+})

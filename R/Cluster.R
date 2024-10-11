@@ -127,6 +127,21 @@ cluster <- function(distance_object, method, random_seed = 123) {
 
 }
 
+#' Validate Count Table
+#'
+#' Detailed description of the function.
+#'
+#' @export
+#' @param count_table_df The count table dataframe object.
+#' @return A validated count table.
+#' @description
+#' If the count table is already valid nothing will change,
+#' otherwise it will add a new group to the count table file.
+#' 
+#' @examples
+#'  count_table <- read.delim(example_path("amazon.count_table"))
+#'  count_table_valid <- validate_count_table(count_table)
+#'
 validate_count_table <- function(count_table_df) {
   if (ncol(count_table_df) > 2) {
     return(count_table_df)

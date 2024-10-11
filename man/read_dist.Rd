@@ -27,7 +27,7 @@ Detailed description of the function.
 \examples{
 
  # Convert Phylip or column file to a sparse matrix
- library(Matrix) #spMatrix requires the use of the matrix library
+ library(Matrix) # spMatrix requires the use of the matrix library
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
