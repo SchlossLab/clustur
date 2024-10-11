@@ -1,5 +1,5 @@
 linters: linters_with_defaults() # see vignette("lintr")
 encoding: "UTF-8"
 exclusions: list(
-    "vignettes/articles/Using-clustur.Rmd"
+    "vignettes/clustur.Rmd"
   )

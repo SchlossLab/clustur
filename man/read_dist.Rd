@@ -7,14 +7,16 @@
 read_dist(distance_file, count_table, cutoff, is_simularity_matrix)
 }
 \arguments{
-\item{distance_file}{Either a phylip or column distance file, or a sparse matrix.}
+\item{distance_file}{Either a phylip or column
+distance file, or a sparse matrix.}
 
 \item{count_table}{A table of names and the given abundance per group.}
 
 \item{cutoff}{The value you wish to use as a cutoff when clustering.
 opti, furthest, nearest, average, or weighted.}
 
-\item{is_simularity_matrix}{are you using a simularity matrix or distance matrix?}
+\item{is_simularity_matrix}{are you using a
+simularity matrix or distance matrix?}
 }
 \value{
 A distance object that contains all your distance information
@@ -35,13 +37,13 @@ Detailed description of the function.
                               j=j_values,
                               x=x_values)
 
- 
+
  column_path <- example_path("amazon_column.dist")
  phylip_path <- example_path("amazon_phylip.dist")
  count_table <- read_count(example_path("amazon.count_table"))
 
-data_column <- read_dist(column_path, count_table, 0.2, FALSE) 
-data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE) 
+data_column <- read_dist(column_path, count_table, 0.2, FALSE)
+data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
 data_sparse <- read_dist(s_matrix, count_table, 0.2, FALSE)
 
 

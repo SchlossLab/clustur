@@ -7,7 +7,8 @@
 cluster(distance_object, method, random_seed = 123)
 }
 \arguments{
-\item{distance_object}{The distance object that was created using the read_dist function.}
+\item{distance_object}{The distance object that
+was created using the read_dist function.}
 
 \item{method}{The type of cluster you wish to conduct;
 opti, furthest, nearest, average, or weighted.}
@@ -24,12 +25,13 @@ Detailed description of the function.
  # Convert Phylip of column file to a sparse matrix
  cutoff <- 0.2
  count_table <- read_count(example_path("amazon.count_table"))
- distance_data <- read_dist(example_path("amazon_column.dist"), count_table, cutoff, FALSE)
+ distance_data <- read_dist(example_path("amazon_column.dist"),
+                            count_table, cutoff, FALSE)
 
  # The clustur using one of the 5 methods
  # opti
  cluster_results <- cluster(distance_data, method = "opti")
- # furthest 
+ # furthest
  cluster_results <- cluster(distance_data, method = "furthest")
  # nearest
  cluster_results <- cluster(distance_data, method = "nearest")

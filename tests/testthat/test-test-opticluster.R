@@ -1,8 +1,9 @@
 test_that("opti cluster returns four dataframes", {
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
-  df <- cluster(distance_data, method = "opti") # this needs to make sure that dist_data and count_table are compatible
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
+  df <- cluster(distance_data, method = "opti")
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
@@ -11,8 +12,9 @@ test_that("opti cluster returns four dataframes", {
 
 test_that("other clustering methods only return two dataframes", {
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
 
   df_furthest <- cluster(distance_data, method = "furthest")
   df_nearest <- cluster(distance_data, method = "nearest")
@@ -35,8 +37,9 @@ test_that("other clustering methods only return two dataframes", {
 test_that("Opticluster works with phylip files", {
 
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata" , "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"), count_table, cutoff, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
+                             count_table, cutoff, FALSE)
 
   df_opti <- cluster(distance_data, method = "opti")
 
@@ -47,25 +50,31 @@ test_that("Opticluster works with phylip files", {
 test_that("cluster works via phylip file", {
 
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata" , "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"), count_table, cutoff, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
+                             count_table, cutoff, FALSE)
 
   df_furthest <- cluster(distance_data, method = "furthest")
   df_nearest <- cluster(distance_data, method = "nearest")
   df_average <- cluster(distance_data, method = "average")
   df_weighted <- cluster(distance_data, method = "weighted")
 
-  expect_true(nrow(df_furthest$cluster) == 31 && nrow(df_furthest$abundance == 31))
-  expect_true(nrow(df_nearest$cluster) == 20 && nrow(df_furthest$abundance == 20))
-  expect_true(nrow(df_average$cluster) == 35 && nrow(df_furthest$abundance == 35))
-  expect_true(nrow(df_weighted$cluster) == 36 && nrow(df_furthest$abundance == 36))
+  expect_true(nrow(df_furthest$cluster) == 31
+              && nrow(df_furthest$abundance == 31))
+  expect_true(nrow(df_nearest$cluster) == 20
+              && nrow(df_furthest$abundance == 20))
+  expect_true(nrow(df_average$cluster) == 35
+              && nrow(df_furthest$abundance == 35))
+  expect_true(nrow(df_weighted$cluster) == 36
+              && nrow(df_furthest$abundance == 36))
 })
 
 test_that("Opticluster works with column files", {
 
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
 
   df_opti <- cluster(distance_data, method = "opti")
 
@@ -76,33 +85,40 @@ test_that("Opticluster works with column files", {
 test_that("Normal cluster works via column file", {
 
   cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, cutoff, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
 
   df_furthest <- cluster(distance_data, method = "furthest")
   df_nearest <- cluster(distance_data, method = "nearest")
   df_average <- cluster(distance_data, method = "average")
   df_weighted <- cluster(distance_data, method = "weighted")
 
-  expect_true(nrow(df_furthest$cluster) == 33 && nrow(df_furthest$abundance == 33))
-  expect_true(nrow(df_nearest$cluster) == 22 && nrow(df_furthest$abundance == 22))
-  expect_true(nrow(df_average$cluster) == 37 && nrow(df_furthest$abundance == 37))
-  expect_true(nrow(df_weighted$cluster) == 38 && nrow(df_furthest$abundance == 38))
+  expect_true(nrow(df_furthest$cluster) == 33
+              && nrow(df_furthest$abundance == 33))
+  expect_true(nrow(df_nearest$cluster) == 22
+              && nrow(df_furthest$abundance == 22))
+  expect_true(nrow(df_average$cluster) == 37
+              && nrow(df_furthest$abundance == 37))
+  expect_true(nrow(df_weighted$cluster) == 38
+              && nrow(df_furthest$abundance == 38))
 })
 
 
 test_that("Amazon Data from mothur clusters properly", {
-  
+
   result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, 0.2, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, 0.2, FALSE)
   data <- cluster(distance_data, method = "opti")
   expect_true(nrow(data$cluster) == nrow(result$cluster))
 })
 
 test_that("Read count can read sparse and normal count tables", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  sparse_count_table <- read_count(test_path("extdata", "amazon_sparse.count_table")) 
+  sparse_count_table <- read_count(test_path("extdata",
+                                             "amazon_sparse.count_table"))
 
   expect_true("data.frame" %in% class(count_table))
   expect_true(nrow(count_table) == 98)
@@ -115,9 +131,11 @@ test_that("Read count can read sparse and normal count tables", {
 })
 
 test_that("Read dist can read column and phylip files", {
-  count_table <- read_count(test_path("extdata", "amazon.count_table")) 
-  distance_data_column <- read_dist(test_path("extdata", "amazon_column.dist"), count_table, 0.2, FALSE)
-  distance_data_phylip <- read_dist(test_path("extdata", "amazon_phylip.dist"), count_table, 0.2, FALSE)
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data_column <- read_dist(test_path("extdata", "amazon_column.dist"),
+                                    count_table, 0.2, FALSE)
+  distance_data_phylip <- read_dist(test_path("extdata", "amazon_phylip.dist"),
+                                    count_table, 0.2, FALSE)
   expect_true(nrow(get_distance_data_frame(distance_data_column)) == 9604)
   expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
 })
