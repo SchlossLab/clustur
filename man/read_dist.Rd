@@ -24,22 +24,25 @@ Detailed description of the function.
 }
 \examples{
 
- # Convert Phylip of column file to a sparse matrix
-
+ # Convert Phylip or column file to a sparse matrix
+ library(Matrix) #spMatrix requires the use of the matrix library
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
- s_matrix <- Matrix::spMatrix(nrow=max(i_values),
+ s_matrix <- spMatrix(nrow=max(i_values),
                               ncol=max(i_values),
                               i=i_values,
                               j=j_values,
                               x=x_values)
+
+ 
  column_path <- example_path("amazon_column.dist")
  phylip_path <- example_path("amazon_phylip.dist")
  count_table <- read_count(example_path("amazon.count_table"))
 
 data_column <- read_dist(column_path, count_table, 0.2, FALSE) 
 data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE) 
+data_sparse <- read_dist(s_matrix, count_table, 0.2, FALSE)
 
 
 }

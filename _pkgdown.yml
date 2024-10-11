@@ -15,7 +15,3 @@ navbar:
   left:
   - text: Reference
     href: reference/index.html
-  - text: Articles
-    menu:
-    - text: Using clustur
-      href: articles/Using-clustur.html
