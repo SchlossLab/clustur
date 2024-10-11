@@ -18,12 +18,12 @@ std::vector<std::vector<double>> DistanceFilesToSparse::CreateSparseList() const
     std::vector<RowData> data;
     if(method == "column") {
         ColumnDistanceMatrixReader reader(1.1, false);
-        data = reader.readToRowData(countTable, filePath);
+        data = reader.ReadToRowData(countTable, filePath);
     }
     else {
         //phylip
         ReadPhylipMatrix reader(1.1, false); // We want every value
-        data = reader.readToRowData(filePath);
+        data = reader.ReadToRowData(filePath);
     }
     const size_t size = data[0].rowValues.size();
     std::vector<double> iValues;
@@ -31,7 +31,7 @@ std::vector<std::vector<double>> DistanceFilesToSparse::CreateSparseList() const
     std::vector<double> dataValues;
     // order by index
     // Have to order them by there index relative to the count table
-    std::vector<std::string> samples = countTable.GetSamples();
+    const std::vector<std::string> samples = countTable.GetSamples();
     std::unordered_map<std::string, double> sampleToIndexMap;
     for(size_t i = 0; i < size; i++) {
         sampleToIndexMap[samples[i]] = static_cast<double>(i);

@@ -16,7 +16,7 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
 ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) const {
     if(path.empty())
         return nullptr;
-    phylipReader->read(path);
+    phylipReader->Read(path);
     return phylipReader;
 }
 
@@ -24,8 +24,8 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
     if(spareDistanceMatrix != nullptr)
         return spareDistanceMatrix;
     const auto phylipMatrix = DistanceMatrixToSquareMatrix();
-    phylipReader->read(phylipMatrix);
-    spareDistanceMatrix = phylipReader->getDMatrix();
+    phylipReader->ReadRowDataMatrix(phylipMatrix);
+    spareDistanceMatrix = phylipReader->GetSparseMatrix();
 
     return spareDistanceMatrix;
 }

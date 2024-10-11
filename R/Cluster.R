@@ -1,208 +1,103 @@
-#' clustur Description
+#' Read Dist Description
+#'
+#' Detailed description of the function.
 #'
 #' @export
-#' @param cutoff A cutoff value
+#' @param distance_file Either a phylip or column
+#' distance file, or a sparse matrix.
 #' @param count_table A table of names and the given abundance per group.
-#' @param simularity_matrix are you using a simularity matrix or distance matrix
-#' @param random_seed you can set your own random
-#' seed for consistent results, if not it will be set to 123
-#' @param ... Either your phylip file or column file path,
-#'  or a sparse distance matrix
-#' @description
-#' You must specfiy the type of matrix you are inputting
-#'  to cluster your object and we support three types:
-#' the path to your phylip and column distance file, or a sparse matrix.
+#' @param cutoff The value you wish to use as a cutoff when clustering.
+#'  opti, furthest, nearest, average, or weighted.
+#' @param is_simularity_matrix are you using a
+#' simularity matrix or distance matrix?
+#' @return A distance object that contains all your distance information
 #'
 #' @examples
-#'  # Using a sparse matrix
+#'
+#'  # Convert Phylip or column file to a sparse matrix
+#'  library(Matrix) # spMatrix requires the use of the matrix library
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
-#'  s_matrix <- Matrix::spMatrix(nrow=max(i_values),
+#'  s_matrix <- spMatrix(nrow=max(i_values),
 #'                               ncol=max(i_values),
 #'                               i=i_values,
 #'                               j=j_values,
 #'                               x=x_values)
 #'
-#'  # Creating a count table using the sparse matrix
-#'  count_table_sparse <- data.frame(sequence=as.character(i_values),
-#'                                  total=rep(1,times=100))
 #'
-#'  cluster_results <- opti_cluster(cutoff=0.2,
-#'                                  count_table = count_table_sparse,
-#'                                  sparse_matrix=s_matrix)
+#'  column_path <- example_path("amazon_column.dist")
+#'  phylip_path <- example_path("amazon_phylip.dist")
+#'  count_table <- read_count(example_path("amazon.count_table"))
 #'
-#'  # With a column file
-#'  count_table <- read.delim(example_path("amazon1.count_table"))
-#'  amazon_data_column <- opti_cluster(column_path=
-#'                                     example_path("96_sq_column_amazon.dist"),
-#'                                     count_table = count_table, cutoff = 0.2)
-#'  # With a phylip file
-#'  count_table <- read.delim(example_path("amazon1.count_table"))
-#'  amazon_data_phylip <- opti_cluster(phylip_path=
-#'                                     example_path("98_sq_phylip_amazon.dist"),
-#'                                     count_table = count_table, cutoff = 0.2)
+#' data_column <- read_dist(column_path, count_table, 0.2, FALSE)
+#' data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
+#' data_sparse <- read_dist(s_matrix, count_table, 0.2, FALSE)
 #'
 #'
-#'
-#' @return A data.frame of the cluster and cluster metrics.
-opti_cluster <- function(cutoff, count_table,
-                         simularity_matrix = FALSE, random_seed = 123, ...) {
+read_dist <- function(distance_file, count_table,
+                      cutoff, is_simularity_matrix) {
   count_table <- validate_count_table(count_table)
-  list_params <- list(...)
-  params <- names(list_params)
-  cluster_dfs <- list()
 
-  if ("phylip_path" %in% params &&
-        "column_path" %in% params &&
-        "sparse_matrix" %in% params) {
-    stop("You cannot use all three input paramters at once.
-    Use either phylip_path, column_path, or sparse_matrix.")
-  }
-  set.seed(random_seed)
-  if ("sparse_matrix" %in% params) {
-    sparse_matrix <- list_params$sparse_matrix
-    cluster_dfs <- MatrixToOpiMatrixCluster(
-      sparse_matrix@i,
-      sparse_matrix@j,
-      sparse_matrix@x,
-      cutoff,
-      count_table,
-      simularity_matrix
-    )
-  } else if ("phylip_path" %in% params) {
-    phylip_path <- list_params$phylip_path
-    cluster_dfs <- OptiClusterPhylip(
-      phylip_path,
-      cutoff,
-      count_table,
-      simularity_matrix
-    )
-  } else if ("column_path" %in% params) {
-    column_path <- list_params$column_path
-    cluster_dfs <- OptiClusterColumnDist(
-      column_path,
-      cutoff,
-      count_table,
-      simularity_matrix
-    )
-  } else {
-    stop("The parameters should include either a sparse_matrix,
-    phylip_path, column_path")
-  }
-  cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-    ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-    if (ls[[1]] == -1) {
-      return(0)
-    } else {
-      return(length(ls))
+  if ("character" %in% class(distance_file)) {
+    if (!file.exists(distance_file)) {
+      stop("Invalid file path: please enter a new file path.")
     }
-  })
-  cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-                                             decreasing = TRUE), ]
-  cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
-  opticluster_data <- list(
-    abundance = cluster_dfs[[1]],
-    cluster = cluster_dfs[[2]],
-    cluster_metrics = cluster_dfs[[3]],
-    other_cluster_metrics = cluster_dfs[[4]]
-  )
-  return(opticluster_data)
+    return(ProcessDistanceFiles(distance_file,
+                                count_table, cutoff, is_simularity_matrix))
+  }
+  # Its a sparse matrix not a path
+
+  return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
+                             count_table, cutoff, is_simularity_matrix))
 }
+
 
 #' Cluster Description
 #'
 #' Detailed description of the function.
 #'
 #' @export
-#' @param cutoff A cutoff value.
+#' @param distance_object The distance object that
+#'  was created using the read_dist function.
 #' @param method The type of cluster you wish to conduct;
-#'  furthest, nearest, average, weighted.
-#' @param count_table A table of names and the given abundance per group.
-#' @param simularity_matrix are you using a simularity matrix or distance matrix
-#' @param random_seed you can set your own random seed
-#'  for consistent results, if not it will be set to 123
-#' @param ... Either your phylip file or column file path,
-#'  or a sparse distance matrix
-#' @description
-#' You must specfiy the type of matrix you are inputting
-#'  to cluster your object and we support three types:
-#' the path to your phylip and column distance file, or a sparse matrix.
-#' @return A string of the given cluster.
+#'  opti, furthest, nearest, average, or weighted.
+#' @param random_seed the random seed you wish to use, defaulted at 123.
+#' @return A list of dataframes that contain abundance, and clustering results.
 #'
 #' @examples
-#'  # Using a sparse matrix
-#'  i_values <- as.integer(1:100)
-#'  j_values <- as.integer(sample(1:100, 100, TRUE))
-#'  x_values <- as.numeric(runif(100, 0, 1))
-#'  s_matrix <- Matrix::spMatrix(nrow=max(i_values),
-#'                               ncol=max(i_values),
-#'                               i=i_values,
-#'                               j=j_values,
-#'                               x=x_values)
+#'  # Convert Phylip of column file to a sparse matrix
+#'  cutoff <- 0.2
+#'  count_table <- read_count(example_path("amazon.count_table"))
+#'  distance_data <- read_dist(example_path("amazon_column.dist"),
+#'                             count_table, cutoff, FALSE)
 #'
-#'  # Creating a count table using the sparse matrix
-#'  count_table_sparse <- data.frame(sequence=as.character(i_values),
-#'                                  total=rep(1,times=100))
-#'  # furthest method
-#'  cluster_results <- cluster(cutoff=0.2, count_table = count_table_sparse,
-#'                             sparse_matrix=s_matrix, method="furthest")
-#'
-#'  # With a phylip file and nearest methods
-#'  count_table <- read.delim(example_path("amazon1.count_table"))
-#'  amazon_data_phylip <- cluster(phylip_path=
-#'                                example_path("98_sq_phylip_amazon.dist"),
-#'               count_table = count_table, method="nearest", cutoff = 0.2)
-#'
-#'  # With a column file and average methods
-#'  amazon_data_column <- cluster(column_path=
-#'                                example_path("96_sq_column_amazon.dist"),
-#'               count_table = count_table, method="average", cutoff = 0.2)
-#'
-#'  # Weighted method
-#'  amazon_data_column <- cluster(column_path=
-#'                                example_path("96_sq_column_amazon.dist"),
-#'              count_table = count_table, method="weighted", cutoff = 0.2)
+#'  # The clustur using one of the 5 methods
+#'  # opti
+#'  cluster_results <- cluster(distance_data, method = "opti")
+#'  # furthest
+#'  cluster_results <- cluster(distance_data, method = "furthest")
+#'  # nearest
+#'  cluster_results <- cluster(distance_data, method = "nearest")
+#'  # average
+#'  cluster_results <- cluster(distance_data, method = "average")
+#'  # weighted
+#'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
-cluster <- function(cutoff, method, count_table,
-                    simularity_matrix = FALSE, random_seed = 123, ...) {
-  list_params <- list(...)
-  params <- names(list_params)
-  cluster_dfs <- list()
-  if ("phylip_path" %in% params &&
-        "column_path" %in% params &&
-        "sparse_matrix" %in% params) {
-    stop("You cannot use all three input paramters at once.
-    Use either phylip_path, column_path, or sparse_matrix.")
+cluster <- function(distance_object, method, random_seed = 123) {
+  if (!("externalptr" %in% class(distance_object))) {
+    stop("`distance_object` must be generated using the `read_dist` function")
   }
   set.seed(random_seed)
-  if ("sparse_matrix" %in% params) {
-    sparse_matrix <- list_params$sparse_matrix
-    cluster_dfs <-  ClassicCluster(
-      sparse_matrix@i, sparse_matrix@j,
-      sparse_matrix@x, cutoff, method,
-      validate_count_table(count_table),
-      simularity_matrix
-    )
-  } else if ("phylip_path" %in% params) {
-    phylip_path <- list_params$phylip_path
-    cluster_dfs <- ClusterWithPhylip(
-      phylip_path, cutoff, method,
-      validate_count_table(count_table),
-      simularity_matrix
-    )
-  } else if ("column_path" %in% params) {
-    column_path <- list_params$column_path
-    cluster_dfs <-  ClusterWithColumn(
-      column_path, cutoff, method,
-      validate_count_table(count_table),
-      simularity_matrix
-    )
+  cluster_dfs <- c()
+  if (method != "opti") {
+    cluster_dfs <- Cluster(distance_object, method)
   } else {
-    stop("The parameters should include either a sparse_matrix,
-    phylip_path, column_path")
+    cluster_dfs <- OptiCluster(distance_object)
   }
+
+  # Order by OTU size
   cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
     ls <- gregexpr(",", x, fixed = TRUE)[[1]]
     if (ls[[1]] == -1) {
@@ -215,12 +110,22 @@ cluster <- function(cutoff, method, count_table,
                                              decreasing = TRUE), ]
   cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
 
+
+  # Return
+  if (method != "opti") {
+    return(list(
+      abundance = cluster_dfs[[1]],
+      cluster = cluster_dfs[[2]]
+    ))
+  }
   return(list(
     abundance = cluster_dfs[[1]],
-    cluster = cluster_dfs[[2]]
+    cluster = cluster_dfs[[2]],
+    cluster_metrics = cluster_dfs[[3]],
+    other_cluster_metrics = cluster_dfs[[4]]
   ))
-}
 
+}
 
 validate_count_table <- function(count_table_df) {
   if (ncol(count_table_df) > 2) {
@@ -233,17 +138,17 @@ validate_count_table <- function(count_table_df) {
   return(count_table_df)
 }
 
-
 #' Example Path
 #'
 #' @export
-#' This function was created as a helper function to generate file paths to our
+#' @description
+#'  This function was created as a helper function to generate file paths to our
 #'  internal data. You are able to access this function if you
 #'  want to follow along with the example.
 #' @param file The data of the path you are looking to find.
 #' @examples
 #' # This will return the path to our example file
-#' example_path("98_sq_phylip_amazon.dist")
+#' example_path("amazon_phylip.dist")
 #'
 #' @return the path inside of the package of the file.
 example_path <- function(file = NULL) {
@@ -256,141 +161,26 @@ example_path <- function(file = NULL) {
   return(path)
 }
 
-
-#' Convert Distance File To Sparse
+#' Read Count
 #'
 #' @export
-#' This function will take your phylip or column distance file and convert it to a sparse matrix for easier use
-#' in clustur
-#' @param count_table Your count table based on the data.
-#' @param distance_file_path The path to the data file.
-#' @param type_of_file What type of file you are passing to the function, has to be "phylip", or "column".
+#' @description
+#' This function will read and return your count table. It can take in
+#' sparse and normal count tables.
+#' @param count_table_path The file path of your count table.
 #' @examples
 #' # This will return the path to our example file
-#' column_path <- example_path("updated_column.dist")
-#' phylip_path <- example_path("updated_phylip_1.txt")
-#' count_table <- readRDS(example_path("count_table.RDS"))
-#' 
-#' phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
-#' column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
-#' @return a sparse matrix based off the data provided
-convert_distance_file_to_sparse <- function(count_table, distance_file_path,  type_of_file) {
-  if(type_of_file != "phylip" && type_of_file != "column") {
-    stop("The type_of_file parameter has to be 'phylip' or 'column.'")
+#' count_table <- read_count(example_path("amazon.count_table"))
+#'
+#' @return a count table data frame.
+read_count <- function(count_table_path) {
+  # We will have to determine if its a sparse or not
+  # Check if the first value of test_read had a comment
+  test_read <- read.delim(count_table_path, sep = "\t", header = FALSE)
+  if (grepl("#", test_read[1, 1], fixed = TRUE)) {
+    count_table_sparse <- read.delim(count_table_path, sep = "\t", skip = 2)
+    count_table_sparse <- lapply(count_table_sparse, as.character)
+    return(validate_count_table(CreateDataFrameFromSparse(count_table_sparse)))
   }
-  # Have to convert c++ indexes to r indexes, so we add one to the i and j list
-  triplicate_list <- DistanceFileToSparseMatrix(count_table, distance_file_path, type_of_file)
-  named_triplicates <- list(i_values = triplicate_list[[1]] + 1,
-                            j_values = triplicate_list [[2]] + 1,
-                            data = triplicate_list[[3]])
-  max_size <- max(named_triplicates$i_values, named_triplicates$j_values)
-  return(spMatrix(
-    nrow = max_size,
-    ncol = max_size,
-    i = named_triplicates$i_values,
-    j = named_triplicates$j_values,
-    x = named_triplicates$data))
-}
-
-#' Clustur Description
-#'
-#' Detailed description of the function.
-#'
-#' @export
-#' @param sparse_matrix The sparse matrix that you want to cluster with.
-#' @param cutoff The value you wish to use as a cutoff when clustering.
-#' @param method The type of cluster you wish to conduct;
-#'  opti, furthest, nearest, average, or weighted.
-#' @param count_table A table of names and the given abundance per group.
-#' @param simularity_matrix are you using a simularity matrix or distance matrix?
-#' @param random_seed the random seed you wish to use, defaulted at 123.
-#' @description
-#' You must specfiy the type of matrix you are inputting
-#'  to cluster your object and we support three types:
-#' the path to your phylip and column distance file, or a sparse matrix.
-#' @return A string of the given cluster.
-#'
-#' @examples
-#'
-#'  # Convert Phylip of column file to a sparse matrix
-#'  column_path <- example_path("updated_column.dist")
-#'  phylip_path <- example_path("updated_phylip_1.txt")
-#'  count_table <- readRDS(example_path("count_table.RDS"))
-#' 
-#'  phylip_sparse <- convert_distance_file_to_sparse(count_table, phylip_path, "phylip")
-#'  column_sparse <- convert_distance_file_to_sparse(count_table, column_path, "column")
-#'  cutoff <- 0.2
-#'  # The clustur using one of the 5 methods
-#'  # opti
-#'  cluster_results <- clustur(column_sparse, cutoff, "opti", count_table)
-#'  # furthest 
-#'  cluster_results <- clustur(phylip_sparse, cutoff, "furthest", count_table)
-#'  # nearest
-#'  cluster_results <- clustur(column_sparse, cutoff, "nearest", count_table)
-#'  # average
-#'  cluster_results <- clustur(phylip_sparse, cutoff, "average", count_table)
-#'  # weighted
-#'  cluster_results <- clustur(column_sparse, cutoff, "weighted", count_table)
-#' 
-#'
-#'
-clustur <- function(sparse_matrix, cutoff, method, count_table,
-  simularity_matrix = FALSE, random_seed = 123) {
-    methodList <- c("opti", "furthest","nearest", "weighted", "average")
-    if(!(method %in% methodList)) {
-      stop("Incorrect method, method must be: 'opti', 'furthest', 'nearest', 'weighted', or 'average.'")
-    }
-  set.seed(random_seed)
-  if(method == "opti"){
-      cluster_dfs <- MatrixToOpiMatrixCluster(
-      sparse_matrix@i,
-      sparse_matrix@j,
-      sparse_matrix@x,
-      cutoff,
-      count_table,
-      simularity_matrix 
-    )
-    #order clusters by otu size
-    cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-      ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-      if (ls[[1]] == -1) {
-        return(0)
-      } else {
-        return(length(ls))
-      }
-    })
-    cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-                                               decreasing = TRUE), ]
-    cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
-    return(list(
-      abundance = cluster_dfs[[1]],
-      cluster = cluster_dfs[[2]],
-      cluster_metrics = cluster_dfs[[3]],
-      other_cluster_metrics = cluster_dfs[[4]]
-    ))
-  }
-  else{
-      cluster_dfs <- ClassicCluster(
-      sparse_matrix@i, sparse_matrix@j,
-      sparse_matrix@x, cutoff, method,
-      validate_count_table(count_table),
-      simularity_matrix)
-    # Order the clusters by otu size
-      cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-        ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-        if (ls[[1]] == -1) {
-          return(0)
-        } else {
-          return(length(ls))
-        }
-      })
-      cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-                                                 decreasing = TRUE), ]
-      cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
-      return(list(
-        abundance = cluster_dfs[[1]],
-        cluster = cluster_dfs[[2]]
-      ))
-  }
-  
+  return(validate_count_table(read.delim(count_table_path, sep = "\t")))
 }

@@ -197,3 +197,8 @@ inst/doc
 /doc/
 /Meta/
 docs
+
+
+# DS Store files
+
+.DS_Store

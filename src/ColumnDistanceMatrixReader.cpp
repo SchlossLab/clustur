@@ -6,7 +6,9 @@
 #include <Rcpp.h>
 
 ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
-:sim(isSimularity), cutoff(cutoff) {
+:DistanceFileReader() {
+	this->cutoff = cutoff;
+	this->sim = isSimularity;
 	sparseMatrix = new SparseDistanceMatrix();
 	list = new ListVector();
 }
@@ -114,7 +116,7 @@ bool ColumnDistanceMatrixReader::Read(const CountTableAdapter &countTable, const
 }
 
 
-std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableAdapter &countTable,
+std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableAdapter &countTable,
 	const std::string& filePath) {
 	std::ifstream fileHandle;
 	fileHandle.open(filePath);
@@ -215,7 +217,7 @@ std::vector<RowData> ColumnDistanceMatrixReader::readToRowData(const CountTableA
 			if (util.isEqual(distance, -1)) {
 				 distance = 1000000; 
 			}
-			else if (sim) { distance = 1 - distance;  } 
+			else if (sim) { distance = 1 - distance;  }
 			//if(distance > 0)
 			//	Rcpp::Rcout << "Distance: " << distance << std::endl; //user has entered a sim matrix that we need to convert.
 			//rowData[itB].rowValues[itA] = distance;

@@ -2,38 +2,38 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 WritePhylipFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
-    invisible(.Call(`_clustur_WritePhylipFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
+    invisible(.Call('_clustur_WritePhylipFile', PACKAGE = 'clustur', xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
 WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, saveLocation) {
-    invisible(.Call(`_clustur_WriteColumnFile`, xPosition, yPosition, data, cutoff, countTable, saveLocation))
+    invisible(.Call('_clustur_WriteColumnFile', PACKAGE = 'clustur', xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
-MatrixToOpiMatrixCluster <- function(xPosition, yPosition, data, cutoff, countTable, isSim = FALSE) {
-    .Call(`_clustur_MatrixToOpiMatrixCluster`, xPosition, yPosition, data, cutoff, countTable, isSim)
+ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
+    .Call('_clustur_ProcessDistanceFiles', PACKAGE = 'clustur', filePath, countTable, cutoff, isSim)
 }
 
-ClassicCluster <- function(xPosition, yPosition, data, cutoff, method, countTable, isSimularity) {
-    .Call(`_clustur_ClassicCluster`, xPosition, yPosition, data, cutoff, method, countTable, isSimularity)
+ProcessSparseMatrix <- function(xPosition, yPosition, data, countTable, cutoff, isSim) {
+    .Call('_clustur_ProcessSparseMatrix', PACKAGE = 'clustur', xPosition, yPosition, data, countTable, cutoff, isSim)
 }
 
-ClusterWithPhylip <- function(phylipFilePath, cutoff, method, countTable, isSimularity) {
-    .Call(`_clustur_ClusterWithPhylip`, phylipFilePath, cutoff, method, countTable, isSimularity)
+GetDistanceDataFrame <- function(fileReader) {
+    .Call('_clustur_GetDistanceDataFrame', PACKAGE = 'clustur', fileReader)
 }
 
-ClusterWithColumn <- function(columnFilePath, cutoff, method, countTable, isSimularity) {
-    .Call(`_clustur_ClusterWithColumn`, columnFilePath, cutoff, method, countTable, isSimularity)
+GetCountTable <- function(fileReader) {
+    .Call('_clustur_GetCountTable', PACKAGE = 'clustur', fileReader)
 }
 
-OptiClusterPhylip <- function(filePath, cutoff, countTable, isSim = FALSE) {
-    .Call(`_clustur_OptiClusterPhylip`, filePath, cutoff, countTable, isSim)
+Cluster <- function(DistanceData, method) {
+    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method)
 }
 
-OptiClusterColumnDist <- function(filePath, cutoff, countTable, isSim = FALSE) {
-    .Call(`_clustur_OptiClusterColumnDist`, filePath, cutoff, countTable, isSim)
+OptiCluster <- function(DistanceData) {
+    .Call('_clustur_OptiCluster', PACKAGE = 'clustur', DistanceData)
 }
 
-DistanceFileToSparseMatrix <- function(countTable, filePath, method) {
-    .Call(`_clustur_DistanceFileToSparseMatrix`, countTable, filePath, method)
+CreateDataFrameFromSparse <- function(countTable) {
+    .Call('_clustur_CreateDataFrameFromSparse', PACKAGE = 'clustur', countTable)
 }
 

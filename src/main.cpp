@@ -12,8 +12,8 @@
 #include "Adapters/DistanceFilesToSparse.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
-
-
+#include "Adapters/DistanceFileReader.h"
+#include "Tests/OptimatrixAdapterTestFixture.h"
 #if DEBUG_RCPP
 #include <Rcpp.h>
 
@@ -50,63 +50,86 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     delete(sharedFile);
     return tidySharedDataFrame;
 }
+
+
+
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> MatrixToOpiMatrixCluster(const std::vector<int> &xPosition,
-                                                  const std::vector<int> &yPosition, const std::vector<double> &data,
-                                                  const double cutoff, const Rcpp::DataFrame& countTable,
-                                                  const bool isSim = false) {
+SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, double cutoff, bool isSim) {
+    std::fstream data(filePath);
+    std::unordered_map<bool, std::string> map;
+    map[true] = "This is a phylip file. Processing now...";
+    map[false] = "This is a column file. Processing now...";
+
+    if(!data.is_open()) {
+        Rcpp::Rcout << "Please enter a valid file path\n";
+        Rcpp::stop("Invalid file path.");
+    }
+    std::string line;
+    std::getline(data, line);
+    bool isPhylip = true;
+    int count = 0;
+    for(const auto& character: line) {
+        if(character == '\t')
+            count++;
+    }
+    if(count > 1)
+        isPhylip = false;
+    Rcpp::Rcout << map[isPhylip] << "\n";
+    data.close();
+
+    CountTableAdapter adapter;
+    adapter.CreateDataFrameMap(countTable);
+    if(isPhylip) {
+        DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
+        std::vector<RowData> rowDataMatrix = read->ReadToRowData(filePath);
+        read->SetCountTable(adapter);
+        read->SetRowDataMatrix(rowDataMatrix);
+        read->ReadRowDataMatrix(rowDataMatrix);
+        return Rcpp::XPtr<DistanceFileReader>(read);
+    }
+    DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
+    std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
+    read->SetCountTable(adapter);
+    read->SetRowDataMatrix(rowDataMatrix);
+    read->ReadRowDataMatrix(rowDataMatrix);
+    return Rcpp::XPtr<DistanceFileReader>(read);
+}
+
+//[[Rcpp::export]]
+SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
+    const std::vector<int> &yPosition, const std::vector<double> &data, const Rcpp::DataFrame& countTable,
+    const double cutoff, const bool isSim) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
+    DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    const auto sparseMatix = adapter.DistanceMatrixToSquareMatrix();
-    OptimatrixAdapter optiAdapter(cutoff);
-    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
-    ClusterCommand command;
-    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
-    delete(result);
-    return {tidySharedDataFrame, clusterDataFrame,command.GetSensitivityData(), command.GetClusterMetrics()};
-}
-
-
-//[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> ClassicCluster(const std::vector<int> &xPosition,
-                           const std::vector<int> &yPosition,
-                           const std::vector<double> &data,
-                           const double cutoff,
-                           const std::string& method,
-                           const Rcpp::DataFrame& countTable,
-                           const bool isSimularity) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSimularity, countTableAdapter);
-    ClusterCommand command;
-    const auto sparseMatix = adapter.CreateSparseMatrix();
-    const auto listVector = adapter.GetListVector();
-
-    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
-    delete(result);
-    delete(listVector);
-    return {tidySharedDataFrame, clusterDataFrame};
-
+    const std::vector<RowData> rowDataMatrix = adapter.DistanceMatrixToSquareMatrix();
+    read->ReadRowDataMatrix(rowDataMatrix);
+    read->SetRowDataMatrix(rowDataMatrix);
+    read->SetCountTable(countTableAdapter);
+    return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath,
-                           const double cutoff,
-                           const std::string& method,
-                           const Rcpp::DataFrame& countTable,
-                           const bool isSimularity) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    ReadPhylipMatrix reader(cutoff, isSimularity);
-    reader.read(phylipFilePath);
+Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader) {
+    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
+    return ptr.get()->SparseMatrixToDataFrame();
+}
+
+//[[Rcpp::export]]
+Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
+    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
+    return ptr.get()->GetCountTable();
+}
+
+//[[Rcpp::export]]
+std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string& method) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
-    const auto sparseMatix = reader.getDMatrix();
-    const auto listVector = reader.getListVector();
+    const double cutoff = distanceData.get()->GetCutoff();
+    const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
     Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
@@ -116,35 +139,12 @@ std::vector<Rcpp::DataFrame> ClusterWithPhylip(const std::string& phylipFilePath
 }
 
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> ClusterWithColumn(const std::string& columnFilePath,
-                           const double cutoff,
-                           const std::string& method,
-                           const Rcpp::DataFrame& countTable,
-                           const bool isSimularity) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    ColumnDistanceMatrixReader colReader(cutoff, isSimularity);
-    colReader.Read(countTableAdapter, columnFilePath);
-    ClusterCommand command;
-    const auto sparseMatix = colReader.GetSparseDataMatrix();
-    const auto listVector = colReader.GetListVector();
-    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
-    delete(result);
-    delete(listVector);
-    return {tidySharedDataFrame, clusterDataFrame};
-}
-
-
-//[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath,
-                                                const double cutoff, const Rcpp::DataFrame& countTable,
-                                                const bool isSim = false) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    ReadPhylipMatrix reader;
-    const auto sparseMatix = reader.readToRowData(filePath);
+std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
+    const double cutoff = distanceData.get()->GetCutoff();
+    const bool isSim = distanceData.get()->GetIsSimularity();
     OptimatrixAdapter optiAdapter(cutoff);
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
     ClusterCommand command;
@@ -156,29 +156,9 @@ std::vector<Rcpp::DataFrame> OptiClusterPhylip(const std::string& filePath,
 }
 
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> OptiClusterColumnDist(const std::string& filePath,
-                                                const double cutoff, const Rcpp::DataFrame& countTable,
-                                                const bool isSim = false) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    ColumnDistanceMatrixReader reader(cutoff, isSim);
-    const auto sparseMatix = reader.readToRowData(countTableAdapter, filePath);
-    OptimatrixAdapter optiAdapter(cutoff);
-    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
-    ClusterCommand command;
-    const auto* result = command.runOptiCluster(optiMatrix, cutoff);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
-    delete(result);
-    return {tidySharedDataFrame, clusterDataFrame,command.GetSensitivityData(), command.GetClusterMetrics()};
-}
-
-//[[Rcpp::export]]
-std::vector<std::vector<double>> DistanceFileToSparseMatrix(const Rcpp::DataFrame& countTable, const std::string& filePath,
-    const std::string& method) {
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    const DistanceFilesToSparse sparseConverter(countTableAdapter, method, filePath);
-    return sparseConverter.CreateSparseList();
+Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
+    CountTableAdapter adapter;
+    adapter.CreateDataFrameMapFromSparseCountTable(countTable);
+    return adapter.ReCreateDataFrame();
 }
 #endif

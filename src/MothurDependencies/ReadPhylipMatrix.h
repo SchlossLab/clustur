@@ -11,27 +11,22 @@
 #include "../RowData.h"
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"
+#include "../Adapters/DistanceFileReader.h"
 
 
-class ReadPhylipMatrix  {
+class ReadPhylipMatrix final : public DistanceFileReader {
 
 public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
-    // ReadPhylipMatrix(std::string, bool);
-    ~ReadPhylipMatrix() {};
-    SparseDistanceMatrix* getDMatrix() const { return DMatrix;}
-    ListVector* getListVector()	const {	return list;}
-    bool read(const std::string&);
-    bool read(const std::vector<RowData>& rowData);
-    std::vector<RowData> readToRowData(const std::string&);
+    ~ReadPhylipMatrix() override = default;
+    bool Read(const std::string&);
+    std::vector<RowData> ReadToRowData(const std::string&) override;
+
+    std::vector<RowData> ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) override { return {};};
+
 private:
     std::ifstream fileHandle;
-    SparseDistanceMatrix* DMatrix{};
-    ListVector* list{};
-    double cutoff = 0;
-    bool sim = true;
-    Utils util;
 };
 
 #endif //READPHYLIPMATRIX_H
