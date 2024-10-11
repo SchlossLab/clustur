@@ -116,7 +116,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     closeness.resize(nonSingletonCount);
     for(long long i = 0; i < size; i++) {
         nameList[singletonIndexSwap[i]] = matrixData[i].name;
-        for(long long j = 0; j < size; j++) {
+        for(long long j = 0; j < i; j++) {
             auto distance = static_cast<float>(matrixData[i].rowValues[j]);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {

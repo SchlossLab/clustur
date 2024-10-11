@@ -66,10 +66,8 @@ context("Optimatrix Adapter Test") {
     data[1].rowValues = {0.3,0,0};
     data[2].rowValues = {0.3,0,0};
     std::vector<std::set<long long>> close(2);
-    close[0].insert(0);
     close[0].insert(1);
     close[1].insert(0);
-    close[1].insert(1);
     bool result = test.ConvertToOptimatrixWithRowData(data, false, close);
     expect_true(result);
     result = test.ConvertToOptimatrixWithRowData(data, false, {});
