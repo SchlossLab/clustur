@@ -198,6 +198,8 @@ inst/doc
 /Meta/
 docs
 
+#R Profile files
+.Rprofile
 
 # DS Store files
 
