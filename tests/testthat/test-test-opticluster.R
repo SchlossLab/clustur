@@ -140,7 +140,7 @@ test_that("Read dist can read column and phylip files", {
   expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
 })
 
-test_that("Validate Count Table returns a valid count table",{
+test_that("Validate Count Table returns a valid count table", {
   count_table <- read.delim(test_path("extdata", "amazon.count_table"))
   validated_count_table <- validate_count_table(count_table)
 
