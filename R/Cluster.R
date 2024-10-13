@@ -137,7 +137,7 @@ cluster <- function(distance_object, method, random_seed = 123) {
 #' @description
 #' If the count table is already valid nothing will change,
 #' otherwise it will add a new group to the count table file.
-#' 
+#'
 #' @examples
 #'  count_table <- read.delim(example_path("amazon.count_table"))
 #'  count_table_valid <- validate_count_table(count_table)

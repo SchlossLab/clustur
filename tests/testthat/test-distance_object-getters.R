@@ -18,7 +18,7 @@ test_that("get_count_table returns the count table", {
 test_that("get_distance_data_frame returns a dataframe of the distances", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"), 
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
   distances <- get_distance_data_frame(distance_data)
   expect_true("data.frame" %in% class(distances))
