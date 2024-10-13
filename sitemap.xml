@@ -1,12 +1,21 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>http://www.schlosslab.org/Clustur/404.html</loc></url>
-<url><loc>http://www.schlosslab.org/Clustur/articles/Using-clustur.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/articles/clustur.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/articles/index.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/authors.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/index.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/reference/cluster.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/clustur-package.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/reference/example_path.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_clusters.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_count_table.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_cutoff.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_distance_data_frame.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_metrics.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/get_shared.html</loc></url>
 <url><loc>http://www.schlosslab.org/Clustur/reference/index.html</loc></url>
-<url><loc>http://www.schlosslab.org/Clustur/reference/opti_cluster.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/read_count.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/read_dist.html</loc></url>
+<url><loc>http://www.schlosslab.org/Clustur/reference/validate_count_table.html</loc></url>
 </urlset>
 
