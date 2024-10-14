@@ -126,36 +126,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// start_profiler
-SEXP start_profiler(const SEXP& str);
-RcppExport SEXP _clustur_start_profiler(SEXP strSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type str(strSEXP);
-    rcpp_result_gen = Rcpp::wrap(start_profiler(str));
-    return rcpp_result_gen;
-END_RCPP
-}
-// stop_profiler
-SEXP stop_profiler();
-RcppExport SEXP _clustur_stop_profiler() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(stop_profiler());
-    return rcpp_result_gen;
-END_RCPP
-}
-// Test
-void Test();
-RcppExport SEXP _clustur_Test() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Test();
-    return R_NilValue;
-END_RCPP
-}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -169,9 +139,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 2},
     {"_clustur_OptiCluster", (DL_FUNC) &_clustur_OptiCluster, 1},
     {"_clustur_CreateDataFrameFromSparse", (DL_FUNC) &_clustur_CreateDataFrameFromSparse, 1},
-    {"_clustur_start_profiler", (DL_FUNC) &_clustur_start_profiler, 1},
-    {"_clustur_stop_profiler", (DL_FUNC) &_clustur_stop_profiler, 0},
-    {"_clustur_Test", (DL_FUNC) &_clustur_Test, 0},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

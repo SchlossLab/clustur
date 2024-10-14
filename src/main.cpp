@@ -13,7 +13,7 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
-#include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
+// #include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
 #if DEBUG_RCPP
 #include <Rcpp.h>
 #include <cctype>
@@ -165,16 +165,16 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
 
 
 
-// [[Rcpp::export]]
-SEXP start_profiler(const SEXP& str) {
-    ProfilerStart(Rcpp::as<const char*>(str));
-    return R_NilValue;
-}
-
-// [[Rcpp::export]]
-SEXP stop_profiler() {
-    ProfilerStop();
-    return R_NilValue;
-}
+// // [[Rcpp::export]]
+// SEXP start_profiler(const SEXP& str) {
+//     ProfilerStart(Rcpp::as<const char*>(str));
+//     return R_NilValue;
+// }
+//
+// // [[Rcpp::export]]
+// SEXP stop_profiler() {
+//     ProfilerStop();
+//     return R_NilValue;
+// }
 
 #endif
