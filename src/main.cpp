@@ -16,6 +16,7 @@
 #include "Tests/OptimatrixAdapterTestFixture.h"
 #if DEBUG_RCPP
 #include <Rcpp.h>
+#include <cctype>
 
 //[[Rcpp::export]]
 void WritePhylipFile(const std::vector<int> &xPosition,
@@ -69,7 +70,7 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
     bool isPhylip = true;
     int count = 0;
     for(const auto& character: line) {
-        if(character == '\t')
+        if(character != '\n' && std::isspace(character))
             count++;
     }
     if(count > 1)
