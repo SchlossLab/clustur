@@ -13,7 +13,6 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
-#include "Tests/OptimatrixAdapterTestFixture.h"
 #if DEBUG_RCPP
 #include <Rcpp.h>
 #include <cctype>

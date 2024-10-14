@@ -176,6 +176,7 @@ example_path <- function(file = NULL) {
   return(path)
 }
 
+
 #' Read Count
 #'
 #' @export

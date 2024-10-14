@@ -29,6 +29,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
     this->countTable = countTable;
+    CreateNameToIndex();
     return true;
 }
 
@@ -86,29 +87,33 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
     dataFrameMap = data;
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
-
     this->countTable = countTable;
+    CreateNameToIndex();
     return true;
 
 }
 
 double CountTableAdapter::FindAbundanceBasedOnGroup(const std::string &group, const std::string &sampleName) const {
-    if (std::find(groups.begin(), groups.end(), group) == groups.end())
-        return -1; //Not Found, may need to throw and execption...
-    if (std::find(sampleNames.begin(), sampleNames.end(), sampleName) == sampleNames.end())
-        return -1; //Not Found, may need to throw and execption...
+    // We will preprocess the find during hte read dist process. So remove special checks
+    // - Protip hashmap find is faster than vector
+    if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
+        return -1;
     const std::vector<double> groupCol = GetColumnByName(group);
-    const long index = std::distance(sampleNames.begin(), std::find(sampleNames.begin(),
-        sampleNames.end(), sampleName));
-    return dataFrameMap.at(group)[index];
+    return dataFrameMap.at(group)[nameToRowIndex.at(sampleName)];
 }
 
 double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) const {
-    if(std::find(sampleNames.begin(), sampleNames.end(), sampleName) == sampleNames.end())
-        return -1; // Not found
-    const long index = std::distance(sampleNames.begin(), std::find(sampleNames.begin(),
-      sampleNames.end(), sampleName));
-    return dataFrameMap.at("total")[index];
+    // We will preprocess the find during hte read dist process. So remove special checks
+    // - Protip hashmap find is faster than vector
+    if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
+        return -1;
+    return dataFrameMap.at("total")[nameToRowIndex.at(sampleName)];
+}
+
+std::string CountTableAdapter::GetNameByIndex(const int index) const {
+    if(index > static_cast<int>(sampleNames.size()))
+        return "";
+    return sampleNames[index];
 }
 
 std::string CountTableAdapter::GetNameByIndex(const int index) const {
@@ -146,6 +151,13 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
         countTable.push_back(columns[i], names[i]);
     }
     return countTable;
+}
+
+
+void CountTableAdapter::CreateNameToIndex() {
+    for(size_t i = 0; i < sampleNames.size(); i++) {
+        nameToRowIndex[sampleNames[i]] = i;
+    }
 }
 
 // Gets every column but the first column (the sequence names)
