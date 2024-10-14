@@ -17,10 +17,13 @@ public:
     ~MatrixAdapter() = default;
     ReadPhylipMatrix* ReadPhylipFile(const std::string& path) const;
     SparseDistanceMatrix* CreateSparseMatrix();
-    ListVector* GetListVector() const {return phylipReader->getListVector();}
-    SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->getDMatrix();}
+    ListVector* GetListVector() const {return phylipReader->GetListVector();}
+    SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->GetSparseMatrix();}
 
     bool CreatePhylipFile(const std::string &saveFileLocation);
+
+    bool CreateColumnDataFile(const std::string &saveFileLocation, double cutoff);
+
     std::vector<RowData> DistanceMatrixToSquareMatrix();
 
 private:

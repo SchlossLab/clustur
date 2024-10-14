@@ -93,7 +93,7 @@ context("RAdbundVector Test") {
         result = fixture.TestGetNumBins(4);
         expect_false(result);
     }
-           test_that("RAbund vector can properly return its number of sequences") {
+        test_that("RAbund vector can properly return its number of sequences") {
         RAbundVectorTestFixture fixture;
         bool result = fixture.TestGetNumSeqs(5);
         expect_true(result);

@@ -46,6 +46,17 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(con
     TearDown();
     return hasPassed;
 }
+bool OptimatrixAdapterTestFixture::ConvertToOptimatrixWithRowData(const std::vector<RowData>& matrixData,
+                                                                        const bool sim,
+                                                                        const std::vector<std::set<long long>>&
+                                                                        expectedResult) {
+    Setup();
+    auto* optiMatrix = adapter->ConvertToOptimatrix(matrixData, sim);
+    const bool result = expectedResult == optiMatrix->GetCloseness();
+    delete optiMatrix;
+    TearDown();
+    return result;
+}
 
 void OptimatrixAdapterTestFixture::Setup() {
     adapter = new OptimatrixAdapter(0.03);

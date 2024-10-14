@@ -193,3 +193,15 @@ fabric.properties
 .idea
 src/.DS_Store
 /.vscode
+inst/doc
+/doc/
+/Meta/
+docs
+
+#R Profile files
+.Rprofile
+
+
+# DS Store files
+
+.DS_Store

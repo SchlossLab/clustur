@@ -5,3 +5,11 @@
 ^cmake-build-release$
 ^CMakeLists\.txt$
 ^\.idea$
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^vignettes/articles$
+^\.vscode$
+^\.lintr$

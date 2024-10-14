@@ -2,17 +2,25 @@
 % Please edit documentation in R/Cluster.R
 \name{validate_count_table}
 \alias{validate_count_table}
-\title{Opticluster Description}
+\title{Validate Count Table}
 \usage{
 validate_count_table(count_table_df)
 }
 \arguments{
-\item{count_table_df}{The count table,
-which contains all your abundance information for each sequence.}
+\item{count_table_df}{The count table dataframe object.}
 }
 \value{
-Validated count table.
+A validated count table.
 }
 \description{
+If the count table is already valid nothing will change,
+otherwise it will add a new group to the count table file.
+}
+\details{
 Detailed description of the function.
+}
+\examples{
+ count_table <- read.delim(example_path("amazon.count_table"))
+ count_table_valid <- validate_count_table(count_table)
+
 }
