@@ -116,6 +116,12 @@ std::string CountTableAdapter::GetNameByIndex(const int index) const {
     return sampleNames[index];
 }
 
+std::string CountTableAdapter::GetNameByIndex(const int index) const {
+    if(index > static_cast<int>(sampleNames.size()))
+        return "";
+    return sampleNames[index];
+}
+
 std::vector<std::string> CountTableAdapter::GetGroups() const {
     return groups;
 }
@@ -146,6 +152,7 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     }
     return countTable;
 }
+
 
 void CountTableAdapter::CreateNameToIndex() {
     for(size_t i = 0; i < sampleNames.size(); i++) {

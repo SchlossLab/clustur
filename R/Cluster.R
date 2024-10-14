@@ -176,6 +176,7 @@ example_path <- function(file = NULL) {
   return(path)
 }
 
+
 #' Read Count
 #'
 #' @export
@@ -199,9 +200,3 @@ read_count <- function(count_table_path) {
   }
   return(validate_count_table(read.delim(count_table_path, sep = "\t")))
 }
-
-# count <- read_count("final.count_table")
-# dist <- read_dist("final.dist", count, 0.2, F)
-# start_profiler("/Users/grejoh/Documents/OptiClusterPackage/clustur/profling_logs/cluster.out")
-# clust <- cluster(dist, "opti")
-# stop_profiler()
