@@ -52,9 +52,8 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
 }
 
 
-
 //[[Rcpp::export]]
-SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, double cutoff, bool isSim) {
+bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
     std::fstream data(filePath);
     std::unordered_map<bool, std::string> map;
     map[true] = "This is a phylip file. Processing now...";
@@ -76,19 +75,26 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
         isPhylip = false;
     Rcpp::Rcout << map[isPhylip] << "\n";
     data.close();
+    return isPhylip;
+}
+
+//[[Rcpp::export]]
+SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
+    const bool isSim) {
+    const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
 
     CountTableAdapter adapter;
     adapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
-        std::vector<RowData> rowDataMatrix = read->ReadToRowData(filePath);
+        const std::vector<RowData> rowDataMatrix = read->ReadToRowData(filePath);
         read->SetCountTable(adapter);
         read->SetRowDataMatrix(rowDataMatrix);
         read->ReadRowDataMatrix(rowDataMatrix);
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
-    std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
+    const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
     read->SetCountTable(adapter);
     read->SetRowDataMatrix(rowDataMatrix);
     read->ReadRowDataMatrix(rowDataMatrix);

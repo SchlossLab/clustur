@@ -9,6 +9,10 @@ WriteColumnFile <- function(xPosition, yPosition, data, cutoff, countTable, save
     invisible(.Call('_clustur_WriteColumnFile', PACKAGE = 'clustur', xPosition, yPosition, data, cutoff, countTable, saveLocation))
 }
 
+DetermineIfPhylipOrColumnFile <- function(filePath) {
+    .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
+}
+
 ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
     .Call('_clustur_ProcessDistanceFiles', PACKAGE = 'clustur', filePath, countTable, cutoff, isSim)
 }
