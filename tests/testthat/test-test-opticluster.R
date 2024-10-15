@@ -141,9 +141,9 @@ test_that("Read dist can read column and phylip files", {
 })
 
 test_that("We can determine if a file is phylip or not", {
-  is_not_phylip <- 
+  is_not_phylip <-
     DetermineIfPhylipOrColumnFile(test_path("extdata", "amazon_column.dist"))
-  is_phylip <- 
+  is_phylip <-
     DetermineIfPhylipOrColumnFile(test_path("extdata", "amazon_phylip.dist"))
   expect_true(is_phylip)
   expect_false(is_not_phylip)
