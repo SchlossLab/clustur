@@ -140,6 +140,16 @@ test_that("Read dist can read column and phylip files", {
   expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
 })
 
+
+test_that("We can determine if a file is phylip or not", {
+  is_not_phylip <-
+    DetermineIfPhylipOrColumnFile(test_path("extdata", "amazon_column.dist"))
+  is_phylip <-
+    DetermineIfPhylipOrColumnFile(test_path("extdata", "amazon_phylip.dist"))
+  expect_true(is_phylip)
+  expect_false(is_not_phylip)
+})
+
 test_that("Validate Count Table returns a valid count table", {
   count_table <- read.delim(test_path("extdata", "amazon.count_table"))
   validated_count_table <- validate_count_table(count_table)

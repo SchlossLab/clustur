@@ -27,11 +27,13 @@ public:
     Rcpp::DataFrame GetCountTable() const {return countTable;}
     Rcpp::DataFrame ReCreateDataFrame() const;
 private:
+    void CreateNameToIndex();
     struct IndexAbundancePair {
         int groupIndex;
         int sequenceIndex;
         double abundance;
     };
+    std::unordered_map<std::string, size_t> nameToRowIndex;
     std::vector<std::string> sampleNames;
     std::unordered_map<std::string, std::vector<double>> dataFrameMap;
     std::vector<std::string> groups;

@@ -40,16 +40,27 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// DetermineIfPhylipOrColumnFile
+bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
+RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
+    rcpp_result_gen = Rcpp::wrap(DetermineIfPhylipOrColumnFile(filePath));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ProcessDistanceFiles
-SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, double cutoff, bool isSim);
+SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff, const bool isSim);
 RcppExport SEXP _clustur_ProcessDistanceFiles(SEXP filePathSEXP, SEXP countTableSEXP, SEXP cutoffSEXP, SEXP isSimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filePath(filePathSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< double >::type cutoff(cutoffSEXP);
-    Rcpp::traits::input_parameter< bool >::type isSim(isSimSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isSim(isSimSEXP);
     rcpp_result_gen = Rcpp::wrap(ProcessDistanceFiles(filePath, countTable, cutoff, isSim));
     return rcpp_result_gen;
 END_RCPP
@@ -132,6 +143,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_clustur_WritePhylipFile", (DL_FUNC) &_clustur_WritePhylipFile, 6},
     {"_clustur_WriteColumnFile", (DL_FUNC) &_clustur_WriteColumnFile, 6},
+    {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
     {"_clustur_GetDistanceDataFrame", (DL_FUNC) &_clustur_GetDistanceDataFrame, 1},
