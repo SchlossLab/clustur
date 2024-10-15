@@ -140,6 +140,7 @@ test_that("Read dist can read column and phylip files", {
   expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
 })
 
+
 test_that("We can determine if a file is phylip or not", {
   is_not_phylip <- 
     DetermineIfPhylipOrColumnFile(test_path("extdata", "amazon_column.dist"))
