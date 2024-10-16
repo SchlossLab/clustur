@@ -27,15 +27,11 @@ Detailed description of the function.
 \examples{
 
  # Convert Phylip or column file to a sparse matrix
- library(Matrix) # spMatrix requires the use of the matrix library
+ # spMatrix requires the use of the matrix library
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))
- s_matrix <- spMatrix(nrow=max(i_values),
-                              ncol=max(i_values),
-                              i=i_values,
-                              j=j_values,
-                              x=x_values)
+ s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 
 
  column_path <- example_path("amazon_column.dist")

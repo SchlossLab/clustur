@@ -15,15 +15,11 @@
 #' @examples
 #'
 #'  # Convert Phylip or column file to a sparse matrix
-#'  library(Matrix) # spMatrix requires the use of the matrix library
+#'  # spMatrix requires the use of the matrix library
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
-#'  s_matrix <- spMatrix(nrow=max(i_values),
-#'                               ncol=max(i_values),
-#'                               i=i_values,
-#'                               j=j_values,
-#'                               x=x_values)
+#'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #'
 #'
 #'  column_path <- example_path("amazon_column.dist")
@@ -199,4 +195,27 @@ read_count <- function(count_table_path) {
     return(validate_count_table(CreateDataFrameFromSparse(count_table_sparse)))
   }
   return(validate_count_table(read.delim(count_table_path, sep = "\t")))
+}
+
+#' Create Sparse Matrix
+#'
+#' @export
+#' @description
+#' Given a list of i indexs, j indexes, and distances values,
+#' we can create a sparse distance matrix for you. Each vector
+#' must have the same size.
+#' @param i_index A list of i indexes, must be numeric
+#' @param j_index A list of j indexes, must be numeric
+#' @param distances A list of the distance at the i and j index
+#' @examples
+#' # This will return the path to our example file
+#'  i_values <- as.integer(1:100)
+#'  j_values <- as.integer(sample(1:100, 100, TRUE))
+#'  x_values <- as.numeric(runif(100, 0, 1))
+#'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+#'
+#' @return a sparse matrix.
+create_sparse_matrix <- function(i_index, j_index, distances) {
+  size <- max(i_index)
+  return(spMatrix(size, size, i_index, j_index, distances))
 }

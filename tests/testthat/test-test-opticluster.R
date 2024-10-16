@@ -166,3 +166,20 @@ test_that("Validate Count table does not change valid count tables", {
   valid_count_table <- validate_count_table(validated_count_table)
   expect_true(ncol(valid_count_table) == ncol(valid_count_table))
 })
+
+test_that("Create sparse matrix will create valid sparse matrices", {
+  i_values <- as.integer(1:100)
+  j_values <- as.integer(sample(1:100, 100, TRUE))
+  x_values <- as.numeric(runif(100, 0, 1))
+  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+  expect_equal(length(s_matrix@i), length(i_values))
+  expect_equal(length(s_matrix@j), length(j_values))
+  expect_equal(length(s_matrix@x), length(x_values))
+})
+
+test_that("Create sparse matrix will fail when given invalid data", {
+  i_values <- as.integer(1:101)
+  j_values <- as.integer(sample(1:100, 100, TRUE))
+  x_values <- as.numeric(runif(100, 0, 1))
+  expect_error(create_sparse_matrix(i_values, j_values, x_values))
+})
