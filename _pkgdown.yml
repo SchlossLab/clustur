@@ -23,6 +23,7 @@ reference:
   contents: 
   - example_path
   - validate_count_table
+  - create_sparse_matrix
 navbar:
   type: default
   left:

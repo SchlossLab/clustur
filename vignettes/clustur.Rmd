@@ -1,8 +1,8 @@
 ---
-title: "Using clustur"
+title: "clustur"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using-clustur}
+  %\VignetteIndexEntry{clustur}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
