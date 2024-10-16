@@ -1,13 +1,17 @@
 Package: clustur
 Type: Package
-Title: What the Package Does in One 'Title Case' Line
+Title: Clustering
 Version: 1.0
 Date: 2024-04-23
-Author: Gregory Johnson
+Authors@R: c(
+    person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut")),
+    person("Patrick", "Schloss", , "pschloss@umich.edu", role = c("aut", "cre", "cph"),
+            comment = c(ORCID = "0000-0002-6935-4275"))
+    )
 Maintainer: Gregory Johnson <grejoh@med.umich.edu>
-Description: One paragraph description of what the package does as one
+Description: An R extension to allow users to use the clustering methods from mothur without having to download mothur.
         or more full sentences.
-License: GPL (>= 2)
+License: MIT + file LICENSE
 Imports: 
     Matrix,
     Rcpp (>= 1.0.12),
@@ -25,3 +29,4 @@ Config/testthat/edition: 3
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr
 URL: http://www.schlosslab.org/Clustur/
+BugReports: https://github.com/SchlossLab/Clustur/issues
