@@ -4,7 +4,7 @@
 \alias{read_dist}
 \title{Read Dist Description}
 \usage{
-read_dist(distance_file, count_table, cutoff, is_simularity_matrix)
+read_dist(distance_file, count_table, cutoff, is_simularity_matrix = FALSE)
 }
 \arguments{
 \item{distance_file}{Either a phylip or column

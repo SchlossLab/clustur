@@ -15,6 +15,7 @@ Description: An R extension to allow users to use the clustering methods from mo
 License: MIT + file LICENSE
 Imports: 
     Matrix,
+    methods,
     Rcpp (>= 1.0.12),
     utils
 Depends:

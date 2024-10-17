@@ -7,7 +7,7 @@
 get_count_table(distance_object)
 }
 \arguments{
-\item{distance_object}{The output from the `read.dist` function.}
+\item{distance_object}{The output from the `read.dist()` function.}
 }
 \value{
 a count table data.frame

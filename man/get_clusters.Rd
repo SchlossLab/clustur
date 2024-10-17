@@ -7,14 +7,14 @@
 get_clusters(cluster_data)
 }
 \arguments{
-\item{cluster_data}{The output from the `cluster` function.}
+\item{cluster_data}{The output from the `cluster()` function.}
 }
 \value{
 the created cluster `data.frame`.
 }
 \description{
 GetClusters returns a `data.frame` of the generated
-clusters from the `cluster` function.
+clusters from the `cluster()` function.
 }
 \examples{
 cutoff <- 0.2

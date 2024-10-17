@@ -183,3 +183,20 @@ test_that("Create sparse matrix will fail when given invalid data", {
   x_values <- as.numeric(runif(100, 0, 1))
   expect_error(create_sparse_matrix(i_values, j_values, x_values))
 })
+
+test_that("Split Clusters to list will generate valid list", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
+  df <- cluster(distance_data)
+  list <- split_clusters_to_list(df)
+  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(length(list) == nrow(df$cluster))
+
+  # Test that it works on classic cluster methods
+  df <- cluster(distance_data, "furthest")
+  list <- split_clusters_to_list(df)
+  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(length(list) == nrow(df$cluster))
+})

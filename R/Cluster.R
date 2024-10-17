@@ -32,7 +32,7 @@
 #'
 #'
 read_dist <- function(distance_file, count_table,
-                      cutoff, is_simularity_matrix) {
+                      cutoff, is_simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
 
   if ("character" %in% class(distance_file)) {
@@ -82,7 +82,7 @@ read_dist <- function(distance_file, count_table,
 #'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, method, random_seed = 123) {
+cluster <- function(distance_object, method = "opti", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }

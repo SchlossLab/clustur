@@ -7,7 +7,7 @@
 get_distance_data_frame(distance_object)
 }
 \arguments{
-\item{distance_object}{The output from the `read.dist` function.}
+\item{distance_object}{The output from the `read.dist()` function.}
 }
 \value{
 a distance data.frame

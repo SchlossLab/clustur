@@ -7,14 +7,14 @@
 get_shared(cluster_data)
 }
 \arguments{
-\item{cluster_data}{The output from the `cluster` function.}
+\item{cluster_data}{The output from the `cluster()` function.}
 }
 \value{
 a shared data.frame
 }
 \description{
 GetShared retuns the generated abundance `data.frame`
-from the `cluster` function
+from the `cluster()` function
 }
 \examples{
 cutoff <- 0.2

@@ -4,11 +4,11 @@
 \alias{cluster}
 \title{Cluster Description}
 \usage{
-cluster(distance_object, method, random_seed = 123)
+cluster(distance_object, method = "opti", random_seed = 123)
 }
 \arguments{
 \item{distance_object}{The distance object that
-was created using the `read_dist` function.}
+was created using the `read_dist()` function.}
 
 \item{method}{The type of cluster you wish to conduct;
 opti, furthest, nearest, average, or weighted.}

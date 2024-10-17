@@ -3,8 +3,9 @@
 
 ## usethis namespace: start
 #' @importFrom Matrix spMatrix
+#' @importFrom methods el
+#' @importFrom Rcpp evalCpp
 #' @importFrom utils read.delim
 #' @useDynLib clustur
-#' @importFrom Rcpp evalCpp
 ## usethis namespace: end
 NULL
