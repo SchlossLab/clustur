@@ -10,7 +10,7 @@ get_distance_data_frame(distance_object)
 \item{distance_object}{The output from the `read.dist()` function.}
 }
 \value{
-a distance data.frame
+a distance `data.frame`.
 }
 \description{
 This function will generate a `data.frame` that contains the distances

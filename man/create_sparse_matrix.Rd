@@ -14,7 +14,7 @@ create_sparse_matrix(i_index, j_index, distances)
 \item{distances}{A list of the distance at the i and j index}
 }
 \value{
-a sparse matrix.
+a `dgTMatrix` from the `Matrix` library.
 }
 \description{
 Given a list of i indexs, j indexes, and distances values,

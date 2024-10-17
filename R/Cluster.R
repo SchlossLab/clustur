@@ -9,26 +9,26 @@
 #' @param cutoff The value you wish to use as a cutoff when clustering.
 #' @param is_simularity_matrix are you using a
 #' simularity matrix or distance matrix?
-#' @return An distance `externalptr` that contains all your 
+#' @return A distance `externalptr` object that contains all your 
 #' distance information.
 #'
 #' @examples
 #'
-#'  # Convert Phylip or column file to a sparse matrix
-#'  # spMatrix requires the use of the matrix library
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
-#'
+#'  sparse_count <- data.frame(
+#'                  Representative_Sequence = 1:100,
+#'                  total = rep(1, times = 100))
 #'
 #'  column_path <- example_path("amazon_column.dist")
 #'  phylip_path <- example_path("amazon_phylip.dist")
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'
-#' data_column <- read_dist(column_path, count_table, 0.2, FALSE)
-#' data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
-#' data_sparse <- read_dist(s_matrix, count_table, 0.2, FALSE)
+#'  data_column <- read_dist(column_path, count_table, 0.2, FALSE)
+#'  data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
+#'  data_sparse <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
 #'
 #'
 read_dist <- function(distance_file, count_table,
@@ -69,16 +69,10 @@ read_dist <- function(distance_file, count_table,
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff, FALSE)
 #'
-#'  # The clustur using one of the 5 methods
-#'  # opti
 #'  cluster_results <- cluster(distance_data, method = "opti")
-#'  # furthest
 #'  cluster_results <- cluster(distance_data, method = "furthest")
-#'  # nearest
 #'  cluster_results <- cluster(distance_data, method = "nearest")
-#'  # average
 #'  cluster_results <- cluster(distance_data, method = "average")
-#'  # weighted
 #'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
@@ -215,7 +209,7 @@ read_count <- function(count_table_path) {
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #'
-#' @return a sparse matrix.
+#' @return a `dgTMatrix` from the `Matrix` library.
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))

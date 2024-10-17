@@ -29,16 +29,10 @@ Detailed description of the function.
  distance_data <- read_dist(example_path("amazon_column.dist"),
                             count_table, cutoff, FALSE)
 
- # The clustur using one of the 5 methods
- # opti
  cluster_results <- cluster(distance_data, method = "opti")
- # furthest
  cluster_results <- cluster(distance_data, method = "furthest")
- # nearest
  cluster_results <- cluster(distance_data, method = "nearest")
- # average
  cluster_results <- cluster(distance_data, method = "average")
- # weighted
  cluster_results <- cluster(distance_data, method = "weighted")
 
 

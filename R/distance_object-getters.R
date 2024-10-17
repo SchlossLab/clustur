@@ -12,7 +12,7 @@
 #'                            count_table, cutoff, FALSE)
 #' count_table <- get_count_table(distance_data)
 #'
-#' @return a count table data.frame
+#' @return a count_table `data.frame`.
 get_count_table <- function(distance_object) {
   if (!inherits(distance_object, "externalptr"))
     stop("The distance object must be the object generated when
@@ -34,7 +34,7 @@ get_count_table <- function(distance_object) {
 #'                                         count_table, cutoff, FALSE)
 #' count_table <- get_count_table(distance_data)
 #'
-#' @return a distance data.frame
+#' @return a distance `data.frame`.
 get_distance_data_frame <- function(distance_object) {
   if (!inherits(distance_object, "externalptr"))
     stop("The distance object must be the object generated when
