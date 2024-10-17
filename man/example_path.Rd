@@ -7,15 +7,15 @@
 example_path(file = NULL)
 }
 \arguments{
-\item{file}{The data of the path you are looking to find.}
+\item{file}{The file name of the data}
 }
 \value{
-the path inside of the package of the file.
+the path to the file as a `chr`.
 }
 \description{
 This function was created as a helper function to generate file paths to our
- internal data. You are able to access this function if you
- want to follow along with the example.
+ internal data. You should use this function if you
+ want to follow along with the example, or intereact with the data
 }
 \examples{
 # This will return the path to our example file

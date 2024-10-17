@@ -4,7 +4,8 @@ Title: Clustering
 Version: 1.0
 Date: 2024-04-23
 Authors@R: c(
-    person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut")),
+    person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
+            comment = c(ORCID = "0009-0008-3890-0297")),
     person("Patrick", "Schloss", , "pschloss@umich.edu", role = c("aut", "cre", "cph"),
             comment = c(ORCID = "0000-0002-6935-4275"))
     )

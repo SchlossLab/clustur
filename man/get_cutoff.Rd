@@ -7,13 +7,14 @@
 get_cutoff(cluster_data)
 }
 \arguments{
-\item{cluster_data}{The cluster method output}
+\item{cluster_data}{The output from the `cluster` function.}
 }
 \value{
-the cutoff value
+the cutoff value as a `dbl`
 }
 \description{
-This function returns the cutoff of the cluster object
+GetCutoff returns the cutoff of the cluster object from
+the `cluster` function.
 }
 \examples{
 cutoff <- 0.2

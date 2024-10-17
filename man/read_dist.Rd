@@ -12,14 +12,14 @@ distance file, or a sparse matrix.}
 
 \item{count_table}{A table of names and the given abundance per group.}
 
-\item{cutoff}{The value you wish to use as a cutoff when clustering.
-opti, furthest, nearest, average, or weighted.}
+\item{cutoff}{The value you wish to use as a cutoff when clustering.}
 
 \item{is_simularity_matrix}{are you using a
 simularity matrix or distance matrix?}
 }
 \value{
-A distance object that contains all your distance information
+An distance `externalptr` that contains all your 
+distance information.
 }
 \description{
 Detailed description of the function.

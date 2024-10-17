@@ -8,7 +8,7 @@ cluster(distance_object, method, random_seed = 123)
 }
 \arguments{
 \item{distance_object}{The distance object that
-was created using the read_dist function.}
+was created using the `read_dist` function.}
 
 \item{method}{The type of cluster you wish to conduct;
 opti, furthest, nearest, average, or weighted.}
@@ -16,13 +16,14 @@ opti, furthest, nearest, average, or weighted.}
 \item{random_seed}{the random seed you wish to use, defaulted at 123.}
 }
 \value{
-A list of dataframes that contain abundance, and clustering results.
+A list of `data.frames` that contain abundance, and clustering results.
+If you used "opti", it will also return clustering metrics.
 }
 \description{
 Detailed description of the function.
 }
 \examples{
- # Convert Phylip of column file to a sparse matrix
+
  cutoff <- 0.2
  count_table <- read_count(example_path("amazon.count_table"))
  distance_data <- read_dist(example_path("amazon_column.dist"),

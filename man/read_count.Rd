@@ -10,14 +10,14 @@ read_count(count_table_path)
 \item{count_table_path}{The file path of your count table.}
 }
 \value{
-a count table data frame.
+a count table `data.frame`.
 }
 \description{
 This function will read and return your count table. It can take in
 sparse and normal count tables.
 }
 \examples{
-# This will return the path to our example file
+
 count_table <- read_count(example_path("amazon.count_table"))
 
 }

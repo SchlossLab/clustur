@@ -4,14 +4,24 @@
 \name{clustur-package}
 \alias{clustur}
 \alias{clustur-package}
-\title{clustur: What the Package Does in One 'Title Case' Line}
+\title{clustur: Clustering}
 \description{
-One paragraph description of what the package does as one or more full sentences.
+An R extension to allow users to use the clustering methods from mothur without having to download mothur. or more full sentences.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{http://www.schlosslab.org/Clustur/}
+  \item Report bugs at \url{https://github.com/SchlossLab/Clustur/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Patrick Schloss \email{pschloss@umich.edu} (\href{https://orcid.org/0000-0002-6935-4275}{ORCID}) [copyright holder]
+
+Authors:
+\itemize{
+  \item Gregory Johnson \email{grejoh@umich.edu} (\href{https://orcid.org/0009-0008-3890-0297}{ORCID})
 }
 
 }
