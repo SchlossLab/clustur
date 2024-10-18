@@ -1,3 +1,10 @@
+
+
+[![R-CMD-check](https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml)
+[![test-coverage](https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml)
+
 # mothur
 
 mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.
