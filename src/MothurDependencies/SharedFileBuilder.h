@@ -23,7 +23,7 @@
 
 class SharedFileBuilder {
 public:
-    SharedFile *BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
+    SharedFile *BuildSharedFile(const ListVector &listVector,
         const CountTableAdapter& countTable);
     SharedFileBuilder() = default;
 };

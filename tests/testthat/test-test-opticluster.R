@@ -1,13 +1,22 @@
 test_that("opti cluster returns four dataframes", {
+
+  path_count <- "/Users/grejoh/Documents/clustur_files/final.count_table"
+  path_dist <- "/Users/grejoh/Documents/clustur_files/final.dist"
+  final_count <- read_count(path_count)
+  final_dist <- read_dist(path_dist, final_count, 0.2, F)
+  final_cluster <- cluster(final_dist)
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
   df <- cluster(distance_data, method = "opti")
+  csv <- read.csv(test_path("extdata", "abundance_results_opticluster.csv"))
+  df$abundance$label <- as.numeric(df$abundance$label)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
+  expect_true(all(csv == df$abundance))
 })
 
 test_that("other clustering methods only return two dataframes", {

@@ -43,10 +43,13 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
-    const auto listVectors = result->GetListVector();
-    listMap[listVectors.label] = *listVectors.listVector;
-    const SharedFile* sharedFile = builder.BuildSharedFile(listMap, countTable);
+    const ListVectorPair listVectors = result->GetListVector();
+    const auto start = std::chrono::high_resolution_clock::now();
+    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable);
+    const auto end = std::chrono::high_resolution_clock::now();
     Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData();
+    const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    Rcpp::Rcout << "Time taken to make_shared file: " << duration.count() << " milliseconds" << std::endl;
     delete(sharedFile);
     return tidySharedDataFrame;
 }
