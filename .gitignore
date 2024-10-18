@@ -205,3 +205,4 @@ docs
 # DS Store files
 
 .DS_Store
+/.quarto/

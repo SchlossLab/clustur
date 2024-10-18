@@ -2,15 +2,15 @@ Package: clustur
 Type: Package
 Title: Clustering
 Version: 0.1
-Date: 2024-04-23
+Date: 2024-10-18
 Authors@R: c(
     person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
             comment = c(ORCID = "0009-0008-3890-0297")),
     person("Patrick", "Schloss", , "pschloss@umich.edu", role = c("aut", "cre", "cph"),
             comment = c(ORCID = "0000-0002-6935-4275"))
     )
-Maintainer: Gregory Johnson <grejoh@med.umich.edu>
-Description: A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) <doi:https://doi.org/10.1128/AEM.01541-09>). Clustur make use of the 'cluster' and 'make.shared' command from mothur. The cluster command has five different algorithms implemented: 'opticlust', 'furthest', 'nearest', 'average', and 'weighted'. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) <doi: https://doi.org/10.1128/mspheredirect.00073-17>). The 'make.shared' command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
+Maintainer: Patrick Schloss <pschloss@umich.edu>
+Description: A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) <doi:10.1128/AEM.01541-09>). Clustur make use of the 'cluster' and 'make.shared' command from mothur. The cluster command has five different algorithms implemented: 'opticlust', 'furthest', 'nearest', 'average', and 'weighted'. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) <doi:10.1128/mspheredirect.00073-17>). The 'make.shared' command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
 License: MIT + file LICENSE
 Imports:
     Matrix,
@@ -29,5 +29,5 @@ Suggests:
 Config/testthat/edition: 3
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr
-URL: http://www.schlosslab.org/Clustur/
+URL: http://www.schlosslab.org/Clustur/, https://github.com/SchlossLab/Clustur
 BugReports: https://github.com/SchlossLab/Clustur/issues
