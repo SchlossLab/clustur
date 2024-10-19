@@ -4,10 +4,10 @@
 
 #include "Tests/SharedFileBuilderTestFixture.h"
 
-bool SharedFileBuilderTestFixture::TestBuildSharedFile(const std::unordered_map<std::string, ListVector>& map,
+bool SharedFileBuilderTestFixture::TestBuildSharedFile(const ListVector& listVector,
                                                        const CountTableAdapter &countTable, const bool expectedResult) {
     Setup();
-    const SharedFile* file = builder->BuildSharedFile(map, countTable);
+    const SharedFile* file = builder->BuildSharedFile(listVector, countTable);
     TearDown();
     return expectedResult == (file != nullptr);
 

@@ -3,30 +3,20 @@
 //
 
 #include "MothurDependencies/SharedFileBuilder.h"
-
 #include "MothurDependencies/ClusterExport.h"
 
 // TODO Comment this code
 // TODO We may need to build a traditional file builder...So we can output a dataframe of how the clusters are (list)
-SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::string, ListVector> &listVectorMap,
+SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
     const CountTableAdapter &countTable) {
     Utils utils;
-    double largestCutoff = -1;
-    std::string largestCutoffLabel;
-    for(auto& map : listVectorMap) {
-        const double cutoffLabel = std::stod(map.first);
-        if(largestCutoff < cutoffLabel) {
-            largestCutoff = cutoffLabel;
-            largestCutoffLabel = map.first;
-        }
-    }
+    std::string largestCutoffLabel = listVector.getLabel();
     std::vector<SharedAbundance> abundancesList;
-    std::vector<std::string> groups = countTable.GetGroups();
-    ListVector correctListVector = listVectorMap.at(largestCutoffLabel);
-    const int seqs = correctListVector.getNumSeqs();
+    const std::vector<std::string> groups = countTable.GetGroups();
+    const int seqs = listVector.getNumSeqs();
     int count = 1;
-    for(int i = 0; i < seqs; i++) {
-        std::string samples = correctListVector.get(i);
+    for(int i = 0; i < seqs; i++) { // O(N^3) -> Lets make this O(N^2) or O(Nlog(N))
+        std::string samples = listVector.get(i);
         if(samples.empty())
             continue;
         std::vector<std::string> splitSamples;
@@ -43,7 +33,6 @@ SharedFile* SharedFileBuilder::BuildSharedFile(const std::unordered_map<std::str
                  largestCutoffLabel, groupTotals.second);
         }
     }
-    // Have to make it group totals, not the abundance of each sample at each group
+    
    return new SharedFile(abundancesList);
-
 }

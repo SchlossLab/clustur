@@ -96,9 +96,8 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
 double CountTableAdapter::FindAbundanceBasedOnGroup(const std::string &group, const std::string &sampleName) const {
     // We will preprocess the find during hte read dist process. So remove special checks
     // - Protip hashmap find is faster than vector
-    if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
-        return -1;
-    const std::vector<double> groupCol = GetColumnByName(group);
+    // if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
+    //     return -1;
     return dataFrameMap.at(group)[nameToRowIndex.at(sampleName)];
 }
 

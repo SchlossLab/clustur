@@ -43,9 +43,8 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
-    const auto listVectors = result->GetListVector();
-    listMap[listVectors.label] = *listVectors.listVector;
-    const SharedFile* sharedFile = builder.BuildSharedFile(listMap, countTable);
+    const ListVectorPair listVectors = result->GetListVector();
+    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable);
     Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData();
     delete(sharedFile);
     return tidySharedDataFrame;

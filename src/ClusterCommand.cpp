@@ -117,6 +117,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         ListVector *list = nullptr;
         // clusterMetrics += "\n\n";
         list = cluster.getList();
+        list->setLabel(std::to_string(cutoff));
         //
         if (printHeaders) {
             //only print headers the first time

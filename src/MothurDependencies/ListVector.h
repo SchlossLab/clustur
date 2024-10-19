@@ -52,7 +52,7 @@ public:
     int getNumSeqs() const							{	return numSeqs;		}
     int getMaxRank() const							{	return maxRank;		}
 
-    std::string get(long long);
+    std::string get(long long) const;
     // The amount of labels is equal to the size of the listVectorBins
     std::vector<std::string> getLabels();
     std::string getOTUName(long long bin);
