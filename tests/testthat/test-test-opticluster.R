@@ -1,10 +1,4 @@
 test_that("opti cluster returns four dataframes", {
-
-  path_count <- "/Users/grejoh/Documents/clustur_files/final.count_table"
-  path_dist <- "/Users/grejoh/Documents/clustur_files/final.dist"
-  final_count <- read_count(path_count)
-  final_dist <- read_dist(path_dist, final_count, 0.2, F)
-  final_cluster <- cluster(final_dist)
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
