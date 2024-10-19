@@ -26,6 +26,18 @@ public:
     SharedFile *BuildSharedFile(const ListVector &listVector,
         const CountTableAdapter& countTable);
     SharedFileBuilder() = default;
+private:
+    struct SampleInformation {
+        SampleInformation() = default;
+        SampleInformation(std::string otu, std::string group, const double abundance)
+            : otu(std::move(otu)),
+              group(std::move(group)),
+              abundance(abundance) {
+        }
+        std::string otu;
+        std::string group;
+        double abundance = 0;
+    };
 };
 
 
