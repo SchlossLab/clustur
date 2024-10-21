@@ -7,10 +7,10 @@
 validate_count_table(count_table_df)
 }
 \arguments{
-\item{count_table_df}{The count table dataframe object.}
+\item{count_table_df}{The count table `data.frame` object.}
 }
 \value{
-A validated count table.
+A validated count table `data.frame`
 }
 \description{
 If the count table is already valid nothing will change,

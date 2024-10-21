@@ -4,14 +4,24 @@
 \name{clustur-package}
 \alias{clustur}
 \alias{clustur-package}
-\title{clustur: What the Package Does in One 'Title Case' Line}
+\title{clustur: Clustering}
 \description{
-One paragraph description of what the package does as one or more full sentences.
+A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) \doi{10.1128/AEM.01541-09}). Clustur make use of the 'cluster' and 'make.shared' command from mothur. The cluster command has five different algorithms implemented: 'opticlust', 'furthest', 'nearest', 'average', and 'weighted'. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) \doi{10.1128/mspheredirect.00073-17}). The 'make.shared' command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{http://www.schlosslab.org/Clustur/}
+  \item Report bugs at \url{https://github.com/SchlossLab/Clustur/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Patrick Schloss \email{pschloss@umich.edu} (\href{https://orcid.org/0000-0002-6935-4275}{ORCID}) [copyright holder]
+
+Authors:
+\itemize{
+  \item Gregory Johnson \email{grejoh@umich.edu} (\href{https://orcid.org/0009-0008-3890-0297}{ORCID})
 }
 
 }

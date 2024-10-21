@@ -229,7 +229,7 @@ std::vector<double> OptiCluster::getCloseFarCounts(const long long seq, const lo
 //TODO figure out why the bad-allocation execption is being thrown
 ListVector *OptiCluster::getList() const {
     auto *list = new ListVector();
-    ListVector *singleton = matrix->getListSingle();
+    const ListVector *singleton = matrix->getListSingle();
     // TestHelper::Print("Made it here, listVector\n");
     if (singleton != nullptr) {
         //add in any sequences above cutoff in read. Removing these saves clustering time.

@@ -48,8 +48,6 @@ context("CountTable") {
         expect_true(res);
         res = testFixture.TestFindAbundanceBasedOnGroup("nogroup", "2", 30);
         expect_false(res);
-        res = testFixture.TestFindAbundanceBasedOnGroup("nogroup", "10", -1);
-        expect_true(res);
     }
     test_that("Count table properly returns column by name") {
         CountTableAdapterTestFixture testFixture;

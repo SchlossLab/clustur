@@ -7,32 +7,33 @@
 #' distance file, or a sparse matrix.
 #' @param count_table A table of names and the given abundance per group.
 #' @param cutoff The value you wish to use as a cutoff when clustering.
-#'  opti, furthest, nearest, average, or weighted.
 #' @param is_simularity_matrix are you using a
 #' simularity matrix or distance matrix?
-#' @return A distance object that contains all your distance information
+#' @return A distance `externalptr` object that contains all your
+#' distance information.
 #'
 #' @examples
 #'
-#'  # Convert Phylip or column file to a sparse matrix
-#'  # spMatrix requires the use of the matrix library
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #'
+#'  sparse_count <- data.frame(
+#'                  Representative_Sequence = 1:100,
+#'                  total = rep(1, times = 100))
 #'
 #'  column_path <- example_path("amazon_column.dist")
 #'  phylip_path <- example_path("amazon_phylip.dist")
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'
-#' data_column <- read_dist(column_path, count_table, 0.2, FALSE)
-#' data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
-#' data_sparse <- read_dist(s_matrix, count_table, 0.2, FALSE)
+#'  data_column <- read_dist(column_path, count_table, 0.2, FALSE)
+#'  data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
+#'  data_sparse <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
 #'
 #'
 read_dist <- function(distance_file, count_table,
-                      cutoff, is_simularity_matrix) {
+                      cutoff, is_simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
 
   if ("character" %in% class(distance_file)) {
@@ -55,33 +56,29 @@ read_dist <- function(distance_file, count_table,
 #'
 #' @export
 #' @param distance_object The distance object that
-#'  was created using the read_dist function.
+#'  was created using the `read_dist()` function.
 #' @param method The type of cluster you wish to conduct;
 #'  opti, furthest, nearest, average, or weighted.
 #' @param random_seed the random seed you wish to use, defaulted at 123.
-#' @return A list of dataframes that contain abundance, and clustering results.
+#' @return A list of `data.frames` that contain abundance,
+#'  and clustering results. If you used "opti", it will also
+#'  return clustering metrics.
 #'
 #' @examples
-#'  # Convert Phylip of column file to a sparse matrix
+#'
 #'  cutoff <- 0.2
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff, FALSE)
 #'
-#'  # The clustur using one of the 5 methods
-#'  # opti
 #'  cluster_results <- cluster(distance_data, method = "opti")
-#'  # furthest
 #'  cluster_results <- cluster(distance_data, method = "furthest")
-#'  # nearest
 #'  cluster_results <- cluster(distance_data, method = "nearest")
-#'  # average
 #'  cluster_results <- cluster(distance_data, method = "average")
-#'  # weighted
 #'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, method, random_seed = 123) {
+cluster <- function(distance_object, method = "opti", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -128,8 +125,8 @@ cluster <- function(distance_object, method, random_seed = 123) {
 #' Detailed description of the function.
 #'
 #' @export
-#' @param count_table_df The count table dataframe object.
-#' @return A validated count table.
+#' @param count_table_df The count table `data.frame` object.
+#' @return A validated count table `data.frame`
 #' @description
 #' If the count table is already valid nothing will change,
 #' otherwise it will add a new group to the count table file.
@@ -154,14 +151,14 @@ validate_count_table <- function(count_table_df) {
 #' @export
 #' @description
 #'  This function was created as a helper function to generate file paths to our
-#'  internal data. You are able to access this function if you
-#'  want to follow along with the example.
-#' @param file The data of the path you are looking to find.
+#'  internal data. You should use this function if you
+#'  want to follow along with the example, or intereact with the data
+#' @param file The file name of the data
 #' @examples
 #' # This will return the path to our example file
 #' example_path("amazon_phylip.dist")
 #'
-#' @return the path inside of the package of the file.
+#' @return the path to the file as a `chr`.
 example_path <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
@@ -181,10 +178,10 @@ example_path <- function(file = NULL) {
 #' sparse and normal count tables.
 #' @param count_table_path The file path of your count table.
 #' @examples
-#' # This will return the path to our example file
+#'
 #' count_table <- read_count(example_path("amazon.count_table"))
 #'
-#' @return a count table data frame.
+#' @return a count table `data.frame`.
 read_count <- function(count_table_path) {
   # We will have to determine if its a sparse or not
   # Check if the first value of test_read had a comment
@@ -208,14 +205,16 @@ read_count <- function(count_table_path) {
 #' @param j_index A list of j indexes, must be numeric
 #' @param distances A list of the distance at the i and j index
 #' @examples
+#'
 #' # This will return the path to our example file
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #'
-#' @return a sparse matrix.
+
+#' @return a `dgTMatrix` from the `Matrix` library.
 create_sparse_matrix <- function(i_index, j_index, distances) {
-  size <- max(i_index)
+  size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))
 }

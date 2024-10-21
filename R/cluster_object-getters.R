@@ -3,8 +3,9 @@
 #'
 #' @export
 #' @description
-#' This function returns the cutoff of the cluster object
-#' @param cluster_data The cluster method output
+#' GetCutoff returns the cutoff of the cluster object from
+#' the `cluster()` function.
+#' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
@@ -13,7 +14,7 @@
 #' df_clusters <- cluster(distance_data, method = "opti")
 #' cutoff <- get_cutoff(df_clusters)
 #'
-#' @return the cutoff value
+#' @return the cutoff value as a `dbl`
 get_cutoff <- function(cluster_data) {
   return(as.numeric(cluster_data$cluster$label[[1]]))
 }
@@ -23,8 +24,9 @@ get_cutoff <- function(cluster_data) {
 #'
 #' @export
 #' @description
-#' This function returns the cluster data.frame of the cluster object
-#' @param cluster_data The cluster method output
+#' GetClusters returns a `data.frame` of the generated
+#' clusters from the `cluster()` function.
+#' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
@@ -33,7 +35,7 @@ get_cutoff <- function(cluster_data) {
 #' df_clusters <- cluster(distance_data, method = "opti")
 #' clusters <- get_clusters(df_clusters)
 #'
-#' @return the cluster data.frame
+#' @return the created cluster `data.frame`.
 get_clusters <- function(cluster_data) {
   return(cluster_data$cluster)
 }
@@ -43,8 +45,9 @@ get_clusters <- function(cluster_data) {
 #'
 #' @export
 #' @description
-#' This function returns the shared data.frame of the cluster object
-#' @param cluster_data The cluster method output
+#' GetShared retuns the generated abundance `data.frame`
+#' from the `cluster()` function
+#' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
@@ -63,8 +66,9 @@ get_shared <- function(cluster_data) {
 #'
 #' @export
 #' @description
-#' This function returns the all of the metrics from the cluster object
-#' @param cluster_data The cluster method output
+#' GetMetrics returns the generated metrics `data.frame` from the
+#' `cluster()` function.
+#' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
