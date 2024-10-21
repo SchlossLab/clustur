@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">clustur</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/Clustur/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -60,7 +61,7 @@
       <h1>clustur</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/SchlossLab/Clustur/blob/master/vignettes/clustur.Rmd" class="external-link"><code>vignettes/clustur.Rmd</code></a></small>
       <div class="d-none name"><code>clustur.Rmd</code></div>
     </div>
 
@@ -79,8 +80,8 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install via github</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"SchlossLab/Clustur"</span><span class="op">)</span></span></code></pre></div>
-<p>clustur was developed to be similar to the <a href="https://www.mothur.org" class="external-link">mothur implementation</a> that was written
-in C++, however there are a few differences to note. In order to cluster
+<p>clustur was developed to be similar to the <a href="https://mothur.org" class="external-link">mothur implementation</a> that was written in
+C++, however there are a few differences to note. In order to cluster
 your data, we are requiring users to build out there own sparse matrix
 (we also support phylip files) and count table in R or mothur. Once
 these objects are built out you can call the cluster function. We
@@ -199,7 +200,7 @@ demonstrated below.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gregory Johnson.</p>
+  <p>Developed by Gregory Johnson, Patrick Schloss.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>What the Package Does in One Title Case Line • clustur</title>
+<title>Clustering • clustur</title>
 <script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="What the Package Does in One Title Case Line">
-<meta name="description" content="One paragraph description of what the package does as one or more full sentences.">
-<meta property="og:description" content="One paragraph description of what the package does as one or more full sentences.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Clustering">
+<meta name="description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). Clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
+<meta property="og:description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). Clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">clustur</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/Clustur/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -53,7 +54,8 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level1">
+  <main id="main" class="col-md-9">
+<div class="section level1">
 <div class="page-header"><h1 id="mothur">mothur<a class="anchor" aria-label="anchor" href="#mothur"></a>
 </h1></div>
 <p>mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.</p>
@@ -75,7 +77,7 @@
 <div class="section level2">
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>To get started, look at the <a href="">“Getting started”</a> page.</p>
+<p>To get started, look at the <a href="www.schlosslab.org/Clustur/">“Getting started”</a> page.</p>
 </div>
 <div class="section level2">
 <h2 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
@@ -84,10 +86,19 @@
 </div>
 </div>
 
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/SchlossLab/Clustur/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/SchlossLab/Clustur/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li>GPL (&gt;= 2)</li>
+<li><a href="LICENSE.html">Full license</a></li>
+<li><small><a href="https://opensource.org/licenses/mit-license.php" class="external-link">MIT</a> + file <a href="LICENSE-text.html">LICENSE</a></small></li>
 </ul>
 </div>
 
@@ -102,18 +113,27 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Gregory Johnson <br><small class="roles"> Maintainer </small>  </li>
+<li>Gregory Johnson <br><small class="roles"> Author </small> <a href="https://orcid.org/0009-0008-3890-0297" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Patrick Schloss <br><small class="roles"> Author, maintainer, copyright holder </small> <a href="https://orcid.org/0000-0002-6935-4275" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml/badge.svg" alt="test-coverage"></a></li>
+<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml/badge.svg" alt="lint"></a></li>
+<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Gregory Johnson.</p>
+  <p>Developed by Gregory Johnson, Patrick Schloss.</p>
 </div>
 
 <div class="pkgdown-footer-right">
