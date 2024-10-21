@@ -25,7 +25,7 @@ get_cutoff <- function(cluster_data) {
 #' @export
 #' @description
 #' GetClusters returns a `data.frame` of the generated
-#' clusters from the `cluster()` function. 
+#' clusters from the `cluster()` function.
 #' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2

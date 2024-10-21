@@ -2,7 +2,7 @@
 #'
 #' @export
 #' @description
-#' `split_clusters_to_list()` will extract clusters from the 
+#' `split_clusters_to_list()` will extract clusters from the
 #' cluster generated `data.frame`. It will then turn those clusters
 #' into a list. This allows users to more easily visualize their data.
 #' @param cluster The output generated from the `cluster()` function.
@@ -13,15 +13,16 @@
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff, FALSE)
 #'  cluster_results <- cluster(distance_data, method = "opti")
-#' 
+#'
 #'  cluster_list <- split_clusters_to_list(cluster_results)
 #' @return a named `list` of clusters.
 split_clusters_to_list <- function(cluster) {
   ls <- c()
   cluster_df <- get_clusters(cluster)
-  for(i in 1:length(cluster_df$bins)) {
-     ls[[cluster_df$otu[[i]]]] <- as.list(el(strsplit(cluster_df$bins[[i]], ",")))
+  size <- nrow(cluster_df)
+  for (i in 1:size) {
+    ls[[cluster_df$otu[[i]]]] <-
+      as.list(el(strsplit(cluster_df$bins[[i]], ",")))
   }
   return(ls)
 }
-

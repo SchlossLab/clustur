@@ -9,20 +9,16 @@
 #' @param cutoff The value you wish to use as a cutoff when clustering.
 #' @param is_simularity_matrix are you using a
 #' simularity matrix or distance matrix?
-#' @return A distance `externalptr` object that contains all your 
+#' @return A distance `externalptr` object that contains all your
 #' distance information.
 #'
 #' @examples
 #'
-
-#'  # Convert Phylip or column file to a sparse matrix
-#'  # spMatrix requires the use of the matrix library
-
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
-
+#'
 #'  sparse_count <- data.frame(
 #'                  Representative_Sequence = 1:100,
 #'                  total = rep(1, times = 100))
@@ -64,11 +60,12 @@ read_dist <- function(distance_file, count_table,
 #' @param method The type of cluster you wish to conduct;
 #'  opti, furthest, nearest, average, or weighted.
 #' @param random_seed the random seed you wish to use, defaulted at 123.
-#' @return A list of `data.frames` that contain abundance, and clustering results.
-#' If you used "opti", it will also return clustering metrics.
+#' @return A list of `data.frames` that contain abundance,
+#'  and clustering results. If you used "opti", it will also
+#'  return clustering metrics.
 #'
 #' @examples
-#' 
+#'
 #'  cutoff <- 0.2
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
@@ -208,7 +205,7 @@ read_count <- function(count_table_path) {
 #' @param j_index A list of j indexes, must be numeric
 #' @param distances A list of the distance at the i and j index
 #' @examples
-#' 
+#'
 #' # This will return the path to our example file
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
