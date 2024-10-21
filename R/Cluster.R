@@ -14,10 +14,15 @@
 #'
 #' @examples
 #'
+
+#'  # Convert Phylip or column file to a sparse matrix
+#'  # spMatrix requires the use of the matrix library
+
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+
 #'  sparse_count <- data.frame(
 #'                  Representative_Sequence = 1:100,
 #'                  total = rep(1, times = 100))
@@ -204,11 +209,13 @@ read_count <- function(count_table_path) {
 #' @param distances A list of the distance at the i and j index
 #' @examples
 #' 
+#' # This will return the path to our example file
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #'
+
 #' @return a `dgTMatrix` from the `Matrix` library.
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
