@@ -7,13 +7,14 @@
 get_metrics(cluster_data)
 }
 \arguments{
-\item{cluster_data}{The cluster method output}
+\item{cluster_data}{The output from the `cluster()` function.}
 }
 \value{
 a list of metric data.frames
 }
 \description{
-This function returns the all of the metrics from the cluster object
+GetMetrics returns the generated metrics `data.frame` from the
+`cluster()` function.
 }
 \examples{
 cutoff <- 0.2

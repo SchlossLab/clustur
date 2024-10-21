@@ -29,7 +29,7 @@ public:
     virtual void print() {};
 
     void setLabel(const std::string& l)		{	label = l;			}
-    std::string getLabel()			    {	return label;		}
+    std::string getLabel() const { return label; }
 
 
 protected:

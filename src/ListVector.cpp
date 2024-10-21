@@ -58,7 +58,7 @@ std::vector<std::string> ListVector::getLabels() {
     return binLabels;
 }
 
-std::string ListVector::get(const long long index) {
+std::string ListVector::get(const long long index) const {
     if (index >= 0 && index < static_cast<long long>(data.size())) { return data[index]; }
     return "";
 }

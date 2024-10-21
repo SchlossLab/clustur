@@ -13,3 +13,5 @@
 ^vignettes/articles$
 ^\.vscode$
 ^\.lintr$
+^LICENSE\.md$
+^cran-comments\.md$

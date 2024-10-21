@@ -4,7 +4,7 @@
 #' @description
 #' This function returns the count table that was used
 #' to generate the distance object.
-#' @param distance_object The read.dist output object
+#' @param distance_object The output from the `read.dist()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
@@ -12,7 +12,7 @@
 #'                            count_table, cutoff, FALSE)
 #' count_table <- get_count_table(distance_data)
 #'
-#' @return a count table data.frame
+#' @return a count_table `data.frame`.
 get_count_table <- function(distance_object) {
   if (!inherits(distance_object, "externalptr"))
     stop("The distance object must be the object generated when
@@ -24,9 +24,9 @@ get_count_table <- function(distance_object) {
 #'
 #' @export
 #' @description
-#' This function will generate a data.frame that contains the distances
+#' This function will generate a `data.frame` that contains the distances
 #' of all the indexes.
-#' @param distance_object The read.dist output object
+#' @param distance_object The output from the `read.dist()` function.
 #' @examples
 #' cutoff <- 0.2
 #' count_table <- read_count(example_path("amazon.count_table"))
@@ -34,7 +34,7 @@ get_count_table <- function(distance_object) {
 #'                                         count_table, cutoff, FALSE)
 #' count_table <- get_count_table(distance_data)
 #'
-#' @return a distance data.frame
+#' @return a distance `data.frame`.
 get_distance_data_frame <- function(distance_object) {
   if (!inherits(distance_object, "externalptr"))
     stop("The distance object must be the object generated when

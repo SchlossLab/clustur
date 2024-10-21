@@ -13,8 +13,8 @@
 class SharedFileBuilderTestFixture final : public TestFixture {
 public:
     //Test if null, we are going to add error checking
-    bool TestBuildSharedFile(const std::unordered_map<std::string, ListVector>&, const CountTableAdapter& countTable,
-         bool expectedResult);
+    bool TestBuildSharedFile(const ListVector &listVector,
+                             const CountTableAdapter &countTable, bool expectedResult);
 private:
     void Setup() override;
     void TearDown() override;

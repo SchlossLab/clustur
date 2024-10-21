@@ -4,10 +4,13 @@ test_that("opti cluster returns four dataframes", {
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
   df <- cluster(distance_data, method = "opti")
+  csv <- read.csv(test_path("extdata", "abundance_results_opticluster.csv"))
+  df$abundance$label <- as.numeric(df$abundance$label)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
   expect_equal(class(df$other_cluster_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
+  expect_true(all(csv == df$abundance))
 })
 
 test_that("other clustering methods only return two dataframes", {
@@ -182,4 +185,21 @@ test_that("Create sparse matrix will fail when given invalid data", {
   j_values <- as.integer(sample(1:100, 100, TRUE))
   x_values <- as.numeric(runif(100, 0, 1))
   expect_error(create_sparse_matrix(i_values, j_values, x_values))
+})
+
+test_that("Split Clusters to list will generate valid list", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
+  df <- cluster(distance_data)
+  list <- split_clusters_to_list(df)
+  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(length(list) == nrow(df$cluster))
+
+  # Test that it works on classic cluster methods
+  df <- cluster(distance_data, "furthest")
+  list <- split_clusters_to_list(df)
+  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(length(list) == nrow(df$cluster))
 })

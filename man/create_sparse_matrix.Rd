@@ -14,7 +14,7 @@ create_sparse_matrix(i_index, j_index, distances)
 \item{distances}{A list of the distance at the i and j index}
 }
 \value{
-a sparse matrix.
+a `dgTMatrix` from the `Matrix` library.
 }
 \description{
 Given a list of i indexs, j indexes, and distances values,
@@ -22,7 +22,7 @@ we can create a sparse distance matrix for you. Each vector
 must have the same size.
 }
 \examples{
-# This will return the path to our example file
+
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))

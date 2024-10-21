@@ -21,7 +21,6 @@ context("SharedFile Builder") {
     // to test the desired conditions.
     test_that("SharedFile Builder returns a SharedFile Object Successfully") {
         SharedFileBuilderTestFixture test;
-        std::unordered_map<std::string, ListVector> map;
         CountTableAdapter countTable;
         ListVector vector;
         vector.push_back("1");
@@ -29,7 +28,6 @@ context("SharedFile Builder") {
         vector.push_back("3");
         vector.push_back("4");
         vector.push_back("5");
-        map["0.0001"] = vector;
         const std::vector<std::string> compounds{"1", "2", "3", "4", "5"};
         const std::vector<double> total{10, 20, 30, 40, 50};
         Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
@@ -37,9 +35,9 @@ context("SharedFile Builder") {
             Rcpp::Named("total") = total,
             Rcpp::Named("nogroup") = total);
         countTable.CreateDataFrameMap(dataframe);
-        bool res = test.TestBuildSharedFile(map,countTable, true);
+        bool res = test.TestBuildSharedFile(vector,countTable, true);
         expect_true(res);
-        res = test.TestBuildSharedFile(map,countTable, false);
+        res = test.TestBuildSharedFile(vector,countTable, false);
         expect_false(res);
     }
 }
