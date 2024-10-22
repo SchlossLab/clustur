@@ -17,7 +17,7 @@ reference:
   - get_shared
   - get_metrics
   - get_count_table
-  - get_cutoff
+  - get_label
   - get_distance_data_frame
 - title: Helper Functions
   contents: 

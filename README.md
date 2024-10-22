@@ -1,35 +1,62 @@
 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# clustur <a href="https://mothur.org/phylotypr/"><img src="man/figures/logo.png" align="right" height="138" alt="phylotypr website" /></a>
+
+<!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/phylotypr)](https://cran.r-project.org/package=phylotypr)
+[![R-CMD-check](https://github.com/mothur/phylotypr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mothur/phylotypr/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/mothur/phylotypr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/mothur/phylotypr?branch=main)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/phylotypr)](https://cran.rstudio.com/package=phylotypr)
+
+<!-- badges: end -->
+
+## Overview
+
+clustur was developed for two main reasons: to allow developers to
+easily create pipelines with mothur code in R, and to give users a
+powerful clustering algorithm from mothur without having to download it.
+Because clustur is built using rcpp, it benefits from the speed of C++
+and the usability of R. Additionally, since clustur will be open source,
+developers can modify are package as needed. This will not only help us
+continue to create high quality packages, but will allow everyone to
+take advantage of the foundation that is already built.
 
 [![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
 [![test-coverage](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml)
 [![lint](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml)
 [![pkgdown](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml)
 
-# mothur
-
-mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.
-
-# clustur
-
-clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful clustering algorithm from mothur without having to download it. Because mothur is built using rcpp, it benefits from the speed of c++ and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.
-
-
 ## Installation
 
-```r
+For the official release from CRAN you can use the standard
+`install.packages()` function:
+
+``` r
 # install via cran
 install.packages("clustur")
+library(clustur)
 ```
 
-```r
+For the developmental version, you can use the `install_github()`
+function from the {devtools} package
+
+``` r
 # install via github
-remotes::install_github("SchlossLab/clustur")
+devtools::install_github("SchlossLab/clustur")
+library(clustur)
 ```
 
 ## Getting Started
 
-To get started, look at the ["Getting started"](www.schlosslab.org/clustur/) page.
+To get started, look at the [“Getting
+started”](www.schlosslab.org/clustur/) page.
 
 ## Contributions
 
-For feature requrest please visit the issue page in github and use the feature tag. If you would like to contribute pull request are welcomed!
+For feature request please visit the issue page in github and use the
+feature tag. If you would like to contribute pull request are welcomed!

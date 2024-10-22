@@ -1,11 +1,11 @@
-test_that("get_cutoff returns the proper cutoff", {
+test_that("get_label returns the proper cutoff", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
   df_clusters <- cluster(distance_data, method = "furthest")
-  expect_true(get_cutoff(df_clusters) == 0.19)
-  expect_false(get_cutoff(df_clusters) == 0.4)
+  expect_true(get_label(df_clusters) == 0.19)
+  expect_false(get_label(df_clusters) == 0.4)
 })
 
 test_that("get_clusters returns the cluster dataframe", {

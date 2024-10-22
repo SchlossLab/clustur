@@ -1,10 +1,8 @@
-
-#' Get Cutoff
+#' Get label
 #'
-#' @export
-#' @description
-#' GetCutoff returns the cutoff of the cluster object from
-#' the `cluster()` function.
+#' Returns the distance cutoff of the cluster object from the `cluster()`
+#' function
+
 #' @param cluster_data The output from the `cluster()` function.
 #' @examples
 #' cutoff <- 0.2
@@ -12,11 +10,12 @@
 #' distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                            count_table, cutoff, FALSE)
 #' df_clusters <- cluster(distance_data, method = "opti")
-#' cutoff <- get_cutoff(df_clusters)
-#'
+#' cutoff <- get_label(df_clusters)
 #' @return the cutoff value as a `dbl`
-get_cutoff <- function(cluster_data) {
-  return(as.numeric(cluster_data$cluster$label[[1]]))
+#' @export
+
+get_label <- function(cluster_data) {
+  return(cluster_data$label)
 }
 
 

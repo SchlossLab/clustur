@@ -1,16 +1,20 @@
-#' Read Dist Description
+#' Read distance matrices
 #'
-#' Detailed description of the function.
+#' Read in distances from a file that is formatted with three columns for the
+#' row, column, and distance of a sparse, square matrix or in a Phylip-formatted
+#' distance matrix.
 #'
 #' @export
-#' @param distance_file Either a phylip or column
-#' distance file, or a sparse matrix.
-#' @param count_table A table of names and the given abundance per group.
+#' @param distance_file Either a phylip or column distance file, or a sparse
+#' matrix. The function will detect the format for you.
+#' @param count_table A table of names and the given abundance per group. Can
+#' be in mothur's sparse or full format. The function will detect the format for
+#' you.
 #' @param cutoff The value you wish to use as a cutoff when clustering.
-#' @param is_simularity_matrix are you using a
-#' simularity matrix or distance matrix?
+#' @param is_similarity_matrix are you using a similarity matrix (default) or
+#' distance matrix?
 #' @return A distance `externalptr` object that contains all your
-#' distance information.
+#' distance information. Can be accessed using `get_distance_df()`
 #'
 #' @examples
 #'
@@ -27,11 +31,10 @@
 #'  phylip_path <- example_path("amazon_phylip.dist")
 #'  count_table <- read_count(example_path("amazon.count_table"))
 #'
-#'  data_column <- read_dist(column_path, count_table, 0.2, FALSE)
-#'  data_phylip <- read_dist(phylip_path, count_table, 0.2, FALSE)
-#'  data_sparse <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
-#'
-#'
+#'  data_column <- read_dist(column_path, count_table, 0.03)
+#'  data_phylip <- read_dist(phylip_path, count_table, 0.03)
+#'  data_sparse <- read_dist(s_matrix, sparse_count, 0.03)
+
 read_dist <- function(distance_file, count_table,
                       cutoff, is_simularity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
@@ -50,79 +53,86 @@ read_dist <- function(distance_file, count_table,
 }
 
 
-#' Cluster Description
+#' Cluster entitites together
 #'
-#' Detailed description of the function.
+#' Clusters entities represented in a distance matrix and count table using
+#' one of several algorithms and outputs information about the composition and
+#' abundance of each cluster
 #'
 #' @export
 #' @param distance_object The distance object that
 #'  was created using the `read_dist()` function.
-#' @param method The type of cluster you wish to conduct;
-#'  opti, furthest, nearest, average, or weighted.
-#' @param random_seed the random seed you wish to use, defaulted at 123.
-#' @return A list of `data.frames` that contain abundance,
-#'  and clustering results. If you used "opti", it will also
-#'  return clustering metrics.
+#' @param method The method of clustering to be performed: opticlust (default),
+#' furthest, nearest, average, or weighted.
+#' @param random_seed the random seed to use, (default = 123).
+#' @return A list of `data.frames` that contain abundance, and clustering
+#' results. If you used `method = opticlust`, it will also return clustering
+#' performance metrics.
 #'
 #' @examples
 #'
-#'  cutoff <- 0.2
-#'  count_table <- read_count(example_path("amazon.count_table"))
+#'  cutoff <- 0.03
+#'  count_table <- read_count(example_path("amazon.full.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
-#'                             count_table, cutoff, FALSE)
+#'                             count_table, cutoff)
 #'
-#'  cluster_results <- cluster(distance_data, method = "opti")
+#'  cluster_results <- cluster(distance_data, method = "opticlust")
 #'  cluster_results <- cluster(distance_data, method = "furthest")
 #'  cluster_results <- cluster(distance_data, method = "nearest")
 #'  cluster_results <- cluster(distance_data, method = "average")
 #'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, method = "opti", random_seed = 123) {
+cluster <- function(distance_object, method = "opticlust") {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
-  set.seed(random_seed)
-  cluster_dfs <- c()
-  if (method != "opti") {
+
+  cluster_dfs <- list()
+  if (method != "opticlust") {
     cluster_dfs <- Cluster(distance_object, method)
   } else {
     cluster_dfs <- OptiCluster(distance_object)
   }
 
   # Order by OTU size
-  cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-    ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-    if (ls[[1]] == -1) {
-      return(0)
-    } else {
-      return(length(ls))
-    }
-  })
-  cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-                                             decreasing = TRUE), ]
-  cluster_dfs[[2]] <- cluster_dfs[[2]][, 1:3]
-
+  # cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
+  #   ls <- gregexpr(",", x, fixed = TRUE)[[1]]
+  #   if (ls[[1]] == -1) {
+  #     return(0)
+  #   } else {
+  #     return(length(ls))
+  #   }
+  # })
+  
+  # cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
+  #                                            decreasing = TRUE), ]
+  label <- as.numeric(cluster_dfs[[1]][1,1])
+  cluster_dfs[[1]] <- cluster_dfs[[1]][, 2:4]
+  cluster_dfs[[2]] <- cluster_dfs[[2]][, 3:2]
+  cluster_dfs[[2]][,1] <- cluster_dfs[[2]][,1] |> toupper()
 
   # Return
-  if (method != "opti") {
+  if (method != "opticlust") {
     return(list(
+      label = label,
       abundance = cluster_dfs[[1]],
       cluster = cluster_dfs[[2]]
     ))
   }
   return(list(
+    label = label,
     abundance = cluster_dfs[[1]],
     cluster = cluster_dfs[[2]],
     cluster_metrics = cluster_dfs[[3]],
-    other_cluster_metrics = cluster_dfs[[4]]
+    iteration_metrics = cluster_dfs[[4]]
   ))
 
 }
 
 #' Validate Count Table
 #'
-#' Detailed description of the function.
+#' Determines whether user supplied count table is valid
 #'
 #' @export
 #' @param count_table_df The count table `data.frame` object.
@@ -148,17 +158,18 @@ validate_count_table <- function(count_table_df) {
 
 #' Example Path
 #'
-#' @export
-#' @description
-#'  This function was created as a helper function to generate file paths to our
-#'  internal data. You should use this function if you
-#'  want to follow along with the example, or intereact with the data
-#' @param file The file name of the data
+#' This function was created as a helper function to generate file paths to our
+#' internal data. You should use this function if you
+#' want to follow along with the example, or interact with the data
+#' @param file The file name of the data; leave as NULL (default) to get full
+#' list of example files
 #' @examples
-#' # This will return the path to our example file
 #' example_path("amazon_phylip.dist")
-#'
-#' @return the path to the file as a `chr`.
+#' example_path()
+#' @return the path to the file as a `character` or a vector of `character`
+#' giving example filenames if `fill = NULL`.
+#' @export
+
 example_path <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
@@ -170,18 +181,17 @@ example_path <- function(file = NULL) {
 }
 
 
-#' Read Count
+#' Read count table
 #'
-#' @export
-#' @description
 #' This function will read and return your count table. It can take in
-#' sparse and normal count tables.
+#' sparse and full count tables.
+#' 
 #' @param count_table_path The file path of your count table.
 #' @examples
-#'
 #' count_table <- read_count(example_path("amazon.count_table"))
-#'
 #' @return a count table `data.frame`.
+#' @export
+
 read_count <- function(count_table_path) {
   # We will have to determine if its a sparse or not
   # Check if the first value of test_read had a comment
@@ -196,8 +206,6 @@ read_count <- function(count_table_path) {
 
 #' Create Sparse Matrix
 #'
-#' @export
-#' @description
 #' Given a list of i indexs, j indexes, and distances values,
 #' we can create a sparse distance matrix for you. Each vector
 #' must have the same size.
@@ -205,15 +213,14 @@ read_count <- function(count_table_path) {
 #' @param j_index A list of j indexes, must be numeric
 #' @param distances A list of the distance at the i and j index
 #' @examples
-#'
 #' # This will return the path to our example file
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
-#'
-
 #' @return a `dgTMatrix` from the `Matrix` library.
+#' @export
+
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))

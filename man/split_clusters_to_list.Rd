@@ -13,7 +13,7 @@ split_clusters_to_list(cluster)
 a named `list` of clusters.
 }
 \description{
-`split_clusters_to_list()` will extract clusters from the 
+`split_clusters_to_list()` will extract clusters from the
 cluster generated `data.frame`. It will then turn those clusters
 into a list. This allows users to more easily visualize their data.
 }

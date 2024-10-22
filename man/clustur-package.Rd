@@ -12,6 +12,7 @@ A tool that implements the clustering algorithms from mothur (Schloss PD et al. 
 Useful links:
 \itemize{
   \item \url{http://www.schlosslab.org/clustur/}
+  \item \url{https://github.com/SchlossLab/clustur}
   \item Report bugs at \url{https://github.com/SchlossLab/clustur/issues}
 }
 
