@@ -26,11 +26,11 @@ test_that("get_metrics returns the metrics for opticlustered clusters", {
                              count_table, cutoff, FALSE)
   df_clusters <- cluster(distance_data, method = "furthest")
   expect_error(get_metrics(df_clusters))
-  df_clusters <- cluster(distance_data, method = "opti")
+  df_clusters <- cluster(distance_data, method = "opticlust")
   metrics <- get_metrics(df_clusters)
   expect_true(length(metrics) == 2)
   expect_true(ncol(metrics$metrics) == 14)
-  expect_true(ncol(metrics$other_metrics) == 17)
+  expect_true(ncol(metrics$iteration_metrics) == 17)
 })
 
 test_that("get_shared returns the shared dataframe", {

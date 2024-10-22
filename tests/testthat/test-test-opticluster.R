@@ -1,16 +1,15 @@
-test_that("opti cluster returns four dataframes", {
+test_that("opticluster returns four dataframes", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df <- cluster(distance_data, method = "opti")
+  df <- cluster(distance_data, method = "opticlust")
   csv <- read.csv(test_path("extdata", "abundance_results_opticluster.csv"))
-  df$abundance$label <- as.numeric(df$abundance$label)
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
-  expect_equal(class(df$other_cluster_metrics), "data.frame")
+  expect_equal(class(df$iteration_metrics), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
-  expect_true(all(csv == df$abundance))
+  expect_true(all(csv$label == df$label))
 })
 
 test_that("other clustering methods only return two dataframes", {
@@ -44,10 +43,10 @@ test_that("Opticluster works with phylip files", {
   distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                              count_table, cutoff, FALSE)
 
-  df_opti <- cluster(distance_data, method = "opti")
+  df_opti <- cluster(distance_data, method = "opticlust")
 
   expect_true(nrow(df_opti$cluster) == 29 && nrow(df_opti$abundance == 29))
-  expect_true(length(df_opti) == 4)
+  expect_true(length(df_opti) == 5)
 
 })
 test_that("cluster works via phylip file", {
@@ -79,7 +78,7 @@ test_that("Opticluster works with column files", {
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
 
-  df_opti <- cluster(distance_data, method = "opti")
+  df_opti <- cluster(distance_data, method = "opticlust")
 
 
   expect_true(nrow(df_opti$cluster) == 31 && nrow(df_opti$abundance == 31))
@@ -114,7 +113,7 @@ test_that("Amazon Data from mothur clusters properly", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, 0.2, FALSE)
-  data <- cluster(distance_data, method = "opti")
+  data <- cluster(distance_data, method = "opticlust")
   expect_true(nrow(data$cluster) == nrow(result$cluster))
 })
 

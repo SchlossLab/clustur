@@ -188,7 +188,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             clusterData->AddToData(data);
             if(rndPreviousDist > highestDistLabel) {
                 highestDistLabel = rndPreviousDist;
-                //Rcpp::Rcout << std::to_string(highestDistLabel) << " : bins " << std::to_string(data.numberOfOtu) <<  std::endl;
+                vec->setLabel(std::to_string(highestDistLabel));
                 clusterData->SetListVector(*vec, std::to_string(highestDistLabel)); // vec might be a shallow copy
             }
         }
@@ -210,9 +210,11 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     if(!data.label.empty()) {
         data.clusterBins = oldList.print(listFile);
         auto* vec = new ListVector(oldList);
+        
         clusterData->AddToData(data);
         if(rndPreviousDist > highestDistLabel) {
             highestDistLabel = rndPreviousDist;
+            vec->setLabel(std::to_string(highestDistLabel));
             clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
         }
     }

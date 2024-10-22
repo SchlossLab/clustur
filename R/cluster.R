@@ -83,11 +83,11 @@ read_dist <- function(distance_file, count_table,
 #'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, method = "opticlust") {
+cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
-
+  set.seed(random_seed)
   cluster_dfs <- list()
   if (method != "opticlust") {
     cluster_dfs <- Cluster(distance_object, method)

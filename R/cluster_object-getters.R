@@ -83,5 +83,5 @@ get_metrics <- function(cluster_data) {
     object is clustered using the opticluster method")
   }
   return(list(metrics = cluster_data$cluster_metrics,
-              other_metrics = cluster_data$other_cluster_metrics))
+              iteration_metrics = cluster_data$iteration_metrics))
 }
