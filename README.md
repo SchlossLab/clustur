@@ -1,9 +1,9 @@
 
 
-[![R-CMD-check](https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml)
-[![test-coverage](https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml)
-[![lint](https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml)
-[![pkgdown](https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml)
+[![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
+[![test-coverage](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml)
 
 # mothur
 
@@ -23,12 +23,12 @@ install.packages("clustur")
 
 ```r
 # install via github
-remotes::install_github("SchlossLab/Clustur")
+remotes::install_github("SchlossLab/clustur")
 ```
 
 ## Getting Started
 
-To get started, look at the ["Getting started"](www.schlosslab.org/Clustur/) page.
+To get started, look at the ["Getting started"](www.schlosslab.org/clustur/) page.
 
 ## Contributions
 

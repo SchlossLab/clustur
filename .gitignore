@@ -206,3 +206,4 @@ docs
 
 .DS_Store
 /.quarto/
+.Rproj.user

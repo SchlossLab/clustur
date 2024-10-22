@@ -29,7 +29,7 @@ install.packages("clustur")
 
 ```r
 # install via github
-remotes::install_github("SchlossLab/Clustur")
+remotes::install_github("SchlossLab/clustur")
 ```
 
 clustur was developed to be similar to the [mothur implementation](https://mothur.org) that was written in C++, however there are a few differences to note. In order to cluster your data, we are requiring users to build out there own sparse matrix (we also support phylip files) and count table in R or mothur. Once these objects are built out you can call the cluster function. We currently support 5 cluster methods from mothur: furthest, nearest, weighted, and average neighbor and opticlust, which is mothur's default. Each of these methods will produce data comparable to mothur. The speed of the clustur and mothur are comparable. Below we will show you how to create your sparse matrix and count table. If you do not have a count table, clustur can produce one from you, but it will assume the abundance of each sequence is one and it will only cluster the sequences in the distance matrix.
