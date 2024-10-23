@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 ## Background
 clustur was developed to be similar to [mothur's cluster
-function](https://mothur.org/wiki/cluster) that was written in C++. In order to
+function](https://mothur.org/wiki/cluster/) that was written in C++. In order to
 cluster your data, users need to provide their own sparse or Phylip-formatted
 distance matrix. They also need to provide a count table that either comes from
 mothur or that they create in R. Once these objects are built users can call the

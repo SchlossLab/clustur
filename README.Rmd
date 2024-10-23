@@ -17,10 +17,10 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 
-[![CRAN status](https://www.r-pkg.org/badges/version/phylotypr)](https://cran.r-project.org/package=phylotypr)
-[![R-CMD-check](https://github.com/mothur/phylotypr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mothur/phylotypr/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/mothur/phylotypr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/mothur/phylotypr?branch=main)
-[![CRAN downloads](https://cranlogs.r-pkg.org/badges/phylotypr)](https://cran.rstudio.com/package=phylotypr)
+[![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
+[![test-coverage](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml)
 
 <!-- badges: end -->
 
@@ -34,13 +34,6 @@ Additionally, since clustur will be open source, developers can modify are
 package as needed. This will not only help us continue to create high quality
 packages, but will allow everyone to take advantage of the foundation that is
 already built.
-
-
-[![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
-[![test-coverage](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml)
-[![lint](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml)
-[![pkgdown](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml)
-
 
 
 

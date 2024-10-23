@@ -87,7 +87,8 @@ cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
-  if (!(method %in% c("opticlust", "furthest", "nearest", "average", "weighted"))) {
+  if (!(method %in% c("opticlust",
+                      "furthest", "nearest", "average", "weighted"))) {
     stop("`method` parameter can only be opticlust, furthest, nearest,
          average, or weighted.")
   }
