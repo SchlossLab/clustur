@@ -104,7 +104,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // Cluster
-std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string& method);
+Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method);
 RcppExport SEXP _clustur_Cluster(SEXP DistanceDataSEXP, SEXP methodSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -116,7 +116,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiCluster
-std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData);
+Rcpp::List OptiCluster(const SEXP& DistanceData);
 RcppExport SEXP _clustur_OptiCluster(SEXP DistanceDataSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

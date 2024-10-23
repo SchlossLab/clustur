@@ -20,7 +20,7 @@ otherwise it will add a new group to the count table file.
 Determines whether user supplied count table is valid
 }
 \examples{
- count_table <- read.delim(example_path("amazon.count_table"))
+ count_table <- read.delim(example_path("amazon.full.count_table"))
  count_table_valid <- validate_count_table(count_table)
 
 }

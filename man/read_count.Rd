@@ -17,5 +17,5 @@ This function will read and return your count table. It can take in
 sparse and full count tables.
 }
 \examples{
-count_table <- read_count(example_path("amazon.count_table"))
+count_table <- read_count(example_path("amazon.full.count_table"))
 }

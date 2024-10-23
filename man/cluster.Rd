@@ -4,7 +4,7 @@
 \alias{cluster}
 \title{Cluster entitites together}
 \usage{
-cluster(distance_object, method = "opticlust")
+cluster(distance_object, method = "opticlust", random_seed = 123)
 }
 \arguments{
 \item{distance_object}{The distance object that

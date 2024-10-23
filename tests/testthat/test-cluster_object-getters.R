@@ -16,7 +16,7 @@ test_that("get_clusters returns the cluster dataframe", {
   df_clusters <- cluster(distance_data, method = "furthest")
   expect_true(class(get_clusters(df_clusters)) == "data.frame")
   expect_true(all(names(get_clusters(df_clusters))
-                  %in%  c("label", "bins", "otu")))
+                  %in%  c("sequences", "otu")))
 })
 
 test_that("get_metrics returns the metrics for opticlustered clusters", {

@@ -4,7 +4,7 @@
 \alias{read_dist}
 \title{Read distance matrices}
 \usage{
-read_dist(distance_file, count_table, cutoff, is_simularity_matrix = FALSE)
+read_dist(distance_file, count_table, cutoff, is_similarity_matrix = FALSE)
 }
 \arguments{
 \item{distance_file}{Either a phylip or column distance file, or a sparse
@@ -41,7 +41,7 @@ distance matrix.
 
  column_path <- example_path("amazon_column.dist")
  phylip_path <- example_path("amazon_phylip.dist")
- count_table <- read_count(example_path("amazon.count_table"))
+ count_table <- read_count(example_path("amazon.full.count_table"))
 
  data_column <- read_dist(column_path, count_table, 0.03)
  data_phylip <- read_dist(phylip_path, count_table, 0.03)

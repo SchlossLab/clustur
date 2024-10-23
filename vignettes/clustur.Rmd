@@ -1,6 +1,10 @@
 ---
-title: "clustur" output: rmarkdown::html_vignette vignette: >
-%\VignetteIndexEntry{clustur} %\VignetteEngine{knitr::rmarkdown}
+title: "clustur"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{clustur}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 editor_options: 
   chunk_output_type: console
 ---
@@ -59,7 +63,6 @@ clustur will produce the same output using either a sparse (default) or full
 ```{r}
 full_count_table <- read_count(example_path("amazon.full.count_table"))
 sparse_count_table <- read_count(example_path("amazon.sparse.count_table"))
-all(full_count_table == sparse_count_table)
 ```
 
 

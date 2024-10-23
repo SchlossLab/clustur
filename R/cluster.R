@@ -29,14 +29,14 @@
 #'
 #'  column_path <- example_path("amazon_column.dist")
 #'  phylip_path <- example_path("amazon_phylip.dist")
-#'  count_table <- read_count(example_path("amazon.count_table"))
+#'  count_table <- read_count(example_path("amazon.full.count_table"))
 #'
 #'  data_column <- read_dist(column_path, count_table, 0.03)
 #'  data_phylip <- read_dist(phylip_path, count_table, 0.03)
 #'  data_sparse <- read_dist(s_matrix, sparse_count, 0.03)
 
 read_dist <- function(distance_file, count_table,
-                      cutoff, is_simularity_matrix = FALSE) {
+                      cutoff, is_similarity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
 
   if ("character" %in% class(distance_file)) {
@@ -44,12 +44,12 @@ read_dist <- function(distance_file, count_table,
       stop("Invalid file path: please enter a new file path.")
     }
     return(ProcessDistanceFiles(distance_file,
-                                count_table, cutoff, is_simularity_matrix))
+                                count_table, cutoff, is_similarity_matrix))
   }
   # Its a sparse matrix not a path
 
   return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
-                             count_table, cutoff, is_simularity_matrix))
+                             count_table, cutoff, is_similarity_matrix))
 }
 
 
@@ -87,47 +87,16 @@ cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
+  if (!(method %in% c("opticlust", "furthest", "nearest", "average", "weighted"))) {
+    stop("`method` parameter can only be opticlust, furthest, nearest,
+         average, or weighted.")
+  }
   set.seed(random_seed)
-  cluster_dfs <- list()
   if (method != "opticlust") {
-    cluster_dfs <- Cluster(distance_object, method)
+    return(Cluster(distance_object, method))
   } else {
-    cluster_dfs <- OptiCluster(distance_object)
+    return(OptiCluster(distance_object))
   }
-
-  # Order by OTU size
-  # cluster_dfs[[2]]$comma_count <- sapply(cluster_dfs[[2]]$bins, function(x) {
-  #   ls <- gregexpr(",", x, fixed = TRUE)[[1]]
-  #   if (ls[[1]] == -1) {
-  #     return(0)
-  #   } else {
-  #     return(length(ls))
-  #   }
-  # })
-  
-  # cluster_dfs[[2]] <- cluster_dfs[[2]][order(cluster_dfs[[2]]$comma_count,
-  #                                            decreasing = TRUE), ]
-  label <- as.numeric(cluster_dfs[[1]][1,1])
-  cluster_dfs[[1]] <- cluster_dfs[[1]][, 2:4]
-  cluster_dfs[[2]] <- cluster_dfs[[2]][, 3:2]
-  cluster_dfs[[2]][,1] <- cluster_dfs[[2]][,1] |> toupper()
-
-  # Return
-  if (method != "opticlust") {
-    return(list(
-      label = label,
-      abundance = cluster_dfs[[1]],
-      cluster = cluster_dfs[[2]]
-    ))
-  }
-  return(list(
-    label = label,
-    abundance = cluster_dfs[[1]],
-    cluster = cluster_dfs[[2]],
-    cluster_metrics = cluster_dfs[[3]],
-    iteration_metrics = cluster_dfs[[4]]
-  ))
-
 }
 
 #' Validate Count Table
@@ -142,7 +111,7 @@ cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
 #' otherwise it will add a new group to the count table file.
 #'
 #' @examples
-#'  count_table <- read.delim(example_path("amazon.count_table"))
+#'  count_table <- read.delim(example_path("amazon.full.count_table"))
 #'  count_table_valid <- validate_count_table(count_table)
 #'
 validate_count_table <- function(count_table_df) {
@@ -185,10 +154,10 @@ example_path <- function(file = NULL) {
 #'
 #' This function will read and return your count table. It can take in
 #' sparse and full count tables.
-#' 
+#'
 #' @param count_table_path The file path of your count table.
 #' @examples
-#' count_table <- read_count(example_path("amazon.count_table"))
+#' count_table <- read_count(example_path("amazon.full.count_table"))
 #' @return a count table `data.frame`.
 #' @export
 

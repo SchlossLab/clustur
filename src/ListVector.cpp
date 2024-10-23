@@ -183,16 +183,15 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
     }
 }
 ///Create Test
-Rcpp::DataFrame ListVector::CreateDataFrameFromList(const std::string& label) const {
+Rcpp::DataFrame ListVector::CreateDataFrameFromList() const {
     std::unordered_map<std::string, std::vector<std::string>> map;
-    const std::vector<std::string> headers{"otu", "bins", "label"};
+    const std::vector<std::string> headers{"otu", "sequences"};
     int count = 1;
     for(const auto& bin : data) {
         if(bin.empty())
             continue;
-        map[headers[0]].emplace_back("otu" + std::to_string(count++));
+        map[headers[0]].emplace_back("OTU" + std::to_string(count++));
         map[headers[1]].emplace_back(bin);
-        map[headers[2]].emplace_back(label);
     }
     return DataFrameAdapter::UnorderedMapToDataFrame(map);
 }

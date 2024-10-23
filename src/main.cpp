@@ -54,9 +54,6 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
 //[[Rcpp::export]]
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
     std::fstream data(filePath);
-    std::unordered_map<bool, std::string> map;
-    map[true] = "This is a phylip file. Processing now...";
-    map[false] = "This is a column file. Processing now...";
 
     if(!data.is_open()) {
         Rcpp::Rcout << "Please enter a valid file path\n";
@@ -72,7 +69,6 @@ bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
     }
     if(count > 1)
         isPhylip = false;
-    Rcpp::Rcout << map[isPhylip] << "\n";
     data.close();
     return isPhylip;
 }
@@ -128,7 +124,7 @@ Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
 }
 
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string& method) {
+Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
@@ -136,15 +132,18 @@ std::vector<Rcpp::DataFrame> Cluster(const SEXP& DistanceData, const std::string
     const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList();
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     delete(listVector);
-    return {tidySharedDataFrame, clusterDataFrame};
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+    Rcpp::Named("abundance") = tidySharedDataFrame,
+    Rcpp::Named("cluster") = clusterDataFrame);
 }
 
 //[[Rcpp::export]]
-std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData) {
+Rcpp::List OptiCluster(const SEXP& DistanceData) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
@@ -154,10 +153,15 @@ std::vector<Rcpp::DataFrame> OptiCluster(const SEXP& DistanceData) {
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
     ClusterCommand command;
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
-    Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(result->GetListVector().label);
-    Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList();
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
-    return {tidySharedDataFrame, clusterDataFrame,command.GetSensitivityData(), command.GetClusterMetrics()};
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = command.GetSensitivityData(),
+      Rcpp::Named("iteration_metrics") = command.GetClusterMetrics());
 }
 
 //[[Rcpp::export]]
