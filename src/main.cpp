@@ -9,7 +9,6 @@
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/OptiMatrix.h"
 #include "Adapters/CountTableAdapter.h"
-#include "Adapters/DistanceFilesToSparse.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
