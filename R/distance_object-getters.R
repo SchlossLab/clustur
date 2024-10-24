@@ -40,7 +40,5 @@ get_distance_df <- function(distance_object) {
     stop("The distance object must be the object generated when
          calling the `read_dist` function.")
   df <- GetDistanceDataFrame(distance_object)
-  # df <- df[df$FirstName != "", ]
-  # df$Distance[which(df$Distance == -1)] <-  1
   return(df)
 }

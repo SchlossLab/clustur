@@ -18,7 +18,7 @@ reference:
   - get_metrics
   - get_count_table
   - get_label
-  - get_distance_data_frame
+  - get_distance_df
 - title: Helper Functions
   contents: 
   - example_path

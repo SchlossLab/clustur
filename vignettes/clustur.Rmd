@@ -86,7 +86,8 @@ The return value of `distance_data` will be a memory address. If you want a data
 frame version of the distances, you can use `get_distances(distance_data)`.
 
 ```{r}
-# all(get_distance_df(column_distance) == get_distance_df(phylip_distance))
+get_distance_df(column_distance)
+get_distance_df(phylip_distance)
 ```
 
 
