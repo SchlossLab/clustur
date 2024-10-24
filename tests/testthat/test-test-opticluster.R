@@ -138,8 +138,10 @@ test_that("Read dist can read column and phylip files", {
                                     count_table, 0.2, FALSE)
   distance_data_phylip <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                                     count_table, 0.2, FALSE)
-  expect_true(nrow(get_distance_data_frame(distance_data_column)) == 9604)
-  expect_true(nrow(get_distance_data_frame(distance_data_phylip)) == 9604)
+  col_df <- get_distance_df(distance_data_column)
+  phy_df <- get_distance_df(distance_data_phylip)
+  expect_true(nrow(get_distance_df(distance_data_column)) == 9604)
+  expect_true(nrow(get_distance_df(distance_data_phylip)) == 9604)
 })
 
 

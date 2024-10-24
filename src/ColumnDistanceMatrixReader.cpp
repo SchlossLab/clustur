@@ -220,7 +220,7 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 			else if (sim) { distance = 1 - distance;  }
 			//if(distance > 0)
 			//	Rcpp::Rcout << "Distance: " << distance << std::endl; //user has entered a sim matrix that we need to convert.
-			//rowData[itB].rowValues[itA] = distance;
+			rowData[itB].rowValues[itA] = distance;
 			rowData[itA].rowValues[itB] = distance;
 		}
 	}

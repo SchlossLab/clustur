@@ -190,7 +190,7 @@ Rcpp::DataFrame ListVector::CreateDataFrameFromList() const {
     for(const auto& bin : data) {
         if(bin.empty())
             continue;
-        map[headers[0]].emplace_back("OTU" + std::to_string(count++));
+        map[headers[0]].emplace_back("otu" + std::to_string(count++));
         map[headers[1]].emplace_back(bin);
     }
     return DataFrameAdapter::UnorderedMapToDataFrame(map);
