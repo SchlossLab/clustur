@@ -20,13 +20,38 @@ context("ColumnDistanceMatrixReader Test") {
     // unit test, and use 'expect_true()' and 'expect_false()'
     // to test the desired conditions.
     test_that("Column Reader reads column files") {
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ColumnDistanceMatrixReader reader(0.2, false);
+        CountTableAdapter adapter;
+        adapter.CreateDataFrameMap(df);
+        reader.Read(adapter, path);
         ColumnReaderTestFixture fixture;
-        bool result = fixture.TestReadColumnFile("", {}, true);
+        bool result = fixture.TestReadColumnFile(path, adapter, reader.GetListVector()->getNumSeqs());
+        expect_true(result);
+        result = fixture.TestReadColumnFile("", {}, 1);
         expect_false(result);
     }
-    test_that("Column Reader reads phylip files to rowdata information") {
+    test_that("Column Reader reads column files to rowdata information") {
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ColumnDistanceMatrixReader reader(0.2, false);
+        CountTableAdapter adapter;
+        adapter.CreateDataFrameMap(df);
         ColumnReaderTestFixture fixture;
-        bool result = fixture.TestReadColumnFileToRowData("", {}, {});
+        bool result = fixture.TestReadColumnFileToRowData(path, adapter, reader.ReadToRowData(adapter, path));
+        expect_true(result);
+        result = fixture.TestReadColumnFileToRowData("", {}, std::vector<RowData>(1));
         expect_false(result);
     }
 
@@ -37,8 +62,21 @@ context("ColumnDistanceMatrixReader Test") {
 
     }
       test_that("Column Reader properly creates a list vector"){
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ColumnDistanceMatrixReader reader(0.2, false);
+        CountTableAdapter adapter;
+        adapter.CreateDataFrameMap(df);
+        reader.Read(adapter, path);
         ColumnReaderTestFixture fixture;
-        bool result = fixture.TestGetListVector("", {}, false);
+        bool result = fixture.TestGetListVector(path, adapter, reader.GetListVector()->getNumSeqs());
+        expect_true(result);
+        result = fixture.TestGetListVector("", {}, 0);
         expect_true(result);
 
     }

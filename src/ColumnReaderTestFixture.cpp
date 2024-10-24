@@ -5,9 +5,10 @@
 #include "Tests/ColumnReaderTestFixture.h"
 
 bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const CountTableAdapter& adapter,
-                                                 const bool expectedResult) {
+                                                 const int expectedResult) {
     Setup();
-    const auto result = reader->Read(adapter, file);
+    reader->Read(adapter, file);
+    const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;
 }
@@ -18,7 +19,7 @@ bool ColumnReaderTestFixture::TestReadColumnFileToRowData(const std::string &fil
     Setup();
     const auto result = reader->ReadToRowData(adapter, filePath);
     TearDown();
-    return !result.empty() && !expectedResult.empty();
+    return result.size() == expectedResult.size();
 }
 
 bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
@@ -31,10 +32,10 @@ bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
 }
 
 bool ColumnReaderTestFixture::TestGetListVector(const std::string& filePath,
-     const CountTableAdapter& adapter, const bool expectedResult) {
+     const CountTableAdapter& adapter, const int expectedResult) {
     Setup();
     reader->Read(adapter, filePath);
-    const auto result = reader->GetListVector()->size() > 0;
+    const auto result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;
 }

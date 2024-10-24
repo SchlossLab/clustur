@@ -22,12 +22,25 @@ context("PhylipReader Test") {
     // to test the desired conditions.
     test_that("Phylip Reader reads phylip files") {
         PhylipReaderTestFixture fixture;
-        bool result = fixture.TestReadPhylipFile("", true);
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        const Rcpp::Function func = pkg["test_path"];
+        const std::string path = Rcpp::as<std::string>(func("extdata", "amazon_phylip.dist"));
+        ReadPhylipMatrix reader(0.2, false);
+        reader.Read(path);
+        bool result = fixture.TestReadPhylipFile(path, reader.GetListVector()->getNumSeqs());
+        expect_true(result);
+        result = fixture.TestReadPhylipFile("", 1);
         expect_false(result);
     }
     test_that("Phylip Reader reads phylip files to rowdata information") {
         PhylipReaderTestFixture fixture;
-        bool result = fixture.TestReadPhylipFileToRowData("", {});
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        const Rcpp::Function func = pkg["test_path"];
+        const std::string path = Rcpp::as<std::string>(func("extdata", "amazon_phylip.dist"));
+        ReadPhylipMatrix reader(0.2, false);
+        bool result = fixture.TestReadPhylipFileToRowData(path, reader.ReadToRowData(path));
+        expect_true(result);
+        result = fixture.TestReadPhylipFileToRowData("", std::vector<RowData>(1));
         expect_false(result);
     }
     test_that("Phylip Reader reads phylip file from created RowData Vectors") {
@@ -42,9 +55,9 @@ context("PhylipReader Test") {
         countTable.CreateDataFrameMap(dataframe);
         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
-        bool result = fixture.TestReadPhylipFile(squareMatrix, true);
+        bool result = fixture.TestReadPhylipFileFromRowData(squareMatrix, 6);
         expect_true(result);
-        result = fixture.TestReadPhylipFile(squareMatrix, false);
+        result = fixture.TestReadPhylipFileFromRowData(squareMatrix, 3);
         expect_false(result);
     }
     test_that("Phylip Reader properly creates a sparse distance matrix"){
@@ -80,12 +93,12 @@ context("PhylipReader Test") {
         countTable.CreateDataFrameMap(dataframe);
         MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
         std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
-        bool result = fixture.TestGetListVector(adapter.DistanceMatrixToSquareMatrix(), true);
+        bool result = fixture.TestGetListVector(adapter.DistanceMatrixToSquareMatrix(), 6);
         expect_true(result);
 
         MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
         std::vector<RowData> squareMatrixTwo = adapterTwo.DistanceMatrixToSquareMatrix();
-        result = fixture.TestGetListVector(squareMatrixTwo, true);
+        result = fixture.TestGetListVector(squareMatrixTwo, 3);
         expect_false(result);
 
     }

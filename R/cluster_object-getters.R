@@ -15,6 +15,11 @@
 #' @export
 
 get_label <- function(cluster_data) {
+  if (!("list" %in% class(cluster_data)) ||
+        is.null(cluster_data$label)) {
+    stop("Ensure `cluster_data` is the object generated from the
+    `cluster` function.")
+  }
   return(cluster_data$label)
 }
 
@@ -36,6 +41,11 @@ get_label <- function(cluster_data) {
 #'
 #' @return the created cluster `data.frame`.
 get_clusters <- function(cluster_data) {
+  if (!("list" %in% class(cluster_data)) ||
+        is.null(cluster_data$cluster)) {
+    stop("Ensure `cluster_data` is the object generated from the
+    `cluster` function.")
+  }
   return(cluster_data$cluster)
 }
 
@@ -57,6 +67,11 @@ get_clusters <- function(cluster_data) {
 #'
 #' @return a shared data.frame
 get_shared <- function(cluster_data) {
+  if (!("list" %in% class(cluster_data)) ||
+        is.null(cluster_data$abundance)) {
+    stop("Ensure `cluster_data` is the object generated from the
+    `cluster` function.")
+  }
   return(cluster_data$abundance)
 }
 
@@ -78,7 +93,8 @@ get_shared <- function(cluster_data) {
 #'
 #' @return a list of metric data.frames
 get_metrics <- function(cluster_data) {
-  if (is.null(cluster_data$cluster_metrics)) {
+  if (!("list" %in% class(cluster_data)) ||
+        is.null(cluster_data$cluster_metrics)) {
     stop("Can only use the get_metrics function when an 
     object is clustered using the opticluster method")
   }
