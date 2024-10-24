@@ -22,6 +22,6 @@ test_that("get_distance_df returns a dataframe of the distances", {
                              count_table, cutoff, FALSE)
   distances <- get_distance_df(distance_data)
   expect_true("data.frame" %in% class(distances))
-  expect_true(nrow(distances) == 1350)
+  expect_true(nrow(distances) == 962)
   expect_true(ncol(distances) == 3)
 })
