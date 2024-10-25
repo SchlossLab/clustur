@@ -83,7 +83,7 @@ phylip_distance <- read_dist(example_path("amazon_phylip.dist"), full_count_tabl
 ```
 
 The return value of `distance_data` will be a memory address. If you want a data
-frame version of the distances, you can use `get_distances(distance_data)`.
+frame version of the distances, you can use `get_distance_df(distance_data)`.
 
 ```{r}
 get_distance_df(column_distance)
@@ -124,8 +124,8 @@ clustur provides getter functions, `get_label()`, `get_clusters()`,
 
 ```{r R.options=list(max.print=15)}
 clusters <- cluster(column_distance)
-get_label(clusters)
-get_clusters(clusters)
-get_shared(clusters)
+get_cutoff(clusters)
+get_bins(clusters)
+get_abundance(clusters)
 get_metrics(clusters)
 ```
