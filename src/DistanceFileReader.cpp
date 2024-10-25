@@ -15,9 +15,14 @@ Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
         const std::string firstName = value.name;
         for(size_t i = 0; i < size; i++) {
             const double distance = value.rowValues[i];
+            
+            const std::string secondName = rowDataMatrix[i].name;
+
+            if (firstName == secondName) continue;
             if (distance > cutoff || distance < 0) continue;
+            
             indexOneNames[counter] = firstName;
-            indexTwoNames[counter] = rowDataMatrix[i].name;
+            indexTwoNames[counter] = secondName;
             distances[counter++] = distance;
         }
     }
