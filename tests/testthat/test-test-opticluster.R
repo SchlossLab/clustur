@@ -93,11 +93,8 @@ test_that("Opticluster works with column files", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-
   df_opti <- cluster(distance_data, method = "opticlust")
-
-
-  expect_true(nrow(df_opti$cluster) == 31 && nrow(df_opti$abundance == 31))
+  expect_true(nrow(df_opti$cluster) == 29 && nrow(df_opti$abundance == 29))
 })
 
 test_that("Normal cluster works via column file", {
@@ -112,14 +109,14 @@ test_that("Normal cluster works via column file", {
   df_average <- cluster(distance_data, method = "average")
   df_weighted <- cluster(distance_data, method = "weighted")
 
-  expect_true(nrow(df_furthest$cluster) == 33
-              && nrow(df_furthest$abundance == 33))
-  expect_true(nrow(df_nearest$cluster) == 22
-              && nrow(df_furthest$abundance == 22))
-  expect_true(nrow(df_average$cluster) == 37
-              && nrow(df_furthest$abundance == 37))
-  expect_true(nrow(df_weighted$cluster) == 38
-              && nrow(df_furthest$abundance == 38))
+  expect_true(nrow(df_furthest$cluster) == 31
+              && nrow(df_furthest$abundance == 31))
+  expect_true(nrow(df_nearest$cluster) == 20
+              && nrow(df_furthest$abundance == 20))
+  expect_true(nrow(df_average$cluster) == 35
+              && nrow(df_furthest$abundance == 35))
+  expect_true(nrow(df_weighted$cluster) == 36
+              && nrow(df_furthest$abundance == 36))
 })
 
 
@@ -147,9 +144,10 @@ test_that("Read count can read sparse and normal count tables", {
   expect_true(nrow(sparse_count_table) == 5)
   expect_true(ncol(sparse_count_table) == 12)
 })
-
+# Change
 test_that("Read dist can read column, phylip files, and sparse matrices", {
   set.seed(123)
+
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data_column <- read_dist(test_path("extdata", "amazon_column.dist"),
                                     count_table, 0.2, FALSE)
@@ -162,10 +160,14 @@ test_that("Read dist can read column, phylip files, and sparse matrices", {
   sparse_count <- data.frame(Representative_Sequence = 1:100,
                              total = rep(1, times = 100))
   distance_data_sparse <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
+  dist_df_col <- get_distance_df(distance_data_column)
+  dist_df_phy <- get_distance_df(distance_data_phylip)
+  dist_df_sparse <- get_distance_df(distance_data_sparse)
   expect_error(read_dist("", count_table, 0.2, FALSE))
-  expect_true(nrow(get_distance_df(distance_data_column)) == 962)
-  expect_true(nrow(get_distance_df(distance_data_phylip)) == 1048)
-  expect_true(nrow(get_distance_df(distance_data_sparse)) == 9827)
+  expect_true(all(dist_df_phy == dist_df_col))
+  expect_true(nrow(dist_df_col) == 573)
+  expect_true(nrow(dist_df_phy) == 573)
+  expect_true(nrow(dist_df_sparse) == 9667)
 })
 
 

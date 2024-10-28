@@ -98,7 +98,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         positionsOfIndexs[xPosition[i]] = i;
         matrixNames[i] = positionsToNames[xPosition[i]];
         dataList[i].name = positionsToNames[xPosition[i]];
-        dataList[i].rowValues = std::vector<double>(nameSize, 0);
+        dataList[i].rowValues = std::vector<double>(nameSize, -1);
     }
 
     for (int i = 0; i < nSeqs;  i++) {
