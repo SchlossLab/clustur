@@ -49,10 +49,10 @@ read_dist <- function(distance_file, count_table,
 
   # Its a sparse matrix not a path
   # filter out the sparse matrix
-  indexes <- which(distance_file@x <= 0.2)
-  distance_file@i <- distance_file@i[indexes]
-  distance_file@j <- distance_file@j[indexes]
-  distance_file@x <- distance_file@x[indexes]
+  # indexes <- which(distance_file@x <= 0.2)
+  # distance_file@i <- distance_file@i[indexes]
+  # distance_file@j <- distance_file@j[indexes]
+  # distance_file@x <- distance_file@x[indexes]
   return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
                              count_table, cutoff, is_similarity_matrix))
 }

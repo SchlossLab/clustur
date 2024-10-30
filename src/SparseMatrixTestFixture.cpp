@@ -85,9 +85,8 @@ bool SparseMatrixTestFixture::TestAddCell(const unsigned long row, const PDistCe
 
 bool SparseMatrixTestFixture::TestAddCellSorted(const unsigned long row, const PDistCell& cell, const bool expectedResult) {
     Setup();
-    sparseDistanceMatrix->addCellSorted(row, cell);
-    const size_t size = sparseDistanceMatrix->seqVec[row].size() - 1;
-    const auto currentCell = sparseDistanceMatrix->seqVec[row][size - cell.index];
+    const int location = sparseDistanceMatrix->addCellSorted(row, cell);
+    const auto currentCell = sparseDistanceMatrix->seqVec[row][location];
     const bool result = currentCell.dist == cell.dist && currentCell.index == cell.index;
     TearDown();
     return result == expectedResult;

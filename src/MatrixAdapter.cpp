@@ -8,7 +8,7 @@
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
                              const std::vector<double> &dataValues, const double cutOff, const bool isSimularity,
-                             CountTableAdapter table): countTable(std::move(table)),xPosition(iIndexes), yPosition(jIndexes),
+                             CountTableAdapter table): cutoff(cutOff), countTable(std::move(table)),xPosition(iIndexes), yPosition(jIndexes),
                             data(dataValues) {
     phylipReader = new ReadPhylipMatrix(cutOff, isSimularity);
 }
@@ -98,23 +98,30 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         positionsOfIndexs[xPosition[i]] = i;
         matrixNames[i] = positionsToNames[xPosition[i]];
         dataList[i].name = positionsToNames[xPosition[i]];
-        dataList[i].rowValues = std::vector<double>(nameSize, -1);
+        dataList[i].rowValues = std::vector<double>(i + 1, -1);
+        dataList[i].rowValues[i] = 0;
     }
 
     for (int i = 0; i < nSeqs;  i++) {
-        int xIndex = positionsOfIndexs[xPosition[i]]; // Coming from r -> c++, indeces start at 1 in r
-        int yIndex = positionsOfIndexs[yPosition[i]];
-        if(data[i] < 0) {
-            data[i] = 0;
+
+        double currentDist = data[i];
+        if(currentDist > cutoff) continue;
+        if(currentDist < 0) {
+            currentDist = 0;
         }
-        const double currentValueX = dataList[yIndex].rowValues[xIndex];
-        if(currentValueX != 0){ // We already set the value and this is a sparse matrix. 
-            continue;           // WE do not need to reset the values back to zero.
-        }                       // This is a catch all in the case of a sparse and square matrix
+        const int xIndex = positionsOfIndexs[xPosition[i]]; // Coming from r -> c++, indeces start at 1 in r
+        const int yIndex = positionsOfIndexs[yPosition[i]];
+
+        // const double currentValueX = dataList[yIndex].rowValues[xIndex];
+        // if(currentValueX != 0){ // We already set the value and this is a sparse matrix.
+        //     continue;           // WE do not need to reset the values back to zero.
+        // }                       // This is a catch all in the case of a sparse and square matrix
         // Since the indexes were reverting back to zero, if the values were found again,
         // like 2,4 = 0.3, but 4,2 = 0 was found, (its a sparse matrix) so we do not change back the value.
-        dataList[xIndex].rowValues[yIndex] = data[i];
-        dataList[yIndex].rowValues[xIndex] = data[i];
+        if(xIndex > yIndex)
+            dataList[xIndex].rowValues[yIndex] = currentDist;
+        else
+            dataList[yIndex].rowValues[xIndex] = currentDist;
     }
     std::vector<RowData> sequenceData(names.size());
     int index = 0;
