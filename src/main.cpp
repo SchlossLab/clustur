@@ -85,14 +85,12 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
         const std::vector<RowData> rowDataMatrix = read->ReadToRowData(filePath);
         read->SetCountTable(adapter);
-        read->SetRowDataMatrix(rowDataMatrix);
         read->ReadRowDataMatrix(rowDataMatrix);
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
     const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
     read->SetCountTable(adapter);
-    read->SetRowDataMatrix(rowDataMatrix);
     read->ReadRowDataMatrix(rowDataMatrix);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }

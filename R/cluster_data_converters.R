@@ -18,7 +18,7 @@
 #' @return a named `list` of clusters.
 split_clusters_to_list <- function(cluster) {
   ls <- c()
-  cluster_df <- get_clusters(cluster)
+  cluster_df <- get_bins(cluster)
   size <- nrow(cluster_df)
   for (i in 1:size) {
     ls[[cluster_df$otu[[i]]]] <-

@@ -71,7 +71,7 @@ test_that("cluster works via phylip file", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                              count_table, cutoff, FALSE)
-
+  
   df_furthest <- cluster(distance_data, method = "furthest")
   df_nearest <- cluster(distance_data, method = "nearest")
   df_average <- cluster(distance_data, method = "average")
@@ -165,8 +165,8 @@ test_that("Read dist can read column, phylip files, and sparse matrices", {
   dist_df_sparse <- get_distance_df(distance_data_sparse)
   expect_error(read_dist("", count_table, 0.2, FALSE))
   expect_true(all(dist_df_phy == dist_df_col))
-  expect_true(nrow(dist_df_col) == 573)
-  expect_true(nrow(dist_df_phy) == 573)
+  expect_true(nrow(dist_df_col) == 475)
+  expect_true(nrow(dist_df_phy) == 475)
   expect_true(nrow(dist_df_sparse) == 113)
 })
 
@@ -219,7 +219,7 @@ test_that("Split Clusters to list will generate valid list", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df <- cluster(distance_data)
+  df <- cluster(distance_data, method = "opticlust")
   list <- split_clusters_to_list(df)
   expect_true(all(names(list) %in% df$cluster$otu))
   expect_true(length(list) == nrow(df$cluster))

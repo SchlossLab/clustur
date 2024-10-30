@@ -19,7 +19,7 @@ class ReadPhylipMatrix final : public DistanceFileReader {
 public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
-    ~ReadPhylipMatrix() override = default;
+    // ~ReadPhylipMatrix() override = default;
     bool Read(const std::string&);
     std::vector<RowData> ReadToRowData(const std::string&) override;
 

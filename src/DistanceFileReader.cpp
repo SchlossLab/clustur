@@ -47,7 +47,6 @@ bool DistanceFileReader::ReadRowDataMatrix(const std::vector<RowData> &rowData) 
         return false;
     Utils util;
     std::string name = rowData[0].name;
-    std::vector<std::string> matrixNames;
     const int nseqs = static_cast<int>(rowData.size());
     list = new ListVector(nseqs);
     list->set(0, name);
@@ -56,7 +55,7 @@ bool DistanceFileReader::ReadRowDataMatrix(const std::vector<RowData> &rowData) 
     for (int i = 1; i < nseqs; i++) {
         name = rowData[i].name;
         list->set(i, name);
-        matrixNames.push_back(name); // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
+        // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
         // Where it should be giving me the distance between 1 and 2, its not giving me any distance, I removed them.
         for (int j = 0; j < i; j++) {
             auto distance = static_cast<float>(rowData[i].rowValues[j]);

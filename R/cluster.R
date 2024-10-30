@@ -166,7 +166,6 @@ example_path <- function(file = NULL) {
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' @return a count table `data.frame`.
 #' @export
-
 read_count <- function(count_table_path) {
   # We will have to determine if its a sparse or not
   # Check if the first value of test_read had a comment

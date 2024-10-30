@@ -108,21 +108,17 @@ std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath
 
     float distance;
     std::string name;
-    std::vector<std::string> matrixNames;
-
-
     std::string numTest;
     fileHandle >> numTest >> name;
     const int nseqs = std::stoi(numTest);
-    matrixNames.push_back(name);
-    std::vector<RowData> phylipRowData(nseqs);
-    phylipRowData[0].name = name;
+    rowDataMatrix = std::vector<RowData>(nseqs);
+    rowDataMatrix[0].name = name;
     list = new ListVector(nseqs);
     list->set(0, name);
 
     for (int i = 0; i < nseqs; i++) {
-        phylipRowData[i].rowValues = std::vector<double>(i + 1, -1);
-        phylipRowData[i].rowValues[i] = 0; // set itself to 0
+        rowDataMatrix[i].rowValues = std::vector<double>(i, -1);
+        // phylipRowData[i].rowValues[i] = 0; // set itself to 0
     }
     bool square = false;
     char d;
@@ -143,14 +139,13 @@ std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath
     if(!square) {
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            matrixNames.push_back(name);
-            phylipRowData[i].name = name;
+            rowDataMatrix[i].name = name;
             list->set(i, name);
             for (int j = 0; j < i; j++) {
                 fileHandle >> distance;
                 if(distance > cutoff)
                     continue;
-                phylipRowData[i].rowValues[j] = distance;
+                rowDataMatrix[i].rowValues[j] = distance;
                 //phylipRowData[j].rowValues[i] = distance;
             }
         }
@@ -158,25 +153,23 @@ std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath
     else {
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            matrixNames.push_back(name);
-            phylipRowData[i].name = name;
+            rowDataMatrix[i].name = name;
             list->set(i, name);
             for (int j = 0; j < nseqs; j++) {
                 fileHandle >> distance;
                 if(distance > cutoff)
                     continue;
-                if(j > i) {
+                if(j >= i) {
                     while ((fileHandle.peek()!='\n') && (fileHandle>> distance)) {}
                     break;
                 }
-                phylipRowData[i].rowValues[j] = distance;
+                rowDataMatrix[i].rowValues[j] = distance;
                 //phylipRowData[j].rowValues[i] = distance;
             }
         }
     }
     fileHandle.close();
-
-    return phylipRowData;
+    return rowDataMatrix;
 }
 
 
