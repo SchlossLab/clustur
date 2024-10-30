@@ -3,7 +3,7 @@ test_that("opticluster returns four dataframes", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df <- cluster(distance_data, method = "opticlust")
+  df <- cluster(distance_data, cutoff, method = "opticlust")
   csv <- read.csv(test_path("extdata", "abundance_results_opticluster.csv"))
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$cluster_metrics), "data.frame")
@@ -18,10 +18,10 @@ test_that("other clustering methods only return two dataframes", {
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
 
-  df_furthest <- cluster(distance_data, method = "furthest")
-  df_nearest <- cluster(distance_data, method = "nearest")
-  df_average <- cluster(distance_data, method = "average")
-  df_weighted <- cluster(distance_data, method = "weighted")
+  df_furthest <- cluster(distance_data, cutoff, method = "furthest")
+  df_nearest <- cluster(distance_data, cutoff, method = "nearest")
+  df_average <- cluster(distance_data, cutoff, method = "average")
+  df_weighted <- cluster(distance_data, cutoff, method = "weighted")
 
   expect_equal(class(df_furthest$cluster), "data.frame")
   expect_equal(class(df_furthest$abundance), "data.frame")
@@ -41,7 +41,7 @@ test_that("Clustering fails when arguments are incorrect", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  expect_error(cluster(distance_data, "neighbor"))
+  expect_error(cluster(distance_data, cutoff, "neighbor"))
   expect_error(cluster(cutoff, "opticlust"))
 })
 
@@ -52,7 +52,7 @@ test_that("Opticluster works with phylip files", {
   distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                              count_table, cutoff, FALSE)
 
-  df_opti <- cluster(distance_data, method = "opticlust")
+  df_opti <- cluster(distance_data, cutoff, method = "opticlust")
 
   expect_true(nrow(df_opti$cluster) == 29 && nrow(df_opti$abundance == 29))
   expect_true(length(df_opti) == 5)
@@ -72,11 +72,14 @@ test_that("cluster works via phylip file", {
   distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                              count_table, cutoff, FALSE)
   
-  df_furthest <- cluster(distance_data, method = "furthest")
-  df_nearest <- cluster(distance_data, method = "nearest")
-  df_average <- cluster(distance_data, method = "average")
-  df_weighted <- cluster(distance_data, method = "weighted")
+  df_opti <- cluster(distance_data, cutoff, method = "opticlust")
+  df_furthest <- cluster(distance_data, cutoff, method = "furthest")
+  df_nearest <- cluster(distance_data, cutoff, method = "nearest")
+  df_average <- cluster(distance_data, cutoff, method = "average")
+  df_weighted <- cluster(distance_data, cutoff, method = "weighted")
 
+  expect_true(nrow(df_opti$cluster) == 29
+              && nrow(df_opti$abundance == 29))
   expect_true(nrow(df_furthest$cluster) == 31
               && nrow(df_furthest$abundance == 31))
   expect_true(nrow(df_nearest$cluster) == 20
@@ -93,7 +96,7 @@ test_that("Opticluster works with column files", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df_opti <- cluster(distance_data, method = "opticlust")
+  df_opti <- cluster(distance_data, cutoff, method = "opticlust")
   expect_true(nrow(df_opti$cluster) == 29 && nrow(df_opti$abundance == 29))
 })
 
@@ -104,10 +107,10 @@ test_that("Normal cluster works via column file", {
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
 
-  df_furthest <- cluster(distance_data, method = "furthest")
-  df_nearest <- cluster(distance_data, method = "nearest")
-  df_average <- cluster(distance_data, method = "average")
-  df_weighted <- cluster(distance_data, method = "weighted")
+  df_furthest <- cluster(distance_data, cutoff, method = "furthest")
+  df_nearest <- cluster(distance_data, cutoff, method = "nearest")
+  df_average <- cluster(distance_data, cutoff, method = "average")
+  df_weighted <- cluster(distance_data, cutoff, method = "weighted")
 
   expect_true(nrow(df_furthest$cluster) == 31
               && nrow(df_furthest$abundance == 31))
@@ -121,12 +124,12 @@ test_that("Normal cluster works via column file", {
 
 
 test_that("Amazon Data from mothur clusters properly", {
-
+  cutoff <- 0.2
   result <- readRDS(test_path("extdata", "amazon_opti_results.RDS"))
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
-                             count_table, 0.2, FALSE)
-  data <- cluster(distance_data, method = "opticlust")
+                             count_table, cutoff, FALSE)
+  data <- cluster(distance_data, cutoff, method = "opticlust")
   expect_true(nrow(data$cluster) == nrow(result$cluster))
 })
 
@@ -219,13 +222,13 @@ test_that("Split Clusters to list will generate valid list", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df <- cluster(distance_data, method = "opticlust")
+  df <- cluster(distance_data, cutoff, method = "opticlust")
   list <- split_clusters_to_list(df)
   expect_true(all(names(list) %in% df$cluster$otu))
   expect_true(length(list) == nrow(df$cluster))
 
   # Test that it works on classic cluster methods
-  df <- cluster(distance_data, "furthest")
+  df <- cluster(distance_data, cutoff, "furthest")
   list <- split_clusters_to_list(df)
   expect_true(all(names(list) %in% df$cluster$otu))
   expect_true(length(list) == nrow(df$cluster))

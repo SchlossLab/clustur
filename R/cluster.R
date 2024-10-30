@@ -67,6 +67,7 @@ read_dist <- function(distance_file, count_table,
 #' @export
 #' @param distance_object The distance object that
 #'  was created using the `read_dist()` function.
+#' @param cutoff The cutoff you want to cluster towards.
 #' @param method The method of clustering to be performed: opticlust (default),
 #' furthest, nearest, average, or weighted.
 #' @param random_seed the random seed to use, (default = 123).
@@ -80,15 +81,20 @@ read_dist <- function(distance_file, count_table,
 #'  count_table <- read_count(example_path("amazon.full.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff)
+#'  
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "opticlust")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "furthest")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "nearest")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "average")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "weighted")
 #'
-#'  cluster_results <- cluster(distance_data, method = "opticlust")
-#'  cluster_results <- cluster(distance_data, method = "furthest")
-#'  cluster_results <- cluster(distance_data, method = "nearest")
-#'  cluster_results <- cluster(distance_data, method = "average")
-#'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
-#'
-cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
+cluster <- function(distance_object, cutoff, method = "opticlust", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -99,9 +105,9 @@ cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
   }
   set.seed(random_seed)
   if (method != "opticlust") {
-    return(Cluster(distance_object, method))
+    return(Cluster(distance_object, cutoff, method))
   } else {
-    return(OptiCluster(distance_object))
+    return(OptiCluster(distance_object, cutoff))
   }
 }
 

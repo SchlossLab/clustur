@@ -123,11 +123,10 @@ Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
 }
 
 //[[Rcpp::export]]
-Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method) {
+Rcpp::List Cluster(const SEXP& DistanceData, const double cutoff, const std::string& method) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
-    const double cutoff = distanceData.get()->GetCutoff();
     const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
@@ -142,11 +141,10 @@ Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method) {
 }
 
 //[[Rcpp::export]]
-Rcpp::List OptiCluster(const SEXP& DistanceData) {
+Rcpp::List OptiCluster(const SEXP& DistanceData, const double cutoff) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
-    const double cutoff = distanceData.get()->GetCutoff();
     const bool isSim = distanceData.get()->GetIsSimularity();
     OptimatrixAdapter optiAdapter(cutoff);
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
