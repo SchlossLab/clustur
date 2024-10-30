@@ -29,6 +29,7 @@ public:
     bool TestIsNumericIsCorrect(const std::string& stringToCheck, bool expectedResult);
     bool TestSplitAtCommaReturnsCorrectData(std::string& stringToSplit, std::vector<std::string> container,
         const std::vector<std::string>& expectedResult);
+    bool TestGetRandomIndex(const std::vector<int>& randomValues, int expectedIndex);
 private:
     Utils* utils = nullptr;
     void Setup() override;

@@ -52,7 +52,12 @@ bool SparseMatrixTestFixture::TestUpdateCellCompliment(const unsigned long row, 
     const bool expectedResult) {
     Setup();
     sparseDistanceMatrix->updateCellCompliment(row, col);
-    const bool result =  sparseDistanceMatrix->seqVec[3][2].dist == sparseDistanceMatrix->seqVec[row][col].dist;
+    const unsigned long vrow = sparseDistanceMatrix->seqVec[row][col].index;
+    unsigned long vcol = 0;
+    for (size_t i = 0; i < sparseDistanceMatrix->seqVec[vrow].size(); i++) {
+        if (sparseDistanceMatrix->seqVec[vrow][i].index == row) { vcol = i;  break; }
+    }
+    const bool result = sparseDistanceMatrix->seqVec[vrow][vcol].dist == sparseDistanceMatrix->seqVec[row][col].dist;
     TearDown();
     return result == expectedResult;
 }

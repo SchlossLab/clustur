@@ -43,6 +43,9 @@ context("Utils Testing") {
   }
   test_that("Utils MothurRandomShuffle works as expected") {
     UtilsTestFixture testFixture;
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("base");
+    const Rcpp::Function func = pkg["set.seed"];
+    func(123);
     const std::vector<int> exampleIntConainer = {1,2,3,4};
     bool result = testFixture.TestMothurRandomShufflesRandomizesData(exampleIntConainer, true);
     expect_true(result);
@@ -61,6 +64,9 @@ context("Utils Testing") {
   }
   test_that("Utils shuffle, shuffles string list correctly") {
     UtilsTestFixture testFixture;
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("base");
+    const Rcpp::Function func = pkg["set.seed"];
+    func(123);
     const std::vector<std::string> exampleContainer = {"1", "2", "3", "4"};
     bool result = testFixture.TestMotherRandomShuffleOverloadRandomizesData(exampleContainer, true);
     expect_true(result);
@@ -105,6 +111,17 @@ context("Utils Testing") {
     expect_true(result);
     result = testFixture.TestGetOTUNamesReturnsCorrectNames({"OTU12", "OTU13"}, 2, "OTU", 0);
     expect_true(result);
+  }
+  test_that("Get Random Index returns a random index") {
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("base");
+    const Rcpp::Function func = pkg["set.seed"];
+    func(123);
+    UtilsTestFixture testFixture;
+    const std::vector<int> exampleIntConainer = {1,2,3,4};
+    bool result = testFixture.TestGetRandomIndex(exampleIntConainer, 1);
+    expect_true(result);
+    result = testFixture.TestGetRandomIndex(exampleIntConainer, 2);
+    expect_false(result);
   }
 }
 

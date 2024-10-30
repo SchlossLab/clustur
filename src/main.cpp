@@ -13,6 +13,7 @@
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
 #include "Tests/SparseMatrixTestFixture.h"
+#include "Tests/UtilsTestFixture.h"
 #if DEBUG_RCPP
 #include <Rcpp.h>
 #include <cctype>
@@ -169,11 +170,5 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     CountTableAdapter adapter;
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
-}
-
-//[[Rcpp::export]]
-void Test() {
-    SparseMatrixTestFixture fixture;
-    bool result = fixture.TestAddCellSorted(3, PDistCell(1,2.0), true);
 }
 #endif

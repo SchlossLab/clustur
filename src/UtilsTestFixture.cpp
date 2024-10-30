@@ -110,6 +110,14 @@ bool UtilsTestFixture::TestSplitAtCommaReturnsCorrectData(std::string &stringToS
     return container == expectedResult;
 
 }
+
+bool UtilsTestFixture::TestGetRandomIndex(const std::vector<int> &randomValues, const int expectedIndex) {
+    Setup();
+    const int index = utils->getRandomIndex(static_cast<int>(randomValues.size()));
+    TearDown();
+    return index == expectedIndex;
+}
+
 void UtilsTestFixture::Setup() {
     utils =  new Utils();
 }
