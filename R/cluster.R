@@ -110,7 +110,11 @@ cluster <- function(distance_object, cutoff, method = "opticlust", featureColumn
   if (method != "opticlust") {
     return(Cluster(distance_object, method, featureColumnNameTo, binColumnNameTo, cutoff))
   } else {
-    return(OptiCluster(distance_object, featureColumnNameTo, binColumnNameTo, cutoff))
+    df <- OptiCluster(distance_object, featureColumnNameTo, binColumnNameTo, cutoff)
+    df$iteration_metrics <- df$iteration_metrics[,c("iter", "time", "label", "num_otus", "cutoff", "tp",
+                            "tn", "fp", "fn", "sensitivity", "specificity", "ppv",
+                            "npv", "fdr", "accuracy", "mcc", "f1score")]
+    return(df)
   }
 }
 
