@@ -136,7 +136,7 @@ test_that("Amazon Data from mothur clusters properly", {
 test_that("Read count can read sparse and normal count tables", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   sparse_count_table <- read_count(test_path("extdata",
-                                             "amazon_sparse.count_table"))
+                                             "amazon.sparse.count_table"))
 
   expect_true("data.frame" %in% class(count_table))
   expect_true(nrow(count_table) == 98)
@@ -144,8 +144,8 @@ test_that("Read count can read sparse and normal count tables", {
 
 
   expect_true("data.frame" %in% class(sparse_count_table))
-  expect_true(nrow(sparse_count_table) == 5)
-  expect_true(ncol(sparse_count_table) == 12)
+  expect_true(nrow(sparse_count_table) == 98)
+  expect_true(ncol(sparse_count_table) == 4)
 })
 # Change
 test_that("Read dist can read column, phylip files, and sparse matrices", {
@@ -173,6 +173,25 @@ test_that("Read dist can read column, phylip files, and sparse matrices", {
   expect_true(nrow(dist_df_sparse) == 113)
 })
 
+test_that("Read dist errors when the name is not present in the count table", {
+  set.seed(123)
+
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  count_table <- count_table[1:50, ]
+  i_values <- as.integer(1:100)
+  j_values <- as.integer(sample(1:100, 100, TRUE))
+  x_values <- as.numeric(runif(100, 0, 1))
+  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+  sparse_count <- data.frame(Representative_Sequence = 1:100,
+    total = rep(1, times = 100))
+  sparse_count <- sparse_count[1:50,]
+
+  expect_error(read_dist(test_path("extdata", "amazon_column.dist"),
+                                    count_table, 0.2, FALSE))
+  expect_error(read_dist(test_path("extdata", "amazon_phylip.dist"),
+                                    count_table, 0.2, FALSE))
+  expect_error(read_dist(s_matrix, sparse_count, 0.2, FALSE))
+})
 
 test_that("We can determine if a file is phylip or not", {
   is_not_phylip <-

@@ -88,6 +88,17 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
+    if(xPosition.size() > nameSize) { // There are values that should exist
+        std::set<std::string> unknownNames;
+        for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
+            if(i >= nameSize + 2)
+                break;
+            unknownNames.insert(std::to_string(xPosition[i]));
+        }
+        const Utils util;
+        util.CheckForDistanceFileError(unknownNames);
+    }
+
     for (int i = 0; i < nameSize; i++) {
         positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
     }
@@ -101,6 +112,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         dataList[i].rowValues = std::vector<double>(i + 1, -1);
         dataList[i].rowValues[i] = 0;
     }
+
 
     for (int i = 0; i < nSeqs;  i++) {
 

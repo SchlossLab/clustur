@@ -168,3 +168,17 @@ void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std
         map[headers[i]].emplace_back(splitStrings[i]);
     }
 }
+
+void Utils::CheckForDistanceFileError(const std::set<std::string>& unknownNames) const {
+    if(!unknownNames.empty()) {
+        int count = 0;
+        std::string errorMessage = "These names were not found in the count table:\n";
+        for(const auto& name : unknownNames) {
+            errorMessage += name + "\n";
+            count++;
+            if(count >= 2)
+                break;
+        }
+        Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table");
+    }
+}

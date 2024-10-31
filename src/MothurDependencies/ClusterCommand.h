@@ -80,7 +80,6 @@ private:
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;
-	time_t start;
 	bool canShuffle = true;
 	vector<string> outputNames;
 	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;

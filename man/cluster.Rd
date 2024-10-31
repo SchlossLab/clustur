@@ -19,7 +19,13 @@ was created using the `read_dist()` function.}
 
 \item{cutoff}{The cutoff you want to cluster towards.}
 
-\item{method}{The method of clustering to be performed: opticlust (default),
+\item{method}{The method of clustering to be performed: opticlust (default),}
+
+\item{featureColumnNameTo}{Set the name of the column in the cluster dataframe that
+contains the sequence names.}
+
+\item{binColumnNameTo}{Set the name of the column in the cluster dataframe that contains
+the name of the group of sequence names.
 furthest, nearest, average, or weighted.}
 
 \item{random_seed}{the random seed to use, (default = 123).}

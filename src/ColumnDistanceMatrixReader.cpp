@@ -123,7 +123,6 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 	if(!fileHandle.is_open())
 		return {};
 	Utils util;
-
 	std::string firstName, secondName;
 	float distance;
 	std::string dist;
@@ -166,8 +165,23 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
         fileHandle >> distance;	// get the row and column names and distance
 		if(distance > cutoff)
 			continue;
-        int itA = nameToIndexMap[firstName];
-		int itB = nameToIndexMap[secondName];
+		int itA;
+		int itB;
+		try {
+			itA = nameToIndexMap.at(firstName);
+			itB = nameToIndexMap.at(secondName);
+		}
+		catch (const std::exception& ex) {
+			std::string errorMessage = "These names were not found in the count table:\n";
+			if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
+				errorMessage += firstName + "\n";
+			}
+			if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
+				errorMessage += secondName + "\n";
+			}
+			Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table.");
+			continue;
+		}
         // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
 		if(itA == itB) continue;
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
@@ -217,15 +231,33 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 		sparseMatrix->clear();  //let's start over
 		fileHandle.open(filePath);
 		firstName.clear();//let's start over
+		rowDataMatrix = std::vector<RowData>(nseqs);
 	// Clear rowData
 		while(fileHandle){
 			fileHandle >> firstName;
             fileHandle >> secondName;
             fileHandle >> distance;	// get the row and column names and distance
+
 			if(distance > cutoff)
 				continue;
-			int itA = nameToIndexMap[firstName];
-			int itB = nameToIndexMap[secondName];
+			int itA;
+			int itB;
+			try {
+				itA = nameToIndexMap.at(firstName);
+				itB = nameToIndexMap.at(secondName);
+			}
+			catch (const std::exception& ex) {
+				std::string errorMessage = "These names were not found in the count table:\n";
+				if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
+					errorMessage += firstName + "\n";
+				}
+				if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
+					errorMessage += secondName + "\n";
+				}
+				Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table.");
+				continue;
+			}
+
 			if(itA == itB) continue;
 			if (util.isEqual(distance, -1)) {
 				 distance = 1000000; 
@@ -242,7 +274,6 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 	}
 	fileHandle.close();
 	list->setLabel("0");
-
 	return rowDataMatrix;
 
 }
