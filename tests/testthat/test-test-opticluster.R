@@ -224,12 +224,12 @@ test_that("Split Clusters to list will generate valid list", {
                              count_table, cutoff, FALSE)
   df <- cluster(distance_data, cutoff, method = "opticlust")
   list <- split_clusters_to_list(df)
-  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(all(names(list) %in% df$cluster[[2]]))
   expect_true(length(list) == nrow(df$cluster))
 
   # Test that it works on classic cluster methods
   df <- cluster(distance_data, cutoff, "furthest")
   list <- split_clusters_to_list(df)
-  expect_true(all(names(list) %in% df$cluster$otu))
+  expect_true(all(names(list) %in% df$cluster[[2]]))
   expect_true(length(list) == nrow(df$cluster))
 })

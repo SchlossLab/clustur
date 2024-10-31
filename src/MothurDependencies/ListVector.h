@@ -69,7 +69,8 @@ public:
     int size() override;
     void clear() override;
     void resize(int) override;
-    Rcpp::DataFrame CreateDataFrameFromList() const;
+    Rcpp::DataFrame CreateDataFrameFromList(const std::string &featureColumnName = "feature",
+        const std::string &binColumnName = "bin") const;
 
 private:
     std::vector<std::string> data;  //data[i] is a list of names of sequences in the ith OTU.

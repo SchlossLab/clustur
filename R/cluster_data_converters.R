@@ -21,8 +21,8 @@ split_clusters_to_list <- function(cluster) {
   cluster_df <- get_bins(cluster)
   size <- nrow(cluster_df)
   for (i in 1:size) {
-    ls[[cluster_df$otu[[i]]]] <-
-      as.list(el(strsplit(cluster_df$sequences[[i]], ",")))
+    ls[[cluster_df[[2]][[i]]]] <-
+      as.list(el(strsplit(cluster_df[[1]][[i]], ",")))
   }
   return(ls)
 }

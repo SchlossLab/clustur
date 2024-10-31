@@ -123,7 +123,8 @@ Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
 }
 
 //[[Rcpp::export]]
-Rcpp::List Cluster(const SEXP& DistanceData, const double cutoff, const std::string& method) {
+Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std::string& featureColumnName,
+    const std::string& binColumnName, const double cutoff) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
@@ -131,7 +132,8 @@ Rcpp::List Cluster(const SEXP& DistanceData, const double cutoff, const std::str
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList();
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+        featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     delete(listVector);
@@ -141,7 +143,8 @@ Rcpp::List Cluster(const SEXP& DistanceData, const double cutoff, const std::str
 }
 
 //[[Rcpp::export]]
-Rcpp::List OptiCluster(const SEXP& DistanceData, const double cutoff) {
+Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
@@ -151,7 +154,8 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const double cutoff) {
     ClusterCommand command;
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList();
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+        featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),

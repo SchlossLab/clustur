@@ -83,7 +83,9 @@ read_dist <- function(distance_file, count_table,
 #'                             count_table, cutoff)
 #'  
 #'  cluster_results <- cluster(distance_data, 
-#'                             cutoff, method = "opticlust")
+#'                             cutoff, method = "opticlust",
+#'                             featureColumnNameTo = "sequence",
+#'                             binColumnNameTo = "omu")
 #'  cluster_results <- cluster(distance_data, 
 #'                             cutoff, method = "furthest")
 #'  cluster_results <- cluster(distance_data, 
@@ -94,7 +96,8 @@ read_dist <- function(distance_file, count_table,
 #'                             cutoff, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, cutoff, method = "opticlust", random_seed = 123) {
+cluster <- function(distance_object, cutoff, method = "opticlust", featureColumnNameTo = "feature", 
+                    binColumnNameTo = "bin", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -105,9 +108,9 @@ cluster <- function(distance_object, cutoff, method = "opticlust", random_seed =
   }
   set.seed(random_seed)
   if (method != "opticlust") {
-    return(Cluster(distance_object, cutoff, method))
+    return(Cluster(distance_object, method, featureColumnNameTo, binColumnNameTo, cutoff))
   } else {
-    return(OptiCluster(distance_object, cutoff))
+    return(OptiCluster(distance_object, featureColumnNameTo, binColumnNameTo, cutoff))
   }
 }
 

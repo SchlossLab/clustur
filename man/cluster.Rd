@@ -4,7 +4,14 @@
 \alias{cluster}
 \title{Cluster entitites together}
 \usage{
-cluster(distance_object, cutoff, method = "opticlust", random_seed = 123)
+cluster(
+  distance_object,
+  cutoff,
+  method = "opticlust",
+  featureColumnNameTo = "feature",
+  binColumnNameTo = "bin",
+  random_seed = 123
+)
 }
 \arguments{
 \item{distance_object}{The distance object that
@@ -35,7 +42,9 @@ abundance of each cluster
                             count_table, cutoff)
  
  cluster_results <- cluster(distance_data, 
-                            cutoff, method = "opticlust")
+                            cutoff, method = "opticlust",
+                            featureColumnNameTo = "sequence",
+                            binColumnNameTo = "omu")
  cluster_results <- cluster(distance_data, 
                             cutoff, method = "furthest")
  cluster_results <- cluster(distance_data, 

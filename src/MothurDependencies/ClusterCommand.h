@@ -20,6 +20,7 @@
 #include <map>
 #include "OptiMatrix.h"
 #include "ListVector.h"
+#include <chrono>
 #include "Metrics/accuracy.hpp"
 #include "Metrics/f1score.hpp"
 #include "Metrics/fdr.hpp"

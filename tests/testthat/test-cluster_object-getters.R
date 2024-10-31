@@ -20,7 +20,7 @@ test_that("get_clusters returns the cluster dataframe", {
   df_clusters <- cluster(distance_data, cutoff, method = "furthest")
   expect_true(class(get_bins(df_clusters)) == "data.frame")
   expect_true(all(names(get_bins(df_clusters))
-                  %in%  c("sequences", "otu")))
+                  %in%  c("feature", "bin")))
 
   # Error Checking
   expect_error(get_bins(""))
