@@ -46,8 +46,13 @@ read_dist <- function(distance_file, count_table,
     return(ProcessDistanceFiles(distance_file,
                                 count_table, cutoff, is_similarity_matrix))
   }
-  # Its a sparse matrix not a path
 
+  # Its a sparse matrix not a path
+  # filter out the sparse matrix
+  # indexes <- which(distance_file@x <= 0.2)
+  # distance_file@i <- distance_file@i[indexes]
+  # distance_file@j <- distance_file@j[indexes]
+  # distance_file@x <- distance_file@x[indexes]
   return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
                              count_table, cutoff, is_similarity_matrix))
 }
@@ -62,7 +67,12 @@ read_dist <- function(distance_file, count_table,
 #' @export
 #' @param distance_object The distance object that
 #'  was created using the `read_dist()` function.
+#' @param cutoff The cutoff you want to cluster towards.
 #' @param method The method of clustering to be performed: opticlust (default),
+#' @param featureColumnNameTo Set the name of the column in the cluster dataframe that
+#' contains the sequence names.
+#' @param binColumnNameTo Set the name of the column in the cluster dataframe that contains
+#' the name of the group of sequence names.
 #' furthest, nearest, average, or weighted.
 #' @param random_seed the random seed to use, (default = 123).
 #' @return A list of `data.frames` that contain abundance, and clustering
@@ -75,15 +85,23 @@ read_dist <- function(distance_file, count_table,
 #'  count_table <- read_count(example_path("amazon.full.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff)
+#'  
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "opticlust",
+#'                             featureColumnNameTo = "sequence",
+#'                             binColumnNameTo = "omu")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "furthest")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "nearest")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "average")
+#'  cluster_results <- cluster(distance_data, 
+#'                             cutoff, method = "weighted")
 #'
-#'  cluster_results <- cluster(distance_data, method = "opticlust")
-#'  cluster_results <- cluster(distance_data, method = "furthest")
-#'  cluster_results <- cluster(distance_data, method = "nearest")
-#'  cluster_results <- cluster(distance_data, method = "average")
-#'  cluster_results <- cluster(distance_data, method = "weighted")
 #'
-#'
-cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
+cluster <- function(distance_object, cutoff, method = "opticlust", featureColumnNameTo = "feature", 
+                    binColumnNameTo = "bin", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -94,9 +112,13 @@ cluster <- function(distance_object, method = "opticlust", random_seed = 123) {
   }
   set.seed(random_seed)
   if (method != "opticlust") {
-    return(Cluster(distance_object, method))
+    return(Cluster(distance_object, method, featureColumnNameTo, binColumnNameTo, cutoff))
   } else {
-    return(OptiCluster(distance_object))
+    df <- OptiCluster(distance_object, featureColumnNameTo, binColumnNameTo, cutoff)
+    df$iteration_metrics <- df$iteration_metrics[,c("iter", "time", "label", "num_otus", "cutoff", "tp",
+                            "tn", "fp", "fn", "sensitivity", "specificity", "ppv",
+                            "npv", "fdr", "accuracy", "mcc", "f1score")]
+    return(df)
   }
 }
 
@@ -161,7 +183,6 @@ example_path <- function(file = NULL) {
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' @return a count table `data.frame`.
 #' @export
-
 read_count <- function(count_table_path) {
   # We will have to determine if its a sparse or not
   # Check if the first value of test_read had a comment

@@ -39,10 +39,11 @@ public:
 protected:
     SparseDistanceMatrix* sparseMatrix{};
     ListVector* list{};
+    std::vector<RowData> rowDataMatrix;
     double cutoff = 0;
     bool sim = true;
 private:
-    std::vector<RowData> rowDataMatrix;
+
     CountTableAdapter countTable;
 };
 

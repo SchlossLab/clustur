@@ -9,7 +9,7 @@ test_that("get_count_table returns the count table", {
 
   # With Sparse Count Table
   count_table_sparse <- read_count(test_path("extdata",
-                                             "amazon_sparse.count_table"))
+                                             "amazon.sparse.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table_sparse, cutoff, FALSE)
   expect_true(all(get_count_table(distance_data) == count_table_sparse))
@@ -24,7 +24,7 @@ test_that("get_distance_df returns a dataframe of the distances", {
                              count_table, cutoff, FALSE)
   distances <- get_distance_df(distance_data)
   expect_true("data.frame" %in% class(distances))
-  expect_true(nrow(distances) == 962)
+  expect_true(nrow(distances) == 475)
   expect_true(ncol(distances) == 3)
   # Expect Error with proper parameter
   expect_error(get_distance_df(""))

@@ -96,16 +96,18 @@ get_distance_df(phylip_distance)
 The default method for clustering in `cluster` is "opticlust" 
 
 ```{r}
-cluster_data <- cluster(column_distance)
+cutoff <- 0.03
+cluster_data <- cluster(column_distance, cutoff)
 ```
 
 
 ### Selecting different clustering methods
 ```{r}
-cluster_data <- cluster(column_distance, method = "furthest")
-cluster_data <- cluster(column_distance, method = "nearest")
-cluster_data <- cluster(column_distance, method = "average")
-cluster_data <- cluster(column_distance, method = "weighted")
+
+cluster_data <- cluster(column_distance, cutoff, method = "furthest")
+cluster_data <- cluster(column_distance, cutoff, method = "nearest")
+cluster_data <- cluster(column_distance, cutoff, method = "average")
+cluster_data <- cluster(column_distance, cutoff, method = "weighted")
 ```
 
 
@@ -123,7 +125,7 @@ clustur provides getter functions, `get_label()`, `get_clusters()`,
 `get_shared()`, and `get_metrics()`, which will be demonstrated below.
 
 ```{r R.options=list(max.print=15)}
-clusters <- cluster(column_distance)
+clusters <- cluster(column_distance, cutoff, method = "opticlust")
 get_cutoff(clusters)
 get_bins(clusters)
 get_abundance(clusters)

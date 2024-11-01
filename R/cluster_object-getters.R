@@ -1,4 +1,4 @@
-#' Get label
+#' Get Cutoff
 #'
 #' Returns the distance cutoff of the cluster object from the `cluster()`
 #' function
@@ -9,12 +9,12 @@
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                            count_table, cutoff, FALSE)
-#' df_clusters <- cluster(distance_data, method = "opticlust")
-#' cutoff <- get_label(df_clusters)
+#' df_clusters <- cluster(distance_data, cutoff, method = "opticlust")
+#' cutoff <- get_cutoff(df_clusters)
 #' @return the cutoff value as a `dbl`
 #' @export
 
-get_label <- function(cluster_data) {
+get_cutoff <- function(cluster_data) {
   if (!("list" %in% class(cluster_data)) ||
         is.null(cluster_data$label)) {
     stop("Ensure `cluster_data` is the object generated from the
@@ -36,11 +36,11 @@ get_label <- function(cluster_data) {
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                            count_table, cutoff, FALSE)
-#' df_clusters <- cluster(distance_data, method = "opticlust")
-#' clusters <- get_clusters(df_clusters)
+#' df_clusters <- cluster(distance_data, cutoff, method = "opticlust")
+#' clusters <- get_bins(df_clusters)
 #'
 #' @return the created cluster `data.frame`.
-get_clusters <- function(cluster_data) {
+get_bins <- function(cluster_data) {
   if (!("list" %in% class(cluster_data)) ||
         is.null(cluster_data$cluster)) {
     stop("Ensure `cluster_data` is the object generated from the
@@ -62,11 +62,11 @@ get_clusters <- function(cluster_data) {
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                            count_table, cutoff, FALSE)
-#' df_clusters <- cluster(distance_data, method = "opticlust")
-#' shared <- get_shared(df_clusters)
+#' df_clusters <- cluster(distance_data, cutoff, method = "opticlust")
+#' shared <- get_abundance(df_clusters)
 #'
 #' @return a shared data.frame
-get_shared <- function(cluster_data) {
+get_abundance <- function(cluster_data) {
   if (!("list" %in% class(cluster_data)) ||
         is.null(cluster_data$abundance)) {
     stop("Ensure `cluster_data` is the object generated from the
@@ -88,7 +88,7 @@ get_shared <- function(cluster_data) {
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                            count_table, cutoff, FALSE)
-#' df_clusters <- cluster(distance_data, method = "opticlust")
+#' df_clusters <- cluster(distance_data, cutoff, method = "opticlust")
 #' list_of_metrics <- get_metrics(df_clusters)
 #'
 #' @return a list of metric data.frames

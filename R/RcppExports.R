@@ -29,12 +29,12 @@ GetCountTable <- function(fileReader) {
     .Call('_clustur_GetCountTable', PACKAGE = 'clustur', fileReader)
 }
 
-Cluster <- function(DistanceData, method) {
-    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method)
+Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff) {
+    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff)
 }
 
-OptiCluster <- function(DistanceData) {
-    .Call('_clustur_OptiCluster', PACKAGE = 'clustur', DistanceData)
+OptiCluster <- function(DistanceData, featureColumnName, binColumnName, cutoff) {
+    .Call('_clustur_OptiCluster', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff)
 }
 
 CreateDataFrameFromSparse <- function(countTable) {

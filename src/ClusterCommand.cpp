@@ -88,6 +88,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             clusterMetrics += (std::to_string(result) + ",");
         }
         util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+        std::chrono::time_point<std::chrono::system_clock> start, end;
         //m->mothurOutEndLine();
         // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
         // The difference between what the current and last metric (delta)
@@ -95,7 +96,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         while ((delta > stableMetric) && (iters < maxIters)) {
             //long start = std::time(nullptr);
             double oldMetric = listVectorMetric;
-
+            auto startTime = std::chrono::system_clock::now();
             cluster.update(listVectorMetric);
 
             delta = std::abs(oldMetric - listVectorMetric);
@@ -104,8 +105,9 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             stats = cluster.getStats(tp, tn, fp, fn);
 
             numBins = cluster.getNumBins();
-
-            clusterMetrics = (std::to_string(iters) + "," + std::to_string(std::time(nullptr) - start) + "," +
+            auto endTime = std::chrono::system_clock::now();
+            std::chrono::duration<double> currentTime = endTime - startTime;
+            clusterMetrics = (std::to_string(iters) + "," + std::to_string(currentTime.count()) + "," +
                                std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
                                std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
                                + std::to_string(fp) + "," + std::to_string(fn) + ",");

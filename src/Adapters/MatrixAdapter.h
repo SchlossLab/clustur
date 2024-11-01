@@ -27,7 +27,7 @@ public:
     std::vector<RowData> DistanceMatrixToSquareMatrix();
 
 private:
-
+    double cutoff;
     ReadPhylipMatrix* phylipReader;
     SparseDistanceMatrix* spareDistanceMatrix = nullptr;
     CountTableAdapter countTable;

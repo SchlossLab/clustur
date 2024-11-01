@@ -6,29 +6,24 @@
 
 Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
     const size_t size = rowDataMatrix.size();
-    std::vector<std::string> indexOneNames(size * size);
-    std::vector<std::string> indexTwoNames(size * size);
-    std::vector<double> distances(size * size);
+    std::vector<std::string> indexOneNames;
+    std::vector<std::string> indexTwoNames;
+    std::vector<double> distances;
 
-    size_t counter = 0;
+    indexOneNames.reserve(size * size); // The max size it can be
+    indexTwoNames.reserve(size * size);
+    distances.reserve(size * size);
     for(const auto& value : rowDataMatrix) {
         const std::string firstName = value.name;
-        for(size_t i = 0; i < size; i++) {
+        for(size_t i = 0; i < value.rowValues.size(); i++) {
             const double distance = value.rowValues[i];
-            
+            if(distance < 0) continue;
             const std::string secondName = rowDataMatrix[i].name;
-
-            if (firstName == secondName) continue;
-            if (distance > cutoff || distance < 0) continue;
-            
-            indexOneNames[counter] = firstName;
-            indexTwoNames[counter] = secondName;
-            distances[counter++] = distance;
+            indexOneNames.emplace_back(firstName);
+            indexTwoNames.emplace_back(secondName);
+            distances.emplace_back(distance);
         }
     }
-    indexOneNames.resize(counter);
-    indexTwoNames.resize(counter);
-    distances.resize(counter);
     return Rcpp::DataFrame::create(Rcpp::Named("FirstName") = indexOneNames,
                                     Rcpp::Named("SecondName") = indexTwoNames,
                                     Rcpp::Named("Distance") = distances);
@@ -52,7 +47,6 @@ bool DistanceFileReader::ReadRowDataMatrix(const std::vector<RowData> &rowData) 
         return false;
     Utils util;
     std::string name = rowData[0].name;
-    std::vector<std::string> matrixNames;
     const int nseqs = static_cast<int>(rowData.size());
     list = new ListVector(nseqs);
     list->set(0, name);
@@ -61,7 +55,7 @@ bool DistanceFileReader::ReadRowDataMatrix(const std::vector<RowData> &rowData) 
     for (int i = 1; i < nseqs; i++) {
         name = rowData[i].name;
         list->set(i, name);
-        matrixNames.push_back(name); // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
+        // Square matrix respresented as a sparse matrix. This causes a myraid of problems.
         // Where it should be giving me the distance between 1 and 2, its not giving me any distance, I removed them.
         for (int j = 0; j < i; j++) {
             auto distance = static_cast<float>(rowData[i].rowValues[j]);

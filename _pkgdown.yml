@@ -13,11 +13,11 @@ reference:
   - read_count
 - title: Getters and Setters
   contents: 
-  - get_clusters
-  - get_shared
+  - get_bins
+  - get_abundance
   - get_metrics
   - get_count_table
-  - get_label
+  - get_cutoff
   - get_distance_df
 - title: Helper Functions
   contents: 
