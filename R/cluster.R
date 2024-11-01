@@ -216,3 +216,9 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))
 }
+# microbenchmark::microbenchmark(
+# count <- read_count("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.count_table"), times = 1
+# )
+# microbenchmark::microbenchmark(
+# dist <- read_dist("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.sm.dist", count, 0.03, F), times = 1)
+# profvis::profvis({cluster(dist, 0.03, "opticlust")})

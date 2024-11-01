@@ -35,12 +35,18 @@ context("PhylipReader Test") {
     test_that("Phylip Reader reads phylip files to rowdata information") {
         PhylipReaderTestFixture fixture;
         Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
-        const Rcpp::Function func = pkg["test_path"];
-        const std::string path = Rcpp::as<std::string>(func("extdata", "amazon_phylip.dist"));
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        CountTableAdapter adapter;
+        adapter.CreateDataFrameMap(df);
         ReadPhylipMatrix reader(0.2, false);
-        bool result = fixture.TestReadPhylipFileToRowData(path, reader.ReadToRowData(path));
+        bool result = fixture.TestReadPhylipFileToRowData(adapter, path, reader.ReadToRowData(adapter, path));
         expect_true(result);
-        result = fixture.TestReadPhylipFileToRowData("", std::vector<RowData>(1));
+        result = fixture.TestReadPhylipFileToRowData(adapter, "", std::vector<RowData>(1));
         expect_false(result);
     }
     test_that("Phylip Reader reads phylip file from created RowData Vectors") {

@@ -77,22 +77,17 @@ bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
 SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
     const bool isSim) {
     const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
-    const Utils utils;
     CountTableAdapter adapter;
     adapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
-        const std::vector<RowData> rowDataMatrix = read->ReadToRowData(filePath);
-        const auto unknownNames = adapter.CheckDistanceFileOnlyHasNamesInCount(rowDataMatrix);
-        utils.CheckForDistanceFileError(unknownNames);
+        const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
         read->SetCountTable(adapter);
         read->ReadRowDataMatrix(rowDataMatrix);
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
     const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
-    const auto unknownNames = adapter.CheckDistanceFileOnlyHasNamesInCount(rowDataMatrix);
-    utils.CheckForDistanceFileError(unknownNames);
     read->SetCountTable(adapter);
     read->ReadRowDataMatrix(rowDataMatrix);
     return Rcpp::XPtr<DistanceFileReader>(read);
@@ -102,14 +97,11 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
 SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     const std::vector<int> &yPosition, const std::vector<double> &data, const Rcpp::DataFrame& countTable,
     const double cutoff, const bool isSim) {
-    const Utils utils;
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     const std::vector<RowData> rowDataMatrix = adapter.DistanceMatrixToSquareMatrix();
-    const auto unknownNames = countTableAdapter.CheckDistanceFileOnlyHasNamesInCount(rowDataMatrix);
-    utils.CheckForDistanceFileError(unknownNames);
     read->ReadRowDataMatrix(rowDataMatrix);
     read->SetRowDataMatrix(rowDataMatrix);
     read->SetCountTable(countTableAdapter);

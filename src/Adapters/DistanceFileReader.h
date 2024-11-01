@@ -19,7 +19,6 @@ public:
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual std::vector<RowData> ReadToRowData(const CountTableAdapter& adapter, const std::string& filePath) {return {};};
     // Phylip files do not need a count table
-    virtual std::vector<RowData> ReadToRowData(const std::string& filePath) { return {};};
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(*sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(*list);}
     void SetRowDataMatrix(const std::vector<RowData>& data);

@@ -20,10 +20,10 @@ bool PhylipReaderTestFixture::TestReadPhylipFileFromRowData(const std::vector<Ro
     return result == expectedResult;
 }
 
-bool PhylipReaderTestFixture::TestReadPhylipFileToRowData(const std::string& filePath,
+bool PhylipReaderTestFixture::TestReadPhylipFileToRowData(const CountTableAdapter& adapter, const std::string& filePath,
     const std::vector<RowData>& expectedResult) {
     Setup();
-    const auto result = reader->ReadToRowData(filePath);
+    const auto result = reader->ReadToRowData(adapter, filePath);
     TearDown();
     return result.size() == expectedResult.size();
 }

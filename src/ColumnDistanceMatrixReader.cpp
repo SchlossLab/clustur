@@ -172,15 +172,14 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 			itB = nameToIndexMap.at(secondName);
 		}
 		catch (const std::exception& ex) {
-			std::string errorMessage = "These names were not found in the count table:\n";
+			std::set<std::string> container;
 			if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
-				errorMessage += firstName + "\n";
+				container.insert(firstName);
 			}
 			if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
-				errorMessage += secondName + "\n";
+				container.insert(secondName);
 			}
-			Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table.");
-			continue;
+			util.CheckForDistanceFileError(container);
 		}
         // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
 		if(itA == itB) continue;
@@ -247,15 +246,14 @@ std::vector<RowData> ColumnDistanceMatrixReader::ReadToRowData(const CountTableA
 				itB = nameToIndexMap.at(secondName);
 			}
 			catch (const std::exception& ex) {
-				std::string errorMessage = "These names were not found in the count table:\n";
+				std::set<std::string> container;
 				if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
-					errorMessage += firstName + "\n";
+					container.insert(firstName);
 				}
 				if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
-					errorMessage += secondName + "\n";
+					container.insert(secondName);
 				}
-				Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table.");
-				continue;
+				util.CheckForDistanceFileError(container);
 			}
 
 			if(itA == itB) continue;

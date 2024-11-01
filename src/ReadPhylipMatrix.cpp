@@ -100,16 +100,19 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     return true;
 }
 
-std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath) {
-
+std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) {
     fileHandle.open(filePath);
     if(!fileHandle.is_open())
         return {};
-
+    const Utils utils;
+    const std::vector<std::string> samples = adapter.GetSamples();
+    const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
     float distance;
     std::string name;
     std::string numTest;
     fileHandle >> numTest >> name;
+    if(sampleContainer.find(name) == sampleContainer.end())
+        utils.CheckForDistanceFileError({name});
     const int nseqs = std::stoi(numTest);
     rowDataMatrix = std::vector<RowData>(nseqs);
     rowDataMatrix[0].name = name;
@@ -139,6 +142,8 @@ std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath
     if(!square) {
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
+            if(sampleContainer.find(name) == sampleContainer.end())
+                utils.CheckForDistanceFileError({name});
             rowDataMatrix[i].name = name;
             list->set(i, name);
             for (int j = 0; j < i; j++) {
@@ -153,6 +158,8 @@ std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const std::string& filePath
     else {
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
+            if(sampleContainer.find(name) == sampleContainer.end())
+                utils.CheckForDistanceFileError({name});
             rowDataMatrix[i].name = name;
             list->set(i, name);
             for (int j = 0; j < nseqs; j++) {

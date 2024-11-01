@@ -21,9 +21,7 @@ public:
     ReadPhylipMatrix() = default;
     // ~ReadPhylipMatrix() override = default;
     bool Read(const std::string&);
-    std::vector<RowData> ReadToRowData(const std::string&) override;
-
-    std::vector<RowData> ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) override { return {};};
+    std::vector<RowData> ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) override;
 
 private:
     std::ifstream fileHandle;
