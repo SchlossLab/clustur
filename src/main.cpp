@@ -3,6 +3,7 @@
 #include <vector>
 //TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
 //it will look in a package!
+#include "../../../../Downloads/gperftools-2.15/src/gperftools/heap-profiler.h"
 #include "Adapters/OptimatrixAdapter.h"
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
@@ -169,5 +170,18 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     CountTableAdapter adapter;
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
+}
+
+
+// [[Rcpp::export]]
+SEXP start_profiler(const SEXP& str) {
+    HeapProfilerStart(Rcpp::as<const char*>(str));
+    return R_NilValue;
+}
+
+// [[Rcpp::export]]
+SEXP stop_profiler() {
+     HeapProfilerStop();
+    return R_NilValue;
 }
 #endif
