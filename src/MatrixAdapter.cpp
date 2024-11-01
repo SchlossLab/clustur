@@ -88,7 +88,7 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
-    if(xPosition.size() > nameSize) { // There are values that should exist
+    if(static_cast<int>(xPosition.size()) > nameSize) { // There are values that should exist
         std::set<std::string> unknownNames;
         for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
             if(i >= nameSize + 2)
