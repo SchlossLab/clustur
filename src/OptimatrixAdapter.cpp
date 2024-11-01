@@ -77,7 +77,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     singletons = singletonList;
     return new OptiMatrix{adjustedClosenessList, namesVector, singletonList, cutoff};
 }
-
+// TODO Change RowData to sparse matix
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& matrixData, const bool sim) {
     const auto size = static_cast<long long>(matrixData.size());
     Utils util;

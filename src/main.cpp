@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-//TODO Next week: We have to separate the code out into a package! We have all the source code, now need to consider how
-//it will look in a package!
+//TODO Next week: Change RowData into a sparse matrix and remove it from the project. Too much memory usage.
 #include "../../../../Downloads/gperftools-2.15/src/gperftools/heap-profiler.h"
 #include "Adapters/OptimatrixAdapter.h"
 #include "TestHelpers/TestHelper.h"
