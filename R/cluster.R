@@ -49,10 +49,6 @@ read_dist <- function(distance_file, count_table,
 
   # Its a sparse matrix not a path
   # filter out the sparse matrix
-  # indexes <- which(distance_file@x <= 0.2)
-  # distance_file@i <- distance_file@i[indexes]
-  # distance_file@j <- distance_file@j[indexes]
-  # distance_file@x <- distance_file@x[indexes]
   return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
                              count_table, cutoff, is_similarity_matrix))
 }
@@ -69,10 +65,10 @@ read_dist <- function(distance_file, count_table,
 #'  was created using the `read_dist()` function.
 #' @param cutoff The cutoff you want to cluster towards.
 #' @param method The method of clustering to be performed: opticlust (default),
-#' @param featureColumnNameTo Set the name of the column in the cluster dataframe that
-#' contains the sequence names.
-#' @param binColumnNameTo Set the name of the column in the cluster dataframe that contains
-#' the name of the group of sequence names.
+#' @param feature_column_name_to Set the name of the column in the cluster
+#' dataframe that contains the sequence names.
+#' @param bin_column_name_to Set the name of the column in the
+#' cluster dataframe that contains the name of the group of sequence names.
 #' furthest, nearest, average, or weighted.
 #' @param random_seed the random seed to use, (default = 123).
 #' @return A list of `data.frames` that contain abundance, and clustering
@@ -85,23 +81,24 @@ read_dist <- function(distance_file, count_table,
 #'  count_table <- read_count(example_path("amazon.full.count_table"))
 #'  distance_data <- read_dist(example_path("amazon_column.dist"),
 #'                             count_table, cutoff)
-#'  
-#'  cluster_results <- cluster(distance_data, 
+#'
+#'  cluster_results <- cluster(distance_data,
 #'                             cutoff, method = "opticlust",
-#'                             featureColumnNameTo = "sequence",
-#'                             binColumnNameTo = "omu")
-#'  cluster_results <- cluster(distance_data, 
+#'                             feature_column_name_to = "sequence",
+#'                             bin_column_name_to = "omu")
+#'  cluster_results <- cluster(distance_data,
 #'                             cutoff, method = "furthest")
-#'  cluster_results <- cluster(distance_data, 
+#'  cluster_results <- cluster(distance_data,
 #'                             cutoff, method = "nearest")
-#'  cluster_results <- cluster(distance_data, 
+#'  cluster_results <- cluster(distance_data,
 #'                             cutoff, method = "average")
-#'  cluster_results <- cluster(distance_data, 
+#'  cluster_results <- cluster(distance_data,
 #'                             cutoff, method = "weighted")
 #'
 #'
-cluster <- function(distance_object, cutoff, method = "opticlust", featureColumnNameTo = "feature", 
-                    binColumnNameTo = "bin", random_seed = 123) {
+cluster <- function(distance_object, cutoff, method = "opticlust",
+                    feature_column_name_to = "feature",
+                    bin_column_name_to = "bin", random_seed = 123) {
   if (!("externalptr" %in% class(distance_object))) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -112,12 +109,18 @@ cluster <- function(distance_object, cutoff, method = "opticlust", featureColumn
   }
   set.seed(random_seed)
   if (method != "opticlust") {
-    return(Cluster(distance_object, method, featureColumnNameTo, binColumnNameTo, cutoff))
+    return(Cluster(distance_object, method,
+                   feature_column_name_to, bin_column_name_to, cutoff))
   } else {
-    df <- OptiCluster(distance_object, featureColumnNameTo, binColumnNameTo, cutoff)
-    df$iteration_metrics <- df$iteration_metrics[,c("iter", "time", "label", "num_otus", "cutoff", "tp",
-                            "tn", "fp", "fn", "sensitivity", "specificity", "ppv",
-                            "npv", "fdr", "accuracy", "mcc", "f1score")]
+    df <- OptiCluster(distance_object, feature_column_name_to,
+                      bin_column_name_to, cutoff)
+    df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
+                                                     "label", "num_otus",
+                                                     "cutoff", "tp", "tn",
+                                                     "fp", "fn", "sensitivity",
+                                                     "specificity", "ppv",
+                                                     "npv", "fdr", "accuracy",
+                                                     "mcc", "f1score")]
     return(df)
   }
 }
@@ -216,9 +219,3 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))
 }
-# microbenchmark::microbenchmark(
-# count <- read_count("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.count_table"), times = 1
-# )
-# microbenchmark::microbenchmark(
-# dist <- read_dist("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.sm.dist", count, 0.03, F), times = 1)
-# profvis::profvis({cluster(dist, 0.03, "opticlust")})

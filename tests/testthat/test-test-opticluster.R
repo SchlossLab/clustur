@@ -71,7 +71,7 @@ test_that("cluster works via phylip file", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
                              count_table, cutoff, FALSE)
-  
+
   df_opti <- cluster(distance_data, cutoff, method = "opticlust")
   df_furthest <- cluster(distance_data, cutoff, method = "furthest")
   df_nearest <- cluster(distance_data, cutoff, method = "nearest")
@@ -183,13 +183,13 @@ test_that("Read dist errors when the name is not present in the count table", {
   x_values <- as.numeric(runif(100, 0, 1))
   s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
   sparse_count <- data.frame(Representative_Sequence = 1:100,
-    total = rep(1, times = 100))
-  sparse_count <- sparse_count[1:50,]
+                             total = rep(1, times = 100))
+  sparse_count <- sparse_count[1:50, ]
 
   expect_error(read_dist(test_path("extdata", "amazon_column.dist"),
-                                    count_table, 0.2, FALSE))
+                         count_table, 0.2, FALSE))
   expect_error(read_dist(test_path("extdata", "amazon_phylip.dist"),
-                                    count_table, 0.2, FALSE))
+                         count_table, 0.2, FALSE))
   expect_error(read_dist(s_matrix, sparse_count, 0.2, FALSE))
 })
 

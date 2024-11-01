@@ -8,8 +8,8 @@ cluster(
   distance_object,
   cutoff,
   method = "opticlust",
-  featureColumnNameTo = "feature",
-  binColumnNameTo = "bin",
+  feature_column_name_to = "feature",
+  bin_column_name_to = "bin",
   random_seed = 123
 )
 }
@@ -21,11 +21,11 @@ was created using the `read_dist()` function.}
 
 \item{method}{The method of clustering to be performed: opticlust (default),}
 
-\item{featureColumnNameTo}{Set the name of the column in the cluster dataframe that
-contains the sequence names.}
+\item{feature_column_name_to}{Set the name of the column in the cluster
+dataframe that contains the sequence names.}
 
-\item{binColumnNameTo}{Set the name of the column in the cluster dataframe that contains
-the name of the group of sequence names.
+\item{bin_column_name_to}{Set the name of the column in the
+cluster dataframe that contains the name of the group of sequence names.
 furthest, nearest, average, or weighted.}
 
 \item{random_seed}{the random seed to use, (default = 123).}
@@ -46,18 +46,18 @@ abundance of each cluster
  count_table <- read_count(example_path("amazon.full.count_table"))
  distance_data <- read_dist(example_path("amazon_column.dist"),
                             count_table, cutoff)
- 
- cluster_results <- cluster(distance_data, 
+
+ cluster_results <- cluster(distance_data,
                             cutoff, method = "opticlust",
-                            featureColumnNameTo = "sequence",
-                            binColumnNameTo = "omu")
- cluster_results <- cluster(distance_data, 
+                            feature_column_name_to = "sequence",
+                            bin_column_name_to = "omu")
+ cluster_results <- cluster(distance_data,
                             cutoff, method = "furthest")
- cluster_results <- cluster(distance_data, 
+ cluster_results <- cluster(distance_data,
                             cutoff, method = "nearest")
- cluster_results <- cluster(distance_data, 
+ cluster_results <- cluster(distance_data,
                             cutoff, method = "average")
- cluster_results <- cluster(distance_data, 
+ cluster_results <- cluster(distance_data,
                             cutoff, method = "weighted")
 
 
