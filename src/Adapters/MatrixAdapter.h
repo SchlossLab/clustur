@@ -16,20 +16,13 @@ public:
         const std::vector<double> &dataValues, double cutOff, bool isSimularity, CountTableAdapter table);
     ~MatrixAdapter() = default;
     ReadPhylipMatrix* ReadPhylipFile(const std::string& path) const;
-    SparseDistanceMatrix* CreateSparseMatrix();
-    ListVector* GetListVector() const {return phylipReader->GetListVector();}
-    SparseDistanceMatrix* GetSpareDistanceMatrix() const {return phylipReader->GetSparseMatrix();}
-
     bool CreatePhylipFile(const std::string &saveFileLocation);
-
-    bool CreateColumnDataFile(const std::string &saveFileLocation, double cutoff);
-
-    std::vector<RowData> DistanceMatrixToSquareMatrix();
+    bool CreateColumnDataFile(const std::string &saveFileLocation);
+    SparseDistanceMatrix DistanceMatrixToSquareMatrix();
+    ListVector CreateListVector() const;
 
 private:
     double cutoff;
-    ReadPhylipMatrix* phylipReader;
-    SparseDistanceMatrix* spareDistanceMatrix = nullptr;
     CountTableAdapter countTable;
     std::vector<int> xPosition;
     std::vector<int> yPosition;

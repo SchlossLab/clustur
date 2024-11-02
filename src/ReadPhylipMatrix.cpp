@@ -12,6 +12,7 @@ ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMat
     sparseMatrix = new SparseDistanceMatrix();
     list = new ListVector();
 }
+
 bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
     fileHandle.open(filePath);
@@ -21,13 +22,14 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     float distance;
     int square = 0;
     std::string name;
-    std::vector<std::string> matrixNames;
+    const Utils utils;
+    const std::vector<std::string> samples = countTable.GetSamples();
+    const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
 
 
     std::string numTest;
     fileHandle >> numTest >> name;
     const int nseqs = std::stoi(numTest);
-    matrixNames.push_back(name);
 
 
     list = new ListVector(nseqs);
@@ -55,7 +57,8 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            matrixNames.push_back(name);
+            if(sampleContainer.find(name) == sampleContainer.end())
+                utils.CheckForDistanceFileError({name});
 
             list->set(i, name);
             for (int j = 0; j < i; j++) {
@@ -76,7 +79,8 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            matrixNames.push_back(name);
+            if(sampleContainer.find(name) == sampleContainer.end())
+                utils.CheckForDistanceFileError({name});
 
             list->set(i, name);
             for (int j = 0; j < nseqs; j++) {
@@ -99,84 +103,3 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
     return true;
 }
-
-std::vector<RowData> ReadPhylipMatrix::ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) {
-    fileHandle.open(filePath);
-    if(!fileHandle.is_open())
-        return {};
-    const Utils utils;
-    const std::vector<std::string> samples = adapter.GetSamples();
-    const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
-    float distance;
-    std::string name;
-    std::string numTest;
-    fileHandle >> numTest >> name;
-    if(sampleContainer.find(name) == sampleContainer.end())
-        utils.CheckForDistanceFileError({name});
-    const int nseqs = std::stoi(numTest);
-    rowDataMatrix = std::vector<RowData>(nseqs);
-    rowDataMatrix[0].name = name;
-    list = new ListVector(nseqs);
-    list->set(0, name);
-
-    for (int i = 0; i < nseqs; i++) {
-        rowDataMatrix[i].rowValues = std::vector<double>(i, -1);
-        // phylipRowData[i].rowValues[i] = 0; // set itself to 0
-    }
-    bool square = false;
-    char d;
-    while ((d = fileHandle.get()) != EOF) {
-        if (isalnum(d)) {
-            square = true;
-            fileHandle.putback(d);
-            for (int i = 0; i < nseqs; i++) {
-                fileHandle >> distance;
-            }
-            break;
-        }
-        if (d == '\n') {
-            square = false;
-            break;
-        }
-    }
-    if(!square) {
-        for (int i = 1; i < nseqs; i++) {
-            fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
-            rowDataMatrix[i].name = name;
-            list->set(i, name);
-            for (int j = 0; j < i; j++) {
-                fileHandle >> distance;
-                if(distance > cutoff)
-                    continue;
-                rowDataMatrix[i].rowValues[j] = distance;
-                //phylipRowData[j].rowValues[i] = distance;
-            }
-        }
-    }
-    else {
-        for (int i = 1; i < nseqs; i++) {
-            fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
-            rowDataMatrix[i].name = name;
-            list->set(i, name);
-            for (int j = 0; j < nseqs; j++) {
-                fileHandle >> distance;
-                if(distance > cutoff)
-                    continue;
-                if(j >= i) {
-                    while ((fileHandle.peek()!='\n') && (fileHandle>> distance)) {}
-                    break;
-                }
-                rowDataMatrix[i].rowValues[j] = distance;
-                //phylipRowData[j].rowValues[i] = distance;
-            }
-        }
-    }
-    fileHandle.close();
-    return rowDataMatrix;
-}
-
-

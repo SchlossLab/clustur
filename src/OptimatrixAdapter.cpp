@@ -6,6 +6,10 @@
 // Recreate the countTable and Abund data files. We may need to do this in memory
 #include "Adapters/OptimatrixAdapter.h"
 
+#include "Adapters/CountTableAdapter.h"
+#include "MothurDependencies/CountTable.h"
+#include "MothurDependencies/SparseDistanceMatrix.h"
+
 //TODO: We have to create a full matrix, and add the values as from the sparse matrix inside the new matrix.
 //TODO: This will create the full matrix, then and only then, will we be able to create a list of closeness,
 //TODO: singletons, and names properly.
@@ -135,5 +139,66 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     }
     return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
+
+OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& matrixData,
+    const ListVector& listVector, const bool sim) {
+    const auto size = static_cast<long long>(matrixData.seqVec.size());
+    Utils util;
+    std::vector<bool> singletonList(size, true);
+    nameList.resize(size);
+    std::unordered_map<long long, long long> singletonIndexSwap;
+    for(long long i = 0; i < size; i++) {
+        nameList[i] = listVector.get(i);
+        singletonIndexSwap[i] = i;
+        for(long long j = 0; j < static_cast<long long>(matrixData.seqVec[i].size()); j++) {
+            auto distance = static_cast<float>(matrixData.seqVec[i][j].dist);
+            const bool equalivance = util.isEqual(distance, -1);
+            if (equalivance) {
+                distance = 1000000;
+            } else if (sim) {
+                distance = 1.0f - distance;
+            }
+            if(distance <= cutoff) {
+                singletonList[i] = false; // Find out who is a singleton
+                singletonList[j] = false;
+                singletonIndexSwap[i] = i;
+                singletonIndexSwap[j] = j;
+            }
+
+        }
+    }
+    int nonSingletonCount = 0;
+    for(size_t i = 0; i < singletonList.size(); i ++) {
+        if(!singletonList[i]) {
+            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount;
+            nonSingletonCount++;
+        } //Remove all singletonss
+        else
+            singletons.emplace_back(listVector.get(static_cast<long long>(i)));
+    }
+    closeness.resize(nonSingletonCount);
+    for(long long i = 0; i < size; i++) {
+        nameList[singletonIndexSwap[i]] = listVector.get(i);
+        for(long long j = 0; j < static_cast<long long>(matrixData.seqVec[i].size()); j++) {
+            auto distance = static_cast<float>(matrixData.seqVec[i][j].dist);
+            const bool equalivance = util.isEqual(distance, -1);
+            if (equalivance) {
+                distance = 1000000;
+            } else if (sim) {
+                distance = 1.0f - distance;
+            }
+            if(distance <= cutoff) {
+                long long newB = singletonIndexSwap[j];
+                long long newA = singletonIndexSwap[i];
+                closeness[newA].insert(newB);
+                closeness[newB].insert(newA);
+            }
+
+        }
+    }
+    return new OptiMatrix{closeness, nameList, singletons, cutoff};
+}
+
+
 
 

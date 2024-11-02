@@ -20,15 +20,6 @@ ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) const {
     return phylipReader;
 }
 
-SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
-    if(spareDistanceMatrix != nullptr)
-        return spareDistanceMatrix;
-    const auto phylipMatrix = DistanceMatrixToSquareMatrix();
-    phylipReader->ReadRowDataMatrix(phylipMatrix);
-    spareDistanceMatrix = phylipReader->GetSparseMatrix();
-
-    return spareDistanceMatrix;
-}
 
 bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
     if(saveFileLocation.empty())
@@ -54,17 +45,16 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
     return true;
 }
 
-bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation, double cutoff) {
+bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation) {
     if(saveFileLocation.empty())
         return false;
     const auto matrix = DistanceMatrixToSquareMatrix();
-    const size_t size = matrixNames.size();
     std::string data;
-    for (const auto &cells: matrix) {
-        std::string firstCellName = cells.name;
-        for(size_t i = 0; i < size; i++) {
-            std::string otherCell = matrix[i].name;
-            data += firstCellName + "\t" + otherCell + "\t" + std::to_string(cells.rowValues[i]) + "\n";
+    for (size_t i = 0; i < matrix.seqVec.size(); i++) {
+        std::string firstCellName = matrixNames[i];
+        for(size_t j = 0; j < matrixNames[i].size(); j++) {
+            std::string otherCell = matrixNames[matrix.seqVec[i][j].index];
+            data += firstCellName + "\t" + otherCell + "\t" + std::to_string(matrix.seqVec[i][j].dist) + "\n";
         }
     }
     std::ofstream writeOut(saveFileLocation);
@@ -76,18 +66,19 @@ bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation, do
     return true;
 }
 
-std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
+SparseDistanceMatrix MatrixAdapter::DistanceMatrixToSquareMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;
+    SparseDistanceMatrix sparseMatrix;
     const int nSeqs = static_cast<int>(data.size());
     if(nSeqs <= 0)
         return {};
-    std::map<int, RowData> dataList;
     std::unordered_map<int, int> positionsOfIndexs;
     std::unordered_map<int, std::string> positionsToNames;
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
+    sparseMatrix.resize(nameSize);
     if(static_cast<int>(xPosition.size()) > nameSize) { // There are values that should exist
         std::set<std::string> unknownNames;
         for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
@@ -108,9 +99,6 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
     for (int i = 0; i < nameSize; i++) {
         positionsOfIndexs[xPosition[i]] = i;
         matrixNames[i] = positionsToNames[xPosition[i]];
-        dataList[i].name = positionsToNames[xPosition[i]];
-        dataList[i].rowValues = std::vector<double>(i + 1, -1);
-        dataList[i].rowValues[i] = 0;
     }
 
 
@@ -131,14 +119,19 @@ std::vector<RowData> MatrixAdapter::DistanceMatrixToSquareMatrix() {
         // Since the indexes were reverting back to zero, if the values were found again,
         // like 2,4 = 0.3, but 4,2 = 0 was found, (its a sparse matrix) so we do not change back the value.
         if(xIndex > yIndex)
-            dataList[xIndex].rowValues[yIndex] = currentDist;
+            sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
-            dataList[yIndex].rowValues[xIndex] = currentDist;
+            sparseMatrix.addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
     }
-    std::vector<RowData> sequenceData(names.size());
-    int index = 0;
-    for (const auto &row: dataList) {
-        sequenceData[index++] = row.second;
+    return sparseMatrix;
+}
+
+ListVector MatrixAdapter::CreateListVector() const {
+    ListVector vector;
+    vector.resize(static_cast<int>(matrixNames.size()));
+    int count = 0;
+    for(const auto& name : matrixNames) {
+        vector.set(count++, name);
     }
-    return sequenceData;
+    return vector;
 }

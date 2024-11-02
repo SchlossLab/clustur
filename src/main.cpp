@@ -77,19 +77,15 @@ bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
 SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
     const bool isSim) {
     const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
-    CountTableAdapter adapter;
-    adapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
-        const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
-        read->SetCountTable(adapter);
-        read->ReadRowDataMatrix(rowDataMatrix);
+        read->CreateCountTableAdapter(countTable);
+        read->Read(filePath);
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
-    const std::vector<RowData> rowDataMatrix = read->ReadToRowData(adapter, filePath);
-    read->SetCountTable(adapter);
-    read->ReadRowDataMatrix(rowDataMatrix);
+    read->CreateCountTableAdapter(countTable);
+    read->Read(filePath);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
@@ -99,12 +95,11 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     const double cutoff, const bool isSim) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
-    DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    const std::vector<RowData> rowDataMatrix = adapter.DistanceMatrixToSquareMatrix();
-    read->ReadRowDataMatrix(rowDataMatrix);
-    read->SetRowDataMatrix(rowDataMatrix);
-    read->SetCountTable(countTableAdapter);
+    auto sparseMatrix = adapter.DistanceMatrixToSquareMatrix();
+    auto listVector = adapter.CreateListVector();
+    const auto* read = new DistanceFileReader(&sparseMatrix, &listVector);
+    read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
