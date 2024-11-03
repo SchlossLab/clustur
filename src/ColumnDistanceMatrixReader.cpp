@@ -37,7 +37,15 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	int refCol = 0; //shows up later - Cell(refCol,refRow).  If it does, then its a square matrix
 
 	//need to see if this is a square or a triangular matrix...
-
+	std::string dist;
+	fileHandle >> firstName;
+	fileHandle >> secondName;
+	fileHandle >> dist;
+	if(nameToIndexMap.find(firstName) != nameToIndexMap.end() ||
+			nameToIndexMap.find(secondName) != nameToIndexMap.end()) {
+			fileHandle.clear();
+			fileHandle.seekg(0, std::ifstream::beg);
+	}
 	while(fileHandle && lt == 1){  //let's assume it's a triangular matrix...
 
 		fileHandle >> firstName;

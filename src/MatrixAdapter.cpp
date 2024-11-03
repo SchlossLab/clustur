@@ -10,38 +10,30 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
                              const std::vector<double> &dataValues, const double cutOff, const bool isSimularity,
                              CountTableAdapter table): cutoff(cutOff), countTable(std::move(table)),xPosition(iIndexes), yPosition(jIndexes),
                             data(dataValues) {
-    phylipReader = new ReadPhylipMatrix(cutOff, isSimularity);
-}
-
-ReadPhylipMatrix* MatrixAdapter::ReadPhylipFile(const std::string &path) const {
-    if(path.empty())
-        return nullptr;
-    phylipReader->Read(path);
-    return phylipReader;
 }
 
 
 bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
-    if(saveFileLocation.empty())
-        return false;
-    const auto matrix = DistanceMatrixToSquareMatrix();
-    int count = 0;
-    const size_t size = matrixNames.size();
-    std::string distanceString = "\t" + std::to_string(size) + "\n";
-    for (const auto &cells: matrix) {
-        distanceString += matrixNames[count];
-        for (int i = 0; i < count; i++) {
-            distanceString += "\t" + std::to_string(cells.rowValues[i]);
-        }
-        distanceString += "\n";
-        count++;
-    }
-    std::ofstream writeOut(saveFileLocation);
-    if (!writeOut.is_open()) {
-        TestHelper::Print("Failed to open: \n");
-    }
-    writeOut << distanceString;
-    writeOut.close();
+    // if(saveFileLocation.empty())
+    //     return false;
+    // const auto matrix = DistanceMatrixToSquareMatrix();
+    // int count = 0;
+    // const size_t size = matrixNames.size();
+    // std::string distanceString = "\t" + std::to_string(size) + "\n";
+    // for (const auto &cells: matrix) {
+    //     distanceString += matrixNames[count];
+    //     for (int i = 0; i < count; i++) {
+    //         distanceString += "\t" + std::to_string(cells.rowValues[i]);
+    //     }
+    //     distanceString += "\n";
+    //     count++;
+    // }
+    // std::ofstream writeOut(saveFileLocation);
+    // if (!writeOut.is_open()) {
+    //     TestHelper::Print("Failed to open: \n");
+    // }
+    // writeOut << distanceString;
+    // writeOut.close();
     return true;
 }
 

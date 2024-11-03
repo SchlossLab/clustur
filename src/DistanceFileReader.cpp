@@ -33,7 +33,7 @@ Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
                                     Rcpp::Named("Distance") = distances);
 }
 void DistanceFileReader::CreateCountTableAdapter(const Rcpp::DataFrame& countTableDataFrame) {
-    countTable = CountTableAdapter();
+    // countTable = CountTableAdapter();
     countTable.CreateDataFrameMap(countTableDataFrame);
 }
 

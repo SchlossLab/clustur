@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include "../RowData.h"
-#include <unordered_set>s
+#include <unordered_set>
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"
 #include "../Adapters/DistanceFileReader.h"

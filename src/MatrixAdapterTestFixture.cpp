@@ -6,16 +6,16 @@
 
 bool MatrixAdapterTestFixture::TestReadPhylipFile(const bool expectedResult) {
     Setup();
-    const bool result = matrixAdapter->ReadPhylipFile("") != nullptr;
+    // const bool result = matrixAdapter->ReadPhylipFile("") != nullptr;
     TearDown();
-    return expectedResult == result;
+    return false;
 }
 
 bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const bool expectedResult) {
     Setup();
-    const auto result = matrixAdapter->CreateSparseMatrix() != nullptr;
+    // const auto result = matrixAdapter->CreateSparseMatrix() != nullptr;
     TearDown();
-    return result == expectedResult;
+    return false;
 }
 
 bool MatrixAdapterTestFixture::TestCreatePhylipFile(const bool expectedResult) {
@@ -29,23 +29,23 @@ bool MatrixAdapterTestFixture::TestDistanceMatrixToSquareMatrix(const int expect
     Setup();
     const auto result = matrixAdapter->DistanceMatrixToSquareMatrix();
     TearDown();
-    return static_cast<int>(result.size()) == expectedResult;
+    return false;
 }
 
 bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {
     Setup();
-    if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
-    const auto result = matrixAdapter->GetListVector()->size() > 0;
+    // if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
+    // const auto result = matrixAdapter->GetListVector()->size() > 0;
     TearDown();
-    return result == expectedResult;
+    return false;
 }
 
 bool MatrixAdapterTestFixture::TestGetSparseDistanceMatrix(const bool createSparseFirst, const bool expectedResult) {
     Setup();
-    if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
-    const auto result = !matrixAdapter->GetSpareDistanceMatrix()->seqVec.empty();
+    // if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
+    // const auto result = !matrixAdapter->GetSpareDistanceMatrix()->seqVec.empty();
     TearDown();
-    return result == expectedResult;
+    return false;
 }
 
 MatrixAdapterTestFixture::~MatrixAdapterTestFixture() {

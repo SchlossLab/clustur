@@ -37,7 +37,7 @@ void WriteColumnFile(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
-    adapter.CreateColumnDataFile(saveLocation, cutoff);
+    adapter.CreateColumnDataFile(saveLocation);
 }
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
@@ -98,7 +98,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     auto sparseMatrix = adapter.DistanceMatrixToSquareMatrix();
     auto listVector = adapter.CreateListVector();
-    const auto* read = new DistanceFileReader(&sparseMatrix, &listVector);
+    auto* read = new DistanceFileReader(&sparseMatrix, &listVector);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
@@ -131,6 +131,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     delete(listVector);
+    delete(sparseMatix);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
     Rcpp::Named("abundance") = tidySharedDataFrame,
     Rcpp::Named("cluster") = clusterDataFrame);
@@ -141,10 +142,13 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     const double cutoff) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
-    const std::vector<RowData> sparseMatix =  distanceData.get()->GetRowDataMatrix();
+    const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
+    const auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
     OptimatrixAdapter optiAdapter(cutoff);
-    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, isSim);
+    const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    delete(sparseMatix);
+    delete(listVector);
     ClusterCommand command;
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
     const auto label = result->GetListVector().label;
@@ -166,14 +170,13 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     return adapter.ReCreateDataFrame();
 }
 
-
-// [[Rcpp::export]]
+//[[Rcpp::export]]
 SEXP start_profiler(const SEXP& str) {
     HeapProfilerStart(Rcpp::as<const char*>(str));
     return R_NilValue;
 }
 
-// [[Rcpp::export]]
+//[[Rcpp::export]]
 SEXP stop_profiler() {
      HeapProfilerStop();
     return R_NilValue;

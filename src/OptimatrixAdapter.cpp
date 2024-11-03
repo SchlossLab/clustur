@@ -140,18 +140,19 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
     return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
 
-OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& matrixData,
-    const ListVector& listVector, const bool sim) {
-    const auto size = static_cast<long long>(matrixData.seqVec.size());
+OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
+    const ListVector* listVector, const bool sim) {
+    const auto size = static_cast<long long>(matrixData->seqVec.size());
     Utils util;
     std::vector<bool> singletonList(size, true);
     nameList.resize(size);
     std::unordered_map<long long, long long> singletonIndexSwap;
     for(long long i = 0; i < size; i++) {
-        nameList[i] = listVector.get(i);
+        nameList[i] = listVector->get(i);
         singletonIndexSwap[i] = i;
-        for(long long j = 0; j < static_cast<long long>(matrixData.seqVec[i].size()); j++) {
-            auto distance = static_cast<float>(matrixData.seqVec[i][j].dist);
+        for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
+            const auto cell = matrixData->seqVec[i][j];
+            auto distance = static_cast<float>(cell.dist);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
                 distance = 1000000;
@@ -160,9 +161,9 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& m
             }
             if(distance <= cutoff) {
                 singletonList[i] = false; // Find out who is a singleton
-                singletonList[j] = false;
+                singletonList[cell.index] = false;
                 singletonIndexSwap[i] = i;
-                singletonIndexSwap[j] = j;
+                singletonIndexSwap[static_cast<long long>(cell.index)] = static_cast<long long>(cell.index);
             }
 
         }
@@ -170,17 +171,17 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& m
     int nonSingletonCount = 0;
     for(size_t i = 0; i < singletonList.size(); i ++) {
         if(!singletonList[i]) {
-            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount;
-            nonSingletonCount++;
+            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount++;
         } //Remove all singletonss
         else
-            singletons.emplace_back(listVector.get(static_cast<long long>(i)));
+            singletons.emplace_back(listVector->get(static_cast<long long>(i)));
     }
     closeness.resize(nonSingletonCount);
     for(long long i = 0; i < size; i++) {
-        nameList[singletonIndexSwap[i]] = listVector.get(i);
-        for(long long j = 0; j < static_cast<long long>(matrixData.seqVec[i].size()); j++) {
-            auto distance = static_cast<float>(matrixData.seqVec[i][j].dist);
+        nameList[singletonIndexSwap[i]] = listVector->get(i);
+        for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
+            const PDistCell cell = matrixData->seqVec[i][j];
+            auto distance = static_cast<float>(cell.dist);
             const bool equalivance = util.isEqual(distance, -1);
             if (equalivance) {
                 distance = 1000000;
@@ -188,7 +189,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& m
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                long long newB = singletonIndexSwap[j];
+                long long newB = singletonIndexSwap[static_cast<long long>(cell.index)];
                 long long newA = singletonIndexSwap[i];
                 closeness[newA].insert(newB);
                 closeness[newB].insert(newA);

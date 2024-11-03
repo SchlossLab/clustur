@@ -31,8 +31,8 @@ public:
     OptiMatrix* ConvertToOptimatrix(const std::vector<int>
         &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
     OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
-    OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix& matrixData,
-    const ListVector& listVector, bool sim);
+    OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
+    const ListVector* listVector, bool sim);
     std::vector<std::set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameList;}
     std::vector<std::string> GetSingletons() {return singletons;}

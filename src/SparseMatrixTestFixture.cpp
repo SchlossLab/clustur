@@ -118,7 +118,8 @@ void SparseMatrixTestFixture::Setup() {
     countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2,
         false, countTable);
-    sparseDistanceMatrix = adapter.CreateSparseMatrix();
+    SparseDistanceMatrix sparse = adapter.DistanceMatrixToSquareMatrix();
+    sparseDistanceMatrix = &sparse;
 }
 
 void SparseMatrixTestFixture::TearDown() {
