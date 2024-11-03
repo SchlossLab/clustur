@@ -145,64 +145,117 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, const bool sim) {
-    std::vector<std::set<long long>> closeness;
-    std::vector<std::string> nameList;
-    std::vector<std::string> singletons;
     const auto size = static_cast<long long>(matrixData->seqVec.size());
-    Utils util;
-    std::vector<bool> singletonList(size, true);
-    nameList.resize(size);
     std::unordered_map<long long, long long> singletonIndexSwap;
-    for(long long i = 0; i < size; i++) {
-        nameList[i] = listVector->get(i);
-        singletonIndexSwap[i] = i;
-        for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
-            const auto cell = matrixData->seqVec[i][j];
-            auto distance = static_cast<float>(cell.dist);
-            const bool equalivance = util.isEqual(distance, -1);
-            if (equalivance) {
-                distance = 1000000;
-            } else if (sim) {
-                distance = 1.0f - distance;
-            }
-            if(distance <= cutoff) {
-                singletonList[i] = false; // Find out who is a singleton
-                singletonList[cell.index] = false;
-                singletonIndexSwap[i] = i;
-                singletonIndexSwap[static_cast<long long>(cell.index)] = static_cast<long long>(cell.index);
-            }
-
-        }
-    }
+    std::vector<std::string> nameList(size);
+    std::vector<std::string> singletons;
     int nonSingletonCount = 0;
-    for(size_t i = 0; i < singletonList.size(); i ++) {
-        if(!singletonList[i]) {
-            singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount++;
-        } //Remove all singletonss
-        else
-            singletons.emplace_back(listVector->get(static_cast<long long>(i)));
-    }
-    closeness.resize(nonSingletonCount);
     for(long long i = 0; i < size; i++) {
-        nameList[singletonIndexSwap[i]] = listVector->get(i);
-        for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
-            const PDistCell cell = matrixData->seqVec[i][j];
-            auto distance = static_cast<float>(cell.dist);
-            const bool equalivance = util.isEqual(distance, -1);
-            if (equalivance) {
+        const std::string name = listVector->get(i);
+        nameList[i] = name;
+        if(matrixData->seqVec[i].empty()) {
+            singletons.emplace_back(name);
+            continue;
+        }
+        singletonIndexSwap[i] = nonSingletonCount;
+        nonSingletonCount++;
+    }
+    std::vector<std::set<long long>> closeness(nonSingletonCount);
+    int count = 0;
+    for(const auto& cell : matrixData->seqVec) {
+        for(const auto& row : cell) {
+            float distance = row.dist;
+            if (distance == -1) {
                 distance = 1000000;
             } else if (sim) {
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                long long newB = singletonIndexSwap[static_cast<long long>(cell.index)];
-                long long newA = singletonIndexSwap[i];
+                const long long newB = singletonIndexSwap[static_cast<long long>(row.index)];
+                const long long newA = singletonIndexSwap[count];
                 closeness[newA].insert(newB);
                 closeness[newB].insert(newA);
+                // singletonList[i] = false; // Find out who is a singleton
+                // singletonList[cell.index] = false;
+                // singletonIndexSwap[i] = i;
+                // singletonIndexSwap[static_cast<long long>(cell.index)] = static_cast<long long>(cell.index);
             }
-
         }
+        count++;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Utils util;
+    // std::vector<bool> singletonList(size, true);
+    // nameList.resize(size);
+    // std::unordered_map<long long, long long> singletonIndexSwap;
+    // for(long long i = 0; i < size; i++) {
+    //     nameList[i] = listVector->get(i);
+    //     singletonIndexSwap[i] = i;
+    //     for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
+    //         const auto cell = matrixData->seqVec[i][j];
+    //         auto distance = static_cast<float>(cell.dist);
+    //         const bool equalivance = util.isEqual(distance, -1);
+    //         if (equalivance) {
+    //             distance = 1000000;
+    //         } else if (sim) {
+    //             distance = 1.0f - distance;
+    //         }
+    //         if(distance <= cutoff) {
+    //             singletonList[i] = false; // Find out who is a singleton
+    //             singletonList[cell.index] = false;
+    //             singletonIndexSwap[i] = i;
+    //             singletonIndexSwap[static_cast<long long>(cell.index)] = static_cast<long long>(cell.index);
+    //         }
+    //
+    //     }
+    // }
+    // int nonSingletonCount = 0;
+    // for(size_t i = 0; i < singletonList.size(); i ++) {
+    //     if(!singletonList[i]) {
+    //         singletonIndexSwap[static_cast<long long>(i)] = nonSingletonCount++;
+    //     } //Remove all singletonss
+    //     else
+    //         singletons.emplace_back(listVector->get(static_cast<long long>(i)));
+    // }
+    // closeness.resize(nonSingletonCount);
+    // for(long long i = 0; i < size; i++) {
+    //     nameList[singletonIndexSwap[i]] = listVector->get(i);
+    //     for(long long j = 0; j < static_cast<long long>(matrixData->seqVec[i].size()); j++) {
+    //         const PDistCell cell = matrixData->seqVec[i][j];
+    //         auto distance = static_cast<float>(cell.dist);
+    //         const bool equalivance = util.isEqual(distance, -1);
+    //         if (equalivance) {
+    //             distance = 1000000;
+    //         } else if (sim) {
+    //             distance = 1.0f - distance;
+    //         }
+    //         if(distance <= cutoff) {
+    //             long long newB = singletonIndexSwap[static_cast<long long>(cell.index)];
+    //             long long newA = singletonIndexSwap[i];
+    //             closeness[newA].insert(newB);
+    //             closeness[newB].insert(newA);
+    //         }
+    //
+    //     }
+    // }
     return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
 

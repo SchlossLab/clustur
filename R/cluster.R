@@ -235,4 +235,4 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 # microbenchmark::microbenchmark(ct <- read_count("/Users/grejoh/Documents/clustur_files/final.count_table"), times = 5)
 # microbenchmark::microbenchmark(dist_final <- read_dist("/Users/grejoh/Documents/clustur_files/final.dist", ct, 0.2, F), times = 5)
 # microbenchmark::microbenchmark(clust_final <- cluster(dist_final, 0.03, "opticlust"), times = 5)
-# object.size(clust_final)
+# object.size(clust_sfinal)
