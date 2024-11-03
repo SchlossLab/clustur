@@ -2,7 +2,7 @@
 #include <fstream>
 #include <vector>
 //TODO Next week: Change RowData into a sparse matrix and remove it from the project. Too much memory usage.
-#include "../../../../Downloads/gperftools-2.15/src/gperftools/heap-profiler.h"
+// #include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
 #include "Adapters/OptimatrixAdapter.h"
 #include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
@@ -146,15 +146,27 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     const auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
     OptimatrixAdapter optiAdapter(cutoff);
+    auto startTime = std::chrono::system_clock::now();
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    auto endTime = std::chrono::system_clock::now();
+    std::chrono::duration<double> currentTime = endTime - startTime;
+    Rcpp::Rcout << "It took: " << currentTime.count() << " to convert to optimatrix\n";
     delete(sparseMatix);
     delete(listVector);
     ClusterCommand command;
+    startTime = std::chrono::system_clock::now();
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
+    endTime = std::chrono::system_clock::now();
+    currentTime = endTime - startTime;
+    Rcpp::Rcout << "It took: " << currentTime.count() << " to cluster\n";
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
         featureColumnName, binColumnName);
+    startTime = std::chrono::system_clock::now();
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    endTime = std::chrono::system_clock::now();
+    currentTime = endTime - startTime;
+    Rcpp::Rcout << "It took: " << currentTime.count() << " to create a shared df\n";
     delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,
@@ -170,15 +182,13 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     return adapter.ReCreateDataFrame();
 }
 
-//[[Rcpp::export]]
-SEXP start_profiler(const SEXP& str) {
-    HeapProfilerStart(Rcpp::as<const char*>(str));
-    return R_NilValue;
-}
-
-//[[Rcpp::export]]
-SEXP stop_profiler() {
-     HeapProfilerStop();
-    return R_NilValue;
-}
+// SEXP start_profiler(const SEXP& str) {
+//     ProfilerStart(Rcpp::as<const char*>(str));
+//     return R_NilValue;
+// }
+//
+// SEXP stop_profiler() {
+//      ProfilerStop();
+//     return R_NilValue;
+// }
 #endif

@@ -76,14 +76,17 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     for (const auto &name: names) {
         namesVector[counter++] = std::to_string(name);
     }
-    closeness = adjustedClosenessList;
-    nameList = namesVector;
-    singletons = singletonList;
+    std::vector<std::set<long long> > closeness = adjustedClosenessList;
+    std::vector<std::string> nameList = namesVector;
+    std::vector<std::string> singletons = singletonList;
     return new OptiMatrix{adjustedClosenessList, namesVector, singletonList, cutoff};
 }
 // TODO Change RowData to sparse matix
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& matrixData, const bool sim) {
     const auto size = static_cast<long long>(matrixData.size());
+    std::vector<std::set<long long>> closeness;
+    std::vector<std::string> nameList;
+    std::vector<std::string> singletons;
     Utils util;
     std::vector<bool> singletonList(size, true);
     nameList.resize(size);
@@ -142,6 +145,9 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, const bool sim) {
+    std::vector<std::set<long long>> closeness;
+    std::vector<std::string> nameList;
+    std::vector<std::string> singletons;
     const auto size = static_cast<long long>(matrixData->seqVec.size());
     Utils util;
     std::vector<bool> singletonList(size, true);

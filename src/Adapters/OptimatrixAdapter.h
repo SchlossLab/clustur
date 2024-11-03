@@ -33,15 +33,13 @@ public:
     OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
     OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, bool sim);
-    std::vector<std::set<long long>> GetCloseness() {return closeness;}
-    std::vector<std::string> GetNameList() {return nameList;}
-    std::vector<std::string> GetSingletons() {return singletons;}
+    std::vector<std::set<long long>> GetCloseness() {return {};}
+    std::vector<std::string> GetNameList() {return {};}
+    std::vector<std::string> GetSingletons() {return {};}
 private:
     double cutoff;
     //TODO Get rid of values inside of the adapter, it should not care about them
-    std::vector<std::set<long long>> closeness;
-    std::vector<std::string> nameList;
-    std::vector<std::string> singletons;
+
 
 };
 #endif //RSPARSEMATRIXTOCPPSPARSEMATRIXADAPTER_H

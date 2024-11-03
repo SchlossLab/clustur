@@ -41,11 +41,3 @@ CreateDataFrameFromSparse <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparse', PACKAGE = 'clustur', countTable)
 }
 
-start_profiler <- function(str) {
-    .Call('_clustur_start_profiler', PACKAGE = 'clustur', str)
-}
-
-stop_profiler <- function() {
-    .Call('_clustur_stop_profiler', PACKAGE = 'clustur')
-}
-
