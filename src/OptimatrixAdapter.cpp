@@ -149,9 +149,15 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
     // std::unordered_map<long long, long long> singletonIndexSwap;
     std::vector<std::string> nameList(size);
     std::vector<std::string> singletons;
-    std::vector<std::set<long long>> closeness;
-    closeness.reserve(size);
+    std::unordered_map<unsigned long, int> indexSwap;
+    int nonSingletonCount = 0;
+    for(int i = 0; i < size; i++) {
+        if(!matrixData->seqVec[i].empty()) {
+            indexSwap[static_cast<unsigned long>(i)] = nonSingletonCount++;
+        }
+    }
     int count = 0;
+    std::vector<std::set<long long>> closeness(nonSingletonCount);
     for(const auto& cell : matrixData->seqVec) {
          const std::string name =listVector->get(count);
          nameList[count] = name;
@@ -168,10 +174,10 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                cells.insert(row.index);
+                cells.insert(indexSwap[row.index]);
             }
         }
-        closeness.emplace_back(cells);
+        closeness[count] = cells;
         count++;
     }
 
