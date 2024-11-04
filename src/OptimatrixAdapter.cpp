@@ -146,23 +146,20 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& m
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, const bool sim) {
     const auto size = static_cast<long long>(matrixData->seqVec.size());
-    std::unordered_map<long long, long long> singletonIndexSwap;
+    // std::unordered_map<long long, long long> singletonIndexSwap;
     std::vector<std::string> nameList(size);
     std::vector<std::string> singletons;
-    int nonSingletonCount = 0;
-    for(long long i = 0; i < size; i++) {
-        const std::string name = listVector->get(i);
-        nameList[i] = name;
-        if(matrixData->seqVec[i].empty()) {
+    std::vector<std::set<long long>> closeness;
+    closeness.reserve(size);
+    int count = 0;
+    for(const auto& cell : matrixData->seqVec) {
+         const std::string name =listVector->get(count);
+         nameList[count] = name;
+        if(cell.empty()) {
             singletons.emplace_back(name);
             continue;
         }
-        singletonIndexSwap[i] = nonSingletonCount;
-        nonSingletonCount++;
-    }
-    std::vector<std::set<long long>> closeness(nonSingletonCount);
-    int count = 0;
-    for(const auto& cell : matrixData->seqVec) {
+        std::set<long long> cells;
         for(const auto& row : cell) {
             float distance = row.dist;
             if (distance == -1) {
@@ -171,16 +168,10 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                const long long newB = singletonIndexSwap[static_cast<long long>(row.index)];
-                const long long newA = singletonIndexSwap[count];
-                closeness[newA].insert(newB);
-                closeness[newB].insert(newA);
-                // singletonList[i] = false; // Find out who is a singleton
-                // singletonList[cell.index] = false;
-                // singletonIndexSwap[i] = i;
-                // singletonIndexSwap[static_cast<long long>(cell.index)] = static_cast<long long>(cell.index);
+                cells.insert(row.index);
             }
         }
+        closeness.emplace_back(cells);
         count++;
     }
 
