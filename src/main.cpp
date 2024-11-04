@@ -182,11 +182,11 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     return adapter.ReCreateDataFrame();
 }
 
+
 // SEXP start_profiler(const SEXP& str) {
 //     ProfilerStart(Rcpp::as<const char*>(str));
 //     return R_NilValue;
 // }
-//
 // SEXP stop_profiler() {
 //      ProfilerStop();
 //     return R_NilValue;

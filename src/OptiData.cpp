@@ -9,7 +9,7 @@ bool OptiData::isClose(const long long i, const long long toFind) const {
         return false;
     }
     bool found = false;
-    if (closeness[i].count(toFind) != 0) { found = true; }
+    if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
     return found;
 
 }

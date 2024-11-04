@@ -214,7 +214,6 @@ read_count <- function(count_table_path) {
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #' @return a `dgTMatrix` from the `Matrix` library.
 #' @export
-
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))
@@ -225,14 +224,16 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 # )
 # # count <- read_count("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.count_table")
 # microbenchmark::microbenchmark(dist <- read_dist("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.sm.dist", count, 0.03, F), times = 1)
-# # start_profiler("/Users/grejoh/Documents/OptiClusterPackage/clustur/Profiler/profile_test.out")
-# # dist <- read_dist("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.sm.dist", count, 0.03, F)#, times = 1)
-# # stop_profiler()
-# # clust <- cluster(dist, 0.03, "opticlust")
+
+# dist <- read_dist("/Users/grejoh/Documents/BigDataMothurFiles/data/human/human.1_0.01.sm.dist", count, 0.03, F)#, times = 1)
+# start_profiler("/Users/grejoh/Documents/OptiClusterPackage/clustur/Profiler/unordered_set.out")
+# clust <- cluster(dist, 0.03, "opticlust")
+# stop_profiler()
+
 # microbenchmark::microbenchmark(clust <- cluster(dist, 0.03, "opticlust"), times = 1)
 # object.size(clust)
 
 # microbenchmark::microbenchmark(ct <- read_count("/Users/grejoh/Documents/clustur_files/final.count_table"), times = 5)
 # microbenchmark::microbenchmark(dist_final <- read_dist("/Users/grejoh/Documents/clustur_files/final.dist", ct, 0.2, F), times = 5)
-# microbenchmark::microbenchmark(clust_final <- cluster(dist_final, 0.03, "opticlust"), times = 5)
+# microbenchmark::microbenchmark(clust_final <- cluster(dist_final, 0.03, "opticlust"), times = 1)
 # object.size(clust_sfinal)
