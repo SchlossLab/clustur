@@ -33,7 +33,7 @@ public:
     OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
     OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, bool sim);
-    std::vector<std::set<long long>> GetCloseness() {return {};}
+    std::vector<std::unordered_set<long long>> GetCloseness() {return {};}
     std::vector<std::string> GetNameList() {return {};}
     std::vector<std::string> GetSingletons() {return {};}
 private:

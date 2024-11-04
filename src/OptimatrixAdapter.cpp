@@ -59,7 +59,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
         closenessMap[currentYPos].emplace(currentXPos);
     }
     //TODO Change this back into a vector, we do not need to delete values
-    std::vector<std::set<long long> > adjustedClosenessList;
+    std::vector<std::unordered_set<long long> > adjustedClosenessList;
     for (const auto &closenessValues: closenessMap) {
         adjustedClosenessList.emplace_back(closenessValues.second.begin(), closenessValues.second.end());
         names.insert(closenessValues.first);
@@ -76,7 +76,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
     for (const auto &name: names) {
         namesVector[counter++] = std::to_string(name);
     }
-    std::vector<std::set<long long> > closeness = adjustedClosenessList;
+    std::vector<std::unordered_set<long long> > closeness = adjustedClosenessList;
     std::vector<std::string> nameList = namesVector;
     std::vector<std::string> singletons = singletonList;
     return new OptiMatrix{adjustedClosenessList, namesVector, singletonList, cutoff};
@@ -84,7 +84,7 @@ OptiMatrix *OptimatrixAdapter::ConvertToOptimatrix(const std::vector<int> &xPosi
 // TODO Change RowData to sparse matix
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const std::vector<RowData>& matrixData, const bool sim) {
     const auto size = static_cast<long long>(matrixData.size());
-    std::vector<std::set<long long>> closeness;
+    std::vector<std::unordered_set<long long>> closeness;
     std::vector<std::string> nameList;
     std::vector<std::string> singletons;
     Utils util;
@@ -157,7 +157,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
         }
     }
     int count = 0;
-    std::vector<std::set<long long>> closeness(nonSingletonCount);
+    std::vector<std::unordered_set<long long>> closeness(nonSingletonCount);
     for(const auto& cell : matrixData->seqVec) {
          const std::string name =listVector->get(count);
          nameList[count] = name;
@@ -165,7 +165,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
             singletons.emplace_back(name);
             continue;
         }
-        std::set<long long> cells;
+        std::unordered_set<long long> cells;
         for(const auto& row : cell) {
             float distance = row.dist;
             if (distance == -1) {

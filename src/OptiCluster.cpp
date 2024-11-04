@@ -144,7 +144,7 @@ bool OptiCluster::update(double &listMetric) {
             }
 
             std::set<long long> binsToTry;
-            std::set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
+            std::unordered_set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
             for (long long closeSeq : closeSeqs) {
                 binsToTry.insert(seqBin[closeSeq]);
             }

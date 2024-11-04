@@ -81,9 +81,9 @@ context("Optidata test") {
     }
     test_that("Optidata Returns Data for ref sequences") {
         OptiDataTestFixture testFixture;
-        bool result = testFixture.TestGetCloseRefSeqsReturnsCorrectData(1, std::set<long long>());
+        bool result = testFixture.TestGetCloseRefSeqsReturnsCorrectData(1, std::unordered_set<long long>());
         expect_true(result);
-        result = testFixture.TestGetCloseRefSeqsReturnsCorrectData(1, std::set<long long>{1,2});
+        result = testFixture.TestGetCloseRefSeqsReturnsCorrectData(1, std::unordered_set<long long>{1,2});
         expect_false(result);
     }
     test_that("Optidata IsCloseFit returns false") {

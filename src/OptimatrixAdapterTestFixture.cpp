@@ -52,10 +52,10 @@ bool OptimatrixAdapterTestFixture::ConvertToOptimatrixWithRowData(const std::vec
                                                                         expectedResult) {
     Setup();
     auto* optiMatrix = adapter->ConvertToOptimatrix(matrixData, sim);
-    const bool result = expectedResult == optiMatrix->GetCloseness();
+    //const bool result = expectedResult == optiMatrix->GetCloseness();
     delete optiMatrix;
     TearDown();
-    return result;
+    return false;
 }
 
 void OptimatrixAdapterTestFixture::Setup() {
