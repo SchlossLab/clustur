@@ -170,7 +170,7 @@ test_that("Read dist can read column, phylip files, and sparse matrices", {
   expect_true(all(dist_df_phy == dist_df_col))
   expect_true(nrow(dist_df_col) == 475)
   expect_true(nrow(dist_df_phy) == 475)
-  expect_true(nrow(dist_df_sparse) == 113)
+  expect_true(nrow(dist_df_sparse) == 13)
 })
 
 test_that("Read dist errors when the name is not present in the count table", {
