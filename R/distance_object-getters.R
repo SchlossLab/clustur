@@ -42,3 +42,19 @@ get_distance_df <- function(distance_object) {
   df <- GetDistanceDataFrame(distance_object)
   return(df)
 }
+
+
+# list_to_remove <- c()
+# for(i in 1:nrow(dist_df_sparse)) {
+#   first_name <- dist_df_sparse[i,]$FirstName
+#   second_name <- dist_df_sparse[i,]$SecondName
+#   my_index <- which(dist_df_sparse$FirstName == first_name & 
+#     dist_df_sparse$SecondName == second_name, arr.ind = TRUE)
+
+#   index <- which(dist_df_sparse$FirstName == second_name & 
+#     dist_df_sparse$SecondName == first_name, arr.ind = TRUE)
+#   if(length(index) > 0 && !(my_index %in% list_to_remove)) {
+#     list_to_remove <- c(list_to_remove, index)
+#   }
+# }
+# dist_df_sparse[-c(list_to_remove),]

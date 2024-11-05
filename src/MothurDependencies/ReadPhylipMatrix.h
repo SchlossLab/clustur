@@ -20,7 +20,10 @@ class ReadPhylipMatrix final : public DistanceFileReader {
 public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
-    // ~ReadPhylipMatrix() override = default;
+    ~ReadPhylipMatrix() override {
+        delete sparseMatrix;
+        delete list;
+    }
     bool Read(const std::string&) override;
 private:
     std::ifstream fileHandle;

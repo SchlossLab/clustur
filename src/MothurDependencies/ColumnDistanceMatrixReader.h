@@ -17,6 +17,10 @@
 class ColumnDistanceMatrixReader final : public DistanceFileReader {
 public:
     ColumnDistanceMatrixReader(double cutoff, bool isSimularity);
+    ~ColumnDistanceMatrixReader() override {
+        delete sparseMatrix;
+        delete list;
+    }
     bool Read(const std::string &filePath) override;
 };
 

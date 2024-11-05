@@ -143,6 +143,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Test
+void Test();
+RcppExport SEXP _clustur_Test() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Test();
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -157,6 +166,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
     {"_clustur_OptiCluster", (DL_FUNC) &_clustur_OptiCluster, 4},
     {"_clustur_CreateDataFrameFromSparse", (DL_FUNC) &_clustur_CreateDataFrameFromSparse, 1},
+    {"_clustur_Test", (DL_FUNC) &_clustur_Test, 0},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

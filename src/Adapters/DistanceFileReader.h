@@ -17,7 +17,7 @@ public:
     virtual ~DistanceFileReader() = default;
     // We need to deduce type, the easy way to do that is to see if there is a number for the first item read.
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
-    virtual bool Read(const std::string& filePath) {return {};};
+    virtual bool Read(const std::string& filePath) {return false;}
     DistanceFileReader(SparseDistanceMatrix*, ListVector*);
     DistanceFileReader() = default;
     // Phylip files do not need a count table

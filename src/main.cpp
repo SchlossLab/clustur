@@ -12,6 +12,7 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
+#include "Tests/RAbundVectorTestFixture.h"
 #include "Tests/SparseMatrixTestFixture.h"
 #include "Tests/UtilsTestFixture.h"
 #if DEBUG_RCPP
@@ -96,9 +97,8 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto sparseMatrix = adapter.DistanceMatrixToSquareMatrix();
-    auto listVector = adapter.CreateListVector();
-    auto* read = new DistanceFileReader(&sparseMatrix, &listVector);
+    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.DistanceMatrixToSquareMatrix()),
+        new ListVector(adapter.CreateListVector()));
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
@@ -182,7 +182,11 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     return adapter.ReCreateDataFrame();
 }
 
-
+//[[Rcpp::export]]
+void Test() {
+    SparseMatrixTestFixture fixture;
+    fixture.TestClear(false);
+}
 // SEXP start_profiler(const SEXP& str) {
 //     ProfilerStart(Rcpp::as<const char*>(str));
 //     return R_NilValue;
