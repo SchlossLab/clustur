@@ -12,6 +12,7 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
+#include "Tests/OptimatrixAdapterTestFixture.h"
 #include "Tests/RAbundVectorTestFixture.h"
 #include "Tests/SparseMatrixTestFixture.h"
 #include "Tests/UtilsTestFixture.h"
@@ -97,7 +98,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.DistanceMatrixToSparseMatrix()),
+    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.CreateSparseMatrix()),
         new ListVector(adapter.CreateListVector()));
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
@@ -184,19 +185,19 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
 
 //[[Rcpp::export]]
 void Test() {
-    // const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
-    // const std::vector<double> total{10, 20, 30, 40, 50, 60};
-    // const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
-    //     Rcpp::Named("Representative Sequence") = compounds,
-    //     Rcpp::Named("total") = total,
-    //     Rcpp::Named("nogroup") = total);
-    // CountTableAdapter countTable;
-    // countTable.CreateDataFrameMap(dataframe);
-    // MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-    // auto dMatrix = adapter.DistanceMatrixToSquareMatrix();
-    // ListVector* listVector = adapter.GetListVector();
-    // auto* clust = new SingleLinkage(new RAbundVector(), listVector,
-    //     &dMatrix, 0.2, "nearest", -1);
+    // OptimatrixAdapterTestFixture fixture;
+    // Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+    // Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+    // const Rcpp::Function test_path = pkg["test_path"];
+    // const Rcpp::Function read_count = clustur["read_count"];
+    // const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
+    // const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+    // const Rcpp::DataFrame df = read_count(countTablePath);
+    // ColumnDistanceMatrixReader reader(0.2, false);
+    // reader.CreateCountTableAdapter(df);
+    // reader.Read(path);
+    // Rcpp::Rcout << "Size of ListVector: " + reader.GetListVector()->size() << std::endl;;
+    // Rcpp::Rcout << "Size of Closeness: " + reader.GetListVector()->size();
 }
 // SEXP start_profiler(const SEXP& str) {
 //     ProfilerStart(Rcpp::as<const char*>(str));

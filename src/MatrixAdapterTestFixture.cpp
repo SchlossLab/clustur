@@ -4,18 +4,11 @@
 
 #include "Tests/MatrixAdapterTestFixture.h"
 
-bool MatrixAdapterTestFixture::TestReadPhylipFile(const bool expectedResult) {
+bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const size_t expectedResult) {
     Setup();
-    // const bool result = matrixAdapter->ReadPhylipFile("") != nullptr;
+    const auto result = matrixAdapter->CreateSparseMatrix().seqVec.size();
     TearDown();
-    return false;
-}
-
-bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const bool expectedResult) {
-    Setup();
-    // const auto result = matrixAdapter->CreateSparseMatrix() != nullptr;
-    TearDown();
-    return false;
+    return result == expectedResult;
 }
 
 bool MatrixAdapterTestFixture::TestCreatePhylipFile(const bool expectedResult) {
@@ -25,27 +18,12 @@ bool MatrixAdapterTestFixture::TestCreatePhylipFile(const bool expectedResult) {
     return result == expectedResult;
 }
 
-bool MatrixAdapterTestFixture::TestDistanceMatrixToSquareMatrix(const int expectedResult) {
-    Setup();
-    const auto result = matrixAdapter->DistanceMatrixToSparseMatrix();
-    TearDown();
-    return false;
-}
-
 bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {
     Setup();
-    // if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
-    // const auto result = matrixAdapter->GetListVector()->size() > 0;
+    if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
+    const auto result = matrixAdapter->CreateListVector().size() > 0;
     TearDown();
-    return false;
-}
-
-bool MatrixAdapterTestFixture::TestGetSparseDistanceMatrix(const bool createSparseFirst, const bool expectedResult) {
-    Setup();
-    // if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
-    // const auto result = !matrixAdapter->GetSpareDistanceMatrix()->seqVec.empty();
-    TearDown();
-    return false;
+    return result == expectedResult;
 }
 
 MatrixAdapterTestFixture::~MatrixAdapterTestFixture() {
