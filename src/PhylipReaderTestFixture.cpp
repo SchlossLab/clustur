@@ -4,42 +4,32 @@
 
 #include "Tests/PhylipReaderTestFixture.h"
 
-bool PhylipReaderTestFixture::TestReadPhylipFile(const std::string &file, const int expectedResult) {
+bool PhylipReaderTestFixture::TestReadPhylipFile(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
+    const bool result = reader->Read(file);
+    TearDown();
+    return result == expectedResult;
+}
+
+
+bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
+    Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(file);
-    const int result = reader->GetListVector()->getNumSeqs();
-    TearDown();
-    return result == expectedResult;
-}
-
-bool PhylipReaderTestFixture::TestReadPhylipFileFromRowData(const std::vector<RowData> &rowData, const int expectedResult) {
-    Setup();
-    reader->ReadRowDataMatrix(rowData);
-    const int result = reader->GetListVector()->getNumSeqs();
-    TearDown();
-    return result == expectedResult;
-}
-
-bool PhylipReaderTestFixture::TestReadPhylipFileToRowData(const CountTableAdapter& adapter, const std::string& filePath,
-    const std::vector<RowData>& expectedResult) {
-    Setup();
-    const auto result = reader->ReadToRowData(adapter, filePath);
-    TearDown();
-    return result.size() == expectedResult.size();
-}
-
-bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::vector<RowData> &rowData, const bool expectedResult) {
-    Setup();
-    reader->ReadRowDataMatrix(rowData);
     const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
     return result == expectedResult;
 
 }
 
-bool PhylipReaderTestFixture::TestGetListVector(const std::vector<RowData> &rowData, const int expectedResult) {
+bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
+    const std::string &file, const int expectedResult) {
     Setup();
-    reader->ReadRowDataMatrix(rowData);
+    reader->CreateCountTableAdapter(df);
+    reader->Read(file);
     const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;

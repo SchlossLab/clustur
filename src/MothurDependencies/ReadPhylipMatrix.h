@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include "../RowData.h"
+#include <unordered_set>
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"
 #include "../Adapters/DistanceFileReader.h"
@@ -19,10 +20,11 @@ class ReadPhylipMatrix final : public DistanceFileReader {
 public:
     ReadPhylipMatrix(double, bool);
     ReadPhylipMatrix() = default;
-    // ~ReadPhylipMatrix() override = default;
-    bool Read(const std::string&);
-    std::vector<RowData> ReadToRowData(const CountTableAdapter &adapter, const std::string &filePath) override;
-
+    ~ReadPhylipMatrix() override {
+        delete sparseMatrix;
+        delete list;
+    }
+    bool Read(const std::string&) override;
 private:
     std::ifstream fileHandle;
 };

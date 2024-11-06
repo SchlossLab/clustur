@@ -214,7 +214,6 @@ read_count <- function(count_table_path) {
 #'  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
 #' @return a `dgTMatrix` from the `Matrix` library.
 #' @export
-
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
   return(spMatrix(size, size, i_index, j_index, distances))

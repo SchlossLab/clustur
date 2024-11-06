@@ -1,9 +1,8 @@
 //
 // Created by Gregory Johnson on 5/14/24.
 //
-#include "TestHelpers/TestHelper.h"
+
 #include "Tests/UtilsTestFixture.h"
-#if DEBUG_RCPP
 #include <testthat.h>
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
@@ -124,5 +123,3 @@ context("Utils Testing") {
     expect_false(result);
   }
 }
-
-#endif

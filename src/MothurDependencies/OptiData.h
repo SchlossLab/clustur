@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <fstream>
+#include <unordered_set>
 
 #include "ListVector.h"
 
@@ -19,7 +20,7 @@ public:
     OptiData() {}
     virtual ~OptiData(){}
 
-    std::set<long long> getCloseSeqs(long long i);
+    std::unordered_set<long long> getCloseSeqs(long long i);
     bool isClose(long long, long long) const;
     long long getNumClose(long long) const;
     std::string getName(long long); //name from nameMap index
@@ -27,11 +28,11 @@ public:
     long long getNumSeqs() { return closeness.size(); }
     long long getNumSingletons() { return singletons.size(); }
     ListVector* getListSingle() const;
-     virtual std::set<long long> getCloseRefSeqs(long long i) { std::set<long long> temp; return temp;  }
+     virtual std::unordered_set<long long> getCloseRefSeqs(long long i) { std::unordered_set<long long> temp; return temp;  }
      virtual bool isCloseFit(long long j, long long i, bool&) { return false; }
 protected:
     double cutoff;
-    std::vector< std::set<long long> > closeness;  //closeness[0] contains indexes of seqs "close" to seq 0.
+    std::vector<std::unordered_set<long long>> closeness;  //closeness[0] contains indexes of seqs "close" to seq 0.
     std::vector<std::string> singletons; //name of seqs with NO distances in matrix, if name file is given then it contains 2nd column of namefile
     std::vector<std::string> nameMap;
 };

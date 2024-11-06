@@ -14,7 +14,7 @@
 class OptiMatrix final : public OptiData{
 
 public:
-    OptiMatrix(const std::vector<std::set<long long>>& close,  const std::vector<std::string>& name,
+    OptiMatrix(const std::vector<std::unordered_set<long long>>& close,  const std::vector<std::string>& name,
      const std::vector<std::string>& single, const double c): OptiData(c)
 {
     closeness = close;
@@ -22,7 +22,7 @@ public:
     singletons = single;
 }//closeness, namemap, singleton, cutoff
     ~OptiMatrix(){}
-    std::vector<std::set<long long>> GetCloseness() {return closeness;}
+    std::vector<std::unordered_set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameMap;}
     std::vector<std::string> GetSingletons() {return singletons;}
 private:

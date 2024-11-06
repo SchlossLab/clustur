@@ -98,10 +98,11 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
 bool OptiCluster::update(double &listMetric) {
     //for each sequence (singletons removed on read)
     for (const int randomizeSeq : randomizeSeqs) {
-        const auto it = seqBin.find(randomizeSeq);
+        // const auto it = seqBin.find(randomizeSeq);
+        // seqBin[randomizeSeq]
 
-        long long seqNumber = it->first;
-        const long long binNumber = it->second;
+        long long seqNumber = randomizeSeq;
+        const long long binNumber = seqBin[randomizeSeq];
 
         if (binNumber == -1) {
         } else {
@@ -143,7 +144,7 @@ bool OptiCluster::update(double &listMetric) {
             }
 
             std::set<long long> binsToTry;
-            std::set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
+            std::unordered_set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
             for (long long closeSeq : closeSeqs) {
                 binsToTry.insert(seqBin[closeSeq]);
             }

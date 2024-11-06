@@ -27,15 +27,13 @@ context("Cluster algorithms") {
     CountTableAdapter countTable;
     countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-    auto* dMatrix = adapter.CreateSparseMatrix();
-    ListVector* listVector = adapter.GetListVector();
-    bool result = test_fixture.TestClusterNames(listVector, dMatrix, true);
+    auto dMatrix = adapter.CreateSparseMatrix();
+    ListVector listVector = adapter.CreateListVector();
+    bool result = test_fixture.TestClusterNames(&listVector, &dMatrix, true);
     expect_true(result);
-    result = test_fixture.TestClusterNames(listVector, dMatrix, false);
+    result = test_fixture.TestClusterNames(&listVector, &dMatrix, false);
     expect_false(result);
 
-    delete dMatrix;
-    delete listVector;
   }
   test_that("Update map function does and does not fail") {
      ClusterTestFixture test_fixture;
@@ -48,15 +46,12 @@ context("Cluster algorithms") {
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-    auto* dMatrix = adapter.CreateSparseMatrix();
-    ListVector* listVector = adapter.GetListVector();
-    bool result = test_fixture.TestUpdateMap(listVector, dMatrix, true);
+    auto dMatrix = adapter.CreateSparseMatrix();
+    ListVector listVector = adapter.CreateListVector();
+    bool result = test_fixture.TestUpdateMap(&listVector, &dMatrix, true);
     expect_true(result);
-    result = test_fixture.TestUpdateMap(listVector, dMatrix, false);
+    result = test_fixture.TestUpdateMap(&listVector, &dMatrix, false);
     expect_false(result);
-
-    delete dMatrix;
-    delete listVector;
   }
   test_that("Get Tag returns the tag that corresponds to the clustering type") {
     ClusterTestFixture test_fixture;
@@ -69,34 +64,34 @@ context("Cluster algorithms") {
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-    auto* dMatrix = adapter.CreateSparseMatrix();
-    ListVector* listVector = adapter.GetListVector();
+    auto dMatrix = adapter.CreateSparseMatrix();
+    ListVector listVector = adapter.CreateListVector();
 
-    auto* clustComplete = new CompleteLinkage(new RAbundVector(), listVector,
-        dMatrix, 0.2, "furthest", -1);
+    auto* clustComplete = new CompleteLinkage(new RAbundVector(), &listVector,
+        &dMatrix, 0.2, "furthest", -1);
     bool result = test_fixture.TestGetTagGetter(clustComplete, "fn");
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustComplete, "nn");
     expect_false(result);
 
 
-    auto* clustSingle = new SingleLinkage(new RAbundVector(), listVector,
-        dMatrix, 0.2, "nearest", -1);
+    auto* clustSingle = new SingleLinkage(new RAbundVector(), &listVector,
+        &dMatrix, 0.2, "nearest", -1);
     result = test_fixture.TestGetTagGetter(clustSingle, "nn");
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustSingle, "an");
     expect_false(result);
 
-    auto* clustAverage = new AverageLinkage(new RAbundVector(), listVector,
-        dMatrix, 0.2, "average", -1);
+    auto* clustAverage = new AverageLinkage(new RAbundVector(), &listVector,
+        &dMatrix, 0.2, "average", -1);
     result = test_fixture.TestGetTagGetter(clustAverage, "an");
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustAverage, "wn");
     expect_false(result);
 
 
-    auto* clustWeighted = new WeightedLinkage(new RAbundVector(), listVector,
-      dMatrix, 0.2, "weighted", -1);
+    auto* clustWeighted = new WeightedLinkage(new RAbundVector(), &listVector,
+      &dMatrix, 0.2, "weighted", -1);
     result = test_fixture.TestGetTagGetter(clustWeighted, "wn");
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustWeighted, "nn");
@@ -117,15 +112,15 @@ context("Cluster algorithms") {
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
       MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-      auto* dMatrix = adapter.CreateSparseMatrix();
-      ListVector* listVector = adapter.GetListVector();
-      auto* clust = new SingleLinkage(new RAbundVector(), listVector,
-          dMatrix, 0.2, "nearest", -1);
+      auto dMatrix = adapter.CreateSparseMatrix();
+      ListVector listVector = adapter.CreateListVector();
+      auto* clust = new SingleLinkage(new RAbundVector(), &listVector,
+          &dMatrix, 0.2, "nearest", -1);
 
       bool result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>());
       expect_true(result);
       result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>{{"", 1}});
       expect_false(result);
-
+      delete(clust);
     }
 }
