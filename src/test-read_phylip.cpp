@@ -5,7 +5,6 @@
 #include <testthat.h>
 #include "Tests/PhylipReaderTestFixture.h"
 #include "Adapters/MatrixAdapter.h"
-#include "RowData.h"
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
 // file providing the definition, and let R CMD INSTALL

@@ -2,7 +2,6 @@
 // Created by Gregory Johnson on 6/28/24.
 //
 #include "Adapters/MatrixAdapter.h"
-#include "TestHelpers/TestHelper.h"
 #include <map>
 #include <utility>
 
@@ -51,7 +50,7 @@ bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation) {
     }
     std::ofstream writeOut(saveFileLocation);
     if (!writeOut.is_open()) {
-        TestHelper::Print("Failed to open: \n");
+        Rcpp::Rcout << "Failed to open: \n";
     }
     writeOut << data;
     writeOut.close();

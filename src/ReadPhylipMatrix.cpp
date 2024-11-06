@@ -4,7 +4,6 @@
 
 #include "MothurDependencies/ReadPhylipMatrix.h"
 #include "MothurDependencies/ListVector.h"
-#include "TestHelpers/TestHelper.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix):DistanceFileReader() {
     this->cutoff = cutoff;

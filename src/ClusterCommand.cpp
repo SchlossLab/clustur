@@ -15,7 +15,6 @@
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
 #include "MothurDependencies/ClusterData.h"
-#include "TestHelpers/TestHelper.h"
 #include <string>
 
 #include "Adapters/DataFrameAdapter.h"

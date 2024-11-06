@@ -1,10 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-//TODO Next week: Change RowData into a sparse matrix and remove it from the project. Too much memory usage.
-// #include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
 #include "Adapters/OptimatrixAdapter.h"
-#include "TestHelpers/TestHelper.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
 #include "MothurDependencies/OptiMatrix.h"
@@ -12,11 +9,6 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include "MothurDependencies/SharedFileBuilder.h"
 #include "Adapters/DistanceFileReader.h"
-#include "Tests/OptimatrixAdapterTestFixture.h"
-#include "Tests/RAbundVectorTestFixture.h"
-#include "Tests/SparseMatrixTestFixture.h"
-#include "Tests/UtilsTestFixture.h"
-#if DEBUG_RCPP
 #include <Rcpp.h>
 #include <cctype>
 
@@ -147,27 +139,15 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     const auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
     OptimatrixAdapter optiAdapter(cutoff);
-    auto startTime = std::chrono::system_clock::now();
     const auto optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
-    auto endTime = std::chrono::system_clock::now();
-    std::chrono::duration<double> currentTime = endTime - startTime;
-    Rcpp::Rcout << "It took: " << currentTime.count() << " to convert to optimatrix\n";
     delete(sparseMatix);
     delete(listVector);
     ClusterCommand command;
-    startTime = std::chrono::system_clock::now();
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
-    endTime = std::chrono::system_clock::now();
-    currentTime = endTime - startTime;
-    Rcpp::Rcout << "It took: " << currentTime.count() << " to cluster\n";
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
         featureColumnName, binColumnName);
-    startTime = std::chrono::system_clock::now();
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
-    endTime = std::chrono::system_clock::now();
-    currentTime = endTime - startTime;
-    Rcpp::Rcout << "It took: " << currentTime.count() << " to create a shared df\n";
     delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,
@@ -183,28 +163,4 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
     return adapter.ReCreateDataFrame();
 }
 
-//[[Rcpp::export]]
-void Test() {
-    // OptimatrixAdapterTestFixture fixture;
-    // Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
-    // Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
-    // const Rcpp::Function test_path = pkg["test_path"];
-    // const Rcpp::Function read_count = clustur["read_count"];
-    // const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
-    // const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
-    // const Rcpp::DataFrame df = read_count(countTablePath);
-    // ColumnDistanceMatrixReader reader(0.2, false);
-    // reader.CreateCountTableAdapter(df);
-    // reader.Read(path);
-    // Rcpp::Rcout << "Size of ListVector: " + reader.GetListVector()->size() << std::endl;;
-    // Rcpp::Rcout << "Size of Closeness: " + reader.GetListVector()->size();
-}
-// SEXP start_profiler(const SEXP& str) {
-//     ProfilerStart(Rcpp::as<const char*>(str));
-//     return R_NilValue;
-// }
-// SEXP stop_profiler() {
-//      ProfilerStop();
-//     return R_NilValue;
-// }
-#endif
+

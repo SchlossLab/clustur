@@ -1,8 +1,7 @@
 //
 // Created by Gregory Johnson on 8/30/24.
 //
-#include "TestHelpers/TestHelper.h"
-#if DEBUG_RCPP
+
 #include <testthat.h>
 #include "Tests/SharedFileBuilderTestFixture.h"
 // Normally this would be a function from your package's
@@ -42,5 +41,5 @@ context("SharedFile Builder") {
     }
 }
 
-#endif
+
 

@@ -1,6 +1,5 @@
 
-#include "TestHelpers/TestHelper.h"
-#if DEBUG_RCPP
+
 #include <testthat.h>
 #include "Tests/OptimatrixAdapterTestFixture.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
@@ -91,4 +90,3 @@ context("Optimatrix Adapter Test") {
 
 }
 
-#endif

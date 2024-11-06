@@ -122,6 +122,5 @@ context("Cluster algorithms") {
       result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>{{"", 1}});
       expect_false(result);
       delete(clust);
-
     }
 }

@@ -8,9 +8,8 @@
 // Created by Gregory Johnson on 5/1/24.
 //
 
-#include "TestHelpers/TestHelper.h"
+
 #include "Tests/OptiDataTestFixture.h"
-#if DEBUG_RCPP
 #include <testthat.h>
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
@@ -98,4 +97,4 @@ context("Optidata test") {
 
 }
 
-#endif
+

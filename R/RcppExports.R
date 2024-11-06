@@ -41,7 +41,3 @@ CreateDataFrameFromSparse <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparse', PACKAGE = 'clustur', countTable)
 }
 
-Test <- function() {
-    invisible(.Call('_clustur_Test', PACKAGE = 'clustur'))
-}
-
