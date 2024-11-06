@@ -97,7 +97,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.DistanceMatrixToSquareMatrix()),
+    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.DistanceMatrixToSparseMatrix()),
         new ListVector(adapter.CreateListVector()));
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
@@ -184,8 +184,19 @@ Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
 
 //[[Rcpp::export]]
 void Test() {
-    SparseMatrixTestFixture fixture;
-    fixture.TestClear(false);
+    // const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+    // const std::vector<double> total{10, 20, 30, 40, 50, 60};
+    // const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+    //     Rcpp::Named("Representative Sequence") = compounds,
+    //     Rcpp::Named("total") = total,
+    //     Rcpp::Named("nogroup") = total);
+    // CountTableAdapter countTable;
+    // countTable.CreateDataFrameMap(dataframe);
+    // MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+    // auto dMatrix = adapter.DistanceMatrixToSquareMatrix();
+    // ListVector* listVector = adapter.GetListVector();
+    // auto* clust = new SingleLinkage(new RAbundVector(), listVector,
+    //     &dMatrix, 0.2, "nearest", -1);
 }
 // SEXP start_profiler(const SEXP& str) {
 //     ProfilerStart(Rcpp::as<const char*>(str));

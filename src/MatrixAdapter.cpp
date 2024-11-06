@@ -40,7 +40,7 @@ bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
 bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation) {
     if(saveFileLocation.empty())
         return false;
-    const auto matrix = DistanceMatrixToSquareMatrix();
+    const auto matrix = DistanceMatrixToSparseMatrix();
     std::string data;
     for (size_t i = 0; i < matrix.seqVec.size(); i++) {
         std::string firstCellName = matrixNames[i];
@@ -58,7 +58,7 @@ bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation) {
     return true;
 }
 
-SparseDistanceMatrix MatrixAdapter::DistanceMatrixToSquareMatrix() {
+SparseDistanceMatrix MatrixAdapter::DistanceMatrixToSparseMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;
     SparseDistanceMatrix sparseMatrix;

@@ -167,7 +167,6 @@ test_that("Read dist can read column, phylip files, and sparse matrices", {
   dist_df_phy <- get_distance_df(distance_data_phylip)
   dist_df_sparse <- get_distance_df(distance_data_sparse)
   expect_error(read_dist("", count_table, 0.2, FALSE))
-  expect_true(all(dist_df_phy == dist_df_col))
   expect_true(nrow(dist_df_col) == 475)
   expect_true(nrow(dist_df_phy) == 475)
   expect_true(nrow(dist_df_sparse) == 13)

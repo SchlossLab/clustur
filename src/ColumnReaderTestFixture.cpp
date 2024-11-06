@@ -4,9 +4,10 @@
 
 #include "Tests/ColumnReaderTestFixture.h"
 
-bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const CountTableAdapter& adapter,
+bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const Rcpp::DataFrame& df,
                                                  const int expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(file);
     const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
@@ -14,8 +15,9 @@ bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const 
 }
 
 bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
-    const CountTableAdapter& adapter, const bool expectedResult) {
+    const Rcpp::DataFrame& df, const bool expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(filePath);
     const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
@@ -23,8 +25,9 @@ bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
 }
 
 bool ColumnReaderTestFixture::TestGetListVector(const std::string& filePath,
-     const CountTableAdapter& adapter, const int expectedResult) {
+    const Rcpp::DataFrame& df, const int expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(filePath);
     const auto result = reader->GetListVector()->getNumSeqs();
     TearDown();

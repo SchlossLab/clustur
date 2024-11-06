@@ -27,7 +27,7 @@ bool MatrixAdapterTestFixture::TestCreatePhylipFile(const bool expectedResult) {
 
 bool MatrixAdapterTestFixture::TestDistanceMatrixToSquareMatrix(const int expectedResult) {
     Setup();
-    const auto result = matrixAdapter->DistanceMatrixToSquareMatrix();
+    const auto result = matrixAdapter->DistanceMatrixToSparseMatrix();
     TearDown();
     return false;
 }

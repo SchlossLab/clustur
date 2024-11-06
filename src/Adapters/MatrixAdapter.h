@@ -17,7 +17,7 @@ public:
     ~MatrixAdapter() = default;
     bool CreatePhylipFile(const std::string &saveFileLocation);
     bool CreateColumnDataFile(const std::string &saveFileLocation);
-    SparseDistanceMatrix DistanceMatrixToSquareMatrix();
+    SparseDistanceMatrix DistanceMatrixToSparseMatrix();
     ListVector CreateListVector() const;
 
 private:
