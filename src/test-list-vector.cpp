@@ -2,8 +2,7 @@
 // Created by Gregory Johnson on 5/1/24.
 //
 
-#include "TestHelpers/TestHelper.h"
-#if DEBUG_RCPP
+
 #include <testthat.h>
 #include "Tests/ListVectorTestFixture.h"
 // Normally this would be a function from your package's
@@ -122,9 +121,5 @@ context("ListVectorTest") {
     result = testFixture.TestCreateDataFrameFromList("0.0001", false);
     expect_false(result);
   }
-
-
-
 }
 
-#endif

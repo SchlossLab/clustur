@@ -1,4 +1,4 @@
-url: http://www.schlosslab.org/Clustur/
+url: http://www.schlosslab.org/clustur/
 template:
   bootstrap: 5
   light-switch: true
@@ -13,12 +13,12 @@ reference:
   - read_count
 - title: Getters and Setters
   contents: 
-  - get_clusters
-  - get_shared
+  - get_bins
+  - get_abundance
   - get_metrics
   - get_count_table
   - get_cutoff
-  - get_distance_data_frame
+  - get_distance_df
 - title: Helper Functions
   contents: 
   - example_path

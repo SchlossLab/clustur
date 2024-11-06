@@ -5,7 +5,6 @@
 #include <testthat.h>
 #include "Tests/PhylipReaderTestFixture.h"
 #include "Adapters/MatrixAdapter.h"
-#include "RowData.h"
 // Normally this would be a function from your package's
 // compiled library -- you might instead just include a header
 // file providing the definition, and let R CMD INSTALL
@@ -22,70 +21,49 @@ context("PhylipReader Test") {
     // to test the desired conditions.
     test_that("Phylip Reader reads phylip files") {
         PhylipReaderTestFixture fixture;
-        bool result = fixture.TestReadPhylipFile("", true);
-        expect_false(result);
-    }
-    test_that("Phylip Reader reads phylip files to rowdata information") {
-        PhylipReaderTestFixture fixture;
-        bool result = fixture.TestReadPhylipFileToRowData("", {});
-        expect_false(result);
-    }
-    test_that("Phylip Reader reads phylip file from created RowData Vectors") {
-        PhylipReaderTestFixture fixture;
-        const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
-        const std::vector<double> total{10, 20, 30, 40, 50, 60};
-        const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
-            Rcpp::Named("Representative Sequence") = compounds,
-            Rcpp::Named("total") = total,
-            Rcpp::Named("nogroup") = total);
-        CountTableAdapter countTable;
-        countTable.CreateDataFrameMap(dataframe);
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-        std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
-        bool result = fixture.TestReadPhylipFile(squareMatrix, true);
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ReadPhylipMatrix reader(0.2, false);
+        bool result = fixture.TestReadPhylipFile(df, path, true);
         expect_true(result);
-        result = fixture.TestReadPhylipFile(squareMatrix, false);
+        result = fixture.TestReadPhylipFile(df, "", true);
         expect_false(result);
     }
     test_that("Phylip Reader properly creates a sparse distance matrix"){
         PhylipReaderTestFixture fixture;
-        const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
-        const std::vector<double> total{10, 20, 30, 40, 50, 60};
-        const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
-            Rcpp::Named("Representative Sequence") = compounds,
-            Rcpp::Named("total") = total,
-            Rcpp::Named("nogroup") = total);
-        CountTableAdapter countTable;
-        countTable.CreateDataFrameMap(dataframe);
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-        std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
-        bool result = fixture.TestGetDistanceMatrix(squareMatrix, true);
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ReadPhylipMatrix reader(0.2, false);
+        bool result = fixture.TestGetSparseMatrix(df, path, true);
         expect_true(result);
-
-        MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
-        std::vector<RowData> squareMatrixTwo = adapterTwo.DistanceMatrixToSquareMatrix();
-        result = fixture.TestGetDistanceMatrix(squareMatrixTwo, true);
+        result = fixture.TestGetSparseMatrix(df, path, false);
         expect_false(result);
 
     }
       test_that("Phylip Reader properly creates a list vector"){
         PhylipReaderTestFixture fixture;
-        const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
-        const std::vector<double> total{10, 20, 30, 40, 50, 60};
-        const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
-            Rcpp::Named("Representative Sequence") = compounds,
-            Rcpp::Named("total") = total,
-            Rcpp::Named("nogroup") = total);
-        CountTableAdapter countTable;
-        countTable.CreateDataFrameMap(dataframe);
-        MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
-        std::vector<RowData> squareMatrix = adapter.DistanceMatrixToSquareMatrix();
-        bool result = fixture.TestGetListVector(adapter.DistanceMatrixToSquareMatrix(), true);
+        Rcpp::Environment pkg = Rcpp::Environment::namespace_env("testthat");
+        Rcpp::Environment clustur = Rcpp::Environment::namespace_env("clustur");
+        const Rcpp::Function test_path = pkg["test_path"];
+        const Rcpp::Function read_count = clustur["read_count"];
+        const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
+        const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
+        const Rcpp::DataFrame df = read_count(countTablePath);
+        ReadPhylipMatrix reader(0.2, false);
+        bool result = fixture.TestGetListVector(df, path, 98);
         expect_true(result);
 
-        MatrixAdapter adapterTwo({}, {}, {}, 0.2, false, countTable);
-        std::vector<RowData> squareMatrixTwo = adapterTwo.DistanceMatrixToSquareMatrix();
-        result = fixture.TestGetListVector(squareMatrixTwo, true);
+        result = fixture.TestGetListVector(df, path, 3);
         expect_false(result);
 
     }

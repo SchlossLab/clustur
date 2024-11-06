@@ -127,7 +127,7 @@ bool ListVectorTestFixture::TestCreateDataFrameFromList(const std::string& label
     Setup();
     listVector->push_back("2");
     listVector->push_back("1");
-    auto df = listVector->CreateDataFrameFromList(label);
+    auto df = listVector->CreateDataFrameFromList();
     const std::vector<std::string> names = df.names();
     TearDown();
     return expectResult == !names.empty();

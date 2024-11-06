@@ -20,6 +20,7 @@
 #include <map>
 #include "OptiMatrix.h"
 #include "ListVector.h"
+#include <chrono>
 #include "Metrics/accuracy.hpp"
 #include "Metrics/f1score.hpp"
 #include "Metrics/fdr.hpp"
@@ -79,7 +80,6 @@ private:
 	ofstream sabundFile, rabundFile, listFile;
     set<string> cutoffs;
 	Utils util;
-	time_t start;
 	bool canShuffle = true;
 	vector<string> outputNames;
 	std::unordered_map<std::string, std::vector<std::string>> dataframeMapClusterMetrics;

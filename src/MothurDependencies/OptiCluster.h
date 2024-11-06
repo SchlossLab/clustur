@@ -9,6 +9,7 @@
 #include "ClusterMetric.h"
 #include "ListVector.h"
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <set>
 #include <vector>
@@ -35,7 +36,7 @@ protected:
     std::vector<int> randomizeSeqs;
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]
     std::map<long long, std::string> binLabels; //for fitting - maps binNumber to existing reference label
-    std::map<long long, long long> seqBin; //sequence# -> bin#
+    std::unordered_map<long long, long long> seqBin; //sequence# -> bin#
 
     long long numSeqs, insertLocation, numSingletons;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;

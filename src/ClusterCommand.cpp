@@ -15,7 +15,6 @@
 #include "MothurDependencies/SingleLinkage.h"
 #include "MothurDependencies/WeightedLinkage.h"
 #include "MothurDependencies/ClusterData.h"
-#include "TestHelpers/TestHelper.h"
 #include <string>
 
 #include "Adapters/DataFrameAdapter.h"
@@ -25,10 +24,6 @@ ClusterCommand::~ClusterCommand() {
 }
 
 // //**********************************************************************************************************************
-/// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
-/// @param optiMatrix
-/// @param cutoffValue
-/// @return
 ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const double cutoffValue) {
     cutoff = cutoffValue;
     // clusterMetrics += ("\nClustering " + distfile + "\n");
@@ -88,6 +83,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             clusterMetrics += (std::to_string(result) + ",");
         }
         util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+        std::chrono::time_point<std::chrono::system_clock> start, end;
         //m->mothurOutEndLine();
         // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
         // The difference between what the current and last metric (delta)
@@ -95,7 +91,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         while ((delta > stableMetric) && (iters < maxIters)) {
             //long start = std::time(nullptr);
             double oldMetric = listVectorMetric;
-
+            auto startTime = std::chrono::system_clock::now();
             cluster.update(listVectorMetric);
 
             delta = std::abs(oldMetric - listVectorMetric);
@@ -104,8 +100,9 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             stats = cluster.getStats(tp, tn, fp, fn);
 
             numBins = cluster.getNumBins();
-
-            clusterMetrics = (std::to_string(iters) + "," + std::to_string(std::time(nullptr) - start) + "," +
+            auto endTime = std::chrono::system_clock::now();
+            std::chrono::duration<double> currentTime = endTime - startTime;
+            clusterMetrics = (std::to_string(iters) + "," + std::to_string(currentTime.count()) + "," +
                                std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
                                std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
                                + std::to_string(fp) + "," + std::to_string(fn) + ",");
@@ -188,7 +185,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
             clusterData->AddToData(data);
             if(rndPreviousDist > highestDistLabel) {
                 highestDistLabel = rndPreviousDist;
-                //Rcpp::Rcout << std::to_string(highestDistLabel) << " : bins " << std::to_string(data.numberOfOtu) <<  std::endl;
+                vec->setLabel(std::to_string(highestDistLabel));
                 clusterData->SetListVector(*vec, std::to_string(highestDistLabel)); // vec might be a shallow copy
             }
         }
@@ -210,9 +207,11 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     if(!data.label.empty()) {
         data.clusterBins = oldList.print(listFile);
         auto* vec = new ListVector(oldList);
+        
         clusterData->AddToData(data);
         if(rndPreviousDist > highestDistLabel) {
             highestDistLabel = rndPreviousDist;
+            vec->setLabel(std::to_string(highestDistLabel));
             clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
         }
     }

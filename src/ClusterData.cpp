@@ -4,7 +4,6 @@
 
 #include "MothurDependencies/ClusterData.h"
 
-#include "TestHelpers/TestHelper.h"
 
 bool ClusterData::AddToData(ClusterInformation& information) {
     if(information.label.empty())

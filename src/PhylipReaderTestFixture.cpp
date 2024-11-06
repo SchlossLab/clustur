@@ -4,41 +4,33 @@
 
 #include "Tests/PhylipReaderTestFixture.h"
 
-bool PhylipReaderTestFixture::TestReadPhylipFile(const std::string &file, const bool expectedResult) {
+bool PhylipReaderTestFixture::TestReadPhylipFile(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
     Setup();
-    const auto result = reader->Read(file);
+    reader->CreateCountTableAdapter(df);
+    const bool result = reader->Read(file);
     TearDown();
     return result == expectedResult;
 }
 
-bool PhylipReaderTestFixture::TestReadPhylipFile(const std::vector<RowData> &rowData, const bool expectedResult) {
-    Setup();
-    const auto result = reader->ReadRowDataMatrix(rowData);
-    TearDown();
-    return result == expectedResult;
-}
 
-bool PhylipReaderTestFixture::TestReadPhylipFileToRowData(const std::string& filePath,
-    const std::vector<RowData>& expectedResult) {
+bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
     Setup();
-    const auto result = reader->ReadToRowData(filePath);
-    TearDown();
-    return !result.empty() && !expectedResult.empty();
-}
-
-bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::vector<RowData> &rowData, const bool expectedResult) {
-    Setup();
-    reader->ReadRowDataMatrix(rowData);
+    reader->CreateCountTableAdapter(df);
+    reader->Read(file);
     const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
     return result == expectedResult;
 
 }
 
-bool PhylipReaderTestFixture::TestGetListVector(const std::vector<RowData> &rowData, const bool expectedResult) {
+bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
+    const std::string &file, const int expectedResult) {
     Setup();
-    reader->ReadRowDataMatrix(rowData);
-    const auto result = reader->GetListVector()->size() > 0;
+    reader->CreateCountTableAdapter(df);
+    reader->Read(file);
+    const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;
 }

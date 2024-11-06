@@ -43,6 +43,8 @@ public:
 
     void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
+    //Error Checking
+    void CheckForDistanceFileError(const std::set<std::string>&) const;
 
     template <typename Out>
     void split(const std::string &s, const char delim, Out result) {

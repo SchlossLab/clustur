@@ -9,16 +9,16 @@ bool OptiData::isClose(const long long i, const long long toFind) const {
         return false;
     }
     bool found = false;
-    if (closeness[i].count(toFind) != 0) { found = true; }
+    if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
     return found;
 
 }
-std::set<long long> OptiData::getCloseSeqs(const long long i){
+std::unordered_set<long long> OptiData::getCloseSeqs(const long long i){
     if (i < 0) {
-        std::set<long long> temp; return temp;
+        std::unordered_set<long long> temp; return temp;
     }
     if (i > static_cast<long long>(closeness.size())) {
-        std::set<long long> temp; return temp;
+        std::unordered_set<long long> temp; return temp;
     }
         return closeness[i];
 }

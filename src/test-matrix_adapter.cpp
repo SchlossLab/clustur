@@ -21,9 +21,9 @@ context("MatrixAdapter Test") {
     // to test the desired conditions.
     test_that("Matrix Adapter can create phylip files") {
         MatrixAdapterTestFixture fixture;
-        bool result = fixture.TestCreatePhylipFile(false);
+        bool result = fixture.TestCreatePhylipFile(true);
         expect_true(result);
-        result = fixture.TestCreatePhylipFile(true);
+        result = fixture.TestCreatePhylipFile(false);
         expect_false(result);
     }
 
@@ -38,30 +38,9 @@ context("MatrixAdapter Test") {
      }
      test_that("Matrix Adapter can create sparse matrices") {
          MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestCreateSparseMatrix(true);
+         bool result = fixture.TestCreateSparseMatrix(6);
          expect_true(result);
-         result = fixture.TestCreateSparseMatrix(false);
-         expect_false(result);
-     }
-     test_that("Matrix Adapter can read phylip files") {
-         MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestReadPhylipFile(false);
-         expect_true(result);
-         result = fixture.TestReadPhylipFile(true);
-         expect_false(result);
-     }
-     test_that("Matrix Adapter can access sparse distance matrix getter") {
-         MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestGetSparseDistanceMatrix(true, true);
-         expect_true(result);
-         result = fixture.TestGetSparseDistanceMatrix(false, true);
-         expect_false(result);
-     }
-     test_that("Matrix Adapter can create proper square matrices from distance matrices") {
-         MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestDistanceMatrixToSquareMatrix(6);
-         expect_true(result);
-         result = fixture.TestDistanceMatrixToSquareMatrix(0);
+         result = fixture.TestCreateSparseMatrix(0);
          expect_false(result);
      }
  }
