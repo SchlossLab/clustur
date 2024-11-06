@@ -13,15 +13,14 @@ get_cutoff(cluster_data)
 the cutoff value as a `dbl`
 }
 \description{
-GetCutoff returns the cutoff of the cluster object from
-the `cluster()` function.
+Returns the distance cutoff of the cluster object from the `cluster()`
+function
 }
 \examples{
 cutoff <- 0.2
-count_table <- read_count(example_path("amazon.count_table"))
+count_table <- read_count(example_path("amazon.full.count_table"))
 distance_data <- read_dist(example_path("amazon_column.dist"),
                            count_table, cutoff, FALSE)
-df_clusters <- cluster(distance_data, method = "opti")
+df_clusters <- cluster(distance_data, cutoff, method = "opticlust")
 cutoff <- get_cutoff(df_clusters)
-
 }

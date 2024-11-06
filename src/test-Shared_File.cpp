@@ -1,8 +1,7 @@
 //
 // Created by Gregory Johnson on 8/30/24.
 //
-#include "TestHelpers/TestHelper.h"
-#if DEBUG_RCPP
+
 #include <testthat.h>
 #include "Tests/SharedFileTestFixture.h"
 // Normally this would be a function from your package's
@@ -25,22 +24,18 @@ context("SharedFile") {
         SharedAbundance abundance2{"grp2", "1", "0.000", 20};
         const std::vector<std::string> compounds{"1", "2", "3", "4", "5"};
         const std::vector<double> total{10, 20, 30, 40, 50};
-        Rcpp::DataFrame dataFrame = Rcpp::DataFrame::create(Rcpp::Named("label") = compounds,
-                                                    Rcpp::Named("samples") = compounds,
+        Rcpp::DataFrame dataFrame = Rcpp::DataFrame::create(Rcpp::Named("samples") = compounds,
                                                     Rcpp::Named("otu") = compounds,
                                                     Rcpp::Named("abundance") = total);
 
         bool res = fixture.TestSharedFilePrintData({abundance, abundance2}, dataFrame);
         expect_true(res);
 
-        Rcpp::DataFrame dataFrame2 = Rcpp::DataFrame::create(Rcpp::Named("label") = compounds,
-                                                    Rcpp::Named("samples") = compounds,
+        Rcpp::DataFrame dataFrame2 = Rcpp::DataFrame::create(Rcpp::Named("samples") = compounds,
                                                     Rcpp::Named("otu") = compounds,
                                                     Rcpp::Named("random") = total);
         res = fixture.TestSharedFilePrintData({abundance, abundance2}, dataFrame2);
         expect_false(res);
     }
 }
-
-#endif
 

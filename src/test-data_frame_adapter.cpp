@@ -1,8 +1,7 @@
 //
 // Created by Gregory Johnson on 8/30/24.
 //
-#include "TestHelpers/TestHelper.h"
-#if DEBUG_RCPP
+
 #include <testthat.h>
 #include "Tests/DataFrameAdapterTestFixture.h"
 // Normally this would be a function from your package's
@@ -34,5 +33,3 @@ context("DataFrame Adapter") {
 }
 
 
-
-#endif

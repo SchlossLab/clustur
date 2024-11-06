@@ -65,30 +65,30 @@ context("Spase Distance Matrix") {
     }
     test_that("Test Adding Cells sorted works") {
         SparseMatrixTestFixture fixture;
-        bool result = fixture.TestAddCellSorted(2, PDistCell(1,2.0), true);
+        bool result = fixture.TestAddCellSorted(3, PDistCell(1,2.0), true);
         expect_true(result);
-        result = fixture.TestAddCellSorted(2, PDistCell(1,2.0), false);
+        result = fixture.TestAddCellSorted(3, PDistCell(1,2.0), false);
         expect_false(result);
     }
     test_that("Test Getting the smallest cells gets the smallest cell value") {
         SparseMatrixTestFixture fixture;
-        bool result = fixture.TestGetSmallestCell(1, 0);
+        bool result = fixture.TestGetSmallestCell(1, .1);
         expect_true(result);
         result = fixture.TestGetSmallestCell(1, 1);
         expect_false(result);
     }
     test_that("Test Getting the smallest distance returns the smallest distance") {
         SparseMatrixTestFixture fixture;
-        bool result = fixture.TestGetSmallestDist(0);
+        bool result = fixture.TestGetSmallestDist(.1);
         expect_true(result);
         result = fixture.TestGetSmallestDist(1);
         expect_false(result);
     }
     test_that("Test Updating the Cell Compliment") {
         SparseMatrixTestFixture fixture;
-        bool result = fixture.TestUpdateCellCompliment(2,2, true);
+        bool result = fixture.TestUpdateCellCompliment(2,1, true);
         expect_true(result);
-        result = fixture.TestUpdateCellCompliment(2,2, false);
+        result = fixture.TestUpdateCellCompliment(2,1, false);
         expect_false(result);
     }
 

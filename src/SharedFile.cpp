@@ -8,19 +8,16 @@
 
 Rcpp::DataFrame SharedFile::PrintData() const {
     const size_t size = tidySharedList.size();
-    std::vector<std::string> labels(size);
     std::vector<std::string> groups(size);
     std::vector<std::string> otus(size);
     std::vector<double> abundanceList(size);
     int count = 0;
     for(const auto& abundances : tidySharedList) {
-        labels[count] = abundances.label;
         groups[count] = abundances.group;
         otus[count] = abundances.OTU;
         abundanceList[count++] = abundances.groupAbundance;
     }
-    return Rcpp::DataFrame::create(Rcpp::Named("label") = labels,
-                                                Rcpp::Named("samples") = groups,
+    return Rcpp::DataFrame::create(Rcpp::Named("samples") = groups,
                                                 Rcpp::Named("otu") = otus,
                                                 Rcpp::Named("abundance") = abundanceList);
 }

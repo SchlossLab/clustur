@@ -72,6 +72,7 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
             std::vector<std::string> container;
             util.splitAtComma(columnString, container);
             // the first one is the value we are looking for
+            if(container[0] == "NA") continue;
             const int groupIndex = std::stoi(container[0]) - 1;
             const double abundance = std::stod(container[1]);
             // Since groupIndexes do not start until after the second column, we add two to the group index
@@ -144,6 +145,16 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
         countTable.push_back(columns[i], names[i]);
     }
     return countTable;
+}
+
+std::set<std::string> CountTableAdapter::CheckDistanceFileOnlyHasNamesInCount(const std::vector<RowData>& data) const {
+    std::set<std::string> names;
+    for(const auto& value : data) {
+        if(nameToRowIndex.find(value.name) == nameToRowIndex.end()) {
+            names.insert(value.name);
+        }
+    }
+    return names;
 }
 
 

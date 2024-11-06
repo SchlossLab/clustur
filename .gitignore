@@ -200,9 +200,10 @@ docs
 
 #R Profile files
 .Rprofile
-
+Profiler/
 
 # DS Store files
 
 .DS_Store
 /.quarto/
+.Rproj.user

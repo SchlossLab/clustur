@@ -10,6 +10,7 @@
 #include <unordered_set>
 #include <list>
 #include "../MothurDependencies/OptiMatrix.h"
+#include "../MothurDependencies/SparseDistanceMatrix.h"
 #include <fstream>
 #include <unordered_map>
 #include <sstream>
@@ -30,15 +31,15 @@ public:
     OptiMatrix* ConvertToOptimatrix(const std::vector<int>
         &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
     OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
-    std::vector<std::set<long long>> GetCloseness() {return closeness;}
-    std::vector<std::string> GetNameList() {return nameList;}
-    std::vector<std::string> GetSingletons() {return singletons;}
+    OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
+    const ListVector* listVector, bool sim);
+    std::vector<std::unordered_set<long long>> GetCloseness() {return {};}
+    std::vector<std::string> GetNameList() {return {};}
+    std::vector<std::string> GetSingletons() {return {};}
 private:
     double cutoff;
     //TODO Get rid of values inside of the adapter, it should not care about them
-    std::vector<std::set<long long>> closeness;
-    std::vector<std::string> nameList;
-    std::vector<std::string> singletons;
+
 
 };
 #endif //RSPARSEMATRIXTOCPPSPARSEMATRIXADAPTER_H

@@ -4,37 +4,32 @@
 
 #include "Tests/ColumnReaderTestFixture.h"
 
-bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const CountTableAdapter& adapter,
-                                                 const bool expectedResult) {
+bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const Rcpp::DataFrame& df,
+                                                 const int expectedResult) {
     Setup();
-    const auto result = reader->Read(adapter, file);
+    reader->CreateCountTableAdapter(df);
+    reader->Read(file);
+    const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;
 }
 
-
-bool ColumnReaderTestFixture::TestReadColumnFileToRowData(const std::string &filePath, const CountTableAdapter& adapter,
-    const std::vector<RowData> &expectedResult) {
-    Setup();
-    const auto result = reader->ReadToRowData(adapter, filePath);
-    TearDown();
-    return !result.empty() && !expectedResult.empty();
-}
-
 bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
-    const CountTableAdapter& adapter, const bool expectedResult) {
+    const Rcpp::DataFrame& df, const bool expectedResult) {
     Setup();
-    reader->Read(adapter, filePath);
+    reader->CreateCountTableAdapter(df);
+    reader->Read(filePath);
     const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
     return result == expectedResult;
 }
 
 bool ColumnReaderTestFixture::TestGetListVector(const std::string& filePath,
-     const CountTableAdapter& adapter, const bool expectedResult) {
+    const Rcpp::DataFrame& df, const int expectedResult) {
     Setup();
-    reader->Read(adapter, filePath);
-    const auto result = reader->GetListVector()->size() > 0;
+    reader->CreateCountTableAdapter(df);
+    reader->Read(filePath);
+    const auto result = reader->GetListVector()->getNumSeqs();
     TearDown();
     return result == expectedResult;
 }

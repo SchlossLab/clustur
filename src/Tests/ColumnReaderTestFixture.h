@@ -14,11 +14,9 @@
 class ColumnReaderTestFixture final : TestFixture {
 public:
     ColumnReaderTestFixture() = default;
-    bool TestReadColumnFile(const std::string &file, const CountTableAdapter &adapter, bool expectedResult);
-    bool TestReadColumnFileToRowData(const std::string &filePath, const CountTableAdapter& adapter,
-     const std::vector<RowData> &expectedResult);
-    bool TestGetDistanceMatrix(const std::string &filePath, const CountTableAdapter &adapter, bool expectedResult);
-    bool TestGetListVector(const std::string &filePath, const CountTableAdapter &adapter, bool expectedResult);
+    bool TestReadColumnFile(const std::string &file, const Rcpp::DataFrame& df, int expectedResult);
+    bool TestGetDistanceMatrix(const std::string &filePath, const Rcpp::DataFrame& df, bool expectedResult);
+    bool TestGetListVector(const std::string &filePath, const Rcpp::DataFrame& df, int expectedResult);
 
 private:
     void Setup() override;

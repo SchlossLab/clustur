@@ -5,59 +5,43 @@
 #include "Tests/OptimatrixAdapterTestFixture.h"
 
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                     const std::vector<int> &yPosition,
-                                                                     const std::vector<double> &data) {
+bool OptimatrixAdapterTestFixture::TestOptimatrixReturnsNotNullValues(const SparseDistanceMatrix* sparse,
+                                                                    const ListVector* listVector) {
     Setup();
-    const bool hasPassed = adapter->ConvertToOptimatrix(xPosition, yPosition, data) != nullptr;
+    const bool hasPassed = adapter->ConvertToOptimatrix(sparse, listVector, false) != nullptr;
     TearDown();
     return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                              const std::vector<int> &yPosition,
-                                                                              const std::vector<double> &data,
+bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(const SparseDistanceMatrix* sparse,
+                                                                              const ListVector* listVector,
                                                                               const int expectedSizeOfList) {
     Setup();
-    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    const bool hasPassed = static_cast<int>(adapter->GetCloseness().size()) == expectedSizeOfList;
+    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    const bool hasPassed = static_cast<int>(optiMatrix->GetCloseness().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                                const std::vector<int> &yPosition,
-                                                                                const std::vector<double> &data,
-                                                                                const int expectedSizeOfList) {
+bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue(const SparseDistanceMatrix* sparse,
+                                                                              const ListVector* listVector,
+                                                                              const int expectedSizeOfList) {
     Setup();
-    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    const bool hasPassed = static_cast<int>(adapter->GetSingletons().size()) == expectedSizeOfList;
+    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    const bool hasPassed = static_cast<int>(optiMatrix->GetSingletons().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }
 
-bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(const std::vector<int> &xPosition,
-                                                                                const std::vector<int> &yPosition,
-                                                                                const std::vector<double> &data,
-                                                                                const int expectedSizeOfList) {
+bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(const SparseDistanceMatrix* sparse,
+                                                                              const ListVector* listVector,
+                                                                              const int expectedSizeOfList) {
     Setup();
-    adapter->ConvertToOptimatrix(xPosition, yPosition, data);
-    const bool hasPassed = static_cast<int>(adapter->GetNameList().size()) == expectedSizeOfList;
+    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    const bool hasPassed = static_cast<int>(optiMatrix->GetNameList().size()) == expectedSizeOfList;
     TearDown();
     return hasPassed;
 }
-bool OptimatrixAdapterTestFixture::ConvertToOptimatrixWithRowData(const std::vector<RowData>& matrixData,
-                                                                        const bool sim,
-                                                                        const std::vector<std::set<long long>>&
-                                                                        expectedResult) {
-    Setup();
-    auto* optiMatrix = adapter->ConvertToOptimatrix(matrixData, sim);
-    const bool result = expectedResult == optiMatrix->GetCloseness();
-    delete optiMatrix;
-    TearDown();
-    return result;
-}
-
 void OptimatrixAdapterTestFixture::Setup() {
     adapter = new OptimatrixAdapter(0.03);
 }

@@ -7,7 +7,7 @@
 #include "Adapters/OptimatrixAdapter.h"
 
 bool OptiDataTestFixture::TestGetCloseSequencesReturnCorrectData(const long long index,
-                                                                 const std::set<long long> &expectedResults) {
+                                                                 const std::unordered_set<long long> &expectedResults) {
     Setup();
     const auto resultant = optiData->getCloseSeqs(index);
     TearDown();
@@ -59,10 +59,11 @@ bool OptiDataTestFixture::TestGetListSingleReturnsCorrectData(const int expected
 }
 
 bool OptiDataTestFixture::TestGetCloseRefSeqsReturnsCorrectData(const long long index,
-    const std::set<long long>& expectedResult) {
+    const std::unordered_set<long long>& expectedResult) {
 
     Setup();
     const auto resultant = optiData->getCloseRefSeqs(index);
+
     TearDown();
     return expectedResult == resultant;
 }

@@ -12,12 +12,9 @@
 
 class MatrixAdapterTestFixture final: public TestFixture {
 public:
-    bool TestReadPhylipFile(bool expectedResult);
-    bool TestCreateSparseMatrix(bool expectedResult);
+    bool TestCreateSparseMatrix(size_t expectedResult);
     bool TestCreatePhylipFile(bool expectedResult);
-    bool TestDistanceMatrixToSquareMatrix(int expectedResult);
     bool TestGetListVector(bool createSparseFirst, bool expectedResult);
-    bool TestGetSparseDistanceMatrix(bool createSparseFirst, bool expectedResult);
     ~MatrixAdapterTestFixture() override;
 private:
 

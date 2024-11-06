@@ -52,7 +52,12 @@ bool SparseMatrixTestFixture::TestUpdateCellCompliment(const unsigned long row, 
     const bool expectedResult) {
     Setup();
     sparseDistanceMatrix->updateCellCompliment(row, col);
-    const bool result =  sparseDistanceMatrix->seqVec[3][2].dist == sparseDistanceMatrix->seqVec[row][col].dist;
+    const unsigned long vrow = sparseDistanceMatrix->seqVec[row][col].index;
+    unsigned long vcol = 0;
+    for (size_t i = 0; i < sparseDistanceMatrix->seqVec[vrow].size(); i++) {
+        if (sparseDistanceMatrix->seqVec[vrow][i].index == row) { vcol = i;  break; }
+    }
+    const bool result = sparseDistanceMatrix->seqVec[vrow][vcol].dist == sparseDistanceMatrix->seqVec[row][col].dist;
     TearDown();
     return result == expectedResult;
 }
@@ -85,9 +90,8 @@ bool SparseMatrixTestFixture::TestAddCell(const unsigned long row, const PDistCe
 
 bool SparseMatrixTestFixture::TestAddCellSorted(const unsigned long row, const PDistCell& cell, const bool expectedResult) {
     Setup();
-    sparseDistanceMatrix->addCellSorted(row, cell);
-    const size_t size = sparseDistanceMatrix->seqVec[row].size() - 1;
-    const auto currentCell = sparseDistanceMatrix->seqVec[row][size - cell.index];
+    const int location = sparseDistanceMatrix->addCellSorted(row, cell);
+    const auto currentCell = sparseDistanceMatrix->seqVec[row][location];
     const bool result = currentCell.dist == cell.dist && currentCell.index == cell.index;
     TearDown();
     return result == expectedResult;
@@ -114,7 +118,7 @@ void SparseMatrixTestFixture::Setup() {
     countTable.CreateDataFrameMap(dataframe);
     MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2,
         false, countTable);
-    sparseDistanceMatrix = adapter.CreateSparseMatrix();
+    sparseDistanceMatrix = new SparseDistanceMatrix(adapter.CreateSparseMatrix());
 }
 
 void SparseMatrixTestFixture::TearDown() {

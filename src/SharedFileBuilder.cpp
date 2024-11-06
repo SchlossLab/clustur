@@ -20,7 +20,7 @@ SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
         if(samples.empty())
             continue;
         std::vector<std::string> splitSamples;
-        std::string otuName = "OTU" + std::to_string(count++);
+        std::string otuName = "otu" + std::to_string(count++);
         utils.splitAtComma(samples, splitSamples);
         std::unordered_map<std::string, double> totalAbundanceInEachGroup;
         for(const auto& sample : splitSamples) {
