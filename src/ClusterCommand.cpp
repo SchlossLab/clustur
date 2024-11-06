@@ -24,10 +24,6 @@ ClusterCommand::~ClusterCommand() {
 }
 
 // //**********************************************************************************************************************
-/// Bad allocations, returns basic_string, returns empty string, returns non-utf8 characters, etc
-/// @param optiMatrix
-/// @param cutoffValue
-/// @return
 ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const double cutoffValue) {
     cutoff = cutoffValue;
     // clusterMetrics += ("\nClustering " + distfile + "\n");
