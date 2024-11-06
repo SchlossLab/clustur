@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Clustering">
-<meta name="description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). Clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
-<meta property="og:description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). Clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
+<meta name="description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
+<meta property="og:description" content="A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) &lt;doi:10.1128/AEM.01541-09&gt;). clustur make use of the cluster and make.shared command from mothur. The cluster command has five different algorithms implemented: opticlust, furthest, nearest, average, and weighted. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) &lt;doi:10.1128/mspheredirect.00073-17&gt;). The make.shared command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -38,7 +38,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/Clustur/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/clustur/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
@@ -54,43 +54,48 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9">
-<div class="section level1">
-<div class="page-header"><h1 id="mothur">mothur<a class="anchor" aria-label="anchor" href="#mothur"></a>
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header"><h1 id="clustur-">clustur <a href="https://mothur.org/phylotypr/" class="external-link"><img src="reference/figures/logo.png" align="right" height="138" alt="phylotypr website"></a>
+<a class="anchor" aria-label="anchor" href="#clustur-"></a>
 </h1></div>
-<p>mothur is an open-sourced software used for the analysis of ecological data. It has a strong presence in the use of analyzing 16S rRNA gene sequences. mothur itself has a plethora of features, such as, clustering based on genetic similarity, sequence alignment, taxomic assignment, alpha and beta diversity, and phylotype analysis. There have been numerous publications using this software by individuals and intuitions alike. We plan to take advantage of the power of mothur, and isolate the clustering feature. We believe this will allow scientist to work with a familiar tool and give rise for the creation of more pipelines utilizing this package.</p>
+<!-- badges: start -->
+
+<!-- badges: end -->
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful clustering algorithm from mothur without having to download it. Because clustur is built using rcpp, it benefits from the speed of C++ and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.</p>
 </div>
-<div class="section level1">
-<h1 id="clustur">clustur<a class="anchor" aria-label="anchor" href="#clustur"></a>
-</h1>
-<p>clustur was developed for two main reasons: to allow developers to easily create pipelines with mothur code in R, and to give users a powerful clustering algorithm from mothur without having to download it. Because mothur is built using rcpp, it benefits from the speed of c++ and the usability of R. Additionally, since clustur will be open source, developers can modify are package as needed. This will not only help us continue to create high quality packages, but will allow everyone to take advantage of the foundation that is already built.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<p>For the official release from CRAN you can use the standard <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code> function:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install via cran</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"clustur"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"clustur"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.schlosslab.org/clustur/">clustur</a></span><span class="op">)</span></span></code></pre></div>
+<p>For the developmental version, you can use the <code>install_github()</code> function from the {devtools} package</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install via github</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"SchlossLab/Clustur"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"SchlossLab/clustur"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.schlosslab.org/clustur/">clustur</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>To get started, look at the <a href="www.schlosslab.org/Clustur/">“Getting started”</a> page.</p>
+<p>To get started, look at the <a href="www.schlosslab.org/clustur/">“Getting started”</a> page.</p>
 </div>
 <div class="section level2">
 <h2 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
 </h2>
-<p>For feature requrest please visit the issue page in github and use the feature tag. If you would like to contribute pull request are welcomed!</p>
+<p>For feature request please visit the issue page in github and use the feature tag. If you would like to contribute pull request are welcomed!</p>
 </div>
 </div>
-
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/SchlossLab/Clustur/" class="external-link">Browse source code</a></li>
-<li><a href="https://github.com/SchlossLab/Clustur/issues" class="external-link">Report a bug</a></li>
+<li><a href="https://github.com/SchlossLab/clustur/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/SchlossLab/clustur/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
 
@@ -121,10 +126,10 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/check-full.yml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/test-coverage.yml/badge.svg" alt="test-coverage"></a></li>
-<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/lintr.yml/badge.svg" alt="lint"></a></li>
-<li><a href="https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/SchlossLab/Clustur/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
+<li><a href="https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml" class="external-link"><img src="https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml" class="external-link"><img src="https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg" alt="test-coverage"></a></li>
+<li><a href="https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml" class="external-link"><img src="https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg" alt="lint"></a></li>
+<li><a href="https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
 </ul>
 </div>
 
