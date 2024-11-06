@@ -13,9 +13,12 @@
 
 class PhylipReaderTestFixture final: public TestFixture{
 public:
-    bool TestReadPhylipFile(const std::string &file, int expectedResult);
-    bool TestGetDistanceMatrix(const std::string &file, bool expectedResult);
-    bool TestGetListVector(const std::string &file, int expectedResult);
+    bool TestReadPhylipFile(const Rcpp::DataFrame& df,
+    const std::string &file, bool expectedResult);
+    bool TestGetSparseMatrix(const Rcpp::DataFrame& df,
+    const std::string &file, bool expectedResult);
+    bool TestGetListVector(const Rcpp::DataFrame& df,
+    const std::string &file, int expectedResult);
 
 private:
     void Setup() override;

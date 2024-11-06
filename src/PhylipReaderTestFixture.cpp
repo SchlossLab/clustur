@@ -4,17 +4,20 @@
 
 #include "Tests/PhylipReaderTestFixture.h"
 
-bool PhylipReaderTestFixture::TestReadPhylipFile(const std::string &file, const int expectedResult) {
+bool PhylipReaderTestFixture::TestReadPhylipFile(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
     Setup();
-    reader->Read(file);
-    const int result = reader->GetListVector()->getNumSeqs();
+    reader->CreateCountTableAdapter(df);
+    const bool result = reader->Read(file);
     TearDown();
     return result == expectedResult;
 }
 
 
-bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::string &file, const bool expectedResult) {
+bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
+    const std::string &file, const bool expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(file);
     const auto result = !reader->GetSparseMatrix()->seqVec.empty();
     TearDown();
@@ -22,8 +25,10 @@ bool PhylipReaderTestFixture::TestGetDistanceMatrix(const std::string &file, con
 
 }
 
-bool PhylipReaderTestFixture::TestGetListVector(const std::string &file, const int expectedResult) {
+bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
+    const std::string &file, const int expectedResult) {
     Setup();
+    reader->CreateCountTableAdapter(df);
     reader->Read(file);
     const int result = reader->GetListVector()->getNumSeqs();
     TearDown();
