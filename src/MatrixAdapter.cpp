@@ -70,7 +70,10 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
     sparseMatrix.resize(nameSize);
-    if(static_cast<int>(xPosition.size()) > nameSize) { // There are values that should exist
+    // Not size, but the largest index inside of xPostions
+    const int maxXValue = *std::max_element(xPosition.begin(), xPosition.end());
+    const int maxYValue = *std::max_element(yPosition.begin(), yPosition.end());
+    if(std::max(maxXValue, maxYValue) > nameSize) { // There are values that should exist
         std::set<std::string> unknownNames;
         for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
             if(i >= nameSize + 2)
@@ -80,18 +83,11 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         const Utils util;
         util.CheckForDistanceFileError(unknownNames);
     }
-
-    for (int i = 0; i < nameSize; i++) {
-        positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
-    }
-
-
     matrixNames = std::vector<std::string>(nameSize);
     for (int i = 0; i < nameSize; i++) {
-        positionsOfIndexs[xPosition[i]] = i;
-        matrixNames[i] = positionsToNames[xPosition[i]];
+        positionsToNames[i] = countTable.GetNameByIndex(i);// Not going to work, I need a way to link my names to the sparse matix indices
+        matrixNames[i] = positionsToNames[i];
     }
-
 
     for (int i = 0; i < nSeqs;  i++) {
 
@@ -100,15 +96,9 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         if(currentDist < 0) {
             currentDist = 0;
         }
-        const int xIndex = positionsOfIndexs[xPosition[i]]; // Coming from r -> c++, indeces start at 1 in r
-        const int yIndex = positionsOfIndexs[yPosition[i]];
-
-        // const double currentValueX = dataList[yIndex].rowValues[xIndex];
-        // if(currentValueX != 0){ // We already set the value and this is a sparse matrix.
-        //     continue;           // WE do not need to reset the values back to zero.
-        // }                       // This is a catch all in the case of a sparse and square matrix
-        // Since the indexes were reverting back to zero, if the values were found again,
-        // like 2,4 = 0.3, but 4,2 = 0 was found, (its a sparse matrix) so we do not change back the value.
+        const int xIndex = xPosition[i]; // Coming from r -> c++, indeces start at 1 in r
+        const int yIndex = yPosition[i];
+      
         if(xIndex > yIndex)
             sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
