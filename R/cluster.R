@@ -207,7 +207,7 @@ read_count <- function(count_table_path) {
 #' @param j_index A list of j indexes, must be numeric
 #' @param distances A list of the distance at the i and j index
 #' @examples
-#' 
+#'
 #'  i_values <- as.integer(1:100)
 #'  j_values <- as.integer(sample(1:100, 100, TRUE))
 #'  x_values <- as.numeric(runif(100, 0, 1))
