@@ -40,10 +40,10 @@ bool SparseMatrixTestFixture::TestRemoveCell(const unsigned long row, const unsi
     const bool expectedResult) {
     Setup();
     unsigned long currentSize = 0;
-    if(row < sparseDistanceMatrix->seqVec.max_size())
+    if(row < sparseDistanceMatrix->seqVec.size())
        currentSize = sparseDistanceMatrix->seqVec[row].size();
     sparseDistanceMatrix->rmCell(row, col);
-    const bool result = sparseDistanceMatrix->seqVec[row].size() < currentSize;
+    const bool result = sparseDistanceMatrix->seqVec[row].size() == currentSize - 1;
     TearDown();
     return result == expectedResult;
 }

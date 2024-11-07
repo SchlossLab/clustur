@@ -6,7 +6,7 @@
 
 
 DistanceFileReader::DistanceFileReader(SparseDistanceMatrix *sparseDistanceMatrix,
-    ListVector *listVector):sparseMatrix(sparseDistanceMatrix), list(listVector) {}
+    ListVector *listVector, const bool isSim):sparseMatrix(sparseDistanceMatrix), list(listVector), sim(isSim){}
 
 Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
     const size_t size = sparseMatrix->seqVec.size();
