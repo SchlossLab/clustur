@@ -70,7 +70,10 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
     sparseMatrix.resize(nameSize);
-    if(static_cast<int>(xPosition.size()) > nameSize) { // There are values that should exist
+    // Not size, but the largest index inside of xPostions
+    const int maxXValue = *std::max_element(xPosition.begin(), xPosition.end());
+    const int maxYValue = *std::max_element(yPosition.begin(), yPosition.end());
+    if(std::max(maxXValue, maxYValue) > nameSize) { // There are values that should exist
         std::set<std::string> unknownNames;
         for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
             if(i >= nameSize + 2)
