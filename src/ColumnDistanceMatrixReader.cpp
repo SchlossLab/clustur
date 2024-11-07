@@ -41,19 +41,15 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	fileHandle >> firstName;
 	fileHandle >> secondName;
 	fileHandle >> dist;
+
 	if(nameToIndexMap.find(firstName) != nameToIndexMap.end() ||
 			nameToIndexMap.find(secondName) != nameToIndexMap.end()) {
 			fileHandle.clear();
 			fileHandle.seekg(0, std::ifstream::beg);
 	}
-	while(fileHandle && lt == 1){  //let's assume it's a triangular matrix...
-
-		fileHandle >> firstName;
-        fileHandle >> secondName;
-        fileHandle >> distance;	// get the row and column names and distance
+	while(fileHandle >> firstName >> secondName >> distance && lt == 1){  //let's assume it's a triangular matrix...
         int itA;
 		int itB;
-
 		try {
 			itA = nameToIndexMap.at(firstName);
 			itB = nameToIndexMap.at(secondName);
@@ -68,7 +64,6 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 			}
 			util.CheckForDistanceFileError(container);
 		}
-        // std::map<std::string,int>::iterator itB = nameMap->find(secondName);
 
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
 		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
@@ -108,19 +103,14 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 		}
 	}
 
-	if(lt == 0){  // oops, it was square
+	if(lt == 0) {  // oops, it was square
 		fileHandle.close();  //let's start over
 		sparseMatrix->clear();  //let's start over
 		fileHandle.open(filePath); //let's start over
 
-		while(fileHandle){
-			fileHandle >> firstName;
-            fileHandle >> secondName;
-            fileHandle >> distance;	// get the row and column names and distance
-
+		while(fileHandle >> firstName >> secondName >> distance){
 			int itA;
 			int itB;
-
 			try {
 				itA = nameToIndexMap.at(firstName);
 				itB = nameToIndexMap.at(secondName);
@@ -145,7 +135,6 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 			}
 		}
 	}
-
 	fileHandle.close();
 	list->setLabel("0");
 	return true;

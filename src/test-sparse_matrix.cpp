@@ -60,7 +60,7 @@ context("Spase Distance Matrix") {
     }
      test_that("RmCells remove cells correctly") {
         SparseMatrixTestFixture fixture;
-        bool result = fixture.TestRemoveCell(1,1,true);
+        bool result = fixture.TestRemoveCell(1,0,true);
         expect_true(result);
     }
     test_that("Test Adding Cells sorted works") {

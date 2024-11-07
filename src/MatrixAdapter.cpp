@@ -83,17 +83,18 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         const Utils util;
         util.CheckForDistanceFileError(unknownNames);
     }
-
-    for (int i = 0; i < nameSize; i++) {
-        positionsToNames[xPosition[i]] = countTable.GetNameByIndex(i); // Not going to work, I need a way to link my names to the sparse matix indices
-    }
-
-
     matrixNames = std::vector<std::string>(nameSize);
     for (int i = 0; i < nameSize; i++) {
-        positionsOfIndexs[xPosition[i]] = i;
-        matrixNames[i] = positionsToNames[xPosition[i]];
+        positionsToNames[i] = countTable.GetNameByIndex(i);// Not going to work, I need a way to link my names to the sparse matix indices
+        matrixNames[i] = positionsToNames[i];
     }
+
+
+
+    // for (int i = 0; i < nameSize; i++) {
+    //     positionsOfIndexs[xPosition[i]] = i; // Position of indexes is incorrectly made
+    //     matrixNames[i] = positionsToNames[i];
+    // }
 
 
     for (int i = 0; i < nSeqs;  i++) {
@@ -103,8 +104,8 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         if(currentDist < 0) {
             currentDist = 0;
         }
-        const int xIndex = positionsOfIndexs[xPosition[i]]; // Coming from r -> c++, indeces start at 1 in r
-        const int yIndex = positionsOfIndexs[yPosition[i]];
+        const int xIndex = xPosition[i]; // Coming from r -> c++, indeces start at 1 in r
+        const int yIndex = yPosition[i];
 
         // const double currentValueX = dataList[yIndex].rowValues[xIndex];
         // if(currentValueX != 0){ // We already set the value and this is a sparse matrix.
