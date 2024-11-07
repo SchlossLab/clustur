@@ -13,8 +13,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-# clustur <a href="https://mothur.org/phylotypr/"><img src="man/figures/logo.png" align="right" height="138" alt="phylotypr website" /></a>
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
