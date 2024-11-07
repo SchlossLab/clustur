@@ -47,8 +47,9 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 			fileHandle.clear();
 			fileHandle.seekg(0, std::ifstream::beg);
 	}
+
 	while(fileHandle >> firstName >> secondName >> distance && lt == 1){  //let's assume it's a triangular matrix...
-        int itA;
+    int itA;
 		int itB;
 		try {
 			itA = nameToIndexMap.at(firstName);

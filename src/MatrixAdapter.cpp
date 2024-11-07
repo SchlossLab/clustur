@@ -89,14 +89,6 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         matrixNames[i] = positionsToNames[i];
     }
 
-
-
-    // for (int i = 0; i < nameSize; i++) {
-    //     positionsOfIndexs[xPosition[i]] = i; // Position of indexes is incorrectly made
-    //     matrixNames[i] = positionsToNames[i];
-    // }
-
-
     for (int i = 0; i < nSeqs;  i++) {
 
         double currentDist = data[i];
@@ -106,13 +98,7 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         }
         const int xIndex = xPosition[i]; // Coming from r -> c++, indeces start at 1 in r
         const int yIndex = yPosition[i];
-
-        // const double currentValueX = dataList[yIndex].rowValues[xIndex];
-        // if(currentValueX != 0){ // We already set the value and this is a sparse matrix.
-        //     continue;           // WE do not need to reset the values back to zero.
-        // }                       // This is a catch all in the case of a sparse and square matrix
-        // Since the indexes were reverting back to zero, if the values were found again,
-        // like 2,4 = 0.3, but 4,2 = 0 was found, (its a sparse matrix) so we do not change back the value.
+      
         if(xIndex > yIndex)
             sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
