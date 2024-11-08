@@ -12,8 +12,6 @@
 #include <Rcpp.h>
 #include <cctype>
 
-#include "Tests/OptiClusterTestFixture.h"
-#include "Tests/OptiDataTestFixture.h"
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
     SharedFileBuilder builder;
@@ -146,10 +144,3 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
 }
-
-//[[Rcpp::export]]
-void Test() {
-     OptiClusterTestFixture testFixture;
-    bool res = testFixture.OptiClusterReturnsTheCorrectList(1);
-}
-

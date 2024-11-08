@@ -193,7 +193,8 @@ read_count <- function(count_table_path) {
   if (grepl("#", test_read[1, 1], fixed = TRUE)) {
     count_table_sparse <- read.delim(count_table_path, sep = "\t", skip = 2)
     count_table_sparse <- lapply(count_table_sparse, as.character)
-    return(validate_count_table(CreateDataFrameFromSparseCountTable(count_table_sparse)))
+    ct <- CreateDataFrameFromSparseCountTable(count_table_sparse)
+    return(validate_count_table(ct))
   }
   return(validate_count_table(read.delim(count_table_path, sep = "\t")))
 }
