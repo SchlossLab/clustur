@@ -25,8 +25,6 @@ public:
     explicit OptimatrixAdapter(const double cutoff) {
         this->cutoff = cutoff;
     }
-    OptiMatrix* ConvertToOptimatrix(const std::vector<int>
-        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
     OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, bool sim);
 private:

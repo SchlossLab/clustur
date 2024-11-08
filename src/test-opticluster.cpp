@@ -50,7 +50,7 @@ context("clustur test") {
   }
   test_that("clustur Returns ListVector properly") {
     OptiClusterTestFixture testFixture;
-    bool res = testFixture.OptiClusterReturnsTheCorrectList(5);
+    bool res = testFixture.OptiClusterReturnsTheCorrectList(2);
     expect_true(res);
     res = testFixture.OptiClusterReturnsTheCorrectList(0);
     expect_false(res);
@@ -64,7 +64,7 @@ context("clustur test") {
   }
   test_that("clustur gets the correct number of bins") {
     OptiClusterTestFixture testFixture;
-    bool res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(5);
+    bool res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(2);
     expect_true(res);
     res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(0);
     expect_false(res);

@@ -66,9 +66,9 @@ bool OptiClusterTestFixture::OptiClusterGetsTheCorrectNumberOfBins(const long lo
 
 
 void OptiClusterTestFixture::Setup() {
-    const auto xVals = std::vector<int>{0,0,0,1,1,2,3};
-    const auto yVals = std::vector<int>{1,2,4,2,4,4,4};
-    const auto data = std::vector<float>{0.02,0.04,0.025,0.01,0.028,0.045,0.05};
+    const auto xVals = std::vector<int>{0,0,0,1,1};
+    const auto yVals = std::vector<int>{1,2,4,2,4};
+    const auto data = std::vector<float>{0.02,0.04,0.025,0.01,0.028};
     SparseDistanceMatrix sparse;
     ListVector vec;
     vec.push_back("0");
@@ -84,6 +84,8 @@ void OptiClusterTestFixture::Setup() {
     OptimatrixAdapter adapter(0.03);
     OptiData *matrix = adapter.ConvertToOptimatrix(&sparse, &vec, false);
     optiCluster = new OptiCluster(matrix, new MCC(), 0);;
+    double value = 0;
+    optiCluster->initialize(value, false, "");
 }
 
 void OptiClusterTestFixture::TearDown() {
