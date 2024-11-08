@@ -113,17 +113,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// TestFilterSparse
-void TestFilterSparse(const SEXP& DistanceData, const float cutoff);
-RcppExport SEXP _clustur_TestFilterSparse(SEXP DistanceDataSEXP, SEXP cutoffSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type DistanceData(DistanceDataSEXP);
-    Rcpp::traits::input_parameter< const float >::type cutoff(cutoffSEXP);
-    TestFilterSparse(DistanceData, cutoff);
-    return R_NilValue;
-END_RCPP
-}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -136,7 +125,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
     {"_clustur_OptiCluster", (DL_FUNC) &_clustur_OptiCluster, 4},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
-    {"_clustur_TestFilterSparse", (DL_FUNC) &_clustur_TestFilterSparse, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

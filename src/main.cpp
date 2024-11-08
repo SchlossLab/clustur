@@ -69,7 +69,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.CreateSparseMatrix()),
-        new ListVector(adapter.CreateListVector()), isSim);
+        new ListVector(adapter.CreateListVector()), cutoff, isSim);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
@@ -93,9 +93,11 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
-    const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    const auto lastCutoff = distanceData.get()->GetCutoff();
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
-    sparse->FilterSparseMatrix(cutoff);
+    auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    if(cutoff < lastCutoff)
+        sparseMatix->FilterSparseMatrix(cutoff);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
@@ -142,11 +144,4 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     return adapter.ReCreateDataFrame();
 }
 
-//[[Rcpp::export]]
-void TestFilterSparse(const SEXP& DistanceData, const float cutoff) {
-    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
-    SparseDistanceMatrix* sparse = distanceData.get()->GetSparseMatrix();
-    sparse->FilterSparseMatrix(cutoff);
-    sparse->print();
-}
 
