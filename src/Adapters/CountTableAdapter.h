@@ -12,7 +12,7 @@
 #include <queue>
 #include <set>
 
-#include "../RowData.h"
+
 
 class CountTableAdapter {
 public:
@@ -29,7 +29,6 @@ public:
     std::vector<std::string> GetGroups() const;
     Rcpp::DataFrame GetCountTable() const {return countTable;}
     Rcpp::DataFrame ReCreateDataFrame() const;
-    std::set<std::string> CheckDistanceFileOnlyHasNamesInCount(const std::vector<RowData>&) const;
 private:
     void CreateNameToIndex();
     struct IndexAbundancePair {

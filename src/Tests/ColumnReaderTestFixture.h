@@ -7,7 +7,6 @@
 #include "TestFixture.h"
 #include <vector>
 #include <string>
-#include "../RowData.h"
 #include "../MothurDependencies/ColumnDistanceMatrixReader.h"
 
 

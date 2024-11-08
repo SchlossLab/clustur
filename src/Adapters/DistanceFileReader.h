@@ -9,7 +9,6 @@
 
 #include "CountTableAdapter.h"
 #include "../MothurDependencies/ListVector.h"
-#include "../RowData.h"
 #include "../MothurDependencies/SparseDistanceMatrix.h"
 
 class DistanceFileReader {
@@ -23,7 +22,6 @@ public:
     // Phylip files do not need a count table
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(*sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(*list);}
-    void SetRowDataMatrix(const std::vector<RowData>& data);
     void SetCountTable(CountTableAdapter data);
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;

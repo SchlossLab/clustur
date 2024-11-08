@@ -40,15 +40,7 @@ context("clustur test") {
     expect_false(res);
 
   }
-  //TODO: why does this not work on unbuntu/windows. It is also not needed for anything besides stats so I may get rid
-  //TODO: of it for now.
-  // test_that("clustur returns proper stats") {
-  //   OptiClusterTestFixture testFixture;
-  //   bool result = testFixture.OpticlusterReturnsTheCorrectStats(1,1,1,1, {0,0,0,0,1,0,0,0});
-  //   expect_true(result);
-  //   result = testFixture.OpticlusterReturnsTheCorrectStats(1,1,1,1, {0,0,0,0,1,1,0,0});
-  //   expect_false(result);
-  // }
+
   test_that("clustur Gets CloseFarCounts properly") {
     OptiClusterTestFixture testFixture;
     bool res = testFixture.OptiClusterGetsTheCorrectCloseFarCounts(1, 2, {0,0});
@@ -58,7 +50,7 @@ context("clustur test") {
   }
   test_that("clustur Returns ListVector properly") {
     OptiClusterTestFixture testFixture;
-    bool res = testFixture.OptiClusterReturnsTheCorrectList(1);
+    bool res = testFixture.OptiClusterReturnsTheCorrectList(5);
     expect_true(res);
     res = testFixture.OptiClusterReturnsTheCorrectList(0);
     expect_false(res);
@@ -72,7 +64,7 @@ context("clustur test") {
   }
   test_that("clustur gets the correct number of bins") {
     OptiClusterTestFixture testFixture;
-    bool res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(1);
+    bool res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(5);
     expect_true(res);
     res = testFixture.OptiClusterGetsTheCorrectNumberOfBins(0);
     expect_false(res);
