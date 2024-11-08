@@ -2,7 +2,6 @@ url: http://www.schlosslab.org/clustur/
 template:
   bootstrap: 5
   light-switch: true
-  bootswatch: materia
 reference:
 - title: Clustering
   contents:
@@ -25,11 +24,3 @@ reference:
   - validate_count_table
   - create_sparse_matrix
   - split_clusters_to_list
-navbar:
-  type: default
-  left:
-  - text: clustur
-    href: articles/clustur.html
-  - text: Reference
-    href: reference/index.html
-
