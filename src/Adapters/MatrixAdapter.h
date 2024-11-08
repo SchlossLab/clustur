@@ -15,8 +15,6 @@ public:
     MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
         const std::vector<double> &dataValues, double cutOff, bool isSimularity, CountTableAdapter table);
     ~MatrixAdapter() = default;
-    bool CreatePhylipFile(const std::string &saveFileLocation);
-    bool CreateColumnDataFile(const std::string &saveFileLocation);
     SparseDistanceMatrix CreateSparseMatrix();
     ListVector CreateListVector() const;
 

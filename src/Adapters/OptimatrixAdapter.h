@@ -15,9 +15,6 @@
 #include <unordered_map>
 #include <sstream>
 
-#include "../RowData.h"
-
-
 class OptimatrixAdapter {
     ///Closeness is the data represntation, it is a vector of sets that tells us which values are closes to it ->
     /// So, close[0], if Namemap[0] = A, then close[0] is the values that are within the cutoff to A.
@@ -28,14 +25,8 @@ public:
     explicit OptimatrixAdapter(const double cutoff) {
         this->cutoff = cutoff;
     }
-    OptiMatrix* ConvertToOptimatrix(const std::vector<int>
-        &xPosition, const std::vector<int>& yPosition, const std::vector<double>& data);
-    OptiMatrix* ConvertToOptimatrix(const std::vector<RowData>&, bool);
     OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
     const ListVector* listVector, bool sim);
-    std::vector<std::unordered_set<long long>> GetCloseness() {return {};}
-    std::vector<std::string> GetNameList() {return {};}
-    std::vector<std::string> GetSingletons() {return {};}
 private:
     double cutoff;
     //TODO Get rid of values inside of the adapter, it should not care about them

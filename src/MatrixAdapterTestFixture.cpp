@@ -11,13 +11,6 @@ bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const size_t expectedResul
     return result == expectedResult;
 }
 
-bool MatrixAdapterTestFixture::TestCreatePhylipFile(const bool expectedResult) {
-    Setup();
-    const auto result = matrixAdapter->CreatePhylipFile("");
-    TearDown();
-    return result == expectedResult;
-}
-
 bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {
     Setup();
     if(createSparseFirst) matrixAdapter->CreateSparseMatrix();

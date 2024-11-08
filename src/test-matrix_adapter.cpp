@@ -19,13 +19,6 @@ context("MatrixAdapter Test") {
     // testthat's R functions. Use 'test_that()' to define a
     // unit test, and use 'expect_true()' and 'expect_false()'
     // to test the desired conditions.
-    test_that("Matrix Adapter can create phylip files") {
-        MatrixAdapterTestFixture fixture;
-        bool result = fixture.TestCreatePhylipFile(true);
-        expect_true(result);
-        result = fixture.TestCreatePhylipFile(false);
-        expect_false(result);
-    }
 
      test_that("Matrix Adapter can get its list vector") {
          MatrixAdapterTestFixture fixture;

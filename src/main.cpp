@@ -12,27 +12,6 @@
 #include <Rcpp.h>
 #include <cctype>
 
-//[[Rcpp::export]]
-void WritePhylipFile(const std::vector<int> &xPosition,
-                      const std::vector<int> &yPosition, const std::vector<double> &data,
-                      const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation) {
-
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
-    adapter.CreatePhylipFile(saveLocation);
-}
-
-//[[Rcpp::export]]
-void WriteColumnFile(const std::vector<int> &xPosition,
-                      const std::vector<int> &yPosition, const std::vector<double> &data,
-                      const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation) {
-
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
-    adapter.CreateColumnDataFile(saveLocation);
-}
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
     SharedFileBuilder builder;
@@ -91,7 +70,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.CreateSparseMatrix()),
-        new ListVector(adapter.CreateListVector()), isSim);
+        new ListVector(adapter.CreateListVector()), cutoff, isSim);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
@@ -115,8 +94,11 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     ClusterCommand command;
-    const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    const auto lastCutoff = distanceData.get()->GetCutoff();
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
+    auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    if(cutoff < lastCutoff)
+        sparseMatix->FilterSparseMatrix(cutoff);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
@@ -157,10 +139,8 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
 }
 
 //[[Rcpp::export]]
-Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
+Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {
     CountTableAdapter adapter;
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
 }
-
-

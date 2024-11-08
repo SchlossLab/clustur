@@ -10,36 +10,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// WritePhylipFile
-void WritePhylipFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation);
-RcppExport SEXP _clustur_WritePhylipFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
-    Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type saveLocation(saveLocationSEXP);
-    WritePhylipFile(xPosition, yPosition, data, cutoff, countTable, saveLocation);
-    return R_NilValue;
-END_RCPP
-}
-// WriteColumnFile
-void WriteColumnFile(const std::vector<int>& xPosition, const std::vector<int>& yPosition, const std::vector<double>& data, const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation);
-RcppExport SEXP _clustur_WriteColumnFile(SEXP xPositionSEXP, SEXP yPositionSEXP, SEXP dataSEXP, SEXP cutoffSEXP, SEXP countTableSEXP, SEXP saveLocationSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<int>& >::type xPosition(xPositionSEXP);
-    Rcpp::traits::input_parameter< const std::vector<int>& >::type yPosition(yPositionSEXP);
-    Rcpp::traits::input_parameter< const std::vector<double>& >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type saveLocation(saveLocationSEXP);
-    WriteColumnFile(xPosition, yPosition, data, cutoff, countTable, saveLocation);
-    return R_NilValue;
-END_RCPP
-}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -132,14 +102,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// CreateDataFrameFromSparse
-Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable);
-RcppExport SEXP _clustur_CreateDataFrameFromSparse(SEXP countTableSEXP) {
+// CreateDataFrameFromSparseCountTable
+Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable);
+RcppExport SEXP _clustur_CreateDataFrameFromSparseCountTable(SEXP countTableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
-    rcpp_result_gen = Rcpp::wrap(CreateDataFrameFromSparse(countTable));
+    rcpp_result_gen = Rcpp::wrap(CreateDataFrameFromSparseCountTable(countTable));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -147,8 +117,6 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_clustur_WritePhylipFile", (DL_FUNC) &_clustur_WritePhylipFile, 6},
-    {"_clustur_WriteColumnFile", (DL_FUNC) &_clustur_WriteColumnFile, 6},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
@@ -156,7 +124,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
     {"_clustur_OptiCluster", (DL_FUNC) &_clustur_OptiCluster, 4},
-    {"_clustur_CreateDataFrameFromSparse", (DL_FUNC) &_clustur_CreateDataFrameFromSparse, 1},
+    {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

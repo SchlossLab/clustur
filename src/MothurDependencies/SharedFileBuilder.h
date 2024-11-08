@@ -15,7 +15,6 @@
 
 #include "ClusterExport.h"
 #include "ListVector.h"
-#include "RSparseMatrix.h"
 #include "SharedFile.h"
 #include "OtuAbundancePair.h"
 #include "../Adapters/CountTableAdapter.h"

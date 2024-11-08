@@ -15,13 +15,13 @@ class OptiMatrix final : public OptiData{
 
 public:
     OptiMatrix(const std::vector<std::unordered_set<long long>>& close,  const std::vector<std::string>& name,
-     const std::vector<std::string>& single, const double c): OptiData(c)
+     const std::vector<std::string>& singleton, const double c): OptiData(c)
 {
     closeness = close;
     nameMap = name;
-    singletons = single;
+    singletons = singleton;
 }//closeness, namemap, singleton, cutoff
-    ~OptiMatrix(){}
+    ~OptiMatrix() override = default;
     std::vector<std::unordered_set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameMap;}
     std::vector<std::string> GetSingletons() {return singletons;}

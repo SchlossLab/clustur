@@ -147,16 +147,6 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     return countTable;
 }
 
-std::set<std::string> CountTableAdapter::CheckDistanceFileOnlyHasNamesInCount(const std::vector<RowData>& data) const {
-    std::set<std::string> names;
-    for(const auto& value : data) {
-        if(nameToRowIndex.find(value.name) == nameToRowIndex.end()) {
-            names.insert(value.name);
-        }
-    }
-    return names;
-}
-
 
 void CountTableAdapter::CreateNameToIndex() {
     for(size_t i = 0; i < sampleNames.size(); i++) {
