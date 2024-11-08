@@ -33,3 +33,7 @@ CreateDataFrameFromSparseCountTable <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
 }
 
+TestFilterSparse <- function(DistanceData, cutoff) {
+    invisible(.Call('_clustur_TestFilterSparse', PACKAGE = 'clustur', DistanceData, cutoff))
+}
+

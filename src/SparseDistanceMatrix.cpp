@@ -148,16 +148,22 @@ bool SparseDistanceMatrix::print() const{
 
     if(seqVec.empty())
         return false;
-    // std::cout << std::endl;
-    // //saves time in getSmallestCell, by making it so you dont search the repeats
-    // for (int i = 0; i < seqVec.size(); i++) {
-    //     std::cout << i << '\t';
-    //     for (int j = 0; j < seqVec[i].size(); j++) {   std::cout <<  seqVec[i][j].index << '\t' ;  }
-    //     std::cout << std::endl;
-    // }
-    // std::cout << std::endl;
+    //saves time in getSmallestCell, by making it so you dont search the repeats
+    for (size_t i = 0; i < seqVec.size(); i++) {
+        for (const auto j : seqVec[i]) { Rcpp::Rcout << i << '\t' << j.index << '\t' << j.dist << std::endl; }
+    }
     return true;
 }
+
+void SparseDistanceMatrix::FilterSparseMatrix(const float cutoff) {
+    for(int i = 0; i < static_cast<int>(seqVec.size()); i++) {
+        for(int j = static_cast<int>(seqVec[i].size()) - 1; j >= 0; j--) {
+            if(seqVec[i][j].dist > cutoff)
+                rmCell(i, j);
+        }
+    }
+}
+
 /***********************************************************************/
 
 int SparseDistanceMatrix::sortSeqVec(){

@@ -95,6 +95,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     ClusterCommand command;
     const auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
+    sparse->FilterSparseMatrix(cutoff);
     const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
@@ -141,4 +142,11 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     return adapter.ReCreateDataFrame();
 }
 
+//[[Rcpp::export]]
+void TestFilterSparse(const SEXP& DistanceData, const float cutoff) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    SparseDistanceMatrix* sparse = distanceData.get()->GetSparseMatrix();
+    sparse->FilterSparseMatrix(cutoff);
+    sparse->print();
+}
 
