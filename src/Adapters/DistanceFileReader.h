@@ -9,7 +9,6 @@
 
 #include "CountTableAdapter.h"
 #include "../MothurDependencies/ListVector.h"
-#include "../RowData.h"
 #include "../MothurDependencies/SparseDistanceMatrix.h"
 
 class DistanceFileReader {
@@ -18,12 +17,11 @@ public:
     // We need to deduce type, the easy way to do that is to see if there is a number for the first item read.
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual bool Read(const std::string& filePath) {return false;}
-    DistanceFileReader(SparseDistanceMatrix*, ListVector*, bool);
+    DistanceFileReader(SparseDistanceMatrix*, ListVector*, double, bool);
     DistanceFileReader() = default;
     // Phylip files do not need a count table
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(*sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(*list);}
-    void SetRowDataMatrix(const std::vector<RowData>& data);
     void SetCountTable(CountTableAdapter data);
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;

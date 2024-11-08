@@ -7,7 +7,6 @@
 #include "TestFixture.h"
 #include <string>
 #include <vector>
-#include "../RowData.h"
 #include "../MothurDependencies/ReadPhylipMatrix.h"
 
 

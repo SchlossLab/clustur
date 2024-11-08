@@ -8,7 +8,6 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include "../RowData.h"
 #include <unordered_set>
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"

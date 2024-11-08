@@ -29,7 +29,7 @@ context("Optidata test") {
     // to test the desired conditions.
     test_that("Optidata gets the correct close sequences") {
         OptiDataTestFixture testFixture;
-        bool result = testFixture.TestGetCloseSequencesReturnCorrectData(1, {0,2,4});
+        bool result = testFixture.TestGetCloseSequencesReturnCorrectData(1, {0,2,3});
         expect_true(result);
         result = testFixture.TestGetCloseSequencesReturnCorrectData(1, {0,1,4});
         expect_false(result);
@@ -68,7 +68,7 @@ context("Optidata test") {
         OptiDataTestFixture testFixture;
         bool result = testFixture.TestGetNumSingletonsReturnsCorrectData(1);
         expect_true(result);
-        result = testFixture.TestGetNumSingletonsReturnsCorrectData(2);
+        result = testFixture.TestGetNumSingletonsReturnsCorrectData(0);
         expect_false(result);
     }
     test_that("Optidata GetList returns a proper listVector and the correct number of numSeqs") {

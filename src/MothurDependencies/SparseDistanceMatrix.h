@@ -8,7 +8,7 @@
 #include "PDistCell.h"
 
 #include <vector>
-
+#include <Rcpp.h>
 #include "Utils.h"
 
 
@@ -44,6 +44,7 @@ public:
     int addCellSorted(unsigned long, PDistCell);
     std::vector<std::vector<PDistCell> > seqVec;
     bool print() const;
+    void FilterSparseMatrix(float cutoff);
 
 private:
     PDistCell smallCell;				//The cell with the smallest distance

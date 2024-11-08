@@ -10,7 +10,6 @@
 #include <vector>
 #include "ListVector.h"
 #include "SparseDistanceMatrix.h"
-#include "../RowData.h"
 #include "../Adapters/CountTableAdapter.h"
 #include "../Adapters/DistanceFileReader.h"
 

@@ -84,10 +84,7 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         }
         util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
         std::chrono::time_point<std::chrono::system_clock> start, end;
-        //m->mothurOutEndLine();
-        // Stable Metric -> Keep the data stable, to prevent errors (rounding errors)
-        // The difference between what the current and last metric (delta)
-        // MaxIters -> is an exit condition
+
         while ((delta > stableMetric) && (iters < maxIters)) {
             //long start = std::time(nullptr);
             double oldMetric = listVectorMetric;
@@ -126,7 +123,6 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         clusterInformation.clusterBins = list->print(listFile);
         data->AddToData(clusterInformation);
         data->SetListVector(*list, std::to_string(cutoff));
-        // clusterMatrixOutput = list->print(listFile);
         stats = cluster.getStats(tp, tn, fp, fn);
 
         sensFile += std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
@@ -157,7 +153,7 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
     float previousDist = 0.00000;
     float rndPreviousDist = 0.00000;
     oldList = *list;
-    bool printHeaders = false;
+    constexpr bool printHeaders = false;
     std::string clusterResult;
     double highestDistLabel =  -1;
     std::string binResults;
