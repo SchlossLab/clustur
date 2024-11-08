@@ -11,52 +11,6 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
                             data(dataValues) {
 }
 
-
-bool MatrixAdapter::CreatePhylipFile(const std::string &saveFileLocation) {
-    // if(saveFileLocation.empty())
-    //     return false;
-    // const auto matrix = DistanceMatrixToSquareMatrix();
-    // int count = 0;
-    // const size_t size = matrixNames.size();
-    // std::string distanceString = "\t" + std::to_string(size) + "\n";
-    // for (const auto &cells: matrix) {
-    //     distanceString += matrixNames[count];
-    //     for (int i = 0; i < count; i++) {
-    //         distanceString += "\t" + std::to_string(cells.rowValues[i]);
-    //     }
-    //     distanceString += "\n";
-    //     count++;
-    // }
-    // std::ofstream writeOut(saveFileLocation);
-    // if (!writeOut.is_open()) {
-    //     TestHelper::Print("Failed to open: \n");
-    // }
-    // writeOut << distanceString;
-    // writeOut.close();
-    return true;
-}
-
-bool MatrixAdapter::CreateColumnDataFile(const std::string &saveFileLocation) {
-    if(saveFileLocation.empty())
-        return false;
-    const auto matrix = CreateSparseMatrix();
-    std::string data;
-    for (size_t i = 0; i < matrix.seqVec.size(); i++) {
-        std::string firstCellName = matrixNames[i];
-        for(size_t j = 0; j < matrixNames[i].size(); j++) {
-            std::string otherCell = matrixNames[matrix.seqVec[i][j].index];
-            data += firstCellName + "\t" + otherCell + "\t" + std::to_string(matrix.seqVec[i][j].dist) + "\n";
-        }
-    }
-    std::ofstream writeOut(saveFileLocation);
-    if (!writeOut.is_open()) {
-        Rcpp::Rcout << "Failed to open: \n";
-    }
-    writeOut << data;
-    writeOut.close();
-    return true;
-}
-
 SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;

@@ -12,28 +12,6 @@
 #include <Rcpp.h>
 #include <cctype>
 
-//[[Rcpp::export]]
-void WritePhylipFile(const std::vector<int> &xPosition,
-                      const std::vector<int> &yPosition, const std::vector<double> &data,
-                      const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation) {
-
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
-    adapter.CreatePhylipFile(saveLocation);
-}
-
-//[[Rcpp::export]]
-void WriteColumnFile(const std::vector<int> &xPosition,
-                      const std::vector<int> &yPosition, const std::vector<double> &data,
-                      const double cutoff, const Rcpp::DataFrame& countTable, const std::string& saveLocation) {
-
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, false, countTableAdapter);
-    adapter.CreateColumnDataFile(saveLocation);
-}
-
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
@@ -157,7 +135,7 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
 }
 
 //[[Rcpp::export]]
-Rcpp::DataFrame CreateDataFrameFromSparse(const Rcpp::DataFrame& countTable) {
+Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {
     CountTableAdapter adapter;
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
