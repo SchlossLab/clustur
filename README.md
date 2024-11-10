@@ -44,7 +44,7 @@ library(clustur)
 ## Getting Started
 
 To get started, look at the [“Getting
-started”](https:://www.schlosslab.org/clustur/) page.
+started”](schlosslab.org/clustur/) page.
 
 ## Contributions
 
