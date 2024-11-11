@@ -199,13 +199,14 @@ address. If you want a data frame version of the distances, you can use
 <p>All methods produce a list object with an indicator of the cutoff
 that was used (<code>label</code>), as well as cluster composition
 (<code>cluster</code>) and shared (<code>abundance</code>) data frames.
-The <code>clusters</code> data frame shows how which OTU each sequence
-was assigned to. The <code>abundance</code> data frame contains columns
-indicating the <code>OTU</code> and <code>sample</code> identifiers and
-the abundance of each OTU in each sample. The OptiClust method also
-includes the <code>metrics</code> data frame, which describe the
-optimization value for each iteration in the fitting process; the data
-in <code>clusters</code> and <code>shared</code> are taken from the last
+The <code>clusters</code> data frame shows which OTU (Operation
+Taxonomic Unit) each sequence was assigned to. The
+<code>abundance</code> data frame contains columns indicating the
+<code>OTU</code> and <code>sample</code> identifiers and the abundance
+of each OTU in each sample. The OptiClust method also includes the
+<code>metrics</code> data frame, which describe the optimization value
+for each iteration in the fitting process; the data in
+<code>clusters</code> and <code>shared</code> are taken from the last
 iteration. clustur provides getter functions, <code>get_label()</code>,
 <code>get_clusters()</code>, <code>get_shared()</code>, and
 <code><a href="../reference/get_metrics.html">get_metrics()</a></code>, which will be demonstrated below.</p>
