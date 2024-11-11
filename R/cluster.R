@@ -1,7 +1,7 @@
 #' Read distance matrices
 #'
 #' Read in distances from a file that is formatted with three columns for the
-#' row, column, and distance of a sparse, square matrix or in a Phylip-formatted
+#' row, column, and distance of a sparse, square matrix or in a phylip-formatted
 #' distance matrix.
 #'
 #' @export
@@ -54,7 +54,7 @@ read_dist <- function(distance_file, count_table,
 }
 
 
-#' Cluster entitites together
+#' Cluster entities together
 #'
 #' Clusters entities represented in a distance matrix and count table using
 #' one of several algorithms and outputs information about the composition and
@@ -201,7 +201,7 @@ read_count <- function(count_table_path) {
 
 #' Create Sparse Matrix
 #'
-#' Given a list of i indexs, j indexes, and distances values,
+#' Given a list of i indexes, j indexes, and distances values,
 #' we can create a sparse distance matrix for you. Each vector
 #' must have the same size.
 #' @param i_index A list of i indexes, must be numeric

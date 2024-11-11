@@ -13,7 +13,7 @@ get_abundance(cluster_data)
 a shared data.frame
 }
 \description{
-GetShared retuns the generated abundance `data.frame`
+GetShared returns the generated abundance `data.frame`
 from the `cluster()` function
 }
 \examples{

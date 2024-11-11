@@ -25,7 +25,7 @@ distance information. Can be accessed using `get_distance_df()`
 }
 \description{
 Read in distances from a file that is formatted with three columns for the
-row, column, and distance of a sparse, square matrix or in a Phylip-formatted
+row, column, and distance of a sparse, square matrix or in a phylip-formatted
 distance matrix.
 }
 \examples{

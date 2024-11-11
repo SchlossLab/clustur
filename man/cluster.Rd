@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster.R
 \name{cluster}
 \alias{cluster}
-\title{Cluster entitites together}
+\title{Cluster entities together}
 \usage{
 cluster(
   distance_object,

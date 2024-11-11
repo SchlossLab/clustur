@@ -48,5 +48,5 @@ started”](https://www.schlosslab.org/clustur/) page.
 
 ## Contributions
 
-For feature request please visit the issue page in github and use the
+For feature request please visit the issue page in GitHub and use the
 feature tag. If you would like to contribute pull request are welcomed!
