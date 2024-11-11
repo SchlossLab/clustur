@@ -116,7 +116,7 @@ cluster_data <- cluster(column_distance, cutoff, method = "weighted")
 #### edit this paragraph further...
 All methods produce a list object with an indicator of the cutoff that was used
 (`label`), as well as cluster composition (`cluster`) and shared (`abundance`) data frames.
-The `clusters` data frame shows how which OTU each sequence was assigned to. The `abundance` data frame
+The `clusters` data frame shows which OTU (Operation Taxonomic Unit) each sequence was assigned to. The `abundance` data frame
 contains columns indicating the `OTU` and `sample` identifiers and the
 abundance of each OTU in each sample. The OptiClust method also includes the `metrics` data
 frame, which describe the optimization value for each iteration in the fitting
