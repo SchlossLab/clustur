@@ -26,7 +26,7 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
 
 //[[Rcpp::export]]
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
-    std::fstream data(filePath);
+    std::ifstream data(filePath);
 
     if(!data.is_open()) {
         Rcpp::Rcout << "Please enter a valid file path\n";
@@ -96,17 +96,17 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     ClusterCommand command;
     const auto lastCutoff = distanceData.get()->GetCutoff();
     const auto listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
-    auto sparseMatix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    auto sparseMatrix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
     if(cutoff < lastCutoff)
-        sparseMatix->FilterSparseMatrix(cutoff);
-    const auto result = command.runMothurCluster(method, sparseMatix, cutoff, listVector);
+        sparseMatrix->FilterSparseMatrix(cutoff);
+    const auto result = command.runMothurCluster(method, sparseMatrix, cutoff, listVector);
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
     delete(result);
     delete(listVector);
-    delete(sparseMatix);
+    delete(sparseMatrix);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
     Rcpp::Named("abundance") = tidySharedDataFrame,
     Rcpp::Named("cluster") = clusterDataFrame);

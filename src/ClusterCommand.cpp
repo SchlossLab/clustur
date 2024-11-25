@@ -83,7 +83,6 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             clusterMetrics += (std::to_string(result) + ",");
         }
         util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
-        std::chrono::time_point<std::chrono::system_clock> start, end;
 
         while ((delta > stableMetric) && (iters < maxIters)) {
             //long start = std::time(nullptr);

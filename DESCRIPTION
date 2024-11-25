@@ -1,8 +1,8 @@
 Package: clustur
 Type: Package
 Title: Clustering
-Version: 0.1.0
-Date: 2024-10-18
+Version: 0.1.1
+Date: 2024-11-25
 Authors@R: c(
     person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
             comment = c(ORCID = "0009-0008-3890-0297")),
