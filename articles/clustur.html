@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">clustur</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -193,9 +193,6 @@ address. If you want a data frame version of the distances, you can use
 <div class="section level2">
 <h2 id="output-data-from-clustering">Output data from clustering<a class="anchor" aria-label="anchor" href="#output-data-from-clustering"></a>
 </h2>
-<div class="section level4">
-<h4 id="edit-this-paragraph-further">edit this paragraph further…<a class="anchor" aria-label="anchor" href="#edit-this-paragraph-further"></a>
-</h4>
 <p>All methods produce a list object with an indicator of the cutoff
 that was used (<code>label</code>), as well as cluster composition
 (<code>cluster</code>) and shared (<code>abundance</code>) data frames.
@@ -225,12 +222,12 @@ iteration. clustur provides getter functions, <code>get_label()</code>,
 <span><span class="co">#&gt; 7  U68605 bin7</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 81 rows ]</span></span>
 <span><span class="fu"><a href="../reference/get_abundance.html">get_abundance</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   samples  otu abundance</span></span>
-<span><span class="co">#&gt; 1 pasture otu1         0</span></span>
-<span><span class="co">#&gt; 2  forest otu1         1</span></span>
-<span><span class="co">#&gt; 3 pasture otu2         0</span></span>
-<span><span class="co">#&gt; 4  forest otu2         1</span></span>
-<span><span class="co">#&gt; 5 pasture otu3         0</span></span>
+<span><span class="co">#&gt;   samples  bin abundance</span></span>
+<span><span class="co">#&gt; 1 pasture bin1         0</span></span>
+<span><span class="co">#&gt; 2  forest bin1         1</span></span>
+<span><span class="co">#&gt; 3 pasture bin2         0</span></span>
+<span><span class="co">#&gt; 4  forest bin2         1</span></span>
+<span><span class="co">#&gt; 5 pasture bin3         0</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 171 rows ]</span></span>
 <span><span class="fu"><a href="../reference/get_metrics.html">get_metrics</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $metrics</span></span>
@@ -243,7 +240,6 @@ iteration. clustur provides getter functions, <code>get_label()</code>,
 <span><span class="co">#&gt;      iter time label num_otus cutoff tp tn fp fn sensitivity specificity ppv</span></span>
 <span><span class="co">#&gt;      npv fdr accuracy mcc f1score</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 3 rows ]</span></span></code></pre></div>
-</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
