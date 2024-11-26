@@ -113,7 +113,6 @@ cluster_data <- cluster(column_distance, cutoff, method = "weighted")
 
 ## Output data from clustering
 
-#### edit this paragraph further...
 All methods produce a list object with an indicator of the cutoff that was used
 (`label`), as well as cluster composition (`cluster`) and shared (`abundance`) data frames.
 The `clusters` data frame shows which OTU (Operation Taxonomic Unit) each sequence was assigned to. The `abundance` data frame

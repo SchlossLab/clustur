@@ -8,7 +8,7 @@ bool SharedFileTestFixture::TestSharedFilePrintData(const std::vector<SharedAbun
                                                     const Rcpp::DataFrame &expectedResult) {
     Setup();
     sharedFile = new SharedFile(data);
-    Rcpp::DataFrame df = sharedFile->PrintData();
+    Rcpp::DataFrame df = sharedFile->PrintData("otu");
     const std::vector<std::string> columnNames = df.names();
     const std::vector<std::string> expectedNames = expectedResult.names();
     TearDown();

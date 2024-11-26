@@ -14,13 +14,14 @@
 #include <cctype>
 
 
-Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result) {
+Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
+    const std::string& binName) {
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
     const ListVectorPair listVectors = result->GetListVector();
-    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable);
-    Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData();
+    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable, binName);
+    Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData(binName);
     delete(sharedFile);
     return tidySharedDataFrame;
 }
@@ -105,7 +106,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
         featureColumnName, binColumnName);
-    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
     delete(listVector);
     delete(sparseMatrix);
@@ -131,7 +132,7 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
         featureColumnName, binColumnName);
-    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,

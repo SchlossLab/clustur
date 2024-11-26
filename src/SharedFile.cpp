@@ -6,7 +6,7 @@
 #include "MothurDependencies/ClusterExport.h"
 
 
-Rcpp::DataFrame SharedFile::PrintData() const {
+Rcpp::DataFrame SharedFile::PrintData(const std::string &binName) const {
     const size_t size = tidySharedList.size();
     std::vector<std::string> groups(size);
     std::vector<std::string> otus(size);
@@ -18,6 +18,6 @@ Rcpp::DataFrame SharedFile::PrintData() const {
         abundanceList[count++] = abundances.groupAbundance;
     }
     return Rcpp::DataFrame::create(Rcpp::Named("samples") = groups,
-                                                Rcpp::Named("otu") = otus,
+                                                Rcpp::Named(binName) = otus,
                                                 Rcpp::Named("abundance") = abundanceList);
 }
