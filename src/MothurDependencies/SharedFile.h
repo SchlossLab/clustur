@@ -16,7 +16,7 @@ public:
     explicit SharedFile(const std::vector<SharedAbundance>& otherTidySharedList)
         : tidySharedList(otherTidySharedList) {
     }
-    Rcpp::DataFrame PrintData() const;
+    Rcpp::DataFrame PrintData(const std::string &binName) const;
 private:
     std::vector<SharedAbundance> tidySharedList;
 };

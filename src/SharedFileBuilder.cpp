@@ -8,7 +8,7 @@
 // TODO Comment this code
 // TODO We may need to build a traditional file builder...So we can output a dataframe of how the clusters are (list)
 SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
-    const CountTableAdapter &countTable) {
+                                               const CountTableAdapter &countTable, const std::string &binName) {
     Utils utils;
     std::string largestCutoffLabel = listVector.getLabel();
     std::vector<SharedAbundance> abundancesList;
@@ -20,7 +20,7 @@ SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
         if(samples.empty())
             continue;
         std::vector<std::string> splitSamples;
-        std::string otuName = "otu" + std::to_string(count++);
+        std::string otuName = binName + std::to_string(count++);
         utils.splitAtComma(samples, splitSamples);
         std::unordered_map<std::string, double> totalAbundanceInEachGroup;
         for(const auto& sample : splitSamples) {
