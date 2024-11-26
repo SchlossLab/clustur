@@ -4,6 +4,7 @@
 #include "Adapters/OptimatrixAdapter.h"
 #include "Adapters/MatrixAdapter.h"
 #include "MothurDependencies/ClusterCommand.h"
+#include "MothurDependencies/ListVector.h"
 #include "MothurDependencies/OptiMatrix.h"
 #include "Adapters/CountTableAdapter.h"
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
@@ -69,8 +70,9 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* read = new DistanceFileReader(new SparseDistanceMatrix(adapter.CreateSparseMatrix()),
-        new ListVector(adapter.CreateListVector()), cutoff, isSim);
+    auto* sparseDistanceMatrix = new SparseDistanceMatrix(adapter.CreateSparseMatrix());
+    auto* listVec =  new ListVector(adapter.CreateListVector());
+    auto* read = new DistanceFileReader(sparseDistanceMatrix,listVec,cutoff, isSim);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
