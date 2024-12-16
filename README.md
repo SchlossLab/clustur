@@ -1,6 +1,5 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/check-full.yml)
@@ -43,8 +42,9 @@ library(clustur)
 
 ## Getting Started
 
-To get started, look at the [“Getting
-started”](https://www.schlosslab.org/clustur/) page.
+To get started, look at the [“Get
+started”](https://www.schlosslab.org/clustur/articles/clustur.html)
+page.
 
 ## Contributions
 
