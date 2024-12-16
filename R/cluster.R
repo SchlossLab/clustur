@@ -156,7 +156,7 @@ validate_count_table <- function(count_table_df) {
 #' This function was created as a helper function to generate file paths to our
 #' internal data. You should use this function if you
 #' want to follow along with the example, or interact with the data
-#' @param The file name of the data; leave as NULL (default) to get full
+#' @param file The file name of the data; leave as NULL (default) to get full
 #' list of example files
 #' @examples
 #' example_path("amazon_phylip.dist")
