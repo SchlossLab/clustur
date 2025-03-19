@@ -54,7 +54,7 @@ get_bins <- function(cluster_data) {
 #'
 #' @export
 #' @description
-#' GetShared retuns the generated abundance `data.frame`
+#' GetShared returns the generated abundance `data.frame`
 #' from the `cluster()` function
 #' @param cluster_data The output from the `cluster()` function.
 #' @examples

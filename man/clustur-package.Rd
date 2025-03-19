@@ -6,7 +6,7 @@
 \alias{clustur-package}
 \title{clustur: Clustering}
 \description{
-A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) \doi{10.1128/AEM.01541-09}). clustur make use of the 'cluster' and 'make.shared' command from mothur. The cluster command has five different algorithms implemented: 'opticlust', 'furthest', 'nearest', 'average', and 'weighted'. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) \doi{10.1128/mspheredirect.00073-17}). The 'make.shared' command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
+A tool that implements the clustering algorithms from 'mothur' (Schloss PD et al. (2009) \doi{10.1128/AEM.01541-09}). 'clustur' make use of the cluster() and make.shared() command from 'mothur'. Our cluster() function has five different algorithms implemented: 'OptiClust', 'furthest', 'nearest', 'average', and 'weighted'. 'OptiClust' is an optimized clustering method for Operational Taxonomic Units, and you can learn more here, (Westcott SL, Schloss PD (2017) \doi{10.1128/mspheredirect.00073-17}). The make.shared() command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
 }
 \seealso{
 Useful links:
@@ -23,6 +23,7 @@ Useful links:
 Authors:
 \itemize{
   \item Gregory Johnson \email{grejoh@umich.edu} (\href{https://orcid.org/0009-0008-3890-0297}{ORCID})
+  \item Sarah Westcott \email{swestcot@umich.edu}
 }
 
 }

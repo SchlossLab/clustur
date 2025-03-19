@@ -1,17 +1,18 @@
 Package: clustur
 Type: Package
 Title: Clustering
-Version: 0.1
-Date: 2024-10-18
+Version: 0.1.2
+Date: 2024-11-25
 Authors@R: c(
     person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
             comment = c(ORCID = "0009-0008-3890-0297")),
+    person("Sarah", "Westcott", , "swestcot@umich.edu", role = c("aut")),
     person("Patrick", "Schloss", , "pschloss@umich.edu", role = c("aut", "cre", "cph"),
             comment = c(ORCID = "0000-0002-6935-4275"))
     )
 Maintainer: Patrick Schloss <pschloss@umich.edu>
-Description: A tool that implements the clustering algorithms from mothur (Schloss PD et al. (2009) <doi:10.1128/AEM.01541-09>). clustur make use of the 'cluster' and 'make.shared' command from mothur. The cluster command has five different algorithms implemented: 'opticlust', 'furthest', 'nearest', 'average', and 'weighted'. Opticlust is an optimized OTU clustering algorithm, and you can learn more here, (Westcott SL, Schloss PD (2017) <doi:10.1128/mspheredirect.00073-17>). The 'make.shared' command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
-License: MIT + file LICENSE
+Description: A tool that implements the clustering algorithms from 'mothur' (Schloss PD et al. (2009) <doi:10.1128/AEM.01541-09>). 'clustur' make use of the cluster() and make.shared() command from 'mothur'. Our cluster() function has five different algorithms implemented: 'OptiClust', 'furthest', 'nearest', 'average', and 'weighted'. 'OptiClust' is an optimized clustering method for Operational Taxonomic Units, and you can learn more here, (Westcott SL, Schloss PD (2017) <doi:10.1128/mspheredirect.00073-17>). The make.shared() command is always applied at the end of the clustering command. This functionality allows us to generate and create clustering and abundance data efficiently.
+License: GPL (>= 3)
 Encoding: UTF-8
 Imports:
     Matrix,

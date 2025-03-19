@@ -1,7 +1,7 @@
 #' Read distance matrices
 #'
 #' Read in distances from a file that is formatted with three columns for the
-#' row, column, and distance of a sparse, square matrix or in a Phylip-formatted
+#' row, column, and distance of a sparse, square matrix or in a phylip-formatted
 #' distance matrix.
 #'
 #' @export
@@ -54,7 +54,7 @@ read_dist <- function(distance_file, count_table,
 }
 
 
-#' Cluster entitites together
+#' Cluster entities together
 #'
 #' Clusters entities represented in a distance matrix and count table using
 #' one of several algorithms and outputs information about the composition and
@@ -65,11 +65,11 @@ read_dist <- function(distance_file, count_table,
 #'  was created using the `read_dist()` function.
 #' @param cutoff The cutoff you want to cluster towards.
 #' @param method The method of clustering to be performed: opticlust (default),
+#' furthest, nearest, average, or weighted.
 #' @param feature_column_name_to Set the name of the column in the cluster
 #' dataframe that contains the sequence names.
 #' @param bin_column_name_to Set the name of the column in the
 #' cluster dataframe that contains the name of the group of sequence names.
-#' furthest, nearest, average, or weighted.
 #' @param random_seed the random seed to use, (default = 123).
 #' @return A list of `data.frames` that contain abundance, and clustering
 #' results. If you used `method = opticlust`, it will also return clustering
@@ -201,7 +201,7 @@ read_count <- function(count_table_path) {
 
 #' Create Sparse Matrix
 #'
-#' Given a list of i indexs, j indexes, and distances values,
+#' Given a list of i indexes, j indexes, and distances values,
 #' we can create a sparse distance matrix for you. Each vector
 #' must have the same size.
 #' @param i_index A list of i indexes, must be numeric

@@ -17,7 +17,7 @@ create_sparse_matrix(i_index, j_index, distances)
 a `dgTMatrix` from the `Matrix` library.
 }
 \description{
-Given a list of i indexs, j indexes, and distances values,
+Given a list of i indexes, j indexes, and distances values,
 we can create a sparse distance matrix for you. Each vector
 must have the same size.
 }

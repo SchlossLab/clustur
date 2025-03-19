@@ -23,7 +23,7 @@
 class SharedFileBuilder {
 public:
     SharedFile *BuildSharedFile(const ListVector &listVector,
-        const CountTableAdapter& countTable);
+                                const CountTableAdapter& countTable, const std::string &binName);
     SharedFileBuilder() = default;
 private:
     struct SampleInformation {
