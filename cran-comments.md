@@ -2,5 +2,4 @@
 
 0 errors | 0 warnings | 1 note
 
-* This is a new release.
-* Patch for clustur crashes on windows.
+* Patch for a clustering bug. 

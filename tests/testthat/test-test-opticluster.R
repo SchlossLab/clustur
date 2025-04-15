@@ -13,115 +13,119 @@ test_that("opticluster returns four dataframes", {
 
 })
 
-test_that("opticluster and other clustering methods do not cluster duplicate values with column files", {
-  cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
-                             count_table, cutoff, FALSE)
-  df <- cluster(distance_data, cutoff, method = "opticlust")
+test_that("opticluster and other clustering methods 
+          do not cluster duplicate values with column files", {
+            cutoff <- 0.2
+            count_table <- read_count(test_path("extdata",
+                                                "amazon.count_table"))
+            distance_data <- read_dist(test_path("extdata",
+                                                 "amazon_column.dist"),
+                                       count_table, cutoff, FALSE)
+            df <- cluster(distance_data, cutoff, method = "opticlust")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
 
-  # Works also when not opticluster
-  # Since furthest, nearest, average, and weighted all
-  # follow the same structure, I do not need
-  # to test them all individually
-  # We will use nearest...
+            # Works also when not opticluster
+            # Since furthest, nearest, average, and weighted all
+            # follow the same structure, I do not need
+            # to test them all individually
+            # We will use nearest...
 
-  df <- cluster(distance_data, cutoff, method = "nearest")
+            df <- cluster(distance_data, cutoff, method = "nearest")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
-  
-})
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
+          })
 
-test_that("opticluster and other clustering methods do not cluster duplicate values with phylip files", {
-  cutoff <- 0.2
-  count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  distance_data <- read_dist(test_path("extdata", "amazon_phylip.dist"),
-                             count_table, cutoff, FALSE)
-  df <- cluster(distance_data, cutoff, method = "opticlust")
+test_that("opticluster and other clustering methods do 
+          not cluster duplicate values with phylip files", {
+            cutoff <- 0.2
+            count_table <- read_count(test_path("extdata",
+                                                "amazon.count_table"))
+            distance_data <- read_dist(test_path("extdata",
+                                                 "amazon_phylip.dist"),
+                                       count_table, cutoff, FALSE)
+            df <- cluster(distance_data, cutoff, method = "opticlust")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
 
-  
-  # Works also when not opticluster
-  # Since furthest, nearest, average, and weighted all
-  # follow the same structure, I do not need
-  # to test them all individually
-  # We will use nearest...
+            # Works also when not opticluster
+            # Since furthest, nearest, average, and weighted all
+            # follow the same structure, I do not need
+            # to test them all individually
+            # We will use nearest...
 
-  df <- cluster(distance_data, cutoff, method = "nearest")
+            df <- cluster(distance_data, cutoff, method = "nearest")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
-  
-})
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
+          })
 
-test_that("opticluster and other clustering methods do not cluster duplicate values with a sparse matrix", {
-  cutoff <- 0.2
-  i_values <- as.integer(1:100)
-  j_values <- as.integer(sample(1:100, 100, TRUE))
-  x_values <- as.numeric(runif(100, 0, 1))
-  s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
-  sparse_count <- data.frame(Representative_Sequence = 1:100,
-                             total = rep(1, times = 100))
-  distance_data <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
-  df <- cluster(distance_data, cutoff, method = "opticlust")
+test_that("opticluster and other clustering methods do not cluster
+          duplicate values with a sparse matrix", {
+            cutoff <- 0.2
+            i_values <- as.integer(1:100)
+            j_values <- as.integer(sample(1:100, 100, TRUE))
+            x_values <- as.numeric(runif(100, 0, 1))
+            s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+            sparse_count <- data.frame(Representative_Sequence = 1:100,
+                                       total = rep(1, times = 100))
+            distance_data <- read_dist(s_matrix, sparse_count, 0.2, FALSE)
+            df <- cluster(distance_data, cutoff, method = "opticlust")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
 
-  # Works also when not opticluster
-  # Since furthest, nearest, average, and weighted all
-  # follow the same structure, I do not need
-  # to test them all individually
-  # We will use nearest...
+            # Works also when not opticluster
+            # Since furthest, nearest, average, and weighted all
+            # follow the same structure, I do not need
+            # to test them all individually
+            # We will use nearest...
 
-  df <- cluster(distance_data, cutoff, method = "nearest")
+            df <- cluster(distance_data, cutoff, method = "nearest")
 
-  list_data <- clustur::split_clusters_to_list(df)
-  count <- 0
-  ls <- c()
-  for(i in list_data){
-    ls <- c(ls, i)
-  }
-  expect_true(length(ls[which(duplicated(ls))]) <= 0)
-  expect_true(length(unique(ls)) == length(ls))
+            list_data <- split_clusters_to_list(df)
+            count <- 0
+            ls <- c()
+            for (i in list_data){
+              ls <- c(ls, i)
+            }
+            expect_true(length(ls[which(duplicated(ls))]) <= 0)
+            expect_true(length(unique(ls)) == length(ls))
 
-})
+          })
 
 
 
