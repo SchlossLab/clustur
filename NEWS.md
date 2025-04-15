@@ -1,3 +1,3 @@
-# clustur 0.1
+# clustur 0.1.3
 
-* Initial CRAN submission.
+* Fixed `Cluster()` returning duplicate cluster names when using method = "opticlust."

@@ -63,4 +63,3 @@ To get started, look at the ["Get started"](https://www.schlosslab.org/clustur/a
 
 For feature request please visit the issue page in GitHub and use the feature
 tag. If you would like to contribute pull request are welcomed!
-

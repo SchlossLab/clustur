@@ -26,8 +26,8 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
     int nameOffset = 0;
     std::vector<std::unordered_set<long long>> closeness(nonSingletonCount);
     for(const auto& cell : matrixData->seqVec) {
-         const std::string name =listVector->get(count + nameOffset);
-         nameList[count + nameOffset] = name;
+        const std::string name = listVector->get(count + nameOffset);
+        // nameList[count + nameOffset] = name;
         if(cell.empty()) {
             singletons.emplace_back(name);
             nameOffset++;
@@ -43,6 +43,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
             }
             if(distance <= cutoff) {
                 cells.insert(indexSwap[row.index]);
+                nameList[indexSwap[row.index]] = listVector->get(row.index);
             }
         }
         closeness[count] = cells;

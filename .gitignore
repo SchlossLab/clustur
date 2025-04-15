@@ -208,3 +208,4 @@ Profiler/
 /.quarto/
 .Rproj.user
 CRAN-SUBMISSION
+revdep/*
