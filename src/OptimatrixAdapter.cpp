@@ -43,7 +43,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
             }
             if(distance <= cutoff) {
                 cells.insert(indexSwap[row.index]);
-                nameList[row.index] = listVector->get(row.index);
+                nameList[indexSwap[row.index]] = listVector->get(row.index);
             }
         }
         closeness[count] = cells;
