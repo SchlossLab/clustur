@@ -19,3 +19,4 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^src/\.idea$
+^CRAN-SUBMISSION$
