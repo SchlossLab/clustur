@@ -20,3 +20,4 @@
 ^README\.Rmd$
 ^src/\.idea$
 ^CRAN-SUBMISSION$
+^revdep$
