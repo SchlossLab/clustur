@@ -7,6 +7,7 @@
 [![test-coverage](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/test-coverage.yml)
 [![lint](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/lintr.yml)
 [![pkgdown](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/clustur/actions/workflows/pkgdown.yaml)
+[![CRAN-downloads](https://cranlogs.r-pkg.org/badges/clustur)](https://CRAN.R-project.org/package=clustur)
 
 <!-- badges: end -->
 
