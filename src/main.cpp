@@ -71,7 +71,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* sparseDistanceMatrix = new SparseDistanceMatrix(adapter.CreateSparseMatrix());
+    auto* sparseDistanceMatrix = adapter.CreateSparseMatrix();
     auto* listVec =  new ListVector(adapter.CreateListVector());
     auto* read = new DistanceFileReader(sparseDistanceMatrix,listVec,cutoff, isSim);
     read->CreateCountTableAdapter(countTable);

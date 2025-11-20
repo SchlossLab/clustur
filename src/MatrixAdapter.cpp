@@ -11,10 +11,10 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
                             data(dataValues) {
 }
 
-SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
+SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() {
     // The indexes are +1, i need to push them back so that 1 -> 0, 2-> 1, etc (name map maybe?)
     std::set<std::string> names;
-    SparseDistanceMatrix sparseMatrix;
+    auto* sparseMatrix = new SparseDistanceMatrix();
     const int nSeqs = static_cast<int>(data.size());
     if(nSeqs <= 0)
         return {};
@@ -23,7 +23,7 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
     const int nameSize = static_cast<int>(names.size());
-    sparseMatrix.resize(nameSize);
+    sparseMatrix->resize(nameSize);
     // Not size, but the largest index inside of xPostions
     const int maxXValue = *std::max_element(xPosition.begin(), xPosition.end());
     const int maxYValue = *std::max_element(yPosition.begin(), yPosition.end());
@@ -54,9 +54,9 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
         const int yIndex = yPosition[i];
       
         if(xIndex > yIndex)
-            sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
+            sparseMatrix->addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
-            sparseMatrix.addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
+            sparseMatrix->addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
     }
     return sparseMatrix;
 }

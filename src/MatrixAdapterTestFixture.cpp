@@ -6,14 +6,19 @@
 
 bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const size_t expectedResult) {
     Setup();
-    const auto result = matrixAdapter->CreateSparseMatrix().seqVec.size();
+    const auto* dat = matrixAdapter->CreateSparseMatrix();
+    const auto result = dat->seqVec.size();
+    delete dat;
     TearDown();
     return result == expectedResult;
 }
 
 bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {
     Setup();
-    if(createSparseFirst) matrixAdapter->CreateSparseMatrix();
+    if(createSparseFirst) {
+        const auto* dat = matrixAdapter->CreateSparseMatrix();
+        delete dat;
+    }
     const auto result = matrixAdapter->CreateListVector().size() > 0;
     TearDown();
     return result == expectedResult;
