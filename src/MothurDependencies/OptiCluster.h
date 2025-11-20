@@ -18,7 +18,7 @@ class OptiCluster {
 public:
 
     OptiCluster(OptiData* mt, ClusterMetric* met, long long ns);
-    ~OptiCluster() = default;
+    ~OptiCluster();
 
     std::string getTag() { std::string tag = "opti_" + metric->getName(); return tag; }
     long long getNumBins() const;

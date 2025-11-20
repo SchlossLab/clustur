@@ -22,6 +22,11 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const long long ns) {
     numSingletons = ns;
 }
 
+OptiCluster::~OptiCluster() {
+    delete metric;
+    delete matrix;
+}
+
 /***********************************************************************/
 //randomly assign sequences to OTUs
 int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {

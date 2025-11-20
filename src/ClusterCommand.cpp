@@ -130,7 +130,6 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         for (double result: stats) { sensFile += std::to_string(result) + ','; }
         util.AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
     }
-    delete matrix;
     return data;
 }
 
