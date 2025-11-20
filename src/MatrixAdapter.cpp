@@ -62,8 +62,7 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() {
 }
 
 ListVector MatrixAdapter::CreateListVector() const {
-    ListVector vector;
-    vector.resize(static_cast<int>(matrixNames.size()));
+    ListVector vector(static_cast<int>(matrixNames.size()));
     int count = 0;
     for(const auto& name : matrixNames) {
         vector.set(count++, name);
