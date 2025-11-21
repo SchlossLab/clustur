@@ -37,13 +37,13 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
 
 SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() const {
     std::set<std::string> names;
-    auto* sparseMatrix = new SparseDistanceMatrix();
+    SparseDistanceMatrix sparseMatrix;
     const int nSeqs = static_cast<int>(data.size());
     if(nSeqs <= 0)
         return {};
     auto samples = countTable.GetSamples();
     names.insert(samples.begin(), samples.end());
-    sparseMatrix->resize(static_cast<int>(names.size()));
+    sparseMatrix.resize(static_cast<int>(names.size()));
     for (int i = 0; i < nSeqs;  i++) {
         double currentDist = data[i];
         if(currentDist > cutoff) continue;
@@ -54,11 +54,11 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() const {
         const int yIndex = yPosition[i];
       
         if(xIndex > yIndex)
-            sparseMatrix->addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
+            sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
-            sparseMatrix->addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
+            sparseMatrix.addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
     }
-    return sparseMatrix;
+    return new SparseDistanceMatrix(sparseMatrix);
 }
 
 ListVector MatrixAdapter::CreateListVector() const {
