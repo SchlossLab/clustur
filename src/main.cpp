@@ -14,8 +14,9 @@
 #include <cctype>
 
 
+
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
-    const std::string& binName) {
+                                      const std::string& binName) {
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
@@ -70,10 +71,9 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     const double cutoff, const bool isSim) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* sparseDistanceMatrix = adapter.CreateSparseMatrix();
-    auto* listVec =  new ListVector(adapter.CreateListVector());
-    auto* read = new DistanceFileReader(sparseDistanceMatrix,listVec,cutoff, isSim);
+    const MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
+    auto* read = new DistanceFileReader(adapter.CreateSparseMatrix(),
+        new ListVector(adapter.CreateListVector()) ,cutoff, isSim);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }

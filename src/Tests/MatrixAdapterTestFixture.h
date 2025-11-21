@@ -13,7 +13,7 @@
 class MatrixAdapterTestFixture final: public TestFixture {
 public:
     bool TestCreateSparseMatrix(size_t expectedResult);
-    bool TestGetListVector(bool createSparseFirst, bool expectedResult);
+    bool TestGetListVector(bool expectedResult);
     ~MatrixAdapterTestFixture() override;
 private:
 

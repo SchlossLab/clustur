@@ -13,12 +13,8 @@ bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const size_t expectedResul
     return result == expectedResult;
 }
 
-bool MatrixAdapterTestFixture::TestGetListVector(const bool createSparseFirst, const bool expectedResult) {
+bool MatrixAdapterTestFixture::TestGetListVector(const bool expectedResult) {
     Setup();
-    if(createSparseFirst) {
-        const auto* dat = matrixAdapter->CreateSparseMatrix();
-        delete dat;
-    }
     const auto result = matrixAdapter->CreateListVector().size() > 0;
     TearDown();
     return result == expectedResult;

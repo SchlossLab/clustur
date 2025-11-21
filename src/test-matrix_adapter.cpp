@@ -22,11 +22,9 @@ context("MatrixAdapter Test") {
 
      test_that("Matrix Adapter can get its list vector") {
          MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestGetListVector(false, false);
+         bool result = fixture.TestGetListVector(true);
          expect_true(result);
-         result = fixture.TestGetListVector(true, true);
-         expect_true(result);
-         result = fixture.TestGetListVector(false, true);
+         result = fixture.TestGetListVector(false);
          expect_false(result);
      }
      test_that("Matrix Adapter can create sparse matrices") {
