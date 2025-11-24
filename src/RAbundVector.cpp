@@ -93,8 +93,8 @@ void RAbundVector::resize(int size){
 
 /***********************************************************************/
 
-int RAbundVector::size(){
-	return data.size();
+int RAbundVector::size() const {
+	return static_cast<int>(data.size());
 }
 
 /***********************************************************************/

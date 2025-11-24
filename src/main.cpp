@@ -21,7 +21,7 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
     const ListVectorPair listVectors = result->GetListVector();
-    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable, binName);
+    const SharedFile* sharedFile = builder.BuildSharedFile(listVectors.listVector, countTable, binName);
     Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData(binName);
     delete(sharedFile);
     return tidySharedDataFrame;
@@ -104,7 +104,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
         sparseMatrix->FilterSparseMatrix(cutoff);
     const auto result = command.runMothurCluster(method, sparseMatrix, cutoff, listVector);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
@@ -130,7 +130,7 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     ClusterCommand command;
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);

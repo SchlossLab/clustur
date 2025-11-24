@@ -107,9 +107,9 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
             }
             util.AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
         }
-        ListVector *list = nullptr;
+        // ListVector *list = nullptr;
         // clusterMetrics += "\n\n";
-        list = cluster.getList();
+        ListVector *list = cluster.getList();
         list->setLabel(std::to_string(cutoff));
         //
         if (printHeaders) {
@@ -174,13 +174,13 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
        
         if(!data.label.empty()) {
             data.clusterBins = oldList.print(listFile);
-            auto* vec = new ListVector(oldList);
+            ListVector listVec(oldList);
             list->setPrintedLabels(false);
             clusterData->AddToData(data);
             if(rndPreviousDist > highestDistLabel) {
                 highestDistLabel = rndPreviousDist;
-                vec->setLabel(std::to_string(highestDistLabel));
-                clusterData->SetListVector(*vec, std::to_string(highestDistLabel)); // vec might be a shallow copy
+                listVec.setLabel(std::to_string(highestDistLabel));
+                clusterData->SetListVector(listVec, std::to_string(highestDistLabel)); // vec might be a shallow copy
             }
         }
         oldList = *list;
@@ -200,13 +200,12 @@ ClusterExport* ClusterCommand::runMothurCluster(const std::string &clusterMethod
 
     if(!data.label.empty()) {
         data.clusterBins = oldList.print(listFile);
-        auto* vec = new ListVector(oldList);
-        
+        ListVector listVec(oldList);
         clusterData->AddToData(data);
         if(rndPreviousDist > highestDistLabel) {
             highestDistLabel = rndPreviousDist;
-            vec->setLabel(std::to_string(highestDistLabel));
-            clusterData->SetListVector(*vec, std::to_string(highestDistLabel));
+            listVec.setLabel(std::to_string(highestDistLabel));
+            clusterData->SetListVector(listVec, std::to_string(highestDistLabel));
         }
     }
     delete(cluster);

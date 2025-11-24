@@ -106,7 +106,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     return output_cluster;
 }
 
-int ListVector::size() {
+int ListVector::size() const {
     return static_cast<int>(data.size());
 }
 
