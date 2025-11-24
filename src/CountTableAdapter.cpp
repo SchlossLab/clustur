@@ -20,7 +20,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
             sampleNames = samples;
             continue;
         }
-        const std::vector<double> columnData = countTable[name];
+        const std::vector<double>& columnData = Rcpp::as<std::vector<double>>(countTable[name]);
         dataFrameMap[name] = columnData;
     }
     // In a count table, the first to columns are the sequence and the total abundance.
