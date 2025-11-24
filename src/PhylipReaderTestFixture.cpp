@@ -19,7 +19,9 @@ bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
     Setup();
     reader->CreateCountTableAdapter(df);
     reader->Read(file);
-    const auto result = !reader->GetSparseMatrix()->seqVec.empty();
+    const SparseDistanceMatrix* sparseMatrix = reader->GetSparseMatrix();
+    const auto result = !sparseMatrix->seqVec.empty();
+    delete sparseMatrix;
     TearDown();
     return result == expectedResult;
 
@@ -30,7 +32,9 @@ bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
     Setup();
     reader->CreateCountTableAdapter(df);
     reader->Read(file);
-    const int result = reader->GetListVector()->getNumSeqs();
+    const ListVector* listVector = reader->GetListVector();
+    const int result = listVector->getNumSeqs();
+    delete listVector;
     TearDown();
     return result == expectedResult;
 }

@@ -29,10 +29,13 @@ context("ColumnDistanceMatrixReader Test") {
         ColumnDistanceMatrixReader reader(0.2, false);
         reader.CreateCountTableAdapter(df);
         reader.Read(path);
+        const ListVector* listVector = reader.GetListVector();
         ColumnReaderTestFixture fixture;
-        bool result = fixture.TestReadColumnFile(path, df, reader.GetListVector()->getNumSeqs());
+        bool result = fixture.TestReadColumnFile(path, df, listVector->getNumSeqs());
+        delete listVector;
         expect_true(result);
         result = fixture.TestReadColumnFile("", df, 1);
+
         expect_false(result);
     }
 
@@ -66,7 +69,9 @@ context("ColumnDistanceMatrixReader Test") {
         reader.CreateCountTableAdapter(df);
         reader.Read(path);
         ColumnReaderTestFixture fixture;
-        bool result = fixture.TestGetListVector(path, df, reader.GetListVector()->getNumSeqs());
+        const ListVector* listVector = reader.GetListVector();
+        bool result = fixture.TestGetListVector(path, df, listVector->getNumSeqs());
+        delete listVector;
         expect_true(result);
         result = fixture.TestGetListVector("", df, 0);
         expect_true(result);

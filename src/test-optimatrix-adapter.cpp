@@ -39,7 +39,11 @@ context("Optimatrix Adapter Test") {
     ColumnDistanceMatrixReader reader(0.2, false);
     reader.CreateCountTableAdapter(df);
     reader.Read(path);
-    bool result = fixture.TestOptimatrixReturnsNotNullValues(reader.GetSparseMatrix(), reader.GetListVector());
+	const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
+    const ListVector* listVector = reader.GetListVector();
+    bool result = fixture.TestOptimatrixReturnsNotNullValues(sparseMatrix, listVector);
+    delete sparseMatrix;
+    delete listVector;
     expect_true(result);
   }
   test_that("OptimatrixAdapter returns the correct number of Closeness Values"){
@@ -54,7 +58,11 @@ context("Optimatrix Adapter Test") {
     ColumnDistanceMatrixReader reader(0.2, false);
     reader.CreateCountTableAdapter(df);
     reader.Read(path);
-    bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(reader.GetSparseMatrix(), reader.GetListVector(), 86);
+    const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
+    const ListVector* listVector = reader.GetListVector();
+    bool result = fixture.TestOptimatrixClosenessReturnsCorrectValue(sparseMatrix, listVector, 86);
+    delete sparseMatrix;
+    delete listVector;
     expect_true(result);
   }
   test_that("OptimatrixAdapter returns the correct number of Singletons"){
@@ -69,7 +77,11 @@ context("Optimatrix Adapter Test") {
     ColumnDistanceMatrixReader reader(0.2, false);
     reader.CreateCountTableAdapter(df);
     reader.Read(path);
-    bool result = fixture.TestOptimatrixSingletonReturnsCorrectValue(reader.GetSparseMatrix(), reader.GetListVector(), 12);
+    const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
+    const ListVector* listVector = reader.GetListVector();
+    bool result = fixture.TestOptimatrixSingletonReturnsCorrectValue(sparseMatrix, listVector, 12);
+    delete sparseMatrix;
+    delete listVector;
     expect_true(result);
   }
   test_that("OptimatrixAdapter returns the correct number of Names"){
@@ -84,7 +96,11 @@ context("Optimatrix Adapter Test") {
     ColumnDistanceMatrixReader reader(0.2, false);
     reader.CreateCountTableAdapter(df);
     reader.Read(path);
-    bool result = fixture.TestOptimatrixNameListReturnsCorrectValue(reader.GetSparseMatrix(), reader.GetListVector(), 98);
+    const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
+    const ListVector* listVector = reader.GetListVector();
+    bool result = fixture.TestOptimatrixNameListReturnsCorrectValue(sparseMatrix, listVector, 98);
+    delete sparseMatrix;
+	delete listVector;
     expect_true(result);
   }
 
