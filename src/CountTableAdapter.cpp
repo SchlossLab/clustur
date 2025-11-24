@@ -7,8 +7,7 @@
 #include "MothurDependencies/Utils.h"
 
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
-    
-    std::unordered_map<std::string, std::vector<double> > data;
+
     const std::vector<std::string> columnNames = countTable.names();
 
     if(columnNames.size() < 3)
@@ -22,9 +21,8 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
             continue;
         }
         const std::vector<double> columnData = countTable[name];
-        data[name] = columnData;
+        dataFrameMap[name] = columnData;
     }
-    dataFrameMap = data;
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
