@@ -7,7 +7,7 @@
 #include "Cluster.h"
 #include <string>
 
-class WeightedLinkage : public Cluster {
+class WeightedLinkage final : public Cluster {
 public:
     WeightedLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
