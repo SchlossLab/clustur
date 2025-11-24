@@ -55,6 +55,7 @@ bool OptiDataTestFixture::TestGetListSingleReturnsCorrectData(const int expected
     const auto resultant = optiData->getListSingle();
     const auto val = resultant->getNumSeqs();
     TearDown();
+    delete resultant;
     return expectedResult == val;
 }
 

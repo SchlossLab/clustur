@@ -54,7 +54,7 @@ context("Cluster algorithms") {
     expect_false(result);
   }
   test_that("Get Tag returns the tag that corresponds to the clustering type") {
-    ClusterTestFixture test_fixture;
+    	ClusterTestFixture test_fixture;
       const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
       const std::vector<double> total{10, 20, 30, 40, 50, 60};
       const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
@@ -73,7 +73,7 @@ context("Cluster algorithms") {
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustComplete, "nn");
     expect_false(result);
-
+    delete clustComplete;
 
     auto* clustSingle = new SingleLinkage(new RAbundVector(), &listVector,
         &dMatrix, 0.2, "nearest", -1);
@@ -81,6 +81,8 @@ context("Cluster algorithms") {
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustSingle, "an");
     expect_false(result);
+    delete clustSingle;
+
 
     auto* clustAverage = new AverageLinkage(new RAbundVector(), &listVector,
         &dMatrix, 0.2, "average", -1);
@@ -88,19 +90,16 @@ context("Cluster algorithms") {
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustAverage, "wn");
     expect_false(result);
-
+	delete clustAverage;
 
     auto* clustWeighted = new WeightedLinkage(new RAbundVector(), &listVector,
       &dMatrix, 0.2, "weighted", -1);
     result = test_fixture.TestGetTagGetter(clustWeighted, "wn");
     expect_true(result);
     result = test_fixture.TestGetTagGetter(clustWeighted, "nn");
+    delete clustWeighted;
     expect_false(result);
-    delete(clustWeighted);
-    delete(clustComplete);
-    delete(clustAverage);
-    delete(clustSingle);
-    }
+	}
     test_that("Get Tag returns the tag that corresponds to the clustering type") {
         ClusterTestFixture test_fixture;
       const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
@@ -120,7 +119,8 @@ context("Cluster algorithms") {
       bool result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>());
       expect_true(result);
       result = test_fixture.TestGetSeqToBin(clust, std::map<std::string, int>{{"", 1}});
-      expect_false(result);
       delete(clust);
+      expect_false(result);
+
     }
 }
