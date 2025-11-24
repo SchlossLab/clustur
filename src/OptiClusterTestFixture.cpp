@@ -47,7 +47,7 @@ bool OptiClusterTestFixture::OptiClusterReturnsTheCorrectList(const double expec
     Setup();
     const auto list = optiCluster->getList();
     TearDown();
-    return list->getNumBins() == expectedDataSize;
+    return list.getNumBins() == expectedDataSize;
 }
 
 bool OptiClusterTestFixture::OptiClusterGetsTheCorrectTag(const std::string &expectedResult) {

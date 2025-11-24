@@ -109,19 +109,19 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
         }
         // ListVector *list = nullptr;
         // clusterMetrics += "\n\n";
-        ListVector *list = cluster.getList();
-        list->setLabel(std::to_string(cutoff));
+        ListVector list = cluster.getList();
+        list.setLabel(std::to_string(cutoff));
         //
         if (printHeaders) {
             //only print headers the first time
             printHeaders = false;
-        } else { list->setPrintedLabels(printHeaders); }
+        } else { list.setPrintedLabels(printHeaders); }
         OptiClusterInformation clusterInformation;
         clusterInformation.label = std::to_string(cutoff);
         clusterInformation.numberOfOtu = static_cast<int>(numBins);
-        clusterInformation.clusterBins = list->print(listFile);
+        clusterInformation.clusterBins = list.print(listFile);
         data->AddToData(clusterInformation);
-        data->SetListVector(*list, std::to_string(cutoff));
+        data->SetListVector(list, std::to_string(cutoff));
         stats = cluster.getStats(tp, tn, fp, fn);
 
         sensFile += std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +

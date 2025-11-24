@@ -28,7 +28,7 @@ public:
     std::vector<double> getStats( double&,  double&,  double&,  double&) const;
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
-    ListVector* getList() const;
+    ListVector getList() const;
 
 protected:
     OptiData* matrix;
