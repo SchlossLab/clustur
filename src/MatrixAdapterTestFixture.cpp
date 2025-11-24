@@ -6,9 +6,8 @@
 
 bool MatrixAdapterTestFixture::TestCreateSparseMatrix(const size_t expectedResult) {
     Setup();
-    const auto* dat = matrixAdapter->CreateSparseMatrix();
-    const auto result = dat->seqVec.size();
-    delete dat;
+    const auto dat = matrixAdapter->CreateSparseMatrix();
+    const auto result = dat.seqVec.size();
     TearDown();
     return result == expectedResult;
 }

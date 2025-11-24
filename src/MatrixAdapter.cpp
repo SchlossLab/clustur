@@ -35,7 +35,7 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
 
 }
 
-SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() const {
+SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() const {
     std::set<std::string> names;
     SparseDistanceMatrix sparseMatrix;
     const int nSeqs = static_cast<int>(data.size());
@@ -58,7 +58,7 @@ SparseDistanceMatrix* MatrixAdapter::CreateSparseMatrix() const {
         else
             sparseMatrix.addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));
     }
-    return new SparseDistanceMatrix(sparseMatrix);
+    return sparseMatrix;
 }
 
 ListVector MatrixAdapter::CreateListVector() const {

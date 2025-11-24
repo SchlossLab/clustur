@@ -12,7 +12,7 @@
 #include "Adapters/DistanceFileReader.h"
 #include <Rcpp.h>
 #include <cctype>
-
+#include <memory>
 
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
@@ -73,7 +73,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     const MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     auto* read = new DistanceFileReader(adapter.CreateSparseMatrix(),
-        new ListVector(adapter.CreateListVector()) ,cutoff, isSim);
+        adapter.CreateListVector() ,cutoff, isSim);
     read->CreateCountTableAdapter(countTable);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }

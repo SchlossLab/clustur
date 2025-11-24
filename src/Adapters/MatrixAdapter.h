@@ -15,7 +15,7 @@ public:
     MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
         const std::vector<double> &dataValues, double cutOff, bool isSimularity, CountTableAdapter table);
     ~MatrixAdapter() = default;
-    SparseDistanceMatrix* CreateSparseMatrix() const;
+    SparseDistanceMatrix CreateSparseMatrix() const;
     ListVector CreateListVector() const;
 
 private:

@@ -9,8 +9,6 @@ ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, cons
 :DistanceFileReader() {
 	this->cutoff = cutoff;
 	this->sim = isSimularity;
-	sparseMatrix = new SparseDistanceMatrix();
-	list = new ListVector();
 }
 bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	std::ifstream fileHandle;
@@ -23,12 +21,12 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	float distance;
 	std::vector<std::string> sequences = countTable.GetSamples();
 	size_t nseqs = sequences.size();
-    sparseMatrix->resize(nseqs);
-	list = new ListVector(static_cast<int>(nseqs));
+    sparseMatrix.resize(nseqs);
+	list = ListVector(static_cast<int>(nseqs));
 	std::unordered_map<std::string, int> nameToIndexMap;
 	int count = 0;
 	for(const auto &sequence : sequences) {
-		list->set(count, sequence);
+		list.set(count, sequence);
 		nameToIndexMap[sequence] = count++;
 	}
 
@@ -77,13 +75,13 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
 					refRow = itA;
 					refCol = itB;
-					sparseMatrix->addCell(itB, value); // This is the problem most likely...How do we fix it.
+					sparseMatrix.addCell(itB, value); // This is the problem most likely...How do we fix it.
 				}
 				else if(refRow == itA && refCol == itB){
 					lt = 0;
 				}
 				else{
-					sparseMatrix->addCell(itB, value);
+					sparseMatrix.addCell(itB, value);
 				}
 			}
 			else if(itA < itB){
@@ -92,13 +90,13 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 				if(refRow == refCol){		// in other words, if we haven't loaded refRow and refCol...
 					refRow = itA;
 					refCol = itB;
-					sparseMatrix->addCell(itA, value);
+					sparseMatrix.addCell(itA, value);
 				}
 				else if(refRow == itB && refCol == itA){
 					lt = 0;
 				}
 				else{
-					sparseMatrix->addCell(itA, value);
+					sparseMatrix.addCell(itA, value);
 				}
 			}
 		}
@@ -106,7 +104,7 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 
 	if(lt == 0) {  // oops, it was square
 		fileHandle.close();  //let's start over
-		sparseMatrix->clear();  //let's start over
+		sparseMatrix.clear();  //let's start over
 		fileHandle.open(filePath); //let's start over
 
 		while(fileHandle >> firstName >> secondName >> distance){
@@ -132,12 +130,12 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 
 			if(distance <= cutoff && itA > itB){
                 PDistCell value(itA, distance);
-				sparseMatrix->addCell(itB, value);
+				sparseMatrix.addCell(itB, value);
 			}
 		}
 	}
 	fileHandle.close();
-	list->setLabel("0");
+	list.setLabel("0");
 	return true;
 }
 
