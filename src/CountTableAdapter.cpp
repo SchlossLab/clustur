@@ -9,10 +9,11 @@
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
 
     const std::vector<std::string> columnNames = count.names();
-
+    std::vector<std::vector<double>> columnValues(columnNames.size() - 1);
     if(columnNames.size() < 3)
         return false;
     bool sequenceColumn = true;
+    size_t counter = 0;
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
@@ -20,8 +21,13 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
             sampleNames = samples;
             continue;
         }
-        dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
+        columnValues[counter++] = Rcpp::as<std::vector<double>>(count[name]);
     }
+    counter = 0;
+    for (size_t i = 1; i < columnNames.size(); ++i) {
+        dataFrameMap[columnNames[i]] = columnValues[counter++];
+    }
+
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
