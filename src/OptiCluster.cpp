@@ -22,6 +22,11 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const long long ns) {
     numSingletons = ns;
 }
 
+OptiCluster::~OptiCluster() {
+    delete metric;
+    delete matrix;
+}
+
 /***********************************************************************/
 //randomly assign sequences to OTUs
 int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {
@@ -228,15 +233,15 @@ std::vector<double> OptiCluster::getCloseFarCounts(const long long seq, const lo
 }
 
 //TODO figure out why the bad-allocation execption is being thrown
-ListVector *OptiCluster::getList() const {
-    auto *list = new ListVector();
+ListVector OptiCluster::getList() const {
+    ListVector list;
     const ListVector *singleton = matrix->getListSingle();
     // TestHelper::Print("Made it here, listVector\n");
     if (singleton != nullptr) {
         //add in any sequences above cutoff in read. Removing these saves clustering time.
         for (int i = 0; i < singleton->getNumBins(); i++) {
             if (!singleton->get(i).empty()) {
-                list->push_back(singleton->get(i));
+                list.push_back(singleton->get(i));
             }
         }
         delete singleton;
@@ -251,7 +256,7 @@ ListVector *OptiCluster::getList() const {
                 // TestHelper::Print(i + "\n");
                 otu += "," + matrix->getName(bin[j]);
             }
-            list->push_back(otu);
+            list.push_back(otu);
         }
     }
     return list;

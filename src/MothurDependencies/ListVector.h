@@ -66,7 +66,7 @@ public:
     RAbundVector getRAbundVector() const;
 
     std::string print(std::ostream&, std::map<std::string, int>&) override;
-    int size() override;
+    int size() const override;
     void clear() override;
     void resize(int) override;
     Rcpp::DataFrame CreateDataFrameFromList(const std::string &featureColumnName = "feature",

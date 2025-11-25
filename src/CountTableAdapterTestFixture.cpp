@@ -62,7 +62,6 @@ void CountTableAdapterTestFixture::Setup() {
         Rcpp::Named("Representative Sequence") = compounds,
         Rcpp::Named("total") = total,
         Rcpp::Named("nogroup") = total);
-    // countTable->CreateDataFrameMap(dataframe);
 }
 
 void CountTableAdapterTestFixture::TearDown() {

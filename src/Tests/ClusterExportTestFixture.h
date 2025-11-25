@@ -11,12 +11,12 @@
 
 class ClusterExportTestFixture final : public TestFixture {
 public:
-    bool TestSetListVector(ListVector &listVector, const std::string &label, const bool result);
+    bool TestSetListVector(const ListVector &listVector, const std::string &label, bool result);
     bool TestGetListVector(bool result);
 private:
     void Setup() override;
     void TearDown() override;
-    ClusterExport* clusteExport = nullptr;
+    ClusterExport* clusterExport = nullptr;
 };
 
 

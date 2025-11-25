@@ -8,7 +8,9 @@
 bool OptimatrixAdapterTestFixture::TestOptimatrixReturnsNotNullValues(const SparseDistanceMatrix* sparse,
                                                                     const ListVector* listVector) {
     Setup();
-    const bool hasPassed = adapter->ConvertToOptimatrix(sparse, listVector, false) != nullptr;
+    const OptiMatrix* optiMatrix =  adapter->ConvertToOptimatrix(sparse, listVector, false);
+    const bool hasPassed = optiMatrix != nullptr;
+    delete optiMatrix;
     TearDown();
     return hasPassed;
 }
@@ -17,8 +19,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixClosenessReturnsCorrectValue(co
                                                                               const ListVector* listVector,
                                                                               const int expectedSizeOfList) {
     Setup();
-    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    OptiMatrix* optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
     const bool hasPassed = static_cast<int>(optiMatrix->GetCloseness().size()) == expectedSizeOfList;
+    delete optiMatrix;
     TearDown();
     return hasPassed;
 }
@@ -27,8 +30,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixSingletonReturnsCorrectValue(co
                                                                               const ListVector* listVector,
                                                                               const int expectedSizeOfList) {
     Setup();
-    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    OptiMatrix* optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
     const bool hasPassed = static_cast<int>(optiMatrix->GetSingletons().size()) == expectedSizeOfList;
+    delete optiMatrix;
     TearDown();
     return hasPassed;
 }
@@ -37,8 +41,9 @@ bool OptimatrixAdapterTestFixture::TestOptimatrixNameListReturnsCorrectValue(con
                                                                               const ListVector* listVector,
                                                                               const int expectedSizeOfList) {
     Setup();
-    const auto optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
+    OptiMatrix* optiMatrix = adapter->ConvertToOptimatrix(sparse, listVector, false);
     const bool hasPassed = static_cast<int>(optiMatrix->GetNameList().size()) == expectedSizeOfList;
+    delete optiMatrix;
     TearDown();
     return hasPassed;
 }

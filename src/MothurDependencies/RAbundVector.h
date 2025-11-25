@@ -46,7 +46,7 @@ public:
     std::vector<int> get() { return data; }
     void push_back(int);
     void resize(int) override;
-    int size() override;
+    int size() const override;
     bool quicksort();
     void clear() override;
 

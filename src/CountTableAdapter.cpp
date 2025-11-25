@@ -6,10 +6,9 @@
 
 #include "MothurDependencies/Utils.h"
 
-bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
-    
-    std::unordered_map<std::string, std::vector<double> > data;
-    const std::vector<std::string> columnNames = countTable.names();
+bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
+
+    const std::vector<std::string> columnNames = count.names();
 
     if(columnNames.size() < 3)
         return false;
@@ -17,18 +16,16 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame &countTable) {
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
-            const std::vector<std::string> samples = countTable[name];
+            const std::vector<std::string> samples = count[name];
             sampleNames = samples;
             continue;
         }
-        const std::vector<double> columnData = countTable[name];
-        data[name] = columnData;
+        dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
     }
-    dataFrameMap = data;
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
-    this->countTable = countTable;
+    countTable = count;
     CreateNameToIndex();
     return true;
 }

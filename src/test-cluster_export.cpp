@@ -20,12 +20,12 @@ context("Cluster Export") {
     // to test the desired conditions.
     test_that("Cluster Exports sets list vector properly") {
         ClusterExportTestFixture testFixture;
-        const auto vec = new ListVector();
+        const ListVector listVector;
         const std::string label = "0.01";
-        bool res = testFixture.TestSetListVector(*vec, label, true);
+        bool res = testFixture.TestSetListVector(listVector, label, true);
         expect_true(res);
-        const auto vec2 = new ListVector();
-        res = testFixture.TestSetListVector(*vec2, label, false);
+        const ListVector listVector2;
+        res = testFixture.TestSetListVector(listVector2, label, false);
         expect_false(res);
     }
     test_that("Cluster Exports returns list vector properly") {
