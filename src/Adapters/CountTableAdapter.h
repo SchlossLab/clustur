@@ -17,7 +17,7 @@
 class CountTableAdapter {
 public:
     CountTableAdapter() = default;
-    bool CreateDataFrameMap(const Rcpp::DataFrame& countTable);
+    bool CreateDataFrameMap(const Rcpp::DataFrame& count);
     bool CreateDataFrameMapFromSparseCountTable(const Rcpp::DataFrame& countTable);
     std::vector<std::string> GetSamples() const {return sampleNames;}
     // Going to ensure that each count_table atleast has a group
