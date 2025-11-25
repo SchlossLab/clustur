@@ -59,3 +59,24 @@ std::string OptiData::getName(const long long index) {
     return nameMap[index];
 
 }
+
+bool OptiData::mccValidCalc() {
+    bool valid = true;
+
+    long long numSeqs = getNumSeqs();
+    double numDists = numSeqs * (numSeqs-1)/2;
+
+    double totalClose = 0;
+    //for each sequence (singletons removed on read)
+    for (int i = 0; i < closeness.size(); i++) {
+        totalClose += closeness[i].size();
+    }
+
+    // Inital setup of all singletons - badState <- TN == 0, FP == 0, FN == totalClose/2, TP = 0
+    // Inital setup of one otu - badState <- TN == 0, FP == 0, FN == 0, TP = totalClose/2
+    if ((numDists - (totalClose/2)) == 0) {
+        return false;
+    }
+
+    return valid;
+}

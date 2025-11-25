@@ -25,6 +25,10 @@ public:
     long long getNumClose(long long) const;
     std::string getName(long long); //name from nameMap index
 
+    // in the case of all distances being below the cutoff, the TN and FP will always be 0
+    // This is because nothing is considered "far apart". The mcc score will always be 0.
+    // In this case we need to select a different calculator to cluster
+    bool mccValidCalc();
     long long getNumSeqs() { return closeness.size(); }
     long long getNumSingletons() { return singletons.size(); }
     ListVector* getListSingle() const;

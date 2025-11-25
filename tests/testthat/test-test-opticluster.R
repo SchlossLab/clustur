@@ -1,5 +1,5 @@
 test_that("opticluster returns four dataframes", {
-  cutoff <- 0.2
+  cutoff <- 1
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
