@@ -1,5 +1,5 @@
 test_that("opticluster returns four dataframes", {
-  cutoff <- 1
+  cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
@@ -369,3 +369,13 @@ test_that("Split Clusters to list will generate valid list", {
   expect_true(all(names(list) %in% df$cluster[[2]]))
   expect_true(length(list) == nrow(df$cluster))
 })
+
+
+test_that("opticluster will generate a warning if the mcc
+          metric is not suitable for the data", {
+          cutoff <- 1
+          count_table <- read_count(test_path("extdata", "amazon.count_table"))
+          distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                                    count_table, cutoff, FALSE)
+          expect_warning(df <- cluster(distance_data, cutoff, method = "opticlust"))
+      })
