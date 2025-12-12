@@ -62,6 +62,12 @@ ClusterExport* ClusterCommand::runOptiCluster(OptiMatrix *optiMatrix, const doub
     cutoffs.insert(std::to_string(cutoff));
 
     OptiData *matrix = optiMatrix;
+    if (!matrix->mccValidCalc()) {
+        Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
+            std::to_string(cutoff) + " using tptn instead.");
+        delete metric;
+        metric = new TPTN();
+    }
     for (auto it = cutoffs.begin(); it != cutoffs.end(); it++) {
         OptiCluster cluster(matrix, metric, 0);
         int iters = 0;
