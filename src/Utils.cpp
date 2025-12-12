@@ -8,6 +8,7 @@
 #include <random>
 #include <sstream>
 #include <unordered_set>
+#include <Rcpp.h>
 
 
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){

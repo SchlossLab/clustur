@@ -1,9 +1,10 @@
 //
 // Created by Gregory Johnson on 6/17/24.
 //
-
-#include "MothurDependencies/SparseDistanceMatrix.h"
 #include <iostream>
+#include <Rcpp.h>
+#include "MothurDependencies/SparseDistanceMatrix.h"
+
 #include "MothurDependencies/SparseDistanceMatrix.h"
 
 
