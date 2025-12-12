@@ -8,7 +8,6 @@
 #include "PDistCell.h"
 
 #include <vector>
-#include <Rcpp.h>
 #include "Utils.h"
 
 
