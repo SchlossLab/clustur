@@ -20,7 +20,8 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
             sampleNames = samples;
             continue;
         }
-        dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
+        // dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
+        dataFrameMap.insert({name, Rcpp::as<std::vector<double>>(count[name])});
     }
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
