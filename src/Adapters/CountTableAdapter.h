@@ -38,7 +38,8 @@ private:
     };
     std::unordered_map<std::string, size_t> nameToRowIndex;
     std::vector<std::string> sampleNames;
-    std::unordered_map<std::string, std::vector<double>> dataFrameMap;
+    std::unordered_map<std::string, size_t> dataFrameMap;
+    std::vector<std::vector<double>> dataFrameData;
     std::vector<std::string> groups;
     Rcpp::DataFrame countTable{};
 };
