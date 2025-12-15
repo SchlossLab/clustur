@@ -8,14 +8,11 @@
 
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
 
-    const Rcpp::CharacterVector columns = count.names();
-    std::vector<std::string> columnNames = Rcpp::as<std::vector<std::string>>(columns);
+    const std::vector<std::string> columnNames = count.names();
 
     if(columnNames.size() < 3)
         return false;
     bool sequenceColumn = true;
-    size_t columnIndex = 0;
-    dataFrameData = std::vector<std::vector<double>>(columns.size() - 1);
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
@@ -24,9 +21,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
             continue;
         }
         // dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
-        dataFrameData[columnIndex] = Rcpp::as<std::vector<double>>(count[name]);
-        dataFrameMap[name] = columnIndex++;
-        // dataFrameMap.emplace(name, Rcpp::as<std::vector<double>>(count[name]));
+        dataFrameMap.emplace(name, Rcpp::as<std::vector<double>>(count[name]));
     }
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
@@ -38,10 +33,8 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
 
 bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataFrame &countTable) {
     std::unordered_map<std::string, std::vector<double> > data;
-
     std::queue<IndexAbundancePair> indexAbundanceQueue;
     const std::vector<std::string> columnNames = countTable.names();
-    dataFrameData = std::vector<std::vector<double>>(columnNames.size() - 1);
     const auto rowSize = static_cast<size_t>(countTable.nrows());
     if(columnNames.size() < 3)
         return false;
@@ -90,12 +83,7 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
         data[groups[pair.groupIndex]][pair.sequenceIndex] = pair.abundance;
         indexAbundanceQueue.pop();
     }
-    //dataFrameMap = data;
-    size_t counter = 0;
-    for (const auto& dat : data) {
-        dataFrameMap[dat.first] = counter;
-        dataFrameData[counter++] = dat.second;
-    }
+    dataFrameMap = data;
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     this->countTable = countTable;
@@ -109,7 +97,7 @@ double CountTableAdapter::FindAbundanceBasedOnGroup(const std::string &group, co
     // - Protip hashmap find is faster than vector
     // if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
     //     return -1;
-    return dataFrameData[dataFrameMap.at(group)][nameToRowIndex.at(sampleName)];
+    return dataFrameMap.at(group)[nameToRowIndex.at(sampleName)];
 }
 
 double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) const {
@@ -117,9 +105,7 @@ double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) cons
     // - Protip hashmap find is faster than vector
     if(nameToRowIndex.find(sampleName) == nameToRowIndex.end())
         return -1;
-    // const size_t index = ;
-    return dataFrameData[dataFrameMap.at("total")][nameToRowIndex.at(sampleName)];
-    // return dataFrameMap.at("total")[nameToRowIndex.at(sampleName)];
+    return dataFrameMap.at("total")[nameToRowIndex.at(sampleName)];
 }
 
 std::string CountTableAdapter::GetNameByIndex(const int index) const {
@@ -142,13 +128,14 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
         groupIndexes[groups[i]] = i;
     }
     for(const auto& column: dataFrameMap) {
+
         if(column.first == "total") {
-            totals = dataFrameData[column.second];
+            totals = column.second;
             continue;
         }
         const size_t index = groupIndexes[column.first];
         names[index] = column.first;
-        columns[index] = dataFrameData[column.second];
+        columns[index] = column.second;
     }
     Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sampleNames,
         Rcpp::Named("total") = totals);
@@ -168,6 +155,6 @@ void CountTableAdapter::CreateNameToIndex() {
 // Gets every column but the first column (the sequence names)
 std::vector<double> CountTableAdapter::GetColumnByName(const std::string &name) const {
     if (dataFrameMap.find(name) != dataFrameMap.end())
-        return dataFrameData[dataFrameMap.at(name)];
+        return dataFrameMap.at(name);
     return {};
 }
