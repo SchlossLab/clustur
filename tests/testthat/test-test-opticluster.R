@@ -301,7 +301,7 @@ test_that("Read dist errors when the name is not present in the count table", {
   s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
   sparse_count <- data.frame(Representative_Sequence = 1:100,
                              total = rep(1, times = 100))
-  sparse_count <- sparse_count[1:50, ]
+  sparse_count <- sparse_count[1:99, ]
 
   expect_error(read_dist(test_path("extdata", "amazon_column.dist"),
                          count_table, 0.2, FALSE))

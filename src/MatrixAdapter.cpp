@@ -11,24 +11,27 @@ MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector
                             data(dataValues) {
 
     std::set<std::string> names;
-    std::unordered_map<int, std::string> positionsToNames;
-    auto samples = countTable.GetSamples();
+    std::unordered_map<size_t, std::string> positionsToNames;
+    auto samples = countTable.GetSequences();
     names.insert(samples.begin(), samples.end());
-    const int nameSize = static_cast<int>(names.size());
+    const size_t nameSize = names.size();
     const int maxXValue = *std::max_element(xPosition.begin(), xPosition.end());
     const int maxYValue = *std::max_element(yPosition.begin(), yPosition.end());
-    if(std::max(maxXValue, maxYValue) > nameSize) { // There are values that should exist
+    if(std::max(maxXValue, maxYValue) + 1 > static_cast<int>(nameSize)) { // There are values that should exist
         std::set<std::string> unknownNames;
-        for(int i = nameSize; i < static_cast<int>(xPosition.size()); i++) {
-            if(i >= nameSize + 2)
-                break;
+        std::string errorString = "The following indexes are present in your sparse matrix but not your count table:\n";
+
+        for(size_t i = nameSize; i < xPosition.size(); i++) {
             unknownNames.insert(std::to_string(xPosition[i]));
         }
-        const Utils util;
-        util.CheckForDistanceFileError(unknownNames);
+        for (const auto& name : unknownNames) {
+            errorString += name + "\n";
+        }
+        errorString += "Ensure your count table is the same length than or greater than your sparse matrix dimensions.";
+        Rcpp::stop(errorString);
     }
     matrixNames = std::vector<std::string>(nameSize);
-    for (int i = 0; i < nameSize; i++) {
+    for (size_t i = 0; i < nameSize; i++) {
         positionsToNames[i] = countTable.GetNameByIndex(i);// Not going to work, I need a way to link my names to the sparse matix indices
         matrixNames[i] = positionsToNames[i];
     }
@@ -41,9 +44,13 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() const {
     const int nSeqs = static_cast<int>(data.size());
     if(nSeqs <= 0)
         return {};
-    auto samples = countTable.GetSamples();
-    names.insert(samples.begin(), samples.end());
+    auto sequences = countTable.GetSequences();
+    names.insert(sequences.begin(), sequences.end());
     sparseMatrix.resize(static_cast<int>(names.size()));
+    // if (nSeqs > sequences.size()) {
+    //     Rcpp::stop("Your sparse matrix has more sequences than your counttable.\n");
+    // }
+    // If the count table
     for (int i = 0; i < nSeqs;  i++) {
         double currentDist = data[i];
         if(currentDist > cutoff) continue;

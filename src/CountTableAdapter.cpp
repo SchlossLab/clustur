@@ -16,8 +16,8 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
-            const std::vector<std::string> samples = count[name];
-            sampleNames = samples;
+            const std::vector<std::string> sequences = count[name];
+            sequenceNames = sequences;
             continue;
         }
         // dataFrameMap[name] = Rcpp::as<std::vector<double>>(count[name]);
@@ -44,7 +44,7 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
             const std::vector<std::string> samples = countTable[name];
-            sampleNames = samples;
+            sequenceNames = samples;
             continue;
         }
         data[name] = std::vector<double>(rowSize, 0);
@@ -108,10 +108,10 @@ double CountTableAdapter::FindTotalAbundance(const std::string &sampleName) cons
     return dataFrameMap.at("total")[nameToRowIndex.at(sampleName)];
 }
 
-std::string CountTableAdapter::GetNameByIndex(const int index) const {
-    if(index > static_cast<int>(sampleNames.size()))
+std::string CountTableAdapter::GetNameByIndex(const size_t index) const {
+    if(index > sequenceNames.size())
         return "";
-    return sampleNames[index];
+    return sequenceNames[index];
 }
 
 std::vector<std::string> CountTableAdapter::GetGroups() const {
@@ -137,7 +137,7 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
         names[index] = column.first;
         columns[index] = column.second;
     }
-    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sampleNames,
+    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sequenceNames,
         Rcpp::Named("total") = totals);
     for(size_t i = 0; i < size; i++) {
         countTable.push_back(columns[i], names[i]);
@@ -147,8 +147,8 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
 
 
 void CountTableAdapter::CreateNameToIndex() {
-    for(size_t i = 0; i < sampleNames.size(); i++) {
-        nameToRowIndex[sampleNames[i]] = i;
+    for(size_t i = 0; i < sequenceNames.size(); i++) {
+        nameToRowIndex[sequenceNames[i]] = i;
     }
 }
 

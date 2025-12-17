@@ -19,7 +19,7 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 
 	std::string firstName, secondName;
 	float distance;
-	std::vector<std::string> sequences = countTable.GetSamples();
+	std::vector<std::string> sequences = countTable.GetSequences();
 	size_t nseqs = sequences.size();
     sparseMatrix.resize(nseqs);
 	list = ListVector(static_cast<int>(nseqs));
