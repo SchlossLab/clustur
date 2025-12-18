@@ -16,6 +16,21 @@
 
 class CountTableAdapter {
 public:
+    CountTableAdapter(const CountTableAdapter &other)
+        : nameToRowIndex(other.nameToRowIndex),
+          sequenceNames(other.sequenceNames),
+          dataFrameMap(other.dataFrameMap),
+          groups(other.groups),
+          countTable(other.countTable) {
+    }
+
+    CountTableAdapter(CountTableAdapter &&other) noexcept
+        : nameToRowIndex(std::move(other.nameToRowIndex)),
+          sequenceNames(std::move(other.sequenceNames)),
+          dataFrameMap(std::move(other.dataFrameMap)),
+          groups(std::move(other.groups)),
+          countTable(std::move(other.countTable)) {
+    }
     CountTableAdapter() = default;
     bool CreateDataFrameMap(const Rcpp::DataFrame& count);
     bool CreateDataFrameMapFromSparseCountTable(const Rcpp::DataFrame& countTable);
