@@ -20,7 +20,7 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     int square = 0;
     std::string name;
     const Utils utils;
-    const std::vector<std::string> samples = countTable.GetSamples();
+    const std::vector<std::string> samples = countTable.GetSequences();
     const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
 
 

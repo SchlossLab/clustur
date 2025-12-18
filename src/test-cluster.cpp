@@ -26,7 +26,7 @@ context("Cluster algorithms") {
           Rcpp::Named("nogroup") = total);
     CountTableAdapter countTable;
     countTable.CreateDataFrameMap(dataframe);
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+    MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto dMatrix = adapter.CreateSparseMatrix();
     ListVector listVector = adapter.CreateListVector();
     bool result = test_fixture.TestClusterNames(&listVector, &dMatrix, true);
@@ -45,7 +45,7 @@ context("Cluster algorithms") {
           Rcpp::Named("nogroup") = total);
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+    MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto dMatrix = adapter.CreateSparseMatrix();
     ListVector listVector = adapter.CreateListVector();
     bool result = test_fixture.TestUpdateMap(&listVector, &dMatrix, true);
@@ -63,7 +63,7 @@ context("Cluster algorithms") {
           Rcpp::Named("nogroup") = total);
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
-    MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+    MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
     auto dMatrix = adapter.CreateSparseMatrix();
     ListVector listVector = adapter.CreateListVector();
 	RAbundVector* abund = new RAbundVector();
@@ -112,7 +112,7 @@ context("Cluster algorithms") {
           Rcpp::Named("nogroup") = total);
       CountTableAdapter countTable;
       countTable.CreateDataFrameMap(dataframe);
-      MatrixAdapter adapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+      MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5}, {.1,.11,.12,.15,.25}, 0.2, false, countTable);
       auto dMatrix = adapter.CreateSparseMatrix();
       ListVector listVector = adapter.CreateListVector();
       RAbundVector* abund = new RAbundVector();

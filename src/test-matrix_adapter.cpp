@@ -30,8 +30,8 @@ context("MatrixAdapter Test") {
          CountTableAdapter countTable;
          countTable.CreateDataFrameMap(dataframe);
 
-         const MatrixAdapter adapter = MatrixAdapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25},
-             0.2, false, countTable);
+         const MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5},
+        {.1,.11,.12,.15,.25}, 0.2, false, countTable);
 
          MatrixAdapterTestFixture fixture;
          bool result = fixture.TestGetListVector(adapter, true);
@@ -49,8 +49,8 @@ context("MatrixAdapter Test") {
          CountTableAdapter countTable;
          countTable.CreateDataFrameMap(dataframe);
 
-         const MatrixAdapter adapter = MatrixAdapter({1,2,3,4,5}, {2,3,4,5,6}, {.1,.11,.12,.15,.25},
-             0.2, false, countTable);
+         const MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5},
+        {.1,.11,.12,.15,.25}, 0.2, false, countTable);
 
          MatrixAdapterTestFixture fixture;
          bool result = fixture.TestCreateSparseMatrix(adapter, 6);

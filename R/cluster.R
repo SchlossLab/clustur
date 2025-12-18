@@ -49,6 +49,10 @@ read_dist <- function(distance_file, count_table,
 
   # Its a sparse matrix not a path
   # filter out the sparse matrix
+  if(!inherits(distance_file, "dgTMatrix")) {
+    stop("If you are not using a file, ensure the sparse matrix is created from
+     the `create_sparse_matrix()` function")
+  }
   return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
                              count_table, cutoff, is_similarity_matrix))
 }
