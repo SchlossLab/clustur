@@ -73,8 +73,7 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     countTableAdapter.CreateDataFrameMap(countTable);
     const MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
     auto* read = new DistanceFileReader(adapter.CreateSparseMatrix(),
-        adapter.CreateListVector() ,cutoff, isSim);
-    read->CreateCountTableAdapter(countTable);
+        adapter.CreateListVector(), countTableAdapter, cutoff, isSim);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 

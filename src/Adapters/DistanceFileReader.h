@@ -18,11 +18,11 @@ public:
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual bool Read(const std::string& filePath) {return false;}
     DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, double, bool);
+    DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, CountTableAdapter , double, bool);
     DistanceFileReader() = default;
     // Phylip files do not need a count table
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(list);}
-    void SetCountTable(CountTableAdapter data);
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
     Rcpp::DataFrame GetCountTable() const;
     CountTableAdapter GetCountTableAdapter() const {return countTable;}

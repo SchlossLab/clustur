@@ -2,12 +2,18 @@
 // Created by Gregory Johnson on 10/7/24.
 //
 
+#include <utility>
+
 #include "Adapters/DistanceFileReader.h"
 
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
     const ListVector& listVector, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
 list(listVector), cutoff(cutoff), sim(isSim){}
+
+DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
+    const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
+countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
 
 Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
     const size_t size = sparseMatrix.seqVec.size();
