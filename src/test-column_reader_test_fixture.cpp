@@ -26,8 +26,9 @@ context("ColumnDistanceMatrixReader Test") {
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
         const Rcpp::DataFrame df = read_count(countTablePath);
-        ColumnDistanceMatrixReader reader(0.2, false);
-        reader.CreateCountTableAdapter(df);
+        CountTableAdapter countTableAdapter;
+        countTableAdapter.CreateDataFrameMap(df);
+        ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
         reader.Read(path);
         const ListVector* listVector = reader.GetListVector();
         ColumnReaderTestFixture fixture;
@@ -48,9 +49,6 @@ context("ColumnDistanceMatrixReader Test") {
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
         const Rcpp::DataFrame df = read_count(countTablePath);
-        ColumnDistanceMatrixReader reader(0.2, false);
-        reader.CreateCountTableAdapter(df);
-        reader.Read(path);
         bool result = fixture.TestGetDistanceMatrix(path, df, true);
         expect_true(result);
         result = fixture.TestGetDistanceMatrix("", df, false);
@@ -65,8 +63,9 @@ context("ColumnDistanceMatrixReader Test") {
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
         const Rcpp::DataFrame df = read_count(countTablePath);
-        ColumnDistanceMatrixReader reader(0.2, false);
-        reader.CreateCountTableAdapter(df);
+        CountTableAdapter countTableAdapter;
+        countTableAdapter.CreateDataFrameMap(df);
+        ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
         reader.Read(path);
         ColumnReaderTestFixture fixture;
         const ListVector* listVector = reader.GetListVector();

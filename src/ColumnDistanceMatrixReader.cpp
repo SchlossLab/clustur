@@ -5,8 +5,8 @@
 #include "MothurDependencies/ColumnDistanceMatrixReader.h"
 #include <Rcpp.h>
 
-ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff, const bool isSimularity)
-:DistanceFileReader() {
+ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(CountTableAdapter countTableAdapter, const double cutoff,
+	const bool isSimularity):DistanceFileReader(std::move(countTableAdapter)) {
 	this->cutoff = cutoff;
 	this->sim = isSimularity;
 }

@@ -28,7 +28,6 @@ context("PhylipReader Test") {
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
         const Rcpp::DataFrame df = read_count(countTablePath);
-        ReadPhylipMatrix reader(0.2, false);
         bool result = fixture.TestReadPhylipFile(df, path, true);
         expect_true(result);
         result = fixture.TestReadPhylipFile(df, "", true);
@@ -42,8 +41,7 @@ context("PhylipReader Test") {
         const Rcpp::Function read_count = clustur["read_count"];
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
-        const Rcpp::DataFrame df = read_count(countTablePath);
-        ReadPhylipMatrix reader(0.2, false);
+        const Rcpp::DataFrame df = read_count(countTablePath);;
         bool result = fixture.TestGetSparseMatrix(df, path, true);
         expect_true(result);
         result = fixture.TestGetSparseMatrix(df, path, false);
@@ -59,7 +57,6 @@ context("PhylipReader Test") {
         const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_phylip.dist"));
         const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
         const Rcpp::DataFrame df = read_count(countTablePath);
-        ReadPhylipMatrix reader(0.2, false);
         bool result = fixture.TestGetListVector(df, path, 98);
         expect_true(result);
 

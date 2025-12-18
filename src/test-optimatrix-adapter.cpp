@@ -36,8 +36,9 @@ context("Optimatrix Adapter Test") {
     const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
     const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
     const Rcpp::DataFrame df = read_count(countTablePath);
-    ColumnDistanceMatrixReader reader(0.2, false);
-    reader.CreateCountTableAdapter(df);
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(df);
+    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
     reader.Read(path);
 	const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -55,8 +56,9 @@ context("Optimatrix Adapter Test") {
     const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
     const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
     const Rcpp::DataFrame df = read_count(countTablePath);
-    ColumnDistanceMatrixReader reader(0.2, false);
-    reader.CreateCountTableAdapter(df);
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(df);
+    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -74,8 +76,9 @@ context("Optimatrix Adapter Test") {
     const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
     const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
     const Rcpp::DataFrame df = read_count(countTablePath);
-    ColumnDistanceMatrixReader reader(0.2, false);
-    reader.CreateCountTableAdapter(df);
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(df);
+    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -93,8 +96,9 @@ context("Optimatrix Adapter Test") {
     const std::string path = Rcpp::as<std::string>(test_path("extdata", "amazon_column.dist"));
     const std::string countTablePath = Rcpp::as<std::string>(test_path("extdata", "amazon.count_table"));
     const Rcpp::DataFrame df = read_count(countTablePath);
-    ColumnDistanceMatrixReader reader(0.2, false);
-    reader.CreateCountTableAdapter(df);
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(df);
+    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();

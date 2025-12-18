@@ -14,12 +14,13 @@
 class DistanceFileReader {
 public:
     virtual ~DistanceFileReader() = default;
+    DistanceFileReader() = default;
     // We need to deduce type, the easy way to do that is to see if there is a number for the first item read.
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual bool Read(const std::string& filePath) {return false;}
-    DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, double, bool);
+    virtual void SetCountTable(const CountTableAdapter& adapter) {}
     DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, CountTableAdapter , double, bool);
-    DistanceFileReader() = default;
+    explicit DistanceFileReader(CountTableAdapter);
     // Phylip files do not need a count table
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(list);}
@@ -28,7 +29,6 @@ public:
     CountTableAdapter GetCountTableAdapter() const {return countTable;}
     double GetCutoff() const {return cutoff;}
     bool GetIsSimularity() const {return sim;}
-    void CreateCountTableAdapter(const Rcpp::DataFrame&);
 
 
 

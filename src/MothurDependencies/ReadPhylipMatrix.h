@@ -17,7 +17,7 @@
 class ReadPhylipMatrix final : public DistanceFileReader {
 
 public:
-    ReadPhylipMatrix(double, bool);
+    ReadPhylipMatrix(CountTableAdapter, double, bool);
     ReadPhylipMatrix() = default;
     ~ReadPhylipMatrix() override = default;
     bool Read(const std::string&) override;

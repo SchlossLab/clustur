@@ -7,7 +7,9 @@
 bool PhylipReaderTestFixture::TestReadPhylipFile(const Rcpp::DataFrame& df,
     const std::string &file, const bool expectedResult) {
     Setup();
-    reader->CreateCountTableAdapter(df);
+    CountTableAdapter countTable;
+    countTable.CreateDataFrameMap(df);
+    reader = new ReadPhylipMatrix(countTable, 0.2, false);
     const bool result = reader->Read(file);
     TearDown();
     return result == expectedResult;
@@ -17,7 +19,9 @@ bool PhylipReaderTestFixture::TestReadPhylipFile(const Rcpp::DataFrame& df,
 bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
     const std::string &file, const bool expectedResult) {
     Setup();
-    reader->CreateCountTableAdapter(df);
+    CountTableAdapter countTable;
+    countTable.CreateDataFrameMap(df);
+    reader = new ReadPhylipMatrix(countTable, 0.2, false);
     reader->Read(file);
     const SparseDistanceMatrix* sparseMatrix = reader->GetSparseMatrix();
     const auto result = !sparseMatrix->seqVec.empty();
@@ -30,7 +34,9 @@ bool PhylipReaderTestFixture::TestGetSparseMatrix(const Rcpp::DataFrame& df,
 bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
     const std::string &file, const int expectedResult) {
     Setup();
-    reader->CreateCountTableAdapter(df);
+    CountTableAdapter countTable;
+    countTable.CreateDataFrameMap(df);
+    reader = new ReadPhylipMatrix(countTable, 0.2, false);
     reader->Read(file);
     const ListVector* listVector = reader->GetListVector();
     const int result = listVector->getNumSeqs();
@@ -41,7 +47,7 @@ bool PhylipReaderTestFixture::TestGetListVector(const Rcpp::DataFrame& df,
 
 
 void PhylipReaderTestFixture::Setup() {
-    reader = new ReadPhylipMatrix(0.2, false);
+    // Do nothing
 }
 
 void PhylipReaderTestFixture::TearDown() {
