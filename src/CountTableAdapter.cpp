@@ -3,7 +3,7 @@
 //
 
 #include "Adapters/CountTableAdapter.h"
-
+#include "DataStructures/IndexAbundancePair.h"
 #include "MothurDependencies/Utils.h"
 
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
@@ -26,7 +26,6 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
-    countTable = count;
     CreateNameToIndex();
     return true;
 }
@@ -86,7 +85,6 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
     dataFrameMap = data;
     // In a count table, the first to columns are the sequence and the total abundance.
     // We only want the actual group names. so everything after
-    this->countTable = countTable;
     CreateNameToIndex();
     return true;
 

@@ -47,5 +47,5 @@ Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     // Recreate and return the count table
     // Might actually just store it in memory and return it
     // return countTable.GetCountTable();
-    return countTable.GetCountTable();
+    return countTable.ReCreateDataFrame();
 }

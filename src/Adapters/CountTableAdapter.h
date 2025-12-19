@@ -13,24 +13,8 @@
 #include <set>
 
 
-
 class CountTableAdapter {
 public:
-    CountTableAdapter(const CountTableAdapter &other)
-        : nameToRowIndex(other.nameToRowIndex),
-          sequenceNames(other.sequenceNames),
-          dataFrameMap(other.dataFrameMap),
-          groups(other.groups),
-          countTable(other.countTable) {
-    }
-
-    CountTableAdapter(CountTableAdapter &&other) noexcept
-        : nameToRowIndex(std::move(other.nameToRowIndex)),
-          sequenceNames(std::move(other.sequenceNames)),
-          dataFrameMap(std::move(other.dataFrameMap)),
-          groups(std::move(other.groups)),
-          countTable(std::move(other.countTable)) {
-    }
     CountTableAdapter() = default;
     bool CreateDataFrameMap(const Rcpp::DataFrame& count);
     bool CreateDataFrameMapFromSparseCountTable(const Rcpp::DataFrame& countTable);
@@ -42,20 +26,13 @@ public:
     std::string GetNameByIndex(size_t) const;
     std::vector<double> GetColumnByName (const std::string& name) const;
     std::vector<std::string> GetGroups() const;
-    Rcpp::DataFrame GetCountTable() const {return countTable;}
     Rcpp::DataFrame ReCreateDataFrame() const;
 private:
     void CreateNameToIndex();
-    struct IndexAbundancePair {
-        int groupIndex;
-        int sequenceIndex;
-        double abundance;
-    };
     std::unordered_map<std::string, size_t> nameToRowIndex;
     std::vector<std::string> sequenceNames;
     std::unordered_map<std::string, std::vector<double>> dataFrameMap;
     std::vector<std::string> groups;
-    Rcpp::DataFrame countTable{};
 };
 
 
