@@ -38,7 +38,8 @@ context("Optimatrix Adapter Test") {
     const Rcpp::DataFrame df = read_count(countTablePath);
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(df);
-    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
+    ColumnDistanceMatrixReader reader(0.2, false);
+    reader.SetCountTableAdapter(countTableAdapter);
     reader.Read(path);
 	const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -58,7 +59,8 @@ context("Optimatrix Adapter Test") {
     const Rcpp::DataFrame df = read_count(countTablePath);
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(df);
-    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
+    ColumnDistanceMatrixReader reader(0.2, false);
+    reader.SetCountTableAdapter(countTableAdapter);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -78,7 +80,8 @@ context("Optimatrix Adapter Test") {
     const Rcpp::DataFrame df = read_count(countTablePath);
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(df);
-    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
+    ColumnDistanceMatrixReader reader(0.2, false);
+    reader.SetCountTableAdapter(countTableAdapter);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();
@@ -98,7 +101,8 @@ context("Optimatrix Adapter Test") {
     const Rcpp::DataFrame df = read_count(countTablePath);
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(df);
-    ColumnDistanceMatrixReader reader(countTableAdapter, 0.2, false);
+    ColumnDistanceMatrixReader reader(0.2, false);
+    reader.SetCountTableAdapter(countTableAdapter);
     reader.Read(path);
     const SparseDistanceMatrix* sparseMatrix = reader.GetSparseMatrix();
     const ListVector* listVector = reader.GetListVector();

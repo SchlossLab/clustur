@@ -15,7 +15,7 @@
 
 class ColumnDistanceMatrixReader final : public DistanceFileReader {
 public:
-    ColumnDistanceMatrixReader(CountTableAdapter countTableAdapter, double cutoff, bool isSimularity);
+    ColumnDistanceMatrixReader(double cutoff, bool isSimularity);
     ~ColumnDistanceMatrixReader() override = default;
     bool Read(const std::string &filePath) override;
 };

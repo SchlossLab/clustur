@@ -9,7 +9,8 @@ bool ColumnReaderTestFixture::TestReadColumnFile(const std::string &file, const 
     Setup();
     CountTableAdapter countTable;
     countTable.CreateDataFrameMap(df);
-    reader = new ColumnDistanceMatrixReader(countTable, 0.2, false);
+    reader = new ColumnDistanceMatrixReader(0.2, false);
+    reader->SetCountTableAdapter(countTable);
     reader->Read(file);
     const ListVector* listVector = reader->GetListVector();
     const int result = listVector->getNumSeqs();
@@ -23,7 +24,8 @@ bool ColumnReaderTestFixture::TestGetDistanceMatrix(const std::string& filePath,
     Setup();
     CountTableAdapter countTable;
     countTable.CreateDataFrameMap(df);
-    reader = new ColumnDistanceMatrixReader(countTable, 0.2, false);
+    reader = new ColumnDistanceMatrixReader(0.2, false);
+    reader->SetCountTableAdapter(countTable);
     reader->Read(filePath);
     const SparseDistanceMatrix* sparseMatrix = reader->GetSparseMatrix();
     const auto result = !sparseMatrix->seqVec.empty();
@@ -37,7 +39,8 @@ bool ColumnReaderTestFixture::TestGetListVector(const std::string& filePath,
     Setup();
     CountTableAdapter countTable;
     countTable.CreateDataFrameMap(df);
-    reader = new ColumnDistanceMatrixReader(countTable, 0.2, false);
+    reader = new ColumnDistanceMatrixReader(0.2, false);
+    reader->SetCountTableAdapter(countTable);
     reader->Read(filePath);
     const ListVector* listVector = reader->GetListVector();
     const auto result = listVector->getNumSeqs();

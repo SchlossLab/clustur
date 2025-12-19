@@ -11,6 +11,10 @@ DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanc
     const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
 countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
 
+DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
+    const ListVector& listVector, const double cutoff, const bool isSim) :sparseMatrix(sparseDistanceMatrix),
+list(listVector), cutoff(cutoff), sim(isSim) {}
+
 DistanceFileReader::DistanceFileReader(CountTableAdapter countTableAdapter):
 countTable(std::move(countTableAdapter)) {}
 
@@ -43,6 +47,11 @@ Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
                                     Rcpp::Named("SecondName") = indexTwoNames,
                                     Rcpp::Named("Distance") = distances);
 }
+
+void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &adapter) {
+    countTable = adapter;
+}
+
 Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     // Recreate and return the count table
     // Might actually just store it in memory and return it

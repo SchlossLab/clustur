@@ -5,8 +5,8 @@
 #include "MothurDependencies/ReadPhylipMatrix.h"
 #include "MothurDependencies/ListVector.h"
 
-ReadPhylipMatrix::ReadPhylipMatrix(CountTableAdapter countTableAdapter, const double cutoff,
-    const bool simularityMatrix):DistanceFileReader(std::move(countTableAdapter)) {
+ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff,
+    const bool simularityMatrix):DistanceFileReader() {
     this->cutoff = cutoff;
     this->sim = simularityMatrix;
 }
