@@ -48,8 +48,12 @@ Rcpp::DataFrame DistanceFileReader::SparseMatrixToDataFrame() const {
                                     Rcpp::Named("Distance") = distances);
 }
 
-void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &adapter) {
-    countTable = adapter;
+void DistanceFileReader::SetCountTableAdapter(const Rcpp::DataFrame& dataframe) {
+    countTable.CreateDataFrameMap(dataframe);
+}
+
+void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &count) {
+    countTable = count;
 }
 
 Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
