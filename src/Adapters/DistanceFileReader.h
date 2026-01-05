@@ -25,8 +25,7 @@ public:
     SparseDistanceMatrix* GetSparseMatrix() const {return new SparseDistanceMatrix(sparseMatrix);}
     ListVector* GetListVector() const {return new ListVector(list);}
     Rcpp::DataFrame SparseMatrixToDataFrame() const;
-    void SetCountTableAdapter(const Rcpp::DataFrame& dataframe);
-    void SetCountTableAdapter(const CountTableAdapter& count);
+    void SetCountTableAdapter(const CountTableAdapter& adapter);
     Rcpp::DataFrame GetCountTable() const;
     CountTableAdapter GetCountTableAdapter() const {return countTable;}
     double GetCutoff() const {return cutoff;}
@@ -35,9 +34,9 @@ public:
 
 
 protected:
-    SparseDistanceMatrix sparseMatrix;
+    SparseDistanceMatrix sparseMatrix{};
     CountTableAdapter countTable;
-    ListVector list;
+    ListVector list{};
     double cutoff = 0;
     bool sim = true;
 private:
