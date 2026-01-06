@@ -49,20 +49,30 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	while(fileHandle >> firstName >> secondName >> distance && lt == 1){  //let's assume it's a triangular matrix...
     	int itA = 0;
 		int itB = 0;
-		try {
-			itA = nameToIndexMap.at(firstName);
-			itB = nameToIndexMap.at(secondName);
+		std::set<std::string> container;
+		if (nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
+			container.insert(firstName);
 		}
-		catch (const std::exception& ex) {
-			std::set<std::string> container;
-			if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
-				container.insert(firstName);
-			}
-			if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
-				container.insert(secondName);
-			}
+		if (nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
+			container.insert(secondName);
+		}
+		if (!container.empty()) {
 			util.CheckForDistanceFileError(container);
 		}
+		// try {
+		itA = nameToIndexMap.at(firstName);
+		itB = nameToIndexMap.at(secondName);
+		// }
+		// catch (const std::exception& ex) {
+		// 	std::set<std::string> container;
+		// 	if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
+		// 		container.insert(firstName);
+		// 	}
+		// 	if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
+		// 		container.insert(secondName);
+		// 	}
+		// 	util.CheckForDistanceFileError(container);
+		// }
 
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
 		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
