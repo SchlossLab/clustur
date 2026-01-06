@@ -31,7 +31,7 @@ private:
     void CreateNameToIndex();
     std::unordered_map<std::string, size_t> nameToRowIndex;
     std::vector<std::string> sequenceNames;
-    std::unordered_map<std::string, Rcpp::NumericVector> dataFrameMap;
+    std::unordered_map<std::string, std::vector<double>> dataFrameMap;
     std::vector<std::string> groups;
 };
 
