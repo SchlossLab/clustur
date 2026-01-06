@@ -294,7 +294,7 @@ test_that("Read dist errors when the name is not present in the count table", {
   set.seed(123)
 
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  count_table <- count_table[1:99, ]
+  count_table <- count_table[1:97, ]
   i_values <- as.integer(1:100)
   j_values <- as.integer(sample(1:100, 100, TRUE))
   x_values <- as.numeric(runif(100, 0, 1))
