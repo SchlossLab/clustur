@@ -52,18 +52,30 @@ bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
 //[[Rcpp::export]]
 SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
     const bool isSim) {
+    const Utils utils;
     const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
         read->SetCountTableAdapter(countTableAdapter);
-        read->Read(filePath);
+        const bool succeeded = read->Read(filePath);
+        if (!succeeded) {
+            const std::set<std::string> params = read->GetFailureParameters();
+            delete read;
+            utils.CheckForDistanceFileError(params);
+        }
+
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
     read->SetCountTableAdapter(countTableAdapter);
-    read->Read(filePath);
+    const bool succeeded = read->Read(filePath);
+    if (!succeeded) {
+        const std::set<std::string> params = read->GetFailureParameters();
+        delete read;
+        utils.CheckForDistanceFileError(params);
+    }
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 

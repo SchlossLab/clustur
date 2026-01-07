@@ -18,6 +18,7 @@ public:
     // We need to deduce type, the easy way to do that is to see if there is a number for the first item read.
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual bool Read(const std::string& filePath) {return false;}
+    virtual std::set<std::string> GetFailureParameters() {return failureParameters;};
     DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, CountTableAdapter , double, bool);
     DistanceFileReader(const SparseDistanceMatrix&, const ListVector&, double, bool);
     explicit DistanceFileReader(CountTableAdapter);
@@ -39,6 +40,7 @@ protected:
     ListVector list{};
     double cutoff = 0;
     bool sim = true;
+    std::set<std::string> failureParameters; //If we fail to read the file or anything else
 private:
 
 

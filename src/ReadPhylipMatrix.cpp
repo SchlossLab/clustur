@@ -55,8 +55,11 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
+            if(sampleContainer.find(name) == sampleContainer.end()) {
+                failureParameters.insert(name);
+                return false;
+            }
+
 
             list.set(i, name);
             for (int j = 0; j < i; j++) {
@@ -77,8 +80,10 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
+            if(sampleContainer.find(name) == sampleContainer.end()) {
+                failureParameters.insert(name);
+                return false;
+            }
 
             list.set(i, name);
             for (int j = 0; j < nseqs; j++) {
