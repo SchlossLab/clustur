@@ -15,8 +15,8 @@
 #' @export
 
 get_cutoff <- function(cluster_data) {
-  if (!("list" %in% class(cluster_data)) ||
-        is.null(cluster_data$label)) {
+  if(!inherits(cluster_data, "mothur_cluster") ||
+    is.null(cluster_data$label)) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
   }
@@ -41,7 +41,7 @@ get_cutoff <- function(cluster_data) {
 #'
 #' @return the created cluster `data.frame`.
 get_bins <- function(cluster_data) {
-  if (!("list" %in% class(cluster_data)) ||
+  if (!inherits(cluster_data, "mothur_cluster") ||
         is.null(cluster_data$cluster)) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
@@ -67,7 +67,7 @@ get_bins <- function(cluster_data) {
 #'
 #' @return a shared data.frame
 get_abundance <- function(cluster_data) {
-  if (!("list" %in% class(cluster_data)) ||
+  if (!inherits(cluster_data, "mothur_cluster")  ||
         is.null(cluster_data$abundance)) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
@@ -93,7 +93,7 @@ get_abundance <- function(cluster_data) {
 #'
 #' @return a list of metric data.frames
 get_metrics <- function(cluster_data) {
-  if (!("list" %in% class(cluster_data)) ||
+  if (!inherits(cluster_data, "mothur_cluster") ||
         is.null(cluster_data$cluster_metrics)) {
     stop("Can only use the get_metrics function when an 
     object is clustered using the opticluster method")
