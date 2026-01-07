@@ -5,11 +5,10 @@
 #include "MothurDependencies/ReadPhylipMatrix.h"
 #include "MothurDependencies/ListVector.h"
 
-ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff, const bool simularityMatrix):DistanceFileReader() {
+ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff,
+    const bool simularityMatrix):DistanceFileReader() {
     this->cutoff = cutoff;
     this->sim = simularityMatrix;
-    sparseMatrix = new SparseDistanceMatrix();
-    list = new ListVector();
 }
 
 bool ReadPhylipMatrix::Read(const std::string& filePath) {
@@ -22,7 +21,7 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     int square = 0;
     std::string name;
     const Utils utils;
-    const std::vector<std::string> samples = countTable.GetSamples();
+    const std::vector<std::string> samples = countTable.GetSequences();
     const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
 
 
@@ -31,8 +30,8 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     const int nseqs = std::stoi(numTest);
 
 
-    list = new ListVector(nseqs);
-    list->set(0, name);
+    list = ListVector(nseqs);
+    list.set(0, name);
 
 
     char d;
@@ -51,15 +50,18 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
         }
     }
 
-    sparseMatrix->resize(nseqs);
+    sparseMatrix.resize(nseqs);
     if (square == 0) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
+            if(sampleContainer.find(name) == sampleContainer.end()) {
+                failureParameters.insert(name);
+                return false;
+            }
 
-            list->set(i, name);
+
+            list.set(i, name);
             for (int j = 0; j < i; j++) {
                 fileHandle >> distance;
 
@@ -68,7 +70,7 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
                 if (distance <= cutoff) {
                     const PDistCell value(i, distance);
-                    sparseMatrix->addCell(j, value);
+                    sparseMatrix.addCell(j, value);
                 }
             }
 
@@ -78,10 +80,12 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
         for (int i = 1; i < nseqs; i++) {
             fileHandle >> name;
-            if(sampleContainer.find(name) == sampleContainer.end())
-                utils.CheckForDistanceFileError({name});
+            if(sampleContainer.find(name) == sampleContainer.end()) {
+                failureParameters.insert(name);
+                return false;
+            }
 
-            list->set(i, name);
+            list.set(i, name);
             for (int j = 0; j < nseqs; j++) {
                 fileHandle >> distance;
 
@@ -91,13 +95,13 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
 
                 if (distance <= cutoff && j < i) {
                     const PDistCell value(i, distance);
-                    sparseMatrix->addCell(j, value);
+                    sparseMatrix.addCell(j, value);
                 }
             }
 
         }
     }
-    list->setLabel("0");
+    list.setLabel("0");
     fileHandle.close();
 
     return true;

@@ -8,8 +8,10 @@ bool SharedFileBuilderTestFixture::TestBuildSharedFile(const ListVector& listVec
                                                        const CountTableAdapter &countTable, const bool expectedResult) {
     Setup();
     const SharedFile* file = builder->BuildSharedFile(listVector, countTable, "otu");
+    bool result = file != nullptr;
+    delete file;
     TearDown();
-    return expectedResult == (file != nullptr);
+    return expectedResult == result;
 
 }
 

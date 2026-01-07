@@ -21,19 +21,41 @@ context("MatrixAdapter Test") {
     // to test the desired conditions.
 
      test_that("Matrix Adapter can get its list vector") {
+         const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+         const std::vector<double> total{10, 20, 30, 40, 50, 60};
+         const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+             Rcpp::Named("Representative Sequence") = compounds,
+             Rcpp::Named("total") = total,
+             Rcpp::Named("nogroup") = total);
+         CountTableAdapter countTable;
+         countTable.CreateDataFrameMap(dataframe);
+
+         const MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5},
+        {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+
          MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestGetListVector(false, false);
+         bool result = fixture.TestGetListVector(adapter, true);
          expect_true(result);
-         result = fixture.TestGetListVector(true, true);
-         expect_true(result);
-         result = fixture.TestGetListVector(false, true);
+         result = fixture.TestGetListVector(adapter, false);
          expect_false(result);
      }
      test_that("Matrix Adapter can create sparse matrices") {
+         const std::vector<std::string> compounds{"1", "2", "3", "4", "5", "6"};
+         const std::vector<double> total{10, 20, 30, 40, 50, 60};
+         const Rcpp::DataFrame dataframe = Rcpp::DataFrame::create(
+             Rcpp::Named("Representative Sequence") = compounds,
+             Rcpp::Named("total") = total,
+             Rcpp::Named("nogroup") = total);
+         CountTableAdapter countTable;
+         countTable.CreateDataFrameMap(dataframe);
+
+         const MatrixAdapter adapter({0,1,2,3,4}, {1,2,3,4,5},
+        {.1,.11,.12,.15,.25}, 0.2, false, countTable);
+
          MatrixAdapterTestFixture fixture;
-         bool result = fixture.TestCreateSparseMatrix(6);
+         bool result = fixture.TestCreateSparseMatrix(adapter, 6);
          expect_true(result);
-         result = fixture.TestCreateSparseMatrix(0);
+         result = fixture.TestCreateSparseMatrix(adapter, 0);
          expect_false(result);
      }
  }

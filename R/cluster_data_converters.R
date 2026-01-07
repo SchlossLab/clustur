@@ -24,5 +24,5 @@ split_clusters_to_list <- function(cluster) {
     ls[[cluster_df[[2]][[i]]]] <-
       as.list(el(strsplit(cluster_df[[1]][[i]], ",")))
   }
-  return(ls)
+  ls
 }

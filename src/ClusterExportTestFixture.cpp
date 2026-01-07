@@ -4,12 +4,12 @@
 
 #include "Tests/ClusterExportTestFixture.h"
 
-bool ClusterExportTestFixture::TestSetListVector(ListVector& listVector, const std::string& label, const bool result) {
+bool ClusterExportTestFixture::TestSetListVector(const ListVector& listVector, const std::string& label, const bool result) {
     Setup();
-    clusteExport->SetListVector(listVector, label);
-    const auto pair = clusteExport->GetListVector();
+    clusterExport->SetListVector(listVector, label);
+    const auto pair = clusterExport->GetListVector();
     const std::string otherLabel = pair.label;
-    const int otherSize = pair.listVector->size();
+    const int otherSize = pair.listVector.size();
     const bool finalResult = result == (otherLabel == label && otherSize == listVector.size());
     TearDown();
     return finalResult;
@@ -17,19 +17,19 @@ bool ClusterExportTestFixture::TestSetListVector(ListVector& listVector, const s
 
 bool ClusterExportTestFixture::TestGetListVector(const bool result) {
     Setup();
-    auto* vector = new ListVector();
-    clusteExport->SetListVector(*vector, "0.00");
-    const auto pair = clusteExport->GetListVector();
-    const int otherSize = pair.listVector->size();
-    const bool finalResult = result == (otherSize == vector->size());
+    const ListVector vector;
+    clusterExport->SetListVector(vector, "0.00");
+    const auto pair = clusterExport->GetListVector();
+    const int otherSize = pair.listVector.size();
+    const bool finalResult = result == (otherSize == vector.size());
     TearDown();
     return finalResult;
 }
 
 void ClusterExportTestFixture::Setup() {
-    clusteExport = new ClusterExport();
+    clusterExport = new ClusterExport();
 }
 
 void ClusterExportTestFixture::TearDown() {
-    delete(clusteExport);
+    delete clusterExport;
 }

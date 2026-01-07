@@ -12,15 +12,16 @@
 #include "Adapters/DistanceFileReader.h"
 #include <Rcpp.h>
 #include <cctype>
+#include <memory>
 
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
-    const std::string& binName) {
+                                      const std::string& binName) {
     SharedFileBuilder builder;
     std::unordered_map<std::string, RAbundVector> map;
     std::unordered_map<std::string, ListVector> listMap;
     const ListVectorPair listVectors = result->GetListVector();
-    const SharedFile* sharedFile = builder.BuildSharedFile(*listVectors.listVector, countTable, binName);
+    const SharedFile* sharedFile = builder.BuildSharedFile(listVectors.listVector, countTable, binName);
     Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData(binName);
     delete(sharedFile);
     return tidySharedDataFrame;
@@ -51,16 +52,30 @@ bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
 //[[Rcpp::export]]
 SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
     const bool isSim) {
+    const Utils utils;
     const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
     if(isPhylip) {
         DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
-        read->CreateCountTableAdapter(countTable);
-        read->Read(filePath);
+        read->SetCountTableAdapter(countTableAdapter);
+        const bool succeeded = read->Read(filePath);
+        if (!succeeded) {
+            const std::set<std::string> params = read->GetFailureParameters();
+            delete read;
+            utils.CheckForDistanceFileError(params);
+        }
+
         return Rcpp::XPtr<DistanceFileReader>(read);
     }
     DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
-    read->CreateCountTableAdapter(countTable);
-    read->Read(filePath);
+    read->SetCountTableAdapter(countTableAdapter);
+    const bool succeeded = read->Read(filePath);
+    if (!succeeded) {
+        const std::set<std::string> params = read->GetFailureParameters();
+        delete read;
+        utils.CheckForDistanceFileError(params);
+    }
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
@@ -70,11 +85,9 @@ SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
     const double cutoff, const bool isSim) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
-    MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-    auto* sparseDistanceMatrix = new SparseDistanceMatrix(adapter.CreateSparseMatrix());
-    auto* listVec =  new ListVector(adapter.CreateListVector());
-    auto* read = new DistanceFileReader(sparseDistanceMatrix,listVec,cutoff, isSim);
-    read->CreateCountTableAdapter(countTable);
+    const MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
+    auto* read = new DistanceFileReader(adapter.CreateSparseMatrix(),
+        adapter.CreateListVector(), countTableAdapter, cutoff, isSim);
     return Rcpp::XPtr<DistanceFileReader>(read);
 }
 
@@ -104,7 +117,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
         sparseMatrix->FilterSparseMatrix(cutoff);
     const auto result = command.runMothurCluster(method, sparseMatrix, cutoff, listVector);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
@@ -130,7 +143,7 @@ Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColum
     ClusterCommand command;
     const auto* result = command.runOptiCluster(optiMatrix, cutoff);
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector->CreateDataFrameFromList(
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);

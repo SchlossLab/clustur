@@ -38,19 +38,27 @@
 read_dist <- function(distance_file, count_table,
                       cutoff, is_similarity_matrix = FALSE) {
   count_table <- validate_count_table(count_table)
-
-  if ("character" %in% class(distance_file)) {
+  if (inherits(distance_file, "character")) {
     if (!file.exists(distance_file)) {
       stop("Invalid file path: please enter a new file path.")
     }
-    return(ProcessDistanceFiles(distance_file,
-                                count_table, cutoff, is_similarity_matrix))
+    result <- ProcessDistanceFiles(distance_file,
+                                   count_table, cutoff, is_similarity_matrix)
+    class(result) <- "distance_object"
+    return(result)
   }
 
   # Its a sparse matrix not a path
   # filter out the sparse matrix
-  return(ProcessSparseMatrix(distance_file@i, distance_file@j, distance_file@x,
-                             count_table, cutoff, is_similarity_matrix))
+  if (!inherits(distance_file, "dgTMatrix")) {
+    stop("If you are not using a file, ensure the sparse matrix is created from
+     the `create_sparse_matrix()` function")
+  }
+  result <- ProcessSparseMatrix(distance_file@i, distance_file@j,
+                                distance_file@x,
+                                count_table, cutoff, is_similarity_matrix)
+  class(result) <- "distance_object"
+  result
 }
 
 
@@ -99,7 +107,7 @@ read_dist <- function(distance_file, count_table,
 cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
                     bin_column_name_to = "bin", random_seed = 123) {
-  if (!("externalptr" %in% class(distance_object))) {
+  if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
   if (!(method %in% c("opticlust",
@@ -108,9 +116,10 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
          average, or weighted.")
   }
   set.seed(random_seed)
+  df <- data.frame()
   if (method != "opticlust") {
-    return(Cluster(distance_object, method,
-                   feature_column_name_to, bin_column_name_to, cutoff))
+    df <- Cluster(distance_object, method,
+                  feature_column_name_to, bin_column_name_to, cutoff)
   } else {
     df <- OptiCluster(distance_object, feature_column_name_to,
                       bin_column_name_to, cutoff)
@@ -121,8 +130,10 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
                                                      "specificity", "ppv",
                                                      "npv", "fdr", "accuracy",
                                                      "mcc", "f1score")]
-    return(df)
+
   }
+  class(df) <- "mothur_cluster"
+  df
 }
 
 #' Validate Count Table
@@ -148,7 +159,7 @@ validate_count_table <- function(count_table_df) {
   count_table_df <- cbind(count_table_df, totals)
   names(count_table_df)[3] <- "no_group"
   count_table_df[[1]] <- as.character(count_table_df[[1]])
-  return(count_table_df)
+  count_table_df
 }
 
 #' Example Path
@@ -172,7 +183,7 @@ example_path <- function(file = NULL) {
   } else {
     path <- system.file("extdata", file, package = "clustur", mustWork = TRUE)
   }
-  return(path)
+  path
 }
 
 
@@ -196,7 +207,7 @@ read_count <- function(count_table_path) {
     ct <- CreateDataFrameFromSparseCountTable(count_table_sparse)
     return(validate_count_table(ct))
   }
-  return(validate_count_table(read.delim(count_table_path, sep = "\t")))
+  validate_count_table(read.delim(count_table_path, sep = "\t"))
 }
 
 #' Create Sparse Matrix
@@ -217,5 +228,5 @@ read_count <- function(count_table_path) {
 #' @export
 create_sparse_matrix <- function(i_index, j_index, distances) {
   size <- max(i_index, j_index)
-  return(spMatrix(size, size, i_index, j_index, distances))
+  spMatrix(size, size, i_index, j_index, distances)
 }

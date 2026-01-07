@@ -18,7 +18,7 @@ class OptiCluster {
 public:
 
     OptiCluster(OptiData* mt, ClusterMetric* met, long long ns);
-    ~OptiCluster() = default;
+    ~OptiCluster();
 
     std::string getTag() { std::string tag = "opti_" + metric->getName(); return tag; }
     long long getNumBins() const;
@@ -28,7 +28,7 @@ public:
     std::vector<double> getStats( double&,  double&,  double&,  double&) const;
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
-    ListVector* getList() const;
+    ListVector getList() const;
 
 protected:
     OptiData* matrix;

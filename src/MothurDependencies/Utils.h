@@ -13,7 +13,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
-#include <Rcpp.h>
 #include "PDistCell.h"
 
 class BadConversion : public std::runtime_error {

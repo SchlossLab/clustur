@@ -294,14 +294,14 @@ test_that("Read dist errors when the name is not present in the count table", {
   set.seed(123)
 
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  count_table <- count_table[1:50, ]
+  count_table <- count_table[1:97, ]
   i_values <- as.integer(1:100)
   j_values <- as.integer(sample(1:100, 100, TRUE))
   x_values <- as.numeric(runif(100, 0, 1))
   s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
   sparse_count <- data.frame(Representative_Sequence = 1:100,
                              total = rep(1, times = 100))
-  sparse_count <- sparse_count[1:50, ]
+  sparse_count <- sparse_count[1:99, ]
 
   expect_error(read_dist(test_path("extdata", "amazon_column.dist"),
                          count_table, 0.2, FALSE))
@@ -369,3 +369,16 @@ test_that("Split Clusters to list will generate valid list", {
   expect_true(all(names(list) %in% df$cluster[[2]]))
   expect_true(length(list) == nrow(df$cluster))
 })
+
+
+test_that("opticluster will generate a warning if the mcc
+          metric is not suitable for the data", {
+            cutoff <- 1
+            count_table <- read_count(test_path("extdata",
+                                                "amazon.count_table"))
+            distance_data <- read_dist(test_path("extdata",
+                                                 "amazon_column.dist"),
+                                       count_table, cutoff, FALSE)
+            expect_warning(df <- cluster(distance_data, cutoff,
+                                         method = "opticlust"))
+          })

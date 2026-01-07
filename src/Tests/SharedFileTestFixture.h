@@ -18,7 +18,6 @@ public:
 private:
     void Setup() override;
     void TearDown() override;
-    SharedFile* sharedFile = nullptr;
 };
 
 

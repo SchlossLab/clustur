@@ -17,7 +17,7 @@ public:
 
     DataVector(){ }
     DataVector(const std::string& l) : label(l) {};
-    virtual int size() = 0;
+    virtual int size() const = 0;
     virtual void clear() = 0;
 
     virtual void resize(int) = 0;

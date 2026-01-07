@@ -10,30 +10,24 @@
 #include "ListVector.h"
 #include "RAbundVector.h"
 struct ListVectorPair {
-    ListVectorPair(ListVector * const list_vector, std::string label)
-        : listVector(list_vector),
-          label(std::move(label)) {
-    }
-    ListVector* listVector;
+    ListVector listVector;
     std::string label;
 };
 class ClusterExport {
 public:
 
     ClusterExport() = default;
-    virtual void SetListVector(ListVector& vector, const std::string& label)  {
-        listVector = &vector;
+    virtual void SetListVector(const ListVector& vector, const std::string& label)  {
+        listVector = vector;
         largestLabel = label;
     };
-    virtual ListVectorPair GetListVector() const {return {listVector, largestLabel};}
+    virtual ListVectorPair GetListVector() const {return ListVectorPair{listVector, largestLabel};}
     virtual int GetLargestBinSize() const {
-        return listVector->getNumBins();
+        return listVector.getNumBins();
     }
-    virtual ~ClusterExport() {
-        delete listVector;
-    }
+    virtual ~ClusterExport() = default;
 protected:
-    ListVector* listVector = nullptr;
+    ListVector listVector;
     std::string largestLabel;
 };
 
