@@ -1,0 +1,88 @@
+## Overview
+
+clustur was developed for two main reasons: to allow developers to
+easily create pipelines with mothur code in R, and to give users a
+powerful clustering algorithm from mothur without having to download it.
+Because clustur is built using rcpp, it benefits from the speed of C++
+and the usability of R. Additionally, since clustur will be open source,
+developers can modify are package as needed. This will not only help us
+continue to create high quality packages, but will allow everyone to
+take advantage of the foundation that is already built.
+
+## Installation
+
+For the official release from CRAN you can use the standard
+[`install.packages()`](https://rdrr.io/r/utils/install.packages.html)
+function:
+
+``` r
+# install via cran
+install.packages("clustur")
+library(clustur)
+```
+
+For the developmental version, you can use the `install_github()`
+function from the {devtools} package
+
+``` r
+# install via github
+devtools::install_github("SchlossLab/clustur")
+library(clustur)
+```
+
+## Getting Started
+
+To get started, look at the [“Get
+started”](https://www.schlosslab.org/clustur/articles/clustur.html)
+page.
+
+## Contributions
+
+For feature request please visit the issue page in GitHub and use the
+feature tag. If you would like to contribute pull request are welcomed!
+
+# Package index
+
+## Clustering
+
+- [`cluster()`](http://www.schlosslab.org/clustur/reference/cluster.md)
+  : Cluster entities together
+
+## Process Data
+
+- [`read_dist()`](http://www.schlosslab.org/clustur/reference/read_dist.md)
+  : Read distance matrices
+- [`read_count()`](http://www.schlosslab.org/clustur/reference/read_count.md)
+  : Read count table
+
+## Getters and Setters
+
+- [`get_bins()`](http://www.schlosslab.org/clustur/reference/get_bins.md)
+  : Get Clusters
+- [`get_abundance()`](http://www.schlosslab.org/clustur/reference/get_abundance.md)
+  : Get Shared
+- [`get_metrics()`](http://www.schlosslab.org/clustur/reference/get_metrics.md)
+  : Get Metrics
+- [`get_count_table()`](http://www.schlosslab.org/clustur/reference/get_count_table.md)
+  : Get Count Table
+- [`get_cutoff()`](http://www.schlosslab.org/clustur/reference/get_cutoff.md)
+  : Get Cutoff
+- [`get_distance_df()`](http://www.schlosslab.org/clustur/reference/get_distance_df.md)
+  : Get Distance Data Frame
+
+## Helper Functions
+
+- [`example_path()`](http://www.schlosslab.org/clustur/reference/example_path.md)
+  : Example Path
+- [`validate_count_table()`](http://www.schlosslab.org/clustur/reference/validate_count_table.md)
+  : Validate Count Table
+- [`create_sparse_matrix()`](http://www.schlosslab.org/clustur/reference/create_sparse_matrix.md)
+  : Create Sparse Matrix
+- [`split_clusters_to_list()`](http://www.schlosslab.org/clustur/reference/split_clusters_to_list.md)
+  : Split Clusters to List
+
+# Articles
+
+### All vignettes
+
+- [clustur](http://www.schlosslab.org/clustur/articles/clustur.md):

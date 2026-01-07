@@ -1,0 +1,57 @@
+# Read distance matrices
+
+Read in distances from a file that is formatted with three columns for
+the row, column, and distance of a sparse, square matrix or in a
+phylip-formatted distance matrix.
+
+## Usage
+
+``` r
+read_dist(distance_file, count_table, cutoff, is_similarity_matrix = FALSE)
+```
+
+## Arguments
+
+- distance_file:
+
+  Either a phylip or column distance file, or a sparse matrix. The
+  function will detect the format for you.
+
+- count_table:
+
+  A table of names and the given abundance per group. Can be in mothur's
+  sparse or full format. The function will detect the format for you.
+
+- cutoff:
+
+  The value you wish to use as a cutoff when clustering.
+
+- is_similarity_matrix:
+
+  are you using a similarity matrix (default) or distance matrix?
+
+## Value
+
+A distance \`externalptr\` object that contains all your distance
+information. Can be accessed using \`get_distance_df()\`
+
+## Examples
+
+``` r
+ i_values <- as.integer(1:100)
+ j_values <- as.integer(sample(1:100, 100, TRUE))
+ x_values <- as.numeric(runif(100, 0, 1))
+ s_matrix <- create_sparse_matrix(i_values, j_values, x_values)
+
+ sparse_count <- data.frame(
+                 Representative_Sequence = 1:100,
+                 total = rep(1, times = 100))
+
+ column_path <- example_path("amazon_column.dist")
+ phylip_path <- example_path("amazon_phylip.dist")
+ count_table <- read_count(example_path("amazon.full.count_table"))
+
+ data_column <- read_dist(column_path, count_table, 0.03)
+ data_phylip <- read_dist(phylip_path, count_table, 0.03)
+ data_sparse <- read_dist(s_matrix, sparse_count, 0.03)
+```
