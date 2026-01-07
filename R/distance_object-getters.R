@@ -17,7 +17,7 @@ get_count_table <- function(distance_object) {
   if (!inherits(distance_object, "distance_object"))
     stop("The distance object must be the object generated when
          calling the `read_dist` function.")
-  return(GetCountTable(distance_object))
+  GetCountTable(distance_object)
 }
 
 #' Get Distance Data Frame
@@ -40,5 +40,5 @@ get_distance_df <- function(distance_object) {
     stop("The distance object must be the object generated when
          calling the `read_dist` function.")
   df <- GetDistanceDataFrame(distance_object)
-  return(df)
+  df
 }

@@ -373,9 +373,12 @@ test_that("Split Clusters to list will generate valid list", {
 
 test_that("opticluster will generate a warning if the mcc
           metric is not suitable for the data", {
-          cutoff <- 1
-          count_table <- read_count(test_path("extdata", "amazon.count_table"))
-          distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
-                                    count_table, cutoff, FALSE)
-          expect_warning(df <- cluster(distance_data, cutoff, method = "opticlust"))
-      })
+            cutoff <- 1
+            count_table <- read_count(test_path("extdata",
+                                                "amazon.count_table"))
+            distance_data <- read_dist(test_path("extdata",
+                                                 "amazon_column.dist"),
+                                       count_table, cutoff, FALSE)
+            expect_warning(df <- cluster(distance_data, cutoff,
+                                         method = "opticlust"))
+          })

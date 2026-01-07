@@ -15,12 +15,12 @@
 #' @export
 
 get_cutoff <- function(cluster_data) {
-  if(!inherits(cluster_data, "mothur_cluster") ||
-    is.null(cluster_data$label)) {
+  if (!inherits(cluster_data, "mothur_cluster") ||
+        is.null(cluster_data$label)) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
   }
-  return(cluster_data$label)
+  cluster_data$label
 }
 
 
@@ -46,7 +46,7 @@ get_bins <- function(cluster_data) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
   }
-  return(cluster_data$cluster)
+  cluster_data$cluster
 }
 
 
@@ -72,7 +72,7 @@ get_abundance <- function(cluster_data) {
     stop("Ensure `cluster_data` is the object generated from the
     `cluster` function.")
   }
-  return(cluster_data$abundance)
+  cluster_data$abundance
 }
 
 
@@ -98,6 +98,6 @@ get_metrics <- function(cluster_data) {
     stop("Can only use the get_metrics function when an 
     object is clustered using the opticluster method")
   }
-  return(list(metrics = cluster_data$cluster_metrics,
-              iteration_metrics = cluster_data$iteration_metrics))
+  list(metrics = cluster_data$cluster_metrics,
+       iteration_metrics = cluster_data$iteration_metrics)
 }
