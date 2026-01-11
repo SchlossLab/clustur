@@ -1,3 +1,5 @@
+# clustur (development version)
+
 # clustur 0.1.4
 * Updated the `cluster()` function to change the current clustering metric it is using if it is not suitable for your data.
 

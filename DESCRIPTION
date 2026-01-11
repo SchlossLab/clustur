@@ -1,7 +1,7 @@
 Package: clustur
 Type: Package
 Title: Clustering
-Version: 0.1.4
+Version: 0.1.4.9000
 Date: 2025-12-12
 Authors@R: c(
     person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
