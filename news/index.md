@@ -2,6 +2,8 @@
 
 ## clustur 0.1.4
 
+CRAN release: 2026-01-08
+
 - Updated the
   [`cluster()`](http://www.schlosslab.org/clustur/reference/cluster.md)
   function to change the current clustering metric it is using if it is
