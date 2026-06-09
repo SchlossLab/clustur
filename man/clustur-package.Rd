@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Patrick Schloss \email{pschloss@umich.edu} (\href{https://orcid.org/0000-0002-6935-4275}{ORCID}) [copyright holder]
   \item Gregory Johnson \email{grejoh@umich.edu} (\href{https://orcid.org/0009-0008-3890-0297}{ORCID})
   \item Sarah Westcott \email{swestcot@umich.edu}
 }

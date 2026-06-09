@@ -106,7 +106,8 @@ read_dist <- function(distance_file, count_table,
 #'
 cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
-                    bin_column_name_to = "bin", random_seed = 123) {
+                    bin_column_name_to = "bin", random_seed = 123,
+                    strollur_object = NULL) {
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -133,7 +134,26 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
 
   }
   class(df) <- "mothur_cluster"
+  if (!is.null(strollur_object)) {
+    result <- add_results_to_strollur_object(df)
+    strollur::xdev_assign_bin_representative_sequences(strollur_object,
+                                                       result)                                               
+  }
   df
+}
+
+add_results_to_strollur_object <- function(cluster_result, strollur_object) {
+  results <- split_clusters_to_list(cluster_result)
+  list_names <- names(results)
+  result <- list()
+  for (i in seq_along(results)) {
+    result <- append(result, lapply(results[[i]], function(x) {
+              c(x, list_names[[i]])
+            }))
+  }
+  result <- Reduce(rbind, result)
+  result <- data.frame(bin_name = result[, 2], sequence_name = result[, 1])
+  result
 }
 
 #' Validate Count Table
@@ -184,30 +204,6 @@ example_path <- function(file = NULL) {
     path <- system.file("extdata", file, package = "clustur", mustWork = TRUE)
   }
   path
-}
-
-
-#' Read count table
-#'
-#' This function will read and return your count table. It can take in
-#' sparse and full count tables.
-#'
-#' @param count_table_path The file path of your count table.
-#' @examples
-#' count_table <- read_count(example_path("amazon.full.count_table"))
-#' @return a count table `data.frame`.
-#' @export
-read_count <- function(count_table_path) {
-  # We will have to determine if its a sparse or not
-  # Check if the first value of test_read had a comment
-  test_read <- read.delim(count_table_path, sep = "\t", header = FALSE)
-  if (grepl("#", test_read[1, 1], fixed = TRUE)) {
-    count_table_sparse <- read.delim(count_table_path, sep = "\t", skip = 2)
-    count_table_sparse <- lapply(count_table_sparse, as.character)
-    ct <- CreateDataFrameFromSparseCountTable(count_table_sparse)
-    return(validate_count_table(ct))
-  }
-  validate_count_table(read.delim(count_table_path, sep = "\t"))
 }
 
 #' Create Sparse Matrix
