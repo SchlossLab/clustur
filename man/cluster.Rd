@@ -10,7 +10,8 @@ cluster(
   method = "opticlust",
   feature_column_name_to = "feature",
   bin_column_name_to = "bin",
-  random_seed = 123
+  random_seed = 123,
+  strollur_object = NULL
 )
 }
 \arguments{

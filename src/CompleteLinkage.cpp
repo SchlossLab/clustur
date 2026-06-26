@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "MothurDependencies/CompleteLinkage.h"
+#include "Clusters/CompleteLinkage.h"
 
 /***********************************************************************/
 
@@ -17,6 +17,10 @@ std::string CompleteLinkage::getTag() {
     return("fn");
 }
 
+ClusterExport* CompleteLinkage::Execute() {
+    return ExecuteCluster();
+}
+
 
 /***********************************************************************/
 //This function updates the distance based on the furthest neighbor method.
@@ -27,7 +31,7 @@ bool CompleteLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
         colCell.dist = rowCell.dist;
         changed = true;
     }
-    return(changed);
+    return changed;
 
 }
 

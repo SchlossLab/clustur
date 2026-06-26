@@ -4,11 +4,11 @@
 
 #include <utility>
 
-#include "Adapters/DistanceFileReader.h"
+#include "FileReaders/DistanceFileReader.h"
 
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
-    const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
+                                       const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
 countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
@@ -53,8 +53,5 @@ void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &adapter) 
 }
 
 Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
-    // Recreate and return the count table
-    // Might actually just store it in memory and return it
-    // return countTable.GetCountTable();
     return countTable.ReCreateDataFrame();
 }

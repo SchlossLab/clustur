@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "MothurDependencies/AverageLinkage.h"
+#include "Clusters/AverageLinkage.h"
 
 /* This class implements the average UPGMA, average neighbor clustering algorithm */
 
@@ -20,6 +20,10 @@ Cluster(rav, lv, dm, c, std::move(s), a),saveRow(-1), saveCol(-1), rowBin(-1), c
 //This function returns the tag of the method.
 std::string AverageLinkage::getTag() {
     return("an");
+}
+// Move this to the cluster algori
+ClusterExport* AverageLinkage::Execute() {
+    return ExecuteCluster();
 }
 
 

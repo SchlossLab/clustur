@@ -7,8 +7,8 @@
 Rcpp::DataFrame DataFrameAdapter::UnorderedMapToDataFrame(const std::unordered_map<std::string,
     std::vector<std::string>>& map) {
     Rcpp::DataFrame df;
-    for(const auto& value : map) {
-        df.push_back(value.second, value.first);
+    for(const auto&[fst, snd] : map) {
+        df.push_back(snd, fst);
     }
     return df;
 }

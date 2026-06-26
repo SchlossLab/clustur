@@ -122,7 +122,7 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
     df <- Cluster(distance_object, method,
                   feature_column_name_to, bin_column_name_to, cutoff)
   } else {
-    df <- OptiCluster(distance_object, feature_column_name_to,
+    df <- OptiClust(distance_object, feature_column_name_to,
                       bin_column_name_to, cutoff)
     df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
                                                      "label", "num_otus",

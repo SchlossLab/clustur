@@ -2,11 +2,11 @@
 // Created by Gregory Johnson on 6/20/24.
 //
 
-#include "MothurDependencies/ReadPhylipMatrix.h"
-#include "MothurDependencies/ListVector.h"
+#include "FileReaders/ReadPhylipMatrix.h"
+#include "DataStructures/ListVector.h"
 
 ReadPhylipMatrix::ReadPhylipMatrix(const double cutoff,
-    const bool simularityMatrix):DistanceFileReader() {
+                                   const bool simularityMatrix):DistanceFileReader() {
     this->cutoff = cutoff;
     this->sim = simularityMatrix;
 }
@@ -20,7 +20,6 @@ bool ReadPhylipMatrix::Read(const std::string& filePath) {
     float distance;
     int square = 0;
     std::string name;
-    const Utils utils;
     const std::vector<std::string> samples = countTable.GetSequences();
     const std::unordered_set<std::string> sampleContainer(samples.begin(), samples.end());
 

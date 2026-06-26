@@ -1,52 +1,39 @@
 //
-// Created by Gregory Johnson on 3/29/24.
+// Created by Gregory Johnson on 6/9/26.
 //
 
-#ifndef UTILS_H
-#define UTILS_H
-#define MOTHURMAX 1e6
-
+#ifndef REFACTOR_UTILS_H
+#define REFACTOR_UTILS_H
 #include <vector>
 #include <random>
-#include <algorithm>
 #include <set>
 #include <sstream>
-#include <stdexcept>
 #include <unordered_map>
-#include "PDistCell.h"
-
-class BadConversion : public std::runtime_error {
-public:
-    BadConversion(const std::string& s) : runtime_error(s){ }
-};
-
+#include <Rcpp.h>
 class Utils {
 public:
     Utils() = default;
-    void mothurRandomShuffle(std::vector<int>& randomize);
-    void mothurRandomShuffle(std::vector<std::string>& randomize);
-    void mothurRandomShuffle(std::vector<PDistCellMin>& randomize);
-    int getRandomIndex(int highest);
-    int getNumNames(std::string names);
-    bool mothurConvert(const std::string& item, int& num);
-    bool isNumeric1(const std::string& stringToCheck);
-    int getOTUNames(std::vector<std::string>& currentLabels, int numBins, const std::string& tagHeader);
-    bool mothurConvert(const std::string &item, double& num);
-    bool mothurConvert(const std::string &item, float& num);
-    std::string getLabelTag(const std::string &label);
-    std::string getSimpleLabel(const std::string &label);
-    void splitAtComma(const std::string& s, std::vector<std::string>& container);
-    bool isEqual(float num1, float num2);
+    static void mothurRandomShuffle(std::vector<int>& randomize);
+    static int getRandomIndex(int highest);
+    static int getNumNames(std::string names);
+    static bool mothurConvert(const std::string& item, int& num);
+    static bool isNumeric1(const std::string& stringToCheck);
+    static int getOTUNames(std::vector<std::string>& currentLabels, int numBins, const std::string& tagHeader);
+    static bool mothurConvert(const std::string &item, double& num);
+    static bool mothurConvert(const std::string &item, float& num);
+    static std::string getLabelTag(const std::string &label);
+    static std::string getSimpleLabel(const std::string &label);
+    static void splitAtComma(const std::string& s, std::vector<std::string>& container);
+    static bool isEqual(float num1, float num2);
+    static float ceilDist(float dist, int precision);
 
-    float ceilDist(float dist, int precision);
-
-    void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
+    static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
     //Error Checking
-    void CheckForDistanceFileError(const std::set<std::string>&) const;
+    static void CheckForDistanceFileError(const std::set<std::string>&);
 
     template <typename Out>
-    void split(const std::string &s, const char delim, Out result) {
+    static void split(const std::string &s, const char delim, Out result) {
         std::istringstream iss(s);
         std::string item;
         while (getline(iss, item, delim)) {
@@ -55,13 +42,7 @@ public:
             }
         }
     }
-
-    //template<typename T>
-    // void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
-private:
-    std::mt19937_64 mersenne_twister_engine;
 };
 
 
-
-#endif //UTILS_H
+#endif //REFACTOR_UTILS_H

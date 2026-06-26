@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 9/13/24.
 //
 
-#include "MothurDependencies/ColumnDistanceMatrixReader.h"
+#include "FileReaders/ColumnDistanceMatrixReader.h"
 #include <Rcpp.h>
 
 ColumnDistanceMatrixReader::ColumnDistanceMatrixReader(const double cutoff,
@@ -20,9 +20,9 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 	std::string firstName, secondName;
 	float distance;
 	std::vector<std::string> sequences = countTable.GetSequences();
-	size_t nseqs = sequences.size();
-    sparseMatrix.resize(nseqs);
-	list = ListVector(static_cast<int>(nseqs));
+	size_t nSeqs = sequences.size();
+    sparseMatrix.resize(nSeqs);
+	list = ListVector(static_cast<int>(nSeqs));
 	std::unordered_map<std::string, int> nameToIndexMap;
 	int count = 0;
 	for(const auto &sequence : sequences) {
@@ -57,24 +57,12 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 			container.insert(secondName);
 		}
 		if (!container.empty()) {
-			// util.CheckForDistanceFileError(container);
 			failureParameters = container;
 			return false;
 		}
-		// try {
+
 		itA = nameToIndexMap.at(firstName);
 		itB = nameToIndexMap.at(secondName);
-		// }
-		// catch (const std::exception& ex) {
-		// 	std::set<std::string> container;
-		// 	if(nameToIndexMap.find(firstName) == nameToIndexMap.end()) {
-		// 		container.insert(firstName);
-		// 	}
-		// 	if(nameToIndexMap.find(secondName) == nameToIndexMap.end()) {
-		// 		container.insert(secondName);
-		// 	}
-		// 	util.CheckForDistanceFileError(container);
-		// }
 
 		if (util.isEqual(distance, -1)) { distance = 1000000; }
 		else if (sim) { distance = 1 - distance;  }  //user has entered a sim matrix that we need to convert.
@@ -136,7 +124,6 @@ bool ColumnDistanceMatrixReader::Read(const std::string& filePath) {
 				}
 				failureParameters = container;
 				return false;
-				// util.CheckForDistanceFileError(container);
 			}
 
 			if (util.isEqual(distance, -1)) { distance = 1000000; }

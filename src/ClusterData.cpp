@@ -1,9 +1,8 @@
 //
-// Created by gregj on 8/20/2024.
+// Created by Gregory Johnson on 6/9/26.
 //
 
-#include "MothurDependencies/ClusterData.h"
-
+#include "DataExporters/ClusterData.h"
 
 bool ClusterData::AddToData(ClusterInformation& information) {
     if(information.label.empty())

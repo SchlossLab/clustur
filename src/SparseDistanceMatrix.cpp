@@ -2,10 +2,10 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 #include <iostream>
-#include <Rcpp.h>
-#include "MothurDependencies/SparseDistanceMatrix.h"
+// #include <Rcpp.h>
+#include "DataStructures/SparseDistanceMatrix.h"
+#include "DataStructures/PDistCellMin.h"
 
-#include "MothurDependencies/SparseDistanceMatrix.h"
 
 
 /***********************************************************************/
@@ -15,7 +15,7 @@ SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX)
 /***********************************************************************/
 
 int SparseDistanceMatrix::getNNodes() const{
-	return numNodes; 
+	return numNodes;
 }
 /***********************************************************************/
 
@@ -36,9 +36,9 @@ bool SparseDistanceMatrix::heapComparator(const PDistCell &a, const PDistCell &b
 
 /***********************************************************************/
 
-int SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const unsigned long col){
+void SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const unsigned long col){
 
-        
+
     const unsigned long vrow = seqVec[row][col].index;
     unsigned long vcol = 0;
 
@@ -48,8 +48,6 @@ int SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const un
     }
 
     seqVec[vrow][vcol].dist = seqVec[row][col].dist;
-
-    return 0;
 
 }
 /***********************************************************************/
@@ -74,7 +72,7 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
     numNodes+=2;
 
     if(cell.dist < smallDist){ smallDist = cell.dist;}
-    
+
     seqVec[row].push_back(cell);
     const PDistCell temp(row, cell.dist);
     seqVec[cell.index].push_back(temp);
@@ -117,15 +115,14 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
         for (size_t j = 0; j < seqVec[i].size(); j++) {
 
             if (i < seqVec[i][j].index) {
-                const float dist = seqVec[i][j].dist;
-                if(dist < smallDist){  //found a new smallest distance
+                if(const float dist = seqVec[i][j].dist; dist < smallDist){  //found a new smallest distance
                     mins.clear();
                     smallDist = dist;
                     PDistCellMin temp(i, seqVec[i][j].index); // The Index is not representative of the actually position of sort.
                     mins.emplace_back(temp);    // Some indexes are 5, but are sorted from the top to the last position, therefore it is not the same
                     // And it pulls the highest distances sometimes
                 }
-                else if(util.isEqual(dist, smallDist)){  //if a subsequent distance is the same as mins distance add the new iterator to the mins vector
+                else if(Utils::isEqual(dist, smallDist)){  //if a subsequent distance is the same as mins distance add the new iterator to the mins vector
                     PDistCellMin temp(i, seqVec[i][j].index);
                     mins.emplace_back(temp);
                 }
@@ -134,12 +131,9 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row){
 	}
     if(mins.empty())
         return -1;
-    const unsigned long num = util.getRandomIndex(static_cast<int>(mins.size() - 1));
+    const unsigned long num = Utils::getRandomIndex(static_cast<int>(mins.size() - 1));
     row = mins[num].row;
     const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
-    // util.mothurRandomShuffle(mins);  //randomize the order of the iterators in the mins vector
-    // row = mins[0].row;
-    // const unsigned long col = mins[0].col;
 	return col;
 
 }
@@ -151,7 +145,7 @@ bool SparseDistanceMatrix::print() const{
         return false;
     //saves time in getSmallestCell, by making it so you dont search the repeats
     for (size_t i = 0; i < seqVec.size(); i++) {
-        for (const auto j : seqVec[i]) { Rcpp::Rcout << i << '\t' << j.index << '\t' << j.dist << std::endl; }
+   //     for (const auto j : seqVec[i]) { Rcpp::Rcout << i << '\t' << j.index << '\t' << j.dist << std::endl; }
     }
     return true;
 }
@@ -168,9 +162,9 @@ void SparseDistanceMatrix::FilterSparseMatrix(const float cutoff) {
 /***********************************************************************/
 
 int SparseDistanceMatrix::sortSeqVec(){
-        
+
         //saves time in getSmallestCell, by making it so you dont search the repeats
-    for (auto & i : seqVec) {  sort(i.begin(), i.end(), PDistCell::CompareIndexes); }
+    for (auto & i : seqVec) { sort(i.begin(), i.end(), PDistCell::CompareIndexes); }
 
     return 0;
 }

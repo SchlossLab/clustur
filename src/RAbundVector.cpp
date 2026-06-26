@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "MothurDependencies/RAbundVector.h"
+#include "DataStructures/RAbundVector.h"
 /*
  *  rabundvector.cpp
  *
@@ -14,11 +14,11 @@
 
 /***********************************************************************/
 
-RAbundVector::RAbundVector() : DataVector(), maxRank(0), numBins(0), numSeqs(0) {}
+RAbundVector::RAbundVector() : maxRank(0), numBins(0), numSeqs(0) {}
 
 /***********************************************************************/
 
-RAbundVector::RAbundVector(int n) : DataVector(), data(n,0) , maxRank(0), numBins(0), numSeqs(0) {}
+RAbundVector::RAbundVector(const int n) : data(n,0) , maxRank(0), numBins(0), numSeqs(0) {}
 
 
 /***********************************************************************/
@@ -29,8 +29,8 @@ RAbundVector::~RAbundVector() {
 
 /***********************************************************************/
 
-void RAbundVector::set(int binNumber, int newBinSize){
-	int oldBinSize = data[binNumber];
+void RAbundVector::set(const int binNumber, const int newBinSize){
+	const int oldBinSize = data[binNumber];
 	data[binNumber] = newBinSize;
 
 	if(oldBinSize == 0)			{	numBins++;				}
@@ -86,7 +86,7 @@ int RAbundVector::remove(const int bin){
 }
 /***********************************************************************/
 
-void RAbundVector::resize(int size){
+void RAbundVector::resize(const int size){
 
 	data.resize(size);
 }
@@ -106,24 +106,24 @@ bool RAbundVector::quicksort(){
 
 
 /***********************************************************************/
-int RAbundVector::getNumBins(){
+int RAbundVector::getNumBins() const {
 	return numBins;
 }
 
 /***********************************************************************/
 
-int RAbundVector::getNumSeqs(){
+int RAbundVector::getNumSeqs() const {
 	return numSeqs;
 }
 
 /***********************************************************************/
 
-int RAbundVector::getMaxRank(){
+int RAbundVector::getMaxRank() const {
 	return maxRank;
 }
 
 /***********************************************************************/
-void RAbundVector::print() {
+void RAbundVector::print() const {
 	const std::string path = "/Users/grejoh/Documents/OptiClusterPackage/clustur/output_rabund.txt";
 	std::ofstream output(path);
 	output << label;
@@ -132,65 +132,9 @@ void RAbundVector::print() {
 	std::vector<int> hold = data;
 	std::sort(hold.rbegin(), hold.rend());
 
-	for(int i=0;i<numBins;i++){		output  << '\t' << hold[i];		}
+	for(int i=0;i<numBins;i++){	output  << '\t' << hold[i];	}
 
 	output << std::endl;
 
 	output.close();
 }
-/***********************************************************************/
-
-// RAbundFloatVector RAbundVector::getRAbundFloatVector(){
-//     RAbundFloatVector rav; rav.setLabel(label);
-//     for(int i=0;i<data.size();i++){ rav.push_back(0.0 + data[i]);  }
-//     return rav;
-// }
-
-// /***********************************************************************/
-//
-// SAbundVector RAbundVector::getSAbundVector() {
-// 	try {
-// 		SAbundVector sav(maxRank+1);
-//
-// 		for(int i=0;i<data.size();i++){
-// 			int abund = data[i];
-// 			sav.set(abund, sav.get(abund) + 1);
-// 		}
-// 		sav.set(0, 0);
-// 		sav.setLabel(label);
-// 		return sav;
-// 	}
-// 	catch(exception& e) {
-// 		m->errorOut(e, "RAbundVector", "getSAbundVector");
-// 		exit(1);
-// 	}
-// }
-
-/***********************************************************************/
-
-// OrderVector RAbundVector::getOrderVector(map<std::string,int>* nameMap = nullptr) {
-// 	try {
-//
-//         std::vector<int> ovData;
-// 		for(int i=0;i<data.size();i++){
-// 			for(int j=0;j<data[i];j++){
-// 				ovData.push_back(i);
-// 			}
-// 		}
-//
-// 		util.mothurRandomShuffle(ovData);
-//
-//         OrderVector ov;
-//         for(int i=0;i<ovData.size();i++){ ov.push_back(ovData[i]); }
-// 		ov.setLabel(label);
-// 		ov.getNumBins();
-//
-// 		return ov;
-// 	}
-// 	catch(exception& e) {
-// 		m->errorOut(e, "RAbundVector", "getOrderVector");
-// 		exit(1);
-// 	}
-// }
-
-/***********************************************************************/

@@ -88,9 +88,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// OptiCluster
-Rcpp::List OptiCluster(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff);
-RcppExport SEXP _clustur_OptiCluster(SEXP DistanceDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP) {
+// OptiClust
+Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff);
+RcppExport SEXP _clustur_OptiClust(SEXP DistanceDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -98,7 +98,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiCluster(DistanceData, featureColumnName, binColumnName, cutoff));
+    rcpp_result_gen = Rcpp::wrap(OptiClust(DistanceData, featureColumnName, binColumnName, cutoff));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -123,7 +123,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_GetDistanceDataFrame", (DL_FUNC) &_clustur_GetDistanceDataFrame, 1},
     {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
-    {"_clustur_OptiCluster", (DL_FUNC) &_clustur_OptiCluster, 4},
+    {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 4},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

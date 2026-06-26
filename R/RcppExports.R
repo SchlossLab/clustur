@@ -25,8 +25,8 @@ Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cuto
     .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff)
 }
 
-OptiCluster <- function(DistanceData, featureColumnName, binColumnName, cutoff) {
-    .Call('_clustur_OptiCluster', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff)
+OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff) {
+    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff)
 }
 
 CreateDataFrameFromSparseCountTable <- function(countTable) {

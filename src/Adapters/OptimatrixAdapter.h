@@ -4,16 +4,8 @@
 
 #ifndef RSPARSEMATRIXTOCPPSPARSEMATRIXADAPTER_H
 #define RSPARSEMATRIXTOCPPSPARSEMATRIXADAPTER_H
-#include <vector>
-#include <string>
-#include <set>
-#include <unordered_set>
-#include <list>
-#include "../MothurDependencies/OptiMatrix.h"
-#include "../MothurDependencies/SparseDistanceMatrix.h"
-#include <fstream>
-#include <unordered_map>
-#include <sstream>
+#include "../DataStructures/OptiMatrix.h"
+#include "../DataStructures/SparseDistanceMatrix.h"
 
 class OptimatrixAdapter {
     ///Closeness is the data represntation, it is a vector of sets that tells us which values are closes to it ->
@@ -26,7 +18,7 @@ public:
         this->cutoff = cutoff;
     }
     OptiMatrix* ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
-    const ListVector* listVector, bool sim);
+    const ListVector* listVector, bool sim) const;
 private:
     double cutoff;
     //TODO Get rid of values inside of the adapter, it should not care about them

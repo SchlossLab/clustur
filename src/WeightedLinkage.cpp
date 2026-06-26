@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "MothurDependencies/WeightedLinkage.h"
+#include "Clusters/WeightedLinkage.h"
 /* This class implements the WPGMA, weighted average neighbor clustering algorithm */
 
 /***********************************************************************/
@@ -23,6 +23,10 @@ std::string WeightedLinkage::getTag() {
     return("wn");
 }
 
+ClusterExport* WeightedLinkage::Execute() {
+    return ExecuteCluster();
+}
+
 
 /***********************************************************************/
 //This function updates the distance based on the average linkage method.
@@ -35,7 +39,7 @@ bool WeightedLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
 
     colCell.dist = (colCell.dist + rowCell.dist) / 2;
 
-    return(true);
+    return true;
 
 }
 

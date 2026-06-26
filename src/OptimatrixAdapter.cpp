@@ -4,15 +4,15 @@
 
 
 // Recreate the countTable and Abund data files. We may need to do this in memory
-#include "Adapters/OptimatrixAdapter.h"
 
+#include "Adapters/OptimatrixAdapter.h"
 #include "Adapters/CountTableAdapter.h"
-#include "MothurDependencies/SparseDistanceMatrix.h"
+#include "DataStructures/SparseDistanceMatrix.h"
+#include "DataStructures/OptiMatrix.h"
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
-    const ListVector* listVector, const bool sim) {
+                                                   const ListVector* listVector, const bool sim) const {
     const auto size = static_cast<long long>(matrixData->seqVec.size());
-    // std::unordered_map<long long, long long> singletonIndexSwap;
     std::vector<std::string> nameList(size);
     std::vector<std::string> singletons;
     std::unordered_map<unsigned long, int> indexSwap;
@@ -27,7 +27,6 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
     std::vector<std::unordered_set<long long>> closeness(nonSingletonCount);
     for(const auto& cell : matrixData->seqVec) {
         const std::string name = listVector->get(count + nameOffset);
-        // nameList[count + nameOffset] = name;
         if(cell.empty()) {
             singletons.emplace_back(name);
             nameOffset++;

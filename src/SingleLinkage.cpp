@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "MothurDependencies/SingleLinkage.h"
+#include "Clusters/SingleLinkage.h"
 
 /***********************************************************************/
 
@@ -17,6 +17,11 @@ Cluster(rav, lv, dm, c, s, a)
 std::string SingleLinkage::getTag() {
     return("nn");
 }
+
+ClusterExport* SingleLinkage::Execute() {
+    return ExecuteCluster();
+}
+
 /***********************************************************************/
 //This function updates the distance based on the nearest neighbor method.
 bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
@@ -24,7 +29,7 @@ bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
     if (colCell.dist > rowCell.dist) {
         colCell.dist = rowCell.dist;
     }
-    return(changed);
+    return changed;
 
 }
 /***********************************************************************/

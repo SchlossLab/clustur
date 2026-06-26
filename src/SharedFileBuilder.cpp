@@ -2,14 +2,13 @@
 // Created by Gregory Johnson on 7/31/24.
 //
 
-#include "MothurDependencies/SharedFileBuilder.h"
-#include "MothurDependencies/ClusterExport.h"
+#include "SharedFileData/SharedFileBuilder.h"
+#include "DataExporters/ClusterExport.h"
 
 // TODO Comment this code
 // TODO We may need to build a traditional file builder...So we can output a dataframe of how the clusters are (list)
 SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
                                                const CountTableAdapter &countTable, const std::string &binName) {
-    Utils utils;
     std::string largestCutoffLabel = listVector.getLabel();
     std::vector<SharedAbundance> abundancesList;
     const std::vector<std::string> groups = countTable.GetGroups();
@@ -21,16 +20,16 @@ SharedFile* SharedFileBuilder::BuildSharedFile(const ListVector &listVector,
             continue;
         std::vector<std::string> splitSamples;
         std::string otuName = binName + std::to_string(count++);
-        utils.splitAtComma(samples, splitSamples);
+        Utils::splitAtComma(samples, splitSamples);
         std::unordered_map<std::string, double> totalAbundanceInEachGroup;
         for(const auto& sample : splitSamples) {
             for(const auto& group : groups) { // Its already in tidy form
                 totalAbundanceInEachGroup[group] += countTable.FindAbundanceBasedOnGroup(group, sample);
             }
         }
-        for(const auto& groupTotals : totalAbundanceInEachGroup) {
-            abundancesList.emplace_back(groupTotals.first, otuName,
-                 largestCutoffLabel, groupTotals.second);
+        for(const auto&[fst, snd] : totalAbundanceInEachGroup) {
+            abundancesList.emplace_back(fst, otuName,
+                 largestCutoffLabel, snd);
         }
     }
     

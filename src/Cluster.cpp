@@ -1,10 +1,10 @@
 //
-// Created by Gregory Johnson on 6/14/24.
+// Created by Gregory Johnson on 6/9/26.
 //
 
+#include "Clusters/Cluster.h"
+#include "DataExporters/ClusterData.h"
 #include <utility>
-
-#include "MothurDependencies/Cluster.h"
 
 /*
  *  cluster.cpp
@@ -18,11 +18,11 @@
 
 /***********************************************************************/
 
-Cluster::Cluster(RAbundVector *rav, ListVector *lv, SparseDistanceMatrix *dm, const float c, std::string f,
+Cluster::Cluster(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c, std::string f,
                  const float cs) : rabund(rav), list(lv), dMatrix(dm), method(std::move(f)), adjust(cs) {
     mapWanted = false; //set to true by mgcluster to speed up overlap merge
 
-    //save so you can modify as it changes in average neighbor
+    //save, so you can modify as it changes in average neighbor
     cutoff = c;
 }
 
@@ -50,8 +50,75 @@ bool Cluster::clusterNames() {
     list->set(sRow, "");
     list->setLabel(std::to_string(smallDist));
     return true;
-    // std::ofstream stream;
-    // std::cout << list->print(stream);
+}
+
+ClusterExport* Cluster::ExecuteCluster() {
+    double currentCutoff = cutoff;
+    std::map<std::string, int> counts;
+    float previousDist = 0.00000;
+    float rndPreviousDist = 0.00000;
+    ListVector oldList = *list;
+    constexpr bool printHeaders = false;
+    std::string clusterResult;
+    double highestDistLabel =  -1;
+    std::string binResults;
+    std::ofstream listFile;
+    auto* clusterData = new ClusterData("");
+
+    while ((dMatrix->getSmallDist() <= cutoff) && (dMatrix->getNNodes() > 0)) {
+        constexpr double precision = 100;
+        //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
+        update(currentCutoff);
+        ClusterInformation data;
+        const float dist = dMatrix->getSmallDist(); // Round to the third decimal place
+        //Rcpp::Rcout << dist << std::endl;
+        const float rndDist = Utils::ceilDist(dist, precision);
+        if (previousDist <= 0.0000 && !Utils::isEqual(dist, previousDist)) {
+            data.label = "0.00000";
+            data.numberOfOtu = oldList.getNumBins();
+        } else if (!Utils::isEqual(rndDist, rndPreviousDist)) {
+            data.label = std::to_string(rndPreviousDist);
+            data.numberOfOtu = oldList.getNumBins();
+        }
+
+
+
+        if(!data.label.empty()) {
+            data.clusterBins = oldList.print(listFile);
+            ListVector listVec(oldList);
+            list->setPrintedLabels(false);
+            clusterData->AddToData(data);
+            if(rndPreviousDist > highestDistLabel) {
+                highestDistLabel = rndPreviousDist;
+                listVec.setLabel(std::to_string(highestDistLabel));
+                clusterData->SetListVector(listVec, std::to_string(highestDistLabel)); // vec might be a shallow copy
+            }
+        }
+        oldList = *list;
+        previousDist = dist;
+        rndPreviousDist = rndDist;
+    }
+    ClusterInformation data;
+    if(previousDist <= 0.0000) {
+        data.label = std::to_string(previousDist);
+        data.numberOfOtu = oldList.getNumBins();
+    }
+    else if(rndPreviousDist<cutoff) {
+        data.label = std::to_string(rndPreviousDist);
+        data.numberOfOtu = oldList.getNumBins();
+    }
+
+    if(!data.label.empty()) {
+        data.clusterBins = oldList.print(listFile);
+        ListVector listVec(oldList);
+        clusterData->AddToData(data);
+        if(rndPreviousDist > highestDistLabel) {
+            highestDistLabel = rndPreviousDist;
+            listVec.setLabel(std::to_string(highestDistLabel));
+            clusterData->SetListVector(listVec, std::to_string(highestDistLabel));
+        }
+    }
+    return clusterData;
 }
 
 /***********************************************************************/
@@ -88,7 +155,7 @@ bool Cluster::update(double &cutOFF) {
                         break;
                     } else if (dMatrix->seqVec[smallCol][j].index < search) {
                         //we don't have a distance for this cell
-                        if (!util.isEqual(adjust, -1)) {
+                        if (!Utils::isEqual(adjust, -1)) {
                             //adjust
                             merged = true;
                             const PDistCell value(search, adjust); //create a distance for the missing value
@@ -96,7 +163,7 @@ bool Cluster::update(double &cutOFF) {
                             changed = updateDistance(dMatrix->seqVec[smallCol][location], dMatrix->seqVec[smallRow][i]);
                             dMatrix->updateCellCompliment(smallCol, location);
                             nColCells++;
-                            foundCol.push_back(0); //add a new found column
+                            foundCol.push_back(0); //add a new-found column
                             //adjust value
                             for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                             foundCol[location] = 1;
@@ -114,7 +181,7 @@ bool Cluster::update(double &cutOFF) {
                 const PDistCell value(search, dMatrix->seqVec[smallRow][i].dist); //create a distance for the missing value
                 const int location = dMatrix->addCellSorted(smallCol, value);
                 nColCells++;
-                foundCol.push_back(0); //add a new found column
+                foundCol.push_back(0); //add a new-found column
                 //adjust value
                 for (int k = static_cast<int>(foundCol.size() - 1); k > location; k--) { foundCol[k] = foundCol[k - 1]; }
                 foundCol[location] = 1;
@@ -127,11 +194,11 @@ bool Cluster::update(double &cutOFF) {
 
     if (method == "nearest") {
         for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
-            //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff -> keep smaller dist in col
+            //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
                 if (dMatrix->seqVec[smallCol][i].index == smallRow) {
-                    //you are smallest distance
+                    //you are the smallest distance
                     dMatrix->rmCell(smallCol, i);
                     break;
                 }
@@ -139,10 +206,10 @@ bool Cluster::update(double &cutOFF) {
         }
     } else {
         for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
-            //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff -> keep smaller dist in col
+            //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
-                if (!util.isEqual(adjust, -1)) {
+                if (!Utils::isEqual(adjust, -1)) {
                     //adjust
                     PDistCell value(smallCol, adjust); //create a distance for the missing value
                     changed = updateDistance(dMatrix->seqVec[smallCol][i], value);
@@ -150,7 +217,7 @@ bool Cluster::update(double &cutOFF) {
                 } else {
                     if (method == "average" || method == "weighted") {
                         if (dMatrix->seqVec[smallCol][i].index != smallRow) {
-                            //if you are not hte smallest distance
+                            //if you are not hte the smallest distance
                             if (cutOFF > dMatrix->seqVec[smallCol][i].dist) {
                                 cutOFF = dMatrix->seqVec[smallCol][i].dist;
                             }
@@ -161,7 +228,7 @@ bool Cluster::update(double &cutOFF) {
             }
         }
     }
-    //dMatrix->print();
+    //dMatrix.print();
     return changed;
 }
 

@@ -2,7 +2,9 @@
 // Created by Gregory Johnson on 3/29/24.
 //
 
-#include "MothurDependencies/OptiData.h"
+
+#include "DataStructures/OptiData.h"
+
 bool OptiData::isClose(const long long i, const long long toFind) const {
     if (i < 0) { return false; }
     if (i > static_cast<long long>(closeness.size())) {
@@ -20,10 +22,10 @@ std::unordered_set<long long> OptiData::getCloseSeqs(const long long i){
     if (i > static_cast<long long>(closeness.size())) {
         std::unordered_set<long long> temp; return temp;
     }
-        return closeness[i];
+    return closeness[i];
 }
 
-long long OptiData::getNumClose(const long long index) const {
+size_t OptiData::getNumClose(const long long index) const {
     if (index < 0)
         return 0;
     if (index > static_cast<long long>(closeness.size())) {
@@ -33,18 +35,14 @@ long long OptiData::getNumClose(const long long index) const {
 
 }
 
-ListVector* OptiData::getListSingle() const {
-    ListVector* singlelist = nullptr;
-    if (singletons.empty()) { }
-    else {
-        singlelist = new ListVector();
+ListVector OptiData::getListSingle() const {
+    ListVector result;
+    if (singletons.empty()) return result;
 
-        for (const auto & singleton : singletons) {
-            singlelist->push_back(singleton);
-        }
+    for (const auto & singleton : singletons) {
+        result.push_back(singleton);
     }
-    return singlelist;
-
+    return result;
 }
 
 std::string OptiData::getName(const long long index) {
@@ -60,7 +58,7 @@ std::string OptiData::getName(const long long index) {
 
 }
 
-bool OptiData::mccValidCalc() {
+bool OptiData::mccValidCalc() const {
 
     const auto numSeqs = static_cast<double>(getNumSeqs());
     const double numDists = numSeqs * (numSeqs-1)/2;

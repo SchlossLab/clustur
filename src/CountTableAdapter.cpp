@@ -59,7 +59,6 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
         }
 
 
-        Utils util;
         const size_t size = columnData.size();
         for(size_t i = 0; i < size; i++) {
             const std::string& columnString = columnData[i];
@@ -67,7 +66,7 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
                 continue;
             }
             std::vector<std::string> container;
-            util.splitAtComma(columnString, container);
+            Utils::splitAtComma(columnString, container);
             // the first one is the value we are looking for
             if(container[0] == "NA") continue;
             const int groupIndex = std::stoi(container[0]) - 1;
@@ -78,8 +77,8 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
     }
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
     while(!indexAbundanceQueue.empty()) {
-        const IndexAbundancePair pair = indexAbundanceQueue.front();
-        data[groups[pair.groupIndex]][pair.sequenceIndex] = pair.abundance;
+        const auto [groupIndex, sequenceIndex, abundance] = indexAbundanceQueue.front();
+        data[groups[groupIndex]][sequenceIndex] = abundance;
         indexAbundanceQueue.pop();
     }
     dataFrameMap = data;
@@ -125,15 +124,15 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     for(size_t i = 0; i < groups.size(); i++) {
         groupIndexes[groups[i]] = i;
     }
-    for(const auto& column: dataFrameMap) {
+    for(const auto&[name, columnData]: dataFrameMap) {
 
-        if(column.first == "total") {
-            totals = column.second;
+        if(name == "total") {
+            totals = columnData;
             continue;
         }
-        const size_t index = groupIndexes[column.first];
-        names[index] = column.first;
-        columns[index] = column.second;
+        const size_t index = groupIndexes[name];
+        names[index] = name;
+        columns[index] = columnData;
     }
     Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sequenceNames,
         Rcpp::Named("total") = totals);

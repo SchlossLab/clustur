@@ -1,31 +1,15 @@
 //
-// Created by Gregory Johnson on 3/29/24.
+// Created by Gregory Johnson on 6/9/26.
 //
 
+
 #include "MothurDependencies/Utils.h"
-
-#include <cmath>
-#include <random>
-#include <sstream>
-#include <unordered_set>
-#include <Rcpp.h>
-
 
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
     Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
     const int size = static_cast<int>(randomize.size());
     randomValues = Rcpp::sample(randomValues, size);
     randomize = Rcpp::as<std::vector<int>>(randomValues);
-}
-void Utils::mothurRandomShuffle(std::vector<std::string>& randomize){
-    Rcpp::CharacterVector randomValues = Rcpp::wrap(randomize);
-    const int size = static_cast<int>(randomize.size());
-    randomValues = Rcpp::sample(randomValues, size);
-    randomize = Rcpp::as<std::vector<std::string>>(randomValues);
-}
-
-void Utils::mothurRandomShuffle(std::vector<PDistCellMin> &randomize) {
-    std::shuffle (randomize.begin(), randomize.end(), mersenne_twister_engine);
 }
 
 int Utils::getRandomIndex(const int highest){
@@ -156,6 +140,7 @@ void Utils::splitAtComma(const std::string& s, std::vector<std::string>& contain
 bool Utils::isEqual(const float num1, const float num2) {
     return std::fabs(num1-num2) <= std::fabs(static_cast<float>(num1 * 0.001));
 }
+
 float Utils::ceilDist(const float dist, const int precision){
         return static_cast<int>(ceil(dist * precision))/static_cast<float>(precision);
 }
@@ -170,7 +155,7 @@ void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std
     }
 }
 
-void Utils::CheckForDistanceFileError(const std::set<std::string>& unknownNames) const {
+void Utils::CheckForDistanceFileError(const std::set<std::string>& unknownNames) {
     if(!unknownNames.empty()) {
         int count = 0;
         std::string errorMessage = "These names were not found in the count table:\n";
