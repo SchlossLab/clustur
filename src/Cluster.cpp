@@ -58,20 +58,19 @@ ClusterExport* Cluster::ExecuteCluster() {
     float previousDist = 0.00000;
     float rndPreviousDist = 0.00000;
     ListVector oldList = *list;
-    constexpr bool printHeaders = false;
     std::string clusterResult;
     double highestDistLabel =  -1;
     std::string binResults;
     std::ofstream listFile;
     auto* clusterData = new ClusterData("");
-
-    while ((dMatrix->getSmallDist() <= cutoff) && (dMatrix->getNNodes() > 0)) {
+    // 0.158123 <= 0.1511
+    while ((dMatrix->getSmallDist() <= currentCutoff) && (dMatrix->getNNodes() > 0)) {
         constexpr double precision = 100;
         //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         update(currentCutoff);
         ClusterInformation data;
         const float dist = dMatrix->getSmallDist(); // Round to the third decimal place
-        //Rcpp::Rcout << dist << std::endl;
+
         const float rndDist = Utils::ceilDist(dist, precision);
         if (previousDist <= 0.0000 && !Utils::isEqual(dist, previousDist)) {
             data.label = "0.00000";
@@ -103,7 +102,7 @@ ClusterExport* Cluster::ExecuteCluster() {
         data.label = std::to_string(previousDist);
         data.numberOfOtu = oldList.getNumBins();
     }
-    else if(rndPreviousDist<cutoff) {
+    else if(rndPreviousDist<currentCutoff) {
         data.label = std::to_string(rndPreviousDist);
         data.numberOfOtu = oldList.getNumBins();
     }
@@ -138,7 +137,7 @@ bool Cluster::update(double &cutOFF) {
 
         //if you are not the smallCell
         if (dMatrix->seqVec[smallRow][i].index != smallCol) {
-            const unsigned long search = dMatrix->seqVec[smallRow][i].index;
+            const long long search = dMatrix->seqVec[smallRow][i].index;
 
             bool merged = false;
             for (size_t j = 0; j < nColCells; j++) {
@@ -211,7 +210,7 @@ bool Cluster::update(double &cutOFF) {
                 //not found
                 if (!Utils::isEqual(adjust, -1)) {
                     //adjust
-                    PDistCell value(smallCol, adjust); //create a distance for the missing value
+                    PDistCell value(static_cast<long long>(smallCol), adjust); //create a distance for the missing value
                     changed = updateDistance(dMatrix->seqVec[smallCol][i], value);
                     dMatrix->updateCellCompliment(smallCol, i);
                 } else {
