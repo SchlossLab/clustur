@@ -216,7 +216,7 @@ bool Cluster::update(double &cutOFF) {
                 } else {
                     if (method == "average" || method == "weighted") {
                         if (dMatrix->seqVec[smallCol][i].index != smallRow) {
-                            //if you are not hte the smallest distance
+                            //if you are not the smallest distance
                             if (cutOFF > dMatrix->seqVec[smallCol][i].dist) {
                                 cutOFF = dMatrix->seqVec[smallCol][i].dist;
                             }
