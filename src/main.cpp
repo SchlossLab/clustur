@@ -170,3 +170,14 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
 }
+
+
+
+//[[Rcpp::export]]
+void Test() {
+    OptiMatrix* mat = new OptiMatrix({}, {"i", "A"}, {}, 1);
+    OptiData* m = new OptiRefMatrix({}, {"i", "a", "c", "d"}, {}, 2);
+    // OptiData* a = std::move(m);
+    m->MoveData(mat);
+    Rcpp::Rcout <<" hi";
+}
