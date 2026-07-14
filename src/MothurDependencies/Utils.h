@@ -10,6 +10,9 @@
 #include <sstream>
 #include <unordered_map>
 #include <Rcpp.h>
+
+#include "../Clusters/ClusterMetric.h"
+
 class Utils {
 public:
     Utils() = default;
@@ -32,6 +35,7 @@ public:
                               const std::vector<std::string> &headers);
     //Error Checking
     static void CheckForDistanceFileError(const std::set<std::string>&);
+    static ClusterMetric* GetClusterMetric(const std::string& metric);
 
     template <typename Out>
     static void split(const std::string &s, const char delim, Out result) {

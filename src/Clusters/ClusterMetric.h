@@ -19,7 +19,6 @@ public:
     virtual std::string getCitation() = 0;
 
 protected:
-    Utils util;
     std::string name;
 };
 

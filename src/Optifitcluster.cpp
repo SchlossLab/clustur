@@ -33,25 +33,23 @@ OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const long
 }
 
 ClusterExport * OptiFitCluster::Execute() {
-       if (abort) { if (calledHelp) { return 0; }  return 2;    }
-
         time_t estart = time(nullptr);
-        
-        ClusterMetric* metric = nullptr;
-        if (metricName == "mcc")             { metric = new MCC();              }
-        else if (metricName == "sens")       { metric = new Sensitivity();      }
-        else if (metricName == "spec")       { metric = new Specificity();      }
-        else if (metricName == "tptn")       { metric = new TPTN();             }
-        else if (metricName == "tp")         { metric = new TP();               }
-        else if (metricName == "tn")         { metric = new TN();               }
-        else if (metricName == "fp")         { metric = new FP();               }
-        else if (metricName == "fn")         { metric = new FN();               }
-        else if (metricName == "f1score")    { metric = new F1Score();          }
-        else if (metricName == "accuracy")   { metric = new Accuracy();         }
-        else if (metricName == "ppv")        { metric = new PPV();              }
-        else if (metricName == "npv")        { metric = new NPV();              }
-        else if (metricName == "fdr")        { metric = new FDR();              }
-        else if (metricName == "fpfn")       { metric = new FPFN();             }
+        //
+        // // ClusterMetric* metric = metric;
+        // if (metricName == "mcc")             { metric = new MCC();              }
+        // else if (metricName == "sens")       { metric = new Sensitivity();      }
+        // else if (metricName == "spec")       { metric = new Specificity();      }
+        // else if (metricName == "tptn")       { metric = new TPTN();             }
+        // else if (metricName == "tp")         { metric = new TP();               }
+        // else if (metricName == "tn")         { metric = new TN();               }
+        // else if (metricName == "fp")         { metric = new FP();               }
+        // else if (metricName == "fn")         { metric = new FN();               }
+        // else if (metricName == "f1score")    { metric = new F1Score();          }
+        // else if (metricName == "accuracy")   { metric = new Accuracy();         }
+        // else if (metricName == "ppv")        { metric = new PPV();              }
+        // else if (metricName == "npv")        { metric = new NPV();              }
+        // else if (metricName == "fdr")        { metric = new FDR();              }
+        // else if (metricName == "fpfn")       { metric = new FPFN();             }
 
         map<string, int> counts;
         string dupsFile = countfile; nameOrCount = "count";

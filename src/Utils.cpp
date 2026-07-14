@@ -5,6 +5,21 @@
 
 #include "MothurDependencies/Utils.h"
 
+#include "Clusters/Metrics/accuracy.h"
+#include "Clusters/Metrics/f1score.h"
+#include "Clusters/Metrics/fdr.h"
+#include "Clusters/Metrics/fn.h"
+#include "Clusters/Metrics/fp.h"
+#include "Clusters/Metrics/fpfn.h"
+#include "Clusters/Metrics/mcc.h"
+#include "Clusters/Metrics/npv.h"
+#include "Clusters/Metrics/ppv.h"
+#include "Clusters/Metrics/sensitivity.h"
+#include "Clusters/Metrics/specificity.h"
+#include "Clusters/Metrics/tn.h"
+#include "Clusters/Metrics/tp.h"
+#include "Clusters/Metrics/tptn.h"
+
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
     Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
     const int size = static_cast<int>(randomize.size());
@@ -174,4 +189,21 @@ void Utils::CheckForDistanceFileError(const std::set<std::string>& unknownNames)
         }
         Rcpp::stop(errorMessage + "Please ensure all names in the distance file are in the count table");
     }
+}
+
+ClusterMetric * Utils::GetClusterMetric(const std::string &metric) {
+    if (metric == "mcc")        { return new MCC();              }
+    if (metric == "sens")       { return new Sensitivity();      }
+    if (metric == "spec")       { return new Specificity();      }
+    if (metric == "tptn")       { return new TPTN();             }
+    if (metric == "tp")         { return new TP();               }
+    if (metric == "tn")         { return new TN();               }
+    if (metric == "fp")         { return new FP();               }
+    if (metric == "fn")         { return new FN();               }
+    if (metric == "f1score")    { return new F1Score();          }
+    if (metric == "accuracy")   { return new Accuracy();         }
+    if (metric == "ppv")        { return new PPV();              }
+    if (metric == "npv")        { return new NPV();              }
+    if (metric == "fdr")        { return new FDR();              }
+    if (metric == "fpfn")       { return new FPFN();             }
 }
