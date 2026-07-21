@@ -51,151 +51,151 @@ ClusterExport * OptiFitCluster::Execute() {
         // else if (metricName == "fdr")        { metric = new FDR();              }
         // else if (metricName == "fpfn")       { metric = new FPFN();             }
 
-        map<string, int> counts;
-        string dupsFile = countfile; nameOrCount = "count";
-        if (namefile != "") { dupsFile = namefile; nameOrCount = "name"; }
-        else { CountTable ct; ct.readTable(countfile, false, false); counts = ct.getNameMap();  }
+        // map<string, int> counts;
+        // string dupsFile = countfile; nameOrCount = "count";
+        // if (namefile != "") { dupsFile = namefile; nameOrCount = "name"; }
+        // else { CountTable ct; ct.readTable(countfile, false, false); counts = ct.getNameMap();  }
+        //
+        // if (outputdir == "") { outputdir += util.hasPath(distfile); }
+        // fileroot = outputdir + util.getRootName(util.getSimpleName(distfile));
+        //
+        // string listFile = ""; string bestListFileName = ""; string outputName = "";
+        //
+        // if (selfReference) { //de novo
+        //
+        //     map<string, string> variables;
+        //     variables["[filename]"] = fileroot;
+        //     variables["[clustertag]"] = "optifit_" + metric->getName();
+        //     outputName = getOutputFileName("steps", variables);
+        //
+        //     if ((accnosfile == "") && (!createAccnos)) { //denovo with mothur randomly assigning references
+        //
+        //         m->mothurOut("\nRandomly assigning reads from " + distfile + " as reference sequences\n");
+        //
+        //         //distfile, distFormat, dupsFile, dupsFormat, cutoff, percentage to be fitseqs - will randomly assign as fit
+        //         OptiData* matrix = new OptiRefMatrix(distfile, "column", dupsFile, nameOrCount, cutoff, fitPercent, refWeight);
+        //
+        //         runDenovoOptiCluster(matrix, metric, counts, outputName);
+        //
+        //         string sensspecFilename = fileroot+ tag + ".sensspec";
+        //         ofstream sensFile;
+        //         util.openOutputFile(sensspecFilename,    sensFile);
+        //         outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
+        //
+        //         //evaluate results
+        //         bestListFileName = compareSensSpec(matrix, metric, sensFile);
+        //
+        //         delete matrix;
+        //
+        //     }else { //reference with accnos file or reference list file assigning references
+        //
+        //         unordered_set<string> refNames; vector<string> refLabels; vector< vector<string> > otus;
+        //
+        //         if (accnosfile != "") { //use accnos file to assign references
+        //
+        //             m->mothurOut("\nUsing sequences from " + accnosfile + " as reference sequences\n");
+        //
+        //             refNames = util.readAccnos(accnosfile);
+        //
+        //         }else if (createAccnos) { //assign references based on reflist parameter
+        //
+        //             m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
+        //
+        //             InputData input(reflistfile, "list", nullVector);
+        //             set<string> processedLabels, userLabels;
+        //             string lastLabel = "";
+        //
+        //             ListVector* reflist = util.getNextList(input, true, userLabels, processedLabels, lastLabel);
+        //
+        //             refLabels = reflist->getLabels();
+        //             for (int i = 0; i < refLabels.size(); i++) { refLabels[i] = "Ref_" + refLabels[i];  }
+        //
+        //             refNames = util.getSetFromList(reflist, otus); delete reflist;
+        //         }
+        //
+        //         //distfile, distFormat, dupsFile, dupsFormat, cutoff, accnos containing refseq name
+        //         OptiData* matrix = new OptiRefMatrix(distfile, "column", dupsFile, nameOrCount, cutoff, refNames);
+        //
+        //         //fit seqs
+        //         ListVector* list = runUserRefOptiCluster(matrix, metric, counts, outputName, refLabels, otus);
+        //
+        //         ofstream listFile; string listFileName = fileroot+ tag + ".list";
+        //         util.openOutputFile(listFileName,    listFile);
+        //
+        //         if(countfile != "") { list->print(listFile, counts); }
+        //         else { list->print(listFile); }
+        //         listFile.close();
+        //
+        //         listFiles.push_back(listFileName);
+        //         bestListFileName = listFileName;
+        //
+        //         delete list; delete matrix;
+        //     }
+        // }else { //reference with files containing reference seqs
+        //
+        //     createReferenceNameCount(); //creates reference name or count file if needed
+        //
+        //     string distanceFile = calcDists();  //calc distance matrix for fasta file and distances between fasta file and reffasta file
+        //
+        //     if (outputdir == "") { outputdir += util.hasPath(distanceFile); }
+        //     fileroot = outputdir + util.getRootName(util.getSimpleName(distanceFile));
+        //
+        //     map<string, string> variables;
+        //     variables["[filename]"] = fileroot;
+        //     variables["[clustertag]"] = "optifit_" + metric->getName();
+        //     outputName = getOutputFileName("steps", variables);
+        //
+        //     m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
+        //
+        //     //calc sens.spec values for reference
+        //     InputData input(reflistfile, "list", nullVector);
+        //     ListVector* list = input.getListVector();
+        //
+        //     //add tag to OTULabels to indicate the reference
+        //     vector<string> refListLabels = list->getLabels();
+        //     for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
+        //     list->setLabels(refListLabels);
+        //
+        //     string refDupsFile = refcountfile;
+        //     if (refNameOrCount == "name") { refDupsFile = refnamefile; }
+        //
+        //     OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
+        //
+        //     listFile = runRefOptiCluster(matrix, metric, list, counts, outputName);
+        //     listFiles.push_back(listFile);
+        //
+        //     bestListFileName = listFile;
+        //
+        //     delete matrix;
+        // }
+        // delete metric;
+        //
+        // if (m->getControl_pressed()) {     for (int j = 0; j < outputNames.size(); j++) { util.mothurRemove(outputNames[j]); }  return 0; }
+        //
+        // outputNames.push_back(outputName); outputTypes["steps"].push_back(outputName);
+        // outputNames.push_back(bestListFileName); outputTypes["list"].push_back(bestListFileName);
+        //
+        // if (m->getControl_pressed()) {     for (int j = 0; j < outputNames.size(); j++) { util.mothurRemove(outputNames[j]); }  return 0; }
+        //
+        // m->mothurOut("It took " + toString(time(nullptr) - estart) + " seconds to fit sequences to reference OTUs.\n");
+        //
+        // //set list file as new current listfile
+        // string currentName = "";
+        // itTypes = outputTypes.find("list");
+        // if (itTypes != outputTypes.end()) {
+        //     if ((itTypes->second).size() != 0) { currentName = (itTypes->second)[0]; current->setListFile(currentName); }
+        // }
+        //
+        // itTypes = outputTypes.find("accnos");
+        // if (itTypes != outputTypes.end()) {
+        //     if ((itTypes->second).size() != 0) { currentName = (itTypes->second)[0]; current->setAccnosFile(currentName); }
+        // }
+        //
+        // m->mothurOut("\nOutput File Names: \n");
+        // for (int i = 0; i < outputNames.size(); i++) {    m->mothurOut(outputNames[i]+"\n");     }
+        // m->mothurOutEndLine();
 
-        if (outputdir == "") { outputdir += util.hasPath(distfile); }
-        fileroot = outputdir + util.getRootName(util.getSimpleName(distfile));
-
-        string listFile = ""; string bestListFileName = ""; string outputName = "";
-
-        if (selfReference) { //de novo
-
-            map<string, string> variables;
-            variables["[filename]"] = fileroot;
-            variables["[clustertag]"] = "optifit_" + metric->getName();
-            outputName = getOutputFileName("steps", variables);
-
-            if ((accnosfile == "") && (!createAccnos)) { //denovo with mothur randomly assigning references
-
-                m->mothurOut("\nRandomly assigning reads from " + distfile + " as reference sequences\n");
-
-                //distfile, distFormat, dupsFile, dupsFormat, cutoff, percentage to be fitseqs - will randomly assign as fit
-                OptiData* matrix = new OptiRefMatrix(distfile, "column", dupsFile, nameOrCount, cutoff, fitPercent, refWeight);
-
-                runDenovoOptiCluster(matrix, metric, counts, outputName);
-
-                string sensspecFilename = fileroot+ tag + ".sensspec";
-                ofstream sensFile;
-                util.openOutputFile(sensspecFilename,    sensFile);
-                outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
-
-                //evaluate results
-                bestListFileName = compareSensSpec(matrix, metric, sensFile);
-
-                delete matrix;
-
-            }else { //reference with accnos file or reference list file assigning references
-
-                unordered_set<string> refNames; vector<string> refLabels; vector< vector<string> > otus;
-
-                if (accnosfile != "") { //use accnos file to assign references
-
-                    m->mothurOut("\nUsing sequences from " + accnosfile + " as reference sequences\n");
-
-                    refNames = util.readAccnos(accnosfile);
-
-                }else if (createAccnos) { //assign references based on reflist parameter
-
-                    m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
-
-                    InputData input(reflistfile, "list", nullVector);
-                    set<string> processedLabels, userLabels;
-                    string lastLabel = "";
-
-                    ListVector* reflist = util.getNextList(input, true, userLabels, processedLabels, lastLabel);
-
-                    refLabels = reflist->getLabels();
-                    for (int i = 0; i < refLabels.size(); i++) { refLabels[i] = "Ref_" + refLabels[i];  }
-
-                    refNames = util.getSetFromList(reflist, otus); delete reflist;
-                }
-
-                //distfile, distFormat, dupsFile, dupsFormat, cutoff, accnos containing refseq name
-                OptiData* matrix = new OptiRefMatrix(distfile, "column", dupsFile, nameOrCount, cutoff, refNames);
-
-                //fit seqs
-                ListVector* list = runUserRefOptiCluster(matrix, metric, counts, outputName, refLabels, otus);
-
-                ofstream listFile; string listFileName = fileroot+ tag + ".list";
-                util.openOutputFile(listFileName,    listFile);
-
-                if(countfile != "") { list->print(listFile, counts); }
-                else { list->print(listFile); }
-                listFile.close();
-
-                listFiles.push_back(listFileName);
-                bestListFileName = listFileName;
-
-                delete list; delete matrix;
-            }
-        }else { //reference with files containing reference seqs
-
-            createReferenceNameCount(); //creates reference name or count file if needed
-
-            string distanceFile = calcDists();  //calc distance matrix for fasta file and distances between fasta file and reffasta file
-
-            if (outputdir == "") { outputdir += util.hasPath(distanceFile); }
-            fileroot = outputdir + util.getRootName(util.getSimpleName(distanceFile));
-
-            map<string, string> variables;
-            variables["[filename]"] = fileroot;
-            variables["[clustertag]"] = "optifit_" + metric->getName();
-            outputName = getOutputFileName("steps", variables);
-
-            m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
-
-            //calc sens.spec values for reference
-            InputData input(reflistfile, "list", nullVector);
-            ListVector* list = input.getListVector();
-
-            //add tag to OTULabels to indicate the reference
-            vector<string> refListLabels = list->getLabels();
-            for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
-            list->setLabels(refListLabels);
-
-            string refDupsFile = refcountfile;
-            if (refNameOrCount == "name") { refDupsFile = refnamefile; }
-
-            OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
-
-            listFile = runRefOptiCluster(matrix, metric, list, counts, outputName);
-            listFiles.push_back(listFile);
-
-            bestListFileName = listFile;
-
-            delete matrix;
-        }
-        delete metric;
-
-        if (m->getControl_pressed()) {     for (int j = 0; j < outputNames.size(); j++) { util.mothurRemove(outputNames[j]); }  return 0; }
-
-        outputNames.push_back(outputName); outputTypes["steps"].push_back(outputName);
-        outputNames.push_back(bestListFileName); outputTypes["list"].push_back(bestListFileName);
-
-        if (m->getControl_pressed()) {     for (int j = 0; j < outputNames.size(); j++) { util.mothurRemove(outputNames[j]); }  return 0; }
-
-        m->mothurOut("It took " + toString(time(nullptr) - estart) + " seconds to fit sequences to reference OTUs.\n");
-
-        //set list file as new current listfile
-        string currentName = "";
-        itTypes = outputTypes.find("list");
-        if (itTypes != outputTypes.end()) {
-            if ((itTypes->second).size() != 0) { currentName = (itTypes->second)[0]; current->setListFile(currentName); }
-        }
-
-        itTypes = outputTypes.find("accnos");
-        if (itTypes != outputTypes.end()) {
-            if ((itTypes->second).size() != 0) { currentName = (itTypes->second)[0]; current->setAccnosFile(currentName); }
-        }
-
-        m->mothurOut("\nOutput File Names: \n");
-        for (int i = 0; i < outputNames.size(); i++) {    m->mothurOut(outputNames[i]+"\n");     }
-        m->mothurOutEndLine();
-
-        return 0;
+        return nullptr;
 }
 
 /***********************************************************************/
