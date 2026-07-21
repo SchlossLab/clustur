@@ -26,7 +26,7 @@
 class OptiRefMatrix final : public OptiData {
 
 public:
-    OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
+    OptiRefMatrix(const std::vector<std::unordered_set<long long>>& close,  const std::vector<std::string>& name,
     const std::vector<std::string>& singleton, const double c) {
         closeness = close;
         nameMap = name;
@@ -35,7 +35,7 @@ public:
     }
     ~OptiRefMatrix() = default;
 
-    std::vector<std::vector<long long>> GetCloseness() {return closeness;}
+    std::vector<std::unordered_set<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameMap;}
     std::vector<std::string> GetSingletons() {return singletons;}
 
@@ -60,13 +60,13 @@ public:
     long long getNumFitSeqs() const { return numFitSeqs; } //only Fit seqs that are in fitdistfile and not singletons
     long long getNumFitClose(long long);
     long long getNumRefClose(long long);
-    std::vector<long long> getCloseFitSeqs(long long);
-    std::vector<long long> getCloseRefSeqs(long long);
+    std::set<long long> getCloseFitSeqs(long long);
+    std::set<long long> getCloseRefSeqs(long long);
 
     std::map<std::string, long long> getNameIndexMap();
 
     bool isCloseFit(long long, long long, bool&);
-    std::vector<long long> getCloseSeqs(long long i);
+    std::unordered_set<long long> getCloseSeqs(long long i);
     [[nodiscard]] bool isClose(long long, long long) const;
     [[nodiscard]] size_t getNumClose(long long) const;
     [[nodiscard]] std::string getName(long long) const; //name from nameMap index

@@ -23,7 +23,7 @@ public:
 
 protected:
     double cutoff{};
-    std::vector<std::vector<long long>> closeness;  //closeness[0] contains indexes of seqs "close" to seq 0.
+    std::vector<std::unordered_set<long long>> closeness;  //closeness[0] contains indexes of seqs "close" to seq 0.
     std::vector<std::string> singletons; //name of seqs with NO distances in matrix, if name file is given then it contains 2nd column of namefile
     std::vector<std::string> nameMap;
 };

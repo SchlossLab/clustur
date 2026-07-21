@@ -53,15 +53,13 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
     bins.resize(numSeqs); //place seqs in own bin
 
     const std::vector<long long> temp;
-    bins.emplace_back(temp);
+    bins.push_back(temp);
     seqBin[numSeqs] = -1;
     insertLocation = numSeqs;
 
     if (initialize == "singleton") {
         //put everyone in own bin
-        for (int i = 0; i < numSeqs; i++) {
-            bins[i].emplace_back(i);
-        }
+        for (int i = 0; i < numSeqs; i++) { bins[i].push_back(i); }
 
         //maps randomized sequences to bins
         for (int i = 0; i < numSeqs; i++) {
@@ -161,11 +159,12 @@ bool OptiCluster::update(double &listMetric) {
                 }
             }
 
-            const std::vector<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
-            std::vector<long long> binsToTry;
+            std::set<long long> binsToTry;
+            std::unordered_set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
             for (long long closeSeq : closeSeqs) {
-                binsToTry.emplace_back(seqBin[closeSeq]);
+                binsToTry.insert(seqBin[closeSeq]);
             }
+
             //merge into each "close" otu
             for (const long long bin : binsToTry) {
                 tn = trueNegatives;
@@ -205,7 +204,7 @@ bool OptiCluster::update(double &listMetric) {
                 falseNegatives = bestFn;
 
                 //move seq from i to j
-                bins[bestBin].emplace_back(seqNumber); //add seq to bestbin
+                bins[bestBin].push_back(seqNumber); //add seq to bestbin
                 bins[binNumber].erase(remove(bins[binNumber].begin(), bins[binNumber].end(), seqNumber),
                                       bins[binNumber].end()); //remove from old bin i
             }
@@ -216,6 +215,7 @@ bool OptiCluster::update(double &listMetric) {
             seqBin[seqNumber] = bestBin; //set new OTU location
         }
     }
+
     listMetric = metric->getValue(truePositives, trueNegatives, falsePositives, falseNegatives);
 
 
@@ -224,9 +224,9 @@ bool OptiCluster::update(double &listMetric) {
 
 /***********************************************************************/
 std::vector<double> OptiCluster::getCloseFarCounts(const long long seq, const long long newBin) const {
-    std::vector<double> results(2, 0);
-    // results.push_back(0);
-    // results.push_back(0);
+    std::vector<double> results;
+    results.push_back(0);
+    results.push_back(0);
     if (newBin == -1) {
     } //making a singleton bin. Close but we are forcing apart.
     else {
