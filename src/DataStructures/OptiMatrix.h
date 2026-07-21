@@ -16,7 +16,7 @@
 class OptiMatrix final : public OptiData {
 
 public:
-    OptiMatrix(const std::vector<std::unordered_set<long long>>& close,  const std::vector<std::string>& name,
+    OptiMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
      const std::vector<std::string>& singleton, const double c)
     {
         closeness = close;
@@ -25,13 +25,13 @@ public:
         cutoff = c;
     }//closeness, namemap, singleton, cutoff
     OptiMatrix() = default;
-    std::vector<std::unordered_set<long long>> GetCloseness() {return closeness;}
+    std::vector<std::vector<long long>> GetCloseness() {return closeness;}
     std::vector<std::string> GetNameList() {return nameMap;}
     std::vector<std::string> GetSingletons() {return singletons;}
     [[nodiscard]] size_t getNumSeqs() const { return closeness.size(); }
     [[nodiscard]] size_t getNumSingletons() const { return singletons.size(); }
     [[nodiscard]] double GetCutoff() const {return cutoff;}
-    std::unordered_set<long long> getCloseSeqs(long long i);
+    std::vector<long long> getCloseSeqs(long long i);
     [[nodiscard]] bool isClose(long long, long long) const;
     [[nodiscard]] long long getNumClose(long long) const;
     [[nodiscard]] ListVector* getListSingle() const;

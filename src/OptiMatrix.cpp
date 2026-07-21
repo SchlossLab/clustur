@@ -10,17 +10,18 @@ bool OptiMatrix::isClose(const long long i, const long long toFind) const {
     if (i > static_cast<long long>(closeness.size())) {
         return false;
     }
-    bool found = false;
-    if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
-    return found;
+    return std::binary_search(closeness[i].begin(), closeness[i].end(), toFind);
+    // bool found = false;
+    // if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
+    // return found;
 
 }
-std::unordered_set<long long> OptiMatrix::getCloseSeqs(const long long i){
+std::vector<long long> OptiMatrix::getCloseSeqs(const long long i){
     if (i < 0) {
-        std::unordered_set<long long> temp; return temp;
+        return {};
     }
     if (i > static_cast<long long>(closeness.size())) {
-        std::unordered_set<long long> temp; return temp;
+        return {};
     }
         return closeness[i];
 }

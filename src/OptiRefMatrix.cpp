@@ -21,7 +21,7 @@ OptiRefMatrix* OptiRefMatrix::extractRefMatrix() {
 
     std::vector<std::string> subsetNameMap;
     std::vector<std::string> subsetSingletons;
-    std::vector< std::unordered_set<long long> > subsetCloseness;
+    std::vector< std::vector<long long> > subsetCloseness;
     std::map<long long, long long> thisNameMap;
     std::map<long long, long long> nonSingletonNameMap;
     std::vector<bool> singleton; singleton.resize(seqs.size(), true);
@@ -32,7 +32,7 @@ OptiRefMatrix* OptiRefMatrix::extractRefMatrix() {
         thisNameMap[seqNum] = count;
         nonSingletonNameMap[count] = seqNum;
 
-        std::unordered_set<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
         for (const long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
             if (seqs.count(thisSeq) != 0) { singleton[thisNameMap[seqNum]] = false; }
@@ -51,11 +51,11 @@ OptiRefMatrix* OptiRefMatrix::extractRefMatrix() {
 
     subsetCloseness.resize(nonSingletonCount);
     for (const auto& seqNum : seqs) {
-        std::unordered_set<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
-        std::unordered_set<long long> thisSeqsCloseUnFittedSeqs;
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        std::vector<long long> thisSeqsCloseUnFittedSeqs;
         for (long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
-            if (seqs.count(thisSeq) != 0) { thisSeqsCloseUnFittedSeqs.insert(nonSingletonNameMap[thisNameMap[thisSeq]]); }
+            if (seqs.count(thisSeq) != 0) { thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]); }
         }
         if (!thisSeqsCloseUnFittedSeqs.empty()) {
             subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
@@ -81,7 +81,7 @@ OptiRefMatrix* OptiRefMatrix::extractMatrixSubset(std::unordered_set<std::string
 OptiRefMatrix* OptiRefMatrix::extractMatrixSubset(std::unordered_set<long long> & seqs) {
     std::vector<std::string> subsetNameMap;
     std::vector<std::string> subsetSingletons;
-    std::vector< std::unordered_set<long long> > subsetCloseness;
+    std::vector< std::vector<long long> > subsetCloseness;
     std::map<long long, long long> thisNameMap;
     std::map<long long, long long> nonSingletonNameMap;
     std::vector<bool> singleton; singleton.resize(seqs.size(), true);
@@ -93,7 +93,7 @@ OptiRefMatrix* OptiRefMatrix::extractMatrixSubset(std::unordered_set<long long> 
         thisNameMap[seqNum] = count;
         nonSingletonNameMap[count] = seqNum;
 
-        std::unordered_set<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
         for (long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
             if (seqs.count(thisSeq) != 0) { singleton[thisNameMap[seqNum]] = false; }
@@ -116,11 +116,11 @@ OptiRefMatrix* OptiRefMatrix::extractMatrixSubset(std::unordered_set<long long> 
 
         long long seqNum = *it;
 
-        std::unordered_set<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
-        std::unordered_set<long long> thisSeqsCloseUnFittedSeqs;
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        std::vector<long long> thisSeqsCloseUnFittedSeqs;
         for (long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
-            if (seqs.count(thisSeq) != 0) { thisSeqsCloseUnFittedSeqs.insert(nonSingletonNameMap[thisNameMap[thisSeq]]); }
+            if (seqs.count(thisSeq) != 0) { thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]); }
         }
 
         if (!thisSeqsCloseUnFittedSeqs.empty()) {
@@ -179,9 +179,10 @@ bool OptiRefMatrix::isCloseFit(const long long i, const long long toFind, bool& 
 
     bool found = false;
     if (!isRef[toFind]) { //are you a fit seq
-        if (closeness[i].find(toFind) != closeness[i].end()) {  //are you close
-            found = true;
-        }
+        found = std::binary_search(closeness[i].begin(), closeness[i].end(), toFind);
+        // if (closeness[i].find(toFind) != closeness[i].end()) {  //are you close
+        //     found = true;
+        // }
         isFit = true;
     } else { isFit = false;  }
     return found;
@@ -885,12 +886,12 @@ void OptiRefMatrix::calcCounts(){
 /***********************************************************************/
 
 
-std::unordered_set<long long> OptiRefMatrix::getCloseSeqs(const long long i){
+std::vector<long long> OptiRefMatrix::getCloseSeqs(const long long i){
     if (i < 0) {
-        std::unordered_set<long long> temp; return temp;
+        return {};
     }
     if (i > static_cast<long long>(closeness.size())) {
-        std::unordered_set<long long> temp; return temp;
+        return {};
     }
     return closeness[i];
 }
@@ -900,9 +901,10 @@ bool OptiRefMatrix::isClose(const long long i, const long long toFind) const {
     if (i > static_cast<long long>(closeness.size())) {
         return false;
     }
-    bool found = false;
-    if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
-    return found;
+    // bool found = false;
+    return std::binary_search(closeness[i].cbegin(), closeness[i].cend(), toFind);
+    // if (closeness[i].find(toFind) != closeness[i].end()) { found = true; }
+    // return found;
 
 }
 

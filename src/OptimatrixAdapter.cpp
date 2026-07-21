@@ -24,7 +24,7 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
     }
     int count = 0;
     int nameOffset = 0;
-    std::vector<std::unordered_set<long long>> closeness(nonSingletonCount);
+    std::vector<std::vector<long long>> closeness(nonSingletonCount);
     for(const auto& cell : matrixData->seqVec) {
         const std::string name = listVector->get(count + nameOffset);
         if(cell.empty()) {
@@ -32,7 +32,9 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
             nameOffset++;
             continue;
         }
-        std::unordered_set<long long> cells;
+        std::vector<long long> cells(cell.size());
+        size_t counter = 0;
+        // cells.reserve(cell.size());
         for(const auto& row : cell) {
             float distance = row.dist;
             if (distance == -1) {
@@ -41,10 +43,11 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                cells.insert(indexSwap[row.index]);
+                cells[counter++] = (indexSwap[row.index]);
                 nameList[indexSwap[row.index]] = listVector->get(row.index);
             }
         }
+        std::sort(cells.begin(), cells.end());
         closeness[count] = cells;
         count++;
     }
