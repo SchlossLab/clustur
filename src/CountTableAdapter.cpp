@@ -5,6 +5,7 @@
 #include "Adapters/CountTableAdapter.h"
 #include "DataStructures/IndexAbundancePair.h"
 #include "MothurDependencies/Utils.h"
+#include <queue>
 
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
 
