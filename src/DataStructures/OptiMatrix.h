@@ -25,22 +25,6 @@ public:
         cutoff = c;
     }//closeness, namemap, singleton, cutoff
     OptiMatrix() = default;
-    std::vector<std::vector<long long>> GetCloseness() {return closeness;}
-    std::vector<std::string> GetNameList() {return nameMap;}
-    std::vector<std::string> GetSingletons() {return singletons;}
-    [[nodiscard]] size_t getNumSeqs() const { return closeness.size(); }
-    [[nodiscard]] size_t getNumSingletons() const { return singletons.size(); }
-    [[nodiscard]] double GetCutoff() const {return cutoff;}
-    std::vector<long long> getCloseSeqs(long long i);
-    [[nodiscard]] bool isClose(long long, long long) const;
-    [[nodiscard]] long long getNumClose(long long) const;
-    [[nodiscard]] ListVector* getListSingle() const;
-    [[nodiscard]] std::string getName(size_t) const; //name from nameMap index
-    [[nodiscard]] bool isCloseFit(long long j, long long i, bool& k) const { return false; }
-    std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&,
-        std::vector< std::vector<long long> >&) { std::vector<long long> temp; return temp;  }
-
-    bool mccValidCalc() const;
 protected:
     std::string distFile, namefile, countfile, format, distFormat;
     // double cutoff;

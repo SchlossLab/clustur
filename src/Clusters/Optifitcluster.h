@@ -20,7 +20,7 @@ class OptiFitCluster : public ClusterMethod {
 
 public:
 
-    OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, long long ns);
+    OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, double cutoff, long long ns);
     ~OptiFitCluster() override = default;
     ClusterExport* Execute() override;
     int initialize(double& value, bool randomize, std::vector<std::vector<std::string>>& existingBins,
@@ -48,15 +48,24 @@ protected:
     long long maxRefBinNumber;
     bool closed, denovo;
     std::set<std::string> unfittedNames;
-
+    double cutoff;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;
     long long  numFitSeqs, insertLocation, numFitSingletons;
     long long  numComboSeqs, numComboSingletons;
 
     int findInsert();
+
+    ClusterExport *runDenovoOptiCluster(OptiRefMatrix *&matrix, ClusterMetric *&metric,
+                                        std::map<std::string, int> &counts,
+                                        std::string outStepFile);
+
+    ListVector *runUserRefOptiCluster(ClusterMetric *&metric, std::vector<std::string> refListLabels, std::vector<std::vector<std::string>> otus);
+
+    ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
+
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
-    ListVector* clusterUnfitted(OptiRefMatrix*, std::string);
+    ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
 
 };
 

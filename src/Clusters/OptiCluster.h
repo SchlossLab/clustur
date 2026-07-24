@@ -17,8 +17,7 @@
 class OptiCluster final : public ClusterMethod {
     public:
 
-    OptiCluster(OptiMatrix* mt, ClusterMetric* met, double cutoff, long long ns);
-    // OptiCluster(Opti* mt, ClusterMetric* met, double cutoff, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, double cutoff, long long ns);
     ~OptiCluster() override;
     ClusterExport* Execute() override;
     [[nodiscard]] std::string getTag() const { std::string tag = "opti_" + metric->getName(); return tag; }
@@ -32,7 +31,7 @@ class OptiCluster final : public ClusterMethod {
     [[nodiscard]] ListVector getList() const;
 
 protected:
-    OptiMatrix* matrix;
+    OptiData* matrix;
     ClusterMetric* metric;
     std::vector<int> randomizeSeqs;
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]

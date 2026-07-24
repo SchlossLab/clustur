@@ -19,7 +19,7 @@
 
 
 
-OptiCluster::OptiCluster(OptiMatrix *mt, ClusterMetric *met, const double cutoff, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const long long ns) : matrix(mt),
     metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
