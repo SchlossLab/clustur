@@ -74,7 +74,7 @@ ClusterExport * OptiFitCluster::Execute() {
         //distfile, distFormat, dupsFile, dupsFormat, cutoff, percentage to be fitseqs - will randomly assign as fit
         // OptiData* matrix = new OptiRefMatrix(distfile, "column", dupsFile, nameOrCount, cutoff, fitPercent, refWeight);
 
-        return runDenovoOptiCluster(matrix, metric, counts, outputName);
+        return runDenovoOptiCluster(counts, outputName);
 
         // std::string sensspecFilename = fileroot+ tag + ".sensspec";
         // ofstream sensFile;
@@ -132,42 +132,42 @@ ClusterExport * OptiFitCluster::Execute() {
 
         }//reference with files containing reference seqs
 
-        createReferenceNameCount(); //creates reference name or count file if needed
-
-        std::string distanceFile = calcDists();  //calc distance matrix for fasta file and distances between fasta file and reffasta file
-
-        // if (outputdir == "") { outputdir += util.hasPath(distanceFile); }
-        // fileroot = outputdir + util.getRootName(util.getSimpleName(distanceFile));
-
-        std::map<std::string, std::string> variables;
-        variables["[filename]"] = fileroot;
-        variables["[clustertag]"] = "optifit_" + metric->getName();
-        // outputName = getOutputFileName("steps", variables);
-
-        // m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
-
-        //calc sens.spec values for reference
-        // InputData input(reflistfile, "list", nullVector);
-        // ListVector* list = input.getListVector();
-
-        //add tag to OTULabels to indicate the reference
-        vector<string> refListLabels = list->getLabels();
-        for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
-        list->setLabels(refListLabels);
-
-        string refDupsFile = refcountfile;
-        if (refNameOrCount == "name") { refDupsFile = refnamefile; }
-
-        // OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
-
-        return runRefOptiCluster(matrix, metric, list, counts, outputName);
-        // listFiles.push_back(listFile);
-
-        // bestListFileName = listFile;
+        // createReferenceNameCount(); //creates reference name or count file if needed
         //
+        // std::string distanceFile = calcDists();  //calc distance matrix for fasta file and distances between fasta file and reffasta file
+        //
+        // // if (outputdir == "") { outputdir += util.hasPath(distanceFile); }
+        // // fileroot = outputdir + util.getRootName(util.getSimpleName(distanceFile));
+        //
+        // std::map<std::string, std::string> variables;
+        // variables["[filename]"] = fileroot;
+        // variables["[clustertag]"] = "optifit_" + metric->getName();
+        // // outputName = getOutputFileName("steps", variables);
+        //
+        // // m->mothurOut("\nUsing OTUs from " + reflistfile + " as reference OTUs\n");
+        //
+        // //calc sens.spec values for reference
+        // // InputData input(reflistfile, "list", nullVector);
+        // ListVector* list = input.getListVector();
+        //
+        // //add tag to OTULabels to indicate the reference
+        // std::vector<std::string> refListLabels = list->getLabels();
+        // for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
+        // list->setLabels(refListLabels);
+        //
+        // string refDupsFile = refcountfile;
+        // if (refNameOrCount == "name") { refDupsFile = refnamefile; }
+        //
+        // // OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
+        //
+        // return runRefOptiCluster(matrix, metric, list, counts, outputName);
+        // // listFiles.push_back(listFile);
+        //
+        // // bestListFileName = listFile;
+        // //
         // delete matrix;
-    }
-    delete metric;
+
+    // delete metric;
 
     // if (m->getControl_pressed()) {     for (int j = 0; j < outputNames.size(); j++) { util.mothurRemove(outputNames[j]); }  return 0; }
     //
@@ -728,8 +728,8 @@ int OptiFitCluster::findInsert() {
 }
 
 /***********************************************************************/
-ClusterExport* OptiFitCluster::runDenovoOptiCluster(OptiRefMatrix*& matrix, ClusterMetric*& metric, std::map<std::string, int>& counts, std::string outStepFile){
-    Rcpp::message("\nClustering\n");
+ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& counts, std::string outStepFile){
+    // Rcpp::message("\nClustering\n");
     OptifitClusterData* result = new OptifitClusterData("");
     constexpr double stableMetric = 0;
     constexpr int maxIters = 100;
@@ -746,7 +746,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(OptiRefMatrix*& matrix, Clus
 
         //get "ref" seqs for initialize inputs
         OptiData* refMatrix = matrix->extractRefMatrix();
-        OptiCluster clust(refMatrix, metric, cutoff, 0);
+        OptiCluster clust(refMatrix, new MCC(), cutoff, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
         delete refMatrix;
@@ -762,7 +762,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(OptiRefMatrix*& matrix, Clus
 
         //add tag to OTULabels to indicate the reference
         std::vector<std::string> refListLabels = refList.getLabels();
-        for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
+        for (auto & refListLabel : refListLabels) { refListLabel = "Ref_" + refListLabel;  }
         refList.setLabels(refListLabels);
 
         initialize(listVectorMetric, true, otus, refList.getLabels(), "", true);
@@ -771,23 +771,40 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(OptiRefMatrix*& matrix, Clus
 
         long long numBins = getNumBins();
         double tp, tn, fp, fn;
+        std::string clusterMetrics;
+        std::string sensFile;
         std::vector<double> results = getStats(tp, tn, fp, fn);
-
+        std::vector<double> stats;
+        std::vector<std::string> clusterMetricList;
         double fittp, fittn, fitfp, fitfn;
         long long numFitBins = getNumFitBins();
         std::vector<double> fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
 
-        Rcpp::message("\nFitting " + std::to_string(matrix->getNumFitSeqs()+matrix->getNumFitSingletons()+matrix->getNumFitTrueSingletons()) + " sequences to reference otus.\n");
+        // Rcpp::message("\nFitting " + std::to_string(matrix->getNumFitSeqs()+matrix->getNumFitSingletons()+matrix->getNumFitTrueSingletons()) + " sequences to reference otus.\n");
 
-        Rcpp::message("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
+        // Rcpp::message("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
 
+        std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
+        "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
+        // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+
+        std::vector<std::string> clusterMetricsHeaders{"iter","time","label","num_otus","cutoff","tp","tn",
+          "fp","fn","sensitivity","specificity","ppv","npv",
+            "fdr", "accuracy", "mcc", "f1score"};
+
+        clusterMetrics = ("0,0," + std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                              std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + "," +
+                              std::to_string(fp) + "," + std::to_string(fn) + ",");
+        for (double stat: stats) {
+            clusterMetrics += (std::to_string(stat) + ",");
+        }
 
         // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, false, 0);
 
         while ((delta > stableMetric) && (iters < maxIters)) { //
 
             double oldMetric = listVectorMetric;
-
+            auto startTime = std::chrono::system_clock::now();
             update(listVectorMetric);
 
             delta = abs(oldMetric - listVectorMetric);
@@ -797,6 +814,17 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(OptiRefMatrix*& matrix, Clus
             numBins = getNumBins();
             numFitBins = getNumFitBins();
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
+            numBins = getNumBins();
+            auto endTime = std::chrono::system_clock::now();
+            std::chrono::duration<double> currentTime = endTime - startTime;
+            clusterMetrics = (std::to_string(iters) + "," + std::to_string(currentTime.count()) + "," +
+                               std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                               std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
+                               + std::to_string(fp) + "," + std::to_string(fn) + ",");
+            for (double stat: stats) {
+                clusterMetrics += (std::to_string(stat) + ",");
+            }
+            Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
 
             // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, i);
         }
@@ -883,7 +911,7 @@ std::vector<std::vector<std::string> > otus){
     std::vector<double> fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
     // m->mothurOut("\nFitting " + std::to_string(matrix->getNumFitSeqs()+matrix->getNumFitSingletons()+matrix->getNumFitTrueSingletons()) + " sequences to reference otus.\n");
 
-    Rcpp::message("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
+    // Rcpp::message("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
 
     // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, false, 0);
 
@@ -951,7 +979,7 @@ std::vector<std::vector<std::string> > otus){
 
 ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& metric) {
 
-    Rcpp::message("\nClustering " + std::to_string(refsMatrix->GetNameList().size()+refsMatrix->getNumSingletons()) + " reference sequences.\n");
+    // Rcpp::message("\nClustering " + std::to_string(refsMatrix->GetNameList().size()+refsMatrix->getNumSingletons()) + " reference sequences.\n");
 
     ListVector list;
 
@@ -964,15 +992,17 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
     cluster.initialize(listVectorMetric, true, "singleton");
 
     long long numBins = cluster.getNumBins();
-    Rcpp::message("\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
+    // Rcpp::message("\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
 
     double tp, tn, fp, fn;
     std::vector<double> results = cluster.getStats(tp, tn, fp, fn);
-    Rcpp::message("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t"+ std::to_string(cutoff) +
-        "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) +
-        "\t");
+    // Rcpp::message("0\t0\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t"+ std::to_string(cutoff) +
+    //     "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) +
+    //     "\t");
 
-    for (const double result : results) { Rcpp::message(std::to_string(result) + "\t");  }
+    for (const double result : results) {
+        // Rcpp::message(std::to_string(result) + "\t");
+    }
 
     while ((delta > 0.0001) && (iters < maxIters)) {
 
@@ -988,16 +1018,134 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
         results = cluster.getStats(tp, tn, fp, fn);
         numBins = cluster.getNumBins();
 
-        Rcpp::message(std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
-            std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t"+
-            std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) +
-            "\t");
+        // Rcpp::message(std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" +
+        //     std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t"+
+        //     std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) +
+        //     "\t");
 
-        for (const double result : results) { Rcpp::message(std::to_string(result) + "\t");  }
+        // for (const double result : results) { Rcpp::message(std::to_string(result) + "\t");  }
 
     }
     list = cluster.getList();
     list.setLabel(std::to_string(cutoff));
 
     return list;
+}
+
+ClusterExport* OptiFitCluster::runRefOptiCluster(OptiData*& matrix, ClusterMetric*& metric, ListVector*& refList, std::map<std::string, int>& counts, std::string outStepFile){
+    int iters = 0;
+    double listVectorMetric = 0; //worst state
+    double delta = 1;
+    int maxIters = 100;
+    constexpr double stableMetric = 0;
+
+    std::vector<std::vector<std::string> > otus;
+    for (int i = 0; i < refList->getNumBins(); i++) {
+        std::vector<std::string> binNames;
+        if (const std::string bin = refList->get(i); !bin.empty()) {
+            Utils::splitAtComma(bin, binNames);
+            otus.push_back(binNames);
+        }
+    }
+
+    std::map<std::string, int> refCounts;
+    // if (refcountfile != "") {
+    //     CountTable refct; refct.readTable(refcountfile, false, false);
+    //     refCounts = refct.getNameMap();
+    // }else if (refnamefile != "") { refCounts = util.readNames(refnamefile); }
+    // else { //assume unique
+    //     for (auto & otu : otus) { for (int j = 0; j < otu.size(); j++) { refCounts[otu[j]] = 1; } }
+    // }
+    counts.insert(refCounts.begin(), refCounts.end());
+
+    initialize(listVectorMetric, true, otus, refList->getLabels(), "", false);
+
+    long long numBins = getNumBins();
+    double tp, tn, fp, fn;
+    std::vector<double> results = getStats(tp, tn, fp, fn);
+
+    double fittp, fittn, fitfp, fitfn;
+    long long numFitBins = getNumFitBins();
+    std::vector<double> fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
+
+    bool printStepsHeader = true;
+    // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, true, 0);
+
+    while ((delta > stableMetric) && (iters < maxIters)) { //
+
+       //  if (m->getControl_pressed()) { break; }
+        double oldMetric = listVectorMetric;
+
+        update(listVectorMetric);
+
+        delta = abs(oldMetric - listVectorMetric);
+        iters++;
+
+        results = getStats(tp, tn, fp, fn);
+        numBins = getNumBins();
+        numFitBins = getNumFitBins();
+        fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
+
+        // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, true, 0);
+    }
+    // m->mothurOutEndLine(); m->mothurOutEndLine();
+
+    // if (m->getControl_pressed()) {  return 0; }
+    std::ofstream listFile;
+    auto* result = new OptifitClusterData("");
+    ListVector* list = getFittedList(std::to_string(cutoff), true);
+    list->setLabel(std::to_string(cutoff));
+    OptifitClusterInformation clusterInformation;
+    clusterInformation.label = std::to_string(cutoff);
+    clusterInformation.numberOfOtu = static_cast<int>(numBins);
+    clusterInformation.clusterBins = list->print(listFile);
+    result->AddToData(clusterInformation);
+    result->SetListVector(*list, std::to_string(cutoff));
+    list->setLabel(std::to_string(cutoff));
+
+    // ofstream listFile;
+    // string listFileName = fileroot+ tag + ".list";
+    // util.openOutputFile(listFileName,    listFile);
+
+    // if(countfile != "") { list->print(listFile, counts); }
+    // else { list->print(listFile); }
+    // listFile.close();
+    //
+    // string sensspecFilename = fileroot+ tag + ".sensspec";
+    // ofstream sensFile;
+    // util.openOutputFile(sensspecFilename,    sensFile);
+    // outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
+    //
+    // if (method == "closed") {
+    //     sensFile << "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+    //
+    //     if (printref) { //combo
+    //         results = cluster.getStats(tp, tn, fp, fn);
+    //         sensFile << cutoff << '\t' << cutoff << '\t' << tp << '\t' << tn << '\t' << fp << '\t' << fn;
+    //         for (int i = 0; i < results.size(); i++) {  sensFile << '\t' << results[i]; } sensFile << '\n';
+    //     }else { //fit
+    //         fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
+    //         sensFile << cutoff << '\t' << cutoff << '\t' << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn;
+    //         for (int i = 0; i < fitresults.size(); i++) {  sensFile << "\t" << fitresults[i]; } sensFile << endl;
+    //     }
+    //     set<string> unfitted = cluster.getUnfittedNames();
+    //
+    //     string accnosFilename = fileroot+ "optifit_scrap.accnos";
+    //     outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
+    //
+    //     ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
+    //     for (set<string>::iterator it = unfitted.begin(); it != unfitted.end(); it++) {
+    //         accOut << *it << endl;
+    //     }
+    //     accOut.close();
+    //
+    // }else {
+    //     runSensSpec(matrix, metric, list, counts, sensFile);
+    // }
+   // sensFile.close();
+
+    delete list;
+    return result;
+    // return listFileName;
+
 }

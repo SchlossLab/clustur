@@ -55,13 +55,15 @@ protected:
 
     int findInsert();
 
-    ClusterExport *runDenovoOptiCluster(OptiRefMatrix *&matrix, ClusterMetric *&metric,
-                                        std::map<std::string, int> &counts,
+    ClusterExport *runDenovoOptiCluster(std::map<std::string, int> &counts,
                                         std::string outStepFile);
 
     ListVector *runUserRefOptiCluster(ClusterMetric *&metric, std::vector<std::string> refListLabels, std::vector<std::vector<std::string>> otus);
 
     ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
+
+    ClusterExport *runRefOptiCluster(OptiData *&matrix, ClusterMetric *&metric, ListVector *&refList,
+                                     std::map<std::string, int> &counts, std::string outStepFile);
 
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);

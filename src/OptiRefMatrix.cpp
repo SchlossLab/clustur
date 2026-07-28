@@ -347,7 +347,7 @@ void OptiRefMatrix::randomizeRefs() {
 }
 /***********************************************************************/
 //for denovo method
-int OptiRefMatrix::ReadFiles(const OptiData* matrix, const OptiData* referenceMatrix,
+int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     const CountTableAdapter& adapter, std::unordered_set<std::string>& optionalRefNames) {
     // std::string namefile, countfile;
     // if (dupsFormat == "name") { namefile = dupsFile; countfile = ""; }
@@ -363,11 +363,18 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix, const OptiData* referenceMa
     // }
 
     //select sequences to be reference
+    refWeightMethod = "abundance";
+    singletons = matrix->GetSingletons();
+    numSingletons = singletons.size();
+    closeness = matrix->GetCloseness();
     std::set<long long> fitSeqsIndexes;
     long long count = 0;
     std::vector<std::string> nameList = matrix->GetNameList();
-    std::vector<double> abundances(nameList.size(), 1);
+    nameList.insert(nameList.end(), singletons.begin(), singletons.end());
+    const long long numberOfSequences = nameList.size();
+    std::vector<double> abundances(numberOfSequences, 1);
     for (auto& name : nameList) {
+        if (name.empty()) continue;
         if (refWeightMethod == "abundance")          { weights[count] = static_cast<long long>(adapter.FindTotalAbundance(name)); }
         else if (refWeightMethod == "connectivity")  { weights[count] = 1;          } //initialize
         else if (refWeightMethod == "accnos") { //fill fit indexes
@@ -375,6 +382,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix, const OptiData* referenceMa
                 fitSeqsIndexes.insert(count); //add as fit seq
             }
         }
+        count++;
         // it->second = count; count++;
         nameMap.push_back(name);
         // nameAssignment[it->first] = it->second;
@@ -407,9 +415,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix, const OptiData* referenceMa
     //         nonSingletonCount++;
     //     }else { singletons.push_back(nameMap[i]); }
     // }
-    singletons = matrix->GetSingletons();
-    numSingletons = singletons.size();
-    closeness = matrix->GetCloseness();
+
 
     // std::map<std::string, std::string> names;
     // if (namefile != "") {
@@ -428,23 +434,29 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix, const OptiData* referenceMa
 
 
     //randomly select the "fit" seqs
-    long long numToSelect = static_cast<long long>(static_cast<float>(referenceMatrix->GetNameList().size()) * fitPercent);
+    const long long numToSelect = static_cast<long long>(static_cast<float>(matrix->GetNameList().size()) * fitPercent);
     if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
     else {
         if (refWeightMethod == "accnos") { } //fitIndexes are filled above
         else { //randomly select references
             long long numSelected = 0;
-            const long long totalSeqs = closeness.size();
-            while (numSelected < numToSelect) {
-                fitSeqsIndexes.insert(Utils::getRandomIndex(totalSeqs-1)); //no repeats
-                numSelected = fitSeqsIndexes.size();
-            }
+            // const long long totalSeqs = numberOfSequences;
+            std::vector<long long> fitSeqsIndexes2(numberOfSequences, 0);
+            std::iota(fitSeqsIndexes2.begin(), fitSeqsIndexes2.end(), 0);
+            Utils::mothurRandomShuffle(fitSeqsIndexes2);
+            fitSeqsIndexes =  {fitSeqsIndexes2.begin(), fitSeqsIndexes2.begin() + numToSelect};
+            // while (numSelected < numToSelect) {
+            //     fitSeqsIndexes.insert(Utils::getRandomIndex(numberOfSequences-1)); //no repeats
+            //     numSelected = fitSeqsIndexes.size();
+            // }
         }
     }
 
     //flag reference seqs singleton or not
-    for (long long i = 0; i < static_cast<long long>(closeness.size()); i++) {
-        if (!closeness[i].empty()) { //if you are not a singleton
+    //Every empty in namemape is a singleton...Soo...
+    const std::vector<std::string> nameList2 = matrix->GetNameList();
+    for (long long i = 0; i < static_cast<long long>(nameList2.size()); i++) {
+        if (!nameList2[i].empty()) { //if you are not a singleton
 
             if (fitSeqsIndexes.find(i) != fitSeqsIndexes.end()) { //you are a fit seq
                 isRef.push_back(false);

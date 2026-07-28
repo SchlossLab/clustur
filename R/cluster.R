@@ -112,13 +112,17 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
     stop("`distance_object` must be generated using the `read_dist` function")
   }
   if (!(method %in% c("opticlust",
-                      "furthest", "nearest", "average", "weighted"))) {
+                      "furthest", "nearest", "average", "weighted", "optifit"))) {
     stop("`method` parameter can only be opticlust, furthest, nearest,
          average, or weighted.")
   }
   set.seed(random_seed)
   df <- data.frame()
-  if (method != "opticlust") {
+  if(method == "optifit") {
+    df <- OptiFit(distance_object, feature_column_name_to,
+                      bin_column_name_to, cutoff)
+  }
+  else if (method != "opticlust") {
     df <- Cluster(distance_object, method,
                   feature_column_name_to, bin_column_name_to, cutoff)
   } else {

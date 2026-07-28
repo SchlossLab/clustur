@@ -35,7 +35,8 @@ public:
         singletons = singleton;
         cutoff = c;
     }
-    OptiRefMatrix(const OptiData* matrix, const OptiData* referenceMatrix, const CountTableAdapter& adapter, double fP, std::string refWeight) {
+
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight) {
 
         numFitSingletons = 0;
         numRefSingletons = 0;
@@ -52,7 +53,7 @@ public:
 
         square = false;
         std::unordered_set<std::string> noRefNamesSet;
-        ReadFiles(matrix, referenceMatrix,adapter, noRefNamesSet);
+        ReadFiles(matrix, adapter,noRefNamesSet);
     }
     ~OptiRefMatrix() = default;
 
@@ -64,11 +65,11 @@ public:
     OptiData* extractRefMatrix();
     void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
-    int ReadFiles(const OptiData* matrix, const OptiData* referenceMatrix,
-        const CountTableAdapter& adapter, std::unordered_set<std::string>& optionalRefNames);
+    int ReadFiles(const OptiData *matrix,
+                  const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
     long long getNumFitTrueSingletons(); //reads that are true singletons (no valid dists in matrix) and are flagged as fit
     [[nodiscard]] long long getNumFitSingletons() const { return numFitSingletons; } //user singletons
-    [[nodiscard]] long long getNumDists() const    { return (numFitDists+numRefDists+numBetweenDists); } //all distances under cutoff
+    [[nodiscard]] long long getNumDists() const    { return (numFitDists +numRefDists+numBetweenDists); } //all distances under cutoff
     [[nodiscard]] long long getNumFitDists() const { return numFitDists; } //user distances under cutoff
     [[nodiscard]] long long getNumRefDists() const { return numRefDists; } //ref distances under cutoff
     std::unordered_set<long long> getIndexes(std::unordered_set<std::string> seqs);

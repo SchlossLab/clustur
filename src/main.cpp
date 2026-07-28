@@ -9,6 +9,7 @@
 #include "Clusters/SingleLinkage.h"
 #include "Clusters/WeightedLinkage.h"
 #include "Clusters/OptiCluster.h"
+#include "Clusters/Optifitcluster.h"
 #include "Clusters/Metrics/mcc.h"
 #include "DataExporters/ClusterExport.h"
 #include "SharedFileData/SharedFileBuilder.h"
@@ -148,7 +149,9 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
     auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
     delete(sparseMatix);
     delete(listVector);
+    ClusterMetric* metric = new MCC();
     OptiCluster cluster(optiMatrix, new MCC(), cutoff, 0);
+    delete metric;
     const auto* result = cluster.Execute();
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
     const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
@@ -166,20 +169,24 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 
 
 //[[Rcpp::export]]
-Rcpp::List OptiFit(const SEXP& distData, const SEXP& referenceDistanceData, const std::string& featureColumnName, const std::string& binColumnName,
+Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
-    const Rcpp::XPtr<DistanceFileReader> refDistanceData(referenceDistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
     const auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
     const OptimatrixAdapter optiAdapter(cutoff);
-    auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, 100, "");
+    delete optiMatrix;
     delete(sparseMatix);
     delete(listVector);
-    OptiCluster cluster(optiMatrix, new MCC(), cutoff, 0);
+    ClusterMetric* metric = new MCC();
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
     const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
     const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
     const auto label = result->GetListVector().label;
@@ -187,6 +194,7 @@ Rcpp::List OptiFit(const SEXP& distData, const SEXP& referenceDistanceData, cons
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
+
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,
       Rcpp::Named("cluster") = clusterDataFrame,
