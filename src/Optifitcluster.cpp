@@ -21,6 +21,7 @@
 #include "Clusters/Metrics/specificity.h"
 #include "DataExporters/OptifitClusterData.h"
 #include "DataStructures/OptiRefMatrix.h"
+#include <chrono>
 
 
 /***********************************************************************/
@@ -773,8 +774,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         double tp, tn, fp, fn;
         std::string clusterMetrics;
         std::string sensFile;
-        std::vector<double> results = getStats(tp, tn, fp, fn);
-        std::vector<double> stats;
+        std::vector<double> stats = getStats(tp, tn, fp, fn);
         std::vector<std::string> clusterMetricList;
         double fittp, fittn, fitfp, fitfn;
         long long numFitBins = getNumFitBins();
@@ -810,7 +810,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
             delta = abs(oldMetric - listVectorMetric);
             iters++;
 
-            results = getStats(tp, tn, fp, fn);
+            stats = getStats(tp, tn, fp, fn);
             numBins = getNumBins();
             numFitBins = getNumFitBins();
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);

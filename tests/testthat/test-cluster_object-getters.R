@@ -3,7 +3,7 @@ test_that("get_label returns the proper cutoff", {
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
   distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
                              count_table, cutoff, FALSE)
-  df_clusters <- cluster(distance_data, cutoff, method = "furthest")
+  df_clusters <- cluster(distance_data, cutoff, method = "optifit")
   expect_true(get_cutoff(df_clusters) == 0.19)
   expect_false(get_cutoff(df_clusters) == 0.4)
 

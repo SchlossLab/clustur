@@ -38,8 +38,8 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
 }
 
 OptiCluster::~OptiCluster() {
-    delete metric;
-    delete matrix;
+    // delete metric;
+    // delete matrix;
 }
 
 /***********************************************************************/
