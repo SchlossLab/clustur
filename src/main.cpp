@@ -11,6 +11,7 @@
 #include "Clusters/OptiCluster.h"
 #include "Clusters/Optifitcluster.h"
 #include "Clusters/Metrics/mcc.h"
+#include "Clusters/Metrics/tptn.h"
 #include "DataExporters/ClusterExport.h"
 #include "SharedFileData/SharedFileBuilder.h"
 #include "FileReaders/DistanceFileReader.h"
@@ -149,17 +150,29 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
     auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
     delete(sparseMatix);
     delete(listVector);
-    ClusterMetric* metric = new MCC();
-    OptiCluster cluster(optiMatrix, new MCC(), cutoff, 0);
-    delete metric;
+    ClusterMetric* metric = nullptr;
+    if (!optiMatrix->mccValidCalc()) {
+        Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
+            std::to_string(cutoff) + " using tptn instead.");
+        delete metric;
+        metric = new TPTN();
+    }
+    else
+        metric = new MCC();
+
+    OptiCluster cluster(optiMatrix, metric, cutoff, 0);
     const auto* result = cluster.Execute();
+
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
     const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
-    delete(result);
+    delete metric;
+    delete result;
+    delete optiMatrix;
+
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,
       Rcpp::Named("cluster") = clusterDataFrame,

@@ -35,7 +35,28 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     trueNegatives = 0;
     falseNegatives = 0;
     falsePositives = 0;
+    stableMetric = 0;
 }
+
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
+    metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
+    fitfalsePositives(0),
+    fitfalseNegatives(0),
+    combotruePositives(0),
+    combotrueNegatives(0),
+    combofalsePositives(0),
+    combofalseNegatives(0),
+    numFitSeqs(0), numFitSingletons(0),
+    numComboSeqs(0),
+    numComboSingletons(0),
+    stableMetric(stableMetric),
+    cutoff(cutoff) {
+    truePositives = 0;
+    trueNegatives = 0;
+    falseNegatives = 0;
+    falsePositives = 0;
+}
+
 
 OptiCluster::~OptiCluster() {
     // delete metric;
@@ -378,7 +399,7 @@ ClusterExport* OptiCluster::Execute() {
     std::string clusterMetrics;
     std::string sensFile;
     bool canShuffle = true;
-    double stableMetric = 0;
+    double delta = 1;
     int maxIters = 100;
     std::ofstream listFile;
     std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
@@ -392,16 +413,15 @@ ClusterExport* OptiCluster::Execute() {
     //     "iter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
     bool printHeaders = true;
 
-    if (!matrix->mccValidCalc()) {
-        Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
-            std::to_string(cutoff) + " using tptn instead.");
-        delete metric;
-        metric = new TPTN();
-    }
+    // if (!matrix->mccValidCalc()) {
+    //     Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
+    //         std::to_string(cutoff) + " using tptn instead.");
+    //     delete metric;
+    //     metric = new TPTN();
+    // }
 
     int iters = 0;
     double listVectorMetric = 0; //worst state
-    double delta = 1;
     long long numBins;
     double tp, tn, fp, fn;
     std::vector<double> stats;

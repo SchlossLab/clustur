@@ -731,7 +731,7 @@ int OptiFitCluster::findInsert() {
 /***********************************************************************/
 ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& counts, std::string outStepFile){
     // Rcpp::message("\nClustering\n");
-    OptifitClusterData* result = new OptifitClusterData("");
+    OptifitClusterData *result = new OptifitClusterData("");
     constexpr double stableMetric = 0;
     constexpr int maxIters = 100;
     bool printStepsHeader = true;
@@ -746,15 +746,15 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         double delta = 1;
 
         //get "ref" seqs for initialize inputs
-        OptiData* refMatrix = matrix->extractRefMatrix();
-        OptiCluster clust(refMatrix, new MCC(), cutoff, 0);
+        OptiData* refMatrix = matrix->extractRefMatrix(); // This is an empty matrix, that is the issue
+        OptiCluster clust(refMatrix, new MCC(), cutoff, 0.0001, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
         delete refMatrix;
 
         std::vector<std::vector<std::string> > otus;
-        for (int i = 0; i < refList.getNumBins(); i++) {
-            if (const std::string bin = refList.get(i); !bin.empty()) {
+        for (int j = 0; j < refList.getNumBins(); j++) {
+            if (const std::string bin = refList.get(j); !bin.empty()) {
                 std::vector<std::string> binNames;
                 Utils::splitAtComma(bin, binNames);
                 otus.push_back(binNames);
