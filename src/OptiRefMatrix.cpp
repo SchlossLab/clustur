@@ -363,14 +363,13 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     // }
 
     //select sequences to be reference
+
     refWeightMethod = "abundance";
-    singletons = matrix->GetSingletons();
-    numSingletons = singletons.size();
     closeness = matrix->GetCloseness();
     std::set<long long> fitSeqsIndexes;
     long long count = 0;
-    std::vector<std::string> nameList = matrix->GetNameList();
-    nameList.insert(nameList.end(), singletons.begin(), singletons.end());
+    std::vector<std::string> nameList = adapter.GetSequences();
+    // nameList.insert(nameList.end(), singletons.begin(), singletons.end());
     const long long numberOfSequences = nameList.size();
     std::vector<double> abundances(numberOfSequences, 1);
     for (auto& name : nameList) {
@@ -408,13 +407,21 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     // if (distFormat == "column")        {  singletonIndexSwap = readColumnSingletons(singleton, distFile, nameAssignment);           }
     // else if (distFormat == "phylip")   {  singletonIndexSwap = readPhylipSingletons(singleton, distFile, count, nameAssignment);    }
     //
-    // int nonSingletonCount = 0;
-    // for (int i = 0; i < singleton.size(); i++) {
-    //     if (!singleton[i]) { //if you are not a singleton
-    //         singletonIndexSwap[i] = nonSingletonCount;
-    //         nonSingletonCount++;
-    //     }else { singletons.push_back(nameMap[i]); }
-    // }
+
+
+    singletons = matrix->GetSingletons();
+    std::vector<bool> isSingletonVector(nameList.size(), true);
+    const std::unordered_set<std::string> singletonNames = {singletons.cbegin(), singletons.cend()};
+    int nonSingletonCount = 0;
+    for (int i = 0; i < isSingletonVector.size(); i++) {
+        if (singletonNames.find(nameList[i]) != singletonNames.end()) {
+            // singletonIndexSwap[i] = nonSingletonCount;
+            // nonSingletonCount++;
+            continue;
+        }
+        //if you are not a singleton
+        isSingletonVector[i] = false;
+    }
 
 
     // std::map<std::string, std::string> names;
@@ -454,19 +461,33 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
 
     //flag reference seqs singleton or not
     //Every empty in namemape is a singleton...Soo...
-    const std::vector<std::string> nameList2 = matrix->GetNameList();
-    for (long long i = 0; i < static_cast<long long>(nameList2.size()); i++) {
-        if (!nameList2[i].empty()) { //if you are not a singleton
 
+    for (long long i = 0; i < nameList.size(); i++) {
+        if (!isSingletonVector[i]) { // if you are not a singleton
             if (fitSeqsIndexes.find(i) != fitSeqsIndexes.end()) { //you are a fit seq
                 isRef.push_back(false);
-            }else { isRef.push_back(true);  } //its a reference
-        }else {
-            if (fitSeqsIndexes.find(i) != fitSeqsIndexes.end()) { //you are a fit seq singleton
-                isSingleRef.push_back(false);
-            }else { isSingleRef.push_back(true); } //its a singleton reference
+            }else {
+                isRef.push_back(true);
+            }
+            continue;
         }
+        // You are a singleton
+        if (fitSeqsIndexes.find(i) != fitSeqsIndexes.end()) { //you are a fit seq singleton
+            isSingleRef.push_back(false);
+            continue;
+        }
+        isSingleRef.push_back(true);
     }
+    // for (long long i = 0; i < static_cast<long long>(nameList2.size()); i++) {
+    //     if (!nameList2[i].empty()) { //if you are not a singleton
+    //
+    //        //its a reference
+    //     }else {
+    //         if (fitSeqsIndexes.find(i) != fitSeqsIndexes.end()) { //you are a fit seq singleton
+    //             isSingleRef.push_back(false);
+    //         }else { isSingleRef.push_back(true); } //its a singleton reference
+    //     }
+    // }
     //find number of fitDists, refDists and between dists
     calcCounts();
 

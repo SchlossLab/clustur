@@ -183,7 +183,7 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 
 //[[Rcpp::export]]
 Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff) {
+    const double cutoff, const double fitPercent = 50) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
@@ -191,7 +191,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     const bool isSim = distanceData.get()->GetIsSimularity();
     const OptimatrixAdapter optiAdapter(cutoff);
     const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
-    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, 100, "");
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, fitPercent, "");
     delete optiMatrix;
     delete(sparseMatix);
     delete(listVector);
