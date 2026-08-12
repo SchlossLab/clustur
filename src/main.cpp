@@ -17,6 +17,8 @@
 #include "FileReaders/DistanceFileReader.h"
 #include "FileReaders/ColumnDistanceMatrixReader.h"
 #include "FileReaders/ReadPhylipMatrix.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+#include "MothurDependencies/PairwiseDistanceCalculator.h"
 
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
@@ -221,4 +223,9 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     CountTableAdapter adapter;
     adapter.CreateDataFrameMapFromSparseCountTable(countTable);
     return adapter.ReCreateDataFrame();
+}
+
+std::vector<std::vector<double>> GetDist(std::vector<std::string> sequences) {
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance(sequences, 0.5);
+    return calculator->Execute();
 }

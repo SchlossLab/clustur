@@ -21,6 +21,9 @@ class OptiFitCluster : public ClusterMethod {
 public:
 
     OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, double cutoff, long long ns);
+
+    void Reset();
+
     ~OptiFitCluster() override = default;
     ClusterExport* Execute() override;
     int initialize(double& value, bool randomize, std::vector<std::vector<std::string>>& existingBins,

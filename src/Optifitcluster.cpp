@@ -34,6 +34,15 @@ OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const doub
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
 
+void OptiFitCluster::Reset() {
+    maxRefBinNumber = 0;
+    closed = false;
+
+    numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
+    numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
+}
+
+
 ClusterExport * OptiFitCluster::Execute() {
     time_t estart = time(nullptr);
     constexpr bool selfReference = true;
@@ -209,7 +218,7 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
 
     std::vector< std::vector< long long> > translatedBins;
     randomizeSeqs = matrix->getTranslatedBins(existingBins, translatedBins); //otus in existingBins, otus with matrix names
-
+    // Bins and translated bins are the same thing...
     int binNumber = 0;
     int placeHolderIndex = -1;
     bins.clear();
@@ -248,7 +257,7 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     for (long long i = 0; i < randomizeSeqs.size(); i++) {
         // std::vector<long long> thisBin;
         // thisBin.emplace_back(randomizeSeqs[i]);
-        bins.emplace_back(randomizeSeqs[i]);
+        bins.emplace_back(std::vector<long long>{randomizeSeqs[i]});
         seqBin[randomizeSeqs[i]] = numRefBins+i;
 
         const long long numCloseSeqs = (matrix->getNumFitClose(randomizeSeqs[i])); //does not include self
@@ -278,7 +287,7 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
 
     value = comboValue;
-
+// TODO: FInd why there are more slots in the bins than there are sequences...
     return value;
 
 }
@@ -735,6 +744,7 @@ int OptiFitCluster::findInsert() {
 /***********************************************************************/
 ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& counts, std::string outStepFile){
     // Rcpp::message("\nClustering\n");
+    // TODO: Reset optiflitcluster values
     OptifitClusterData *result = new OptifitClusterData("");
     const std::string cutoffString = std::to_string(cutoff);
     OptifitClusterInformation clusterInformation;
@@ -749,7 +759,6 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
 
         // OptiFitCluster cluster(matrix, metric, 0);
         // tag = cluster.getTag();
-
         int iters = 0;
         double listVectorMetric = 0; //worst state
         double delta = 1;
@@ -883,7 +892,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         // }
 
         delete list;
-
+        Reset();
         matrix->randomizeRefs();
     }
 
