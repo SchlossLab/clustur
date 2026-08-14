@@ -16,6 +16,37 @@
 //  Copyright © 2018 Schloss Lab. All rights reserved.
 //
 
+
+/***********************************************************************/
+// OptiRefMatrix::OptiRefMatrix(string d, string nc, string f, string df, double c, string fit, string fitnc, string fitf, string fitdf, string betweend, string betweendf) : OptiData(c) {
+//
+//     string refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat;
+//
+//     refdistfile = d; refdistformat = df; refformat = f; fitdistfile = fit; fitdistformat = fitdf; fitformat = fitf; betweendistfile = betweend; betweendistformat = betweendf;
+//
+//     numFitSingletons = 0;
+//     numRefSingletons = 0;
+//     numSingletons = 0;
+//     numBetweenDists = 0;
+//     numFitDists = 0;
+//     numRefDists = 0;
+//     numFitSeqs = 0;
+//
+//     fitPercent = 0;
+//     refWeightMethod = "none";
+//
+//     square = false;
+//
+//     if (refformat == "name") { refnamefile = nc; refcountfile = ""; }
+//     else if (refformat == "count") { refcountfile = nc; refnamefile = ""; }
+//     else { refcountfile = ""; refnamefile = ""; }
+//
+//     if (fitformat == "name") { fitnamefile = fitnc; fitcountfile = ""; }
+//     else if (fitformat == "count") { fitcountfile = fitnc; fitnamefile = ""; }
+//     else { fitcountfile = ""; fitnamefile = ""; }
+//
+//     readFiles(refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat);
+// }
 /***********************************************************************/
 //Since we are extracting a subset of the seqs some reads that may not have been singletons
 OptiData* OptiRefMatrix::extractRefMatrix() {
@@ -364,11 +395,11 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
 
     //select sequences to be reference
 
-    refWeightMethod = "abundance";
+    // refWeightMethod = "abundance";
     closeness = matrix->GetCloseness();
     std::set<long long> fitSeqsIndexes;
     long long count = 0;
-    std::vector<std::string> nameList = adapter.GetSequences();
+    const std::vector<std::string> nameList = adapter.GetSequences();
     // nameList.insert(nameList.end(), singletons.begin(), singletons.end());
     const long long numberOfSequences = nameList.size();
     std::vector<double> abundances(numberOfSequences, 1);
@@ -444,8 +475,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     const long long numToSelect = static_cast<long long>(static_cast<float>(matrix->GetNameList().size()) * fitPercent);
     if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
     else {
-        if (refWeightMethod == "accnos") { } //fitIndexes are filled above
-        else { //randomly select references
+        if (refWeightMethod != "accnos") { //fitIndexes are filled above { //randomly select references
             long long numSelected = 0;
             // const long long totalSeqs = numberOfSequences;
             std::vector<long long> fitSeqsIndexes2(numberOfSequences, 0);

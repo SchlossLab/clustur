@@ -117,6 +117,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptiFit2
+Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const std::vector<std::string>& accnos, const double cutoff);
+RcppExport SEXP _clustur_OptiFit2(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP accnosSEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type distData(distDataSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type accnos(accnosSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiFit2(distData, featureColumnName, binColumnName, accnos, cutoff));
+    return rcpp_result_gen;
+END_RCPP
+}
 // CreateDataFrameFromSparseCountTable
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable);
 RcppExport SEXP _clustur_CreateDataFrameFromSparseCountTable(SEXP countTableSEXP) {
@@ -125,6 +140,30 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
     rcpp_result_gen = Rcpp::wrap(CreateDataFrameFromSparseCountTable(countTable));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GetDist
+double GetDist(const std::string& sequenceOne, const std::string& sequenceTwo);
+RcppExport SEXP _clustur_GetDist(SEXP sequenceOneSEXP, SEXP sequenceTwoSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type sequenceOne(sequenceOneSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type sequenceTwo(sequenceTwoSEXP);
+    rcpp_result_gen = Rcpp::wrap(GetDist(sequenceOne, sequenceTwo));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CreateSparseMatrix
+double CreateSparseMatrix(const std::vector<std::string>& sequences, const double cutoff);
+RcppExport SEXP _clustur_CreateSparseMatrix(SEXP sequencesSEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type sequences(sequencesSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    rcpp_result_gen = Rcpp::wrap(CreateSparseMatrix(sequences, cutoff));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -140,7 +179,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 4},
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 5},
+    {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 5},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
+    {"_clustur_GetDist", (DL_FUNC) &_clustur_GetDist, 2},
+    {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };

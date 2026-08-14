@@ -61,7 +61,7 @@ protected:
     ClusterExport *runDenovoOptiCluster(std::map<std::string, int> &counts,
                                         std::string outStepFile);
 
-    ListVector *runUserRefOptiCluster(ClusterMetric *&metric, std::vector<std::string> refListLabels, std::vector<std::vector<std::string>> otus);
+    ClusterExport *runUserRefOptiCluster(ClusterMetric *&metric, std::vector<std::string> refListLabels, std::vector<std::vector<std::string>> otus);
 
     ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
 

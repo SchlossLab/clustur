@@ -17,6 +17,7 @@
 #include "FileReaders/DistanceFileReader.h"
 #include "FileReaders/ColumnDistanceMatrixReader.h"
 #include "FileReaders/ReadPhylipMatrix.h"
+#include "MothurDependencies/CreateDistanceMatrix.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include "MothurDependencies/PairwiseDistanceCalculator.h"
 
@@ -217,6 +218,42 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
       Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
 }
 
+//[[Rcpp::export]]
+Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
+    const std::vector<std::string>& accnos,
+    const double cutoff) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
+    const auto listVector = distanceData.get()->GetListVector();
+    const bool isSim = distanceData.get()->GetIsSimularity();
+    const OptimatrixAdapter optiAdapter(cutoff);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter,
+        {accnos.begin(), accnos.end()});
+    delete optiMatrix;
+    delete(sparseMatix);
+    delete(listVector);
+    ClusterMetric* metric = new MCC();
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
+    const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    delete(result);
+
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+}
+
 
 //[[Rcpp::export]]
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {
@@ -225,7 +262,18 @@ Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& count
     return adapter.ReCreateDataFrame();
 }
 
-std::vector<std::vector<double>> GetDist(std::vector<std::string> sequences) {
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance(sequences, 0.5);
-    return calculator->Execute();
+//[[Rcpp::export]]
+double GetDist(const std::string& sequenceOne, const std::string& sequenceTwo) {
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    return calculator->Execute(sequenceOne, sequenceTwo);
+}
+
+
+//[[Rcpp::export]]
+double CreateSparseMatrix(const std::vector<std::string>& sequences, const double cutoff) {
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    SparseDistanceMatrix matrix = CreateDistanceMatrix::CreateSparseDistanceMatrix(sequences, calculator, cutoff);
+    delete calculator;
+    return 0;
+
 }

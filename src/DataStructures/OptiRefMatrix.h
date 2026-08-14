@@ -57,6 +57,21 @@ public:
     }
     ~OptiRefMatrix() = default;
 
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames) {
+
+        numFitSingletons = 0;
+        numRefSingletons = 0;
+        numSingletons = 0;
+        numBetweenDists = 0;
+        numFitDists = 0;
+        numRefDists = 0;
+        numFitSeqs = 0;
+        refWeightMethod = "accnos";
+
+        square = false;
+        ReadFiles(matrix, adapter,accnosRefFileNames);
+    }
+
 
 
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;

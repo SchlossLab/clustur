@@ -33,7 +33,19 @@ OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPerce
     .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent)
 }
 
+OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff) {
+    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff)
+}
+
 CreateDataFrameFromSparseCountTable <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
+}
+
+GetDist <- function(sequenceOne, sequenceTwo) {
+    .Call('_clustur_GetDist', PACKAGE = 'clustur', sequenceOne, sequenceTwo)
+}
+
+CreateSparseMatrix <- function(sequences, cutoff) {
+    .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
 }
 

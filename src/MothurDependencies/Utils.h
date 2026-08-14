@@ -30,7 +30,8 @@ public:
     static void splitAtComma(const std::string& s, std::vector<std::string>& container);
     static bool isEqual(float num1, float num2);
     static float ceilDist(float dist, int precision);
-
+    template <typename T>
+    static void SortVector(std::vector<T>&);
     static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
     //Error Checking
@@ -48,6 +49,11 @@ public:
         }
     }
 };
+
+template<typename T>
+void Utils::SortVector(std::vector<T>& vector) {
+    std::sort(vector.begin(), vector.end());
+}
 
 
 #endif //REFACTOR_UTILS_H

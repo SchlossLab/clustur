@@ -12,6 +12,13 @@
 
 SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX){ sorted=false; aboveCutoff = MOTHURMAX;}
 
+SparseDistanceMatrix::SparseDistanceMatrix(const size_t size) : numNodes(0), smallDist(MOTHURMAX) {
+    sorted = false;
+    aboveCutoff = MOTHURMAX;
+    seqVec.resize(size);
+}
+
+
 /***********************************************************************/
 
 int SparseDistanceMatrix::getNNodes() const{
@@ -73,9 +80,9 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
 
     if(cell.dist < smallDist){ smallDist = cell.dist;}
 
-    seqVec[row].push_back(cell);
+    seqVec[row].emplace_back(cell);
     const PDistCell temp(row, cell.dist);
-    seqVec[cell.index].push_back(temp);
+    seqVec[cell.index].emplace_back(temp);
 
     // It pushes itself back in the row, and in the column to create the sparse matrix
 }
@@ -85,9 +92,9 @@ int SparseDistanceMatrix::addCellSorted(const unsigned long row, const PDistCell
 	numNodes+=2;
 	if(cell.dist < smallDist){ smallDist = cell.dist; }
 
-    seqVec[row].push_back(cell);
+    seqVec[row].emplace_back(cell);
     const PDistCell temp(row, cell.dist);
-    seqVec[cell.index].push_back(temp);
+    seqVec[cell.index].emplace_back(temp);
 
     sortSeqVec(row);
     sortSeqVec(cell.index);

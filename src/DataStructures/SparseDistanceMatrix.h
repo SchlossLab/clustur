@@ -22,6 +22,8 @@ public:
           aboveCutoff(other.aboveCutoff),
           util(other.util) {}
     SparseDistanceMatrix();
+    SparseDistanceMatrix(size_t size);
+
     ~SparseDistanceMatrix(){ clear(); }
     [[nodiscard]] int getNNodes() const;
     unsigned long getSmallestCell(unsigned long& row);		//Return the cell with the smallest distance
