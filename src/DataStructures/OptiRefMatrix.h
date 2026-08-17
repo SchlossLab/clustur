@@ -82,6 +82,11 @@ public:
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
                   const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
+
+    int ReadFiles(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
+                  const CountTableAdapter &fitAdapter, const std::vector<std::string> &fastaSequences);
+    void ReadFastaForSingletons(const std::vector<std::string> &fastaSequences, std::vector<bool> &singletons, size_t index);
+
     long long getNumFitTrueSingletons(); //reads that are true singletons (no valid dists in matrix) and are flagged as fit
     [[nodiscard]] long long getNumFitSingletons() const { return numFitSingletons; } //user singletons
     [[nodiscard]] long long getNumDists() const    { return (numFitDists +numRefDists+numBetweenDists); } //all distances under cutoff

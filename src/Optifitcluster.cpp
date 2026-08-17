@@ -170,9 +170,9 @@ ClusterExport * OptiFitCluster::Execute() {
         // string refDupsFile = refcountfile;
         // if (refNameOrCount == "name") { refDupsFile = refnamefile; }
         //
-        // // OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
-        //
-        // return runRefOptiCluster(matrix, metric, list, counts, outputName);
+        OptiData* matrix = new OptiRefMatrix(refdistfile, refDupsFile, refNameOrCount, refformat, cutoff, distfile, dupsFile, nameOrCount, "column", comboDistFile, "column");
+
+        return runRefOptiCluster(matrix, metric, list, counts, outputName);
         // // listFiles.push_back(listFile);
         //
         // // bestListFileName = listFile;

@@ -7,6 +7,8 @@
 
 #include "Adapters/CountTableAdapter.h"
 #include "DataStructures/OptiMatrix.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+#include "MothurDependencies/PairwiseDistanceCalculator.h"
 #include "RNG/SubSample.h"
 //
 //  optirefmatrix.cpp
@@ -18,35 +20,35 @@
 
 
 /***********************************************************************/
-// OptiRefMatrix::OptiRefMatrix(string d, string nc, string f, string df, double c, string fit, string fitnc, string fitf, string fitdf, string betweend, string betweendf) : OptiData(c) {
-//
-//     string refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat;
-//
-//     refdistfile = d; refdistformat = df; refformat = f; fitdistfile = fit; fitdistformat = fitdf; fitformat = fitf; betweendistfile = betweend; betweendistformat = betweendf;
-//
-//     numFitSingletons = 0;
-//     numRefSingletons = 0;
-//     numSingletons = 0;
-//     numBetweenDists = 0;
-//     numFitDists = 0;
-//     numRefDists = 0;
-//     numFitSeqs = 0;
-//
-//     fitPercent = 0;
-//     refWeightMethod = "none";
-//
-//     square = false;
-//
-//     if (refformat == "name") { refnamefile = nc; refcountfile = ""; }
-//     else if (refformat == "count") { refcountfile = nc; refnamefile = ""; }
-//     else { refcountfile = ""; refnamefile = ""; }
-//
-//     if (fitformat == "name") { fitnamefile = fitnc; fitcountfile = ""; }
-//     else if (fitformat == "count") { fitcountfile = fitnc; fitnamefile = ""; }
-//     else { fitcountfile = ""; fitnamefile = ""; }
-//
-//     readFiles(refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat);
-// }
+OptiRefMatrix::OptiRefMatrix(string d, string nc, string f, string df, double c, string fit, string fitnc, string fitf, string fitdf, string betweend, string betweendf) : OptiData(c) {
+
+    string refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat;
+
+    refdistfile = d; refdistformat = df; refformat = f; fitdistfile = fit; fitdistformat = fitdf; fitformat = fitf; betweendistfile = betweend; betweendistformat = betweendf;
+
+    numFitSingletons = 0;
+    numRefSingletons = 0;
+    numSingletons = 0;
+    numBetweenDists = 0;
+    numFitDists = 0;
+    numRefDists = 0;
+    numFitSeqs = 0;
+
+    fitPercent = 0;
+    refWeightMethod = "none";
+
+    square = false;
+
+    if (refformat == "name") { refnamefile = nc; refcountfile = ""; }
+    else if (refformat == "count") { refcountfile = nc; refnamefile = ""; }
+    else { refcountfile = ""; refnamefile = ""; }
+
+    if (fitformat == "name") { fitnamefile = fitnc; fitcountfile = ""; }
+    else if (fitformat == "count") { fitcountfile = fitnc; fitnamefile = ""; }
+    else { fitcountfile = ""; fitnamefile = ""; }
+
+    readFiles(refdistfile, refnamefile, refcountfile, refformat, refdistformat, fitdistfile, fitnamefile, fitcountfile, fitformat, fitdistformat, betweendistfile, betweendistformat);
+}
 /***********************************************************************/
 //Since we are extracting a subset of the seqs some reads that may not have been singletons
 OptiData* OptiRefMatrix::extractRefMatrix() {
@@ -248,6 +250,18 @@ std::vector<long long> OptiRefMatrix::getFitSeqs() {
     return fitSeqsIndexes;
 
 }
+
+void OptiRefMatrix::ReadFastaForSingletons(const std::vector<std::string> &fastaSequences,
+    std::vector<bool> &singletons, const size_t index) {
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    for (size_t i = 0; i < fastaSequences.size(); i++) {
+        if (calculator->Execute(fastaSequences[index], fastaSequences[i]) < cutoff) {
+            singletons[index] = true;
+            return;
+        }
+    }
+}
+
 /***********************************************************************/
 long long OptiRefMatrix::getNumFitTrueSingletons() {
     return std::count(isSingleRef.begin(), isSingleRef.end(), false);
@@ -525,133 +539,160 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
 }
 /***********************************************************************/
 //for reading reference and fit files separately, reference method
-// int OptiRefMatrix::readFiles(std::string refdistfile, std::string refnamefile, std::string refcountfile, std::string refformat, std::string refdistformat, std::string fitdistfile, std::string fitnamefile, std::string fitcountfile, std::string fitformat, std::string fitdistformat, std::string betweendistfile, std::string betweendistformat){
-//     try {
-//         std::map<std::string, long long> nameAssignment;
-//         if (refnamefile != "") { util.readNames(refnamefile, nameAssignment); }
-//         else  {
-//             CountTable ct; ct.readTable(refcountfile, false, true);
-//             std::map<std::string, int> temp = ct.getNameMap();
-//             for (std::map<std::string, int>::iterator it = temp.begin(); it!= temp.end(); it++) {  nameAssignment[it->first] = it->second; }
-//         }
-//
-//         long long count = 0;
-//         for (std::map<std::string, long long>::iterator it = nameAssignment.begin(); it!= nameAssignment.end(); it++) {
-//             it->second = count; count++;
-//             nameMap.push_back(it->first);
-//             nameAssignment[it->first] = it->second;
-//         }
-//
-//         long long refCount = count;
-//         std::vector<bool> singleton; singleton.resize(count, true); //resize will only std::set new elements to true
-//         std::map<long long, long long> refSingletonIndexSwap; //index into
-//         if (refdistformat == "column")        {  refSingletonIndexSwap = readColumnSingletons(singleton, refdistfile, nameAssignment);          }
-//         else if (refdistformat == "phylip")   {  refSingletonIndexSwap = readPhylipSingletons(singleton, refdistfile, count, nameAssignment);   }
-//
-//         //read fit file to find singletons
-//         std::map<long long, long long> fitSingletonIndexSwap;
-//         std::map<std::string, long long> fitnameAssignment;
-//         if (fitnamefile != "") { util.readNames(fitnamefile, fitnameAssignment); }
-//         else  {
-//             CountTable ct; ct.readTable(fitcountfile, false, true);
-//             std::map<std::string, int> temp = ct.getNameMap();
-//             for (std::map<std::string, int>::iterator it = temp.begin(); it!= temp.end(); it++) {  fitnameAssignment[it->first] = it->second; }
-//         }
-//
-//         for (std::map<std::string, long long>::iterator it = fitnameAssignment.begin(); it!= fitnameAssignment.end(); it++) {
-//             it->second = count; count++;
-//             nameMap.push_back(it->first);
-//             nameAssignment[it->first] = it->second;
-//         }
-//
-//         singleton.resize(count, true);
-//         if (fitdistformat == "column")        {  fitSingletonIndexSwap = readColumnSingletons(singleton, fitdistfile, nameAssignment);          }
-//         else if (fitdistformat == "phylip")   {  fitSingletonIndexSwap = readPhylipSingletons(singleton, fitdistfile, count, nameAssignment);   }
-//
-//         fitPercent = ((count-refCount) / (float) count);
-//
-//         //read bewtween file to update singletons
-//         readColumnSingletons(singleton, betweendistfile, nameAssignment);
-//
-//         long long nonSingletonCount = 0;
-//         std::map<long long, long long> singletonIndexSwap;
-//         for (long long i = 0; i < refCount; i++) {
-//             if (!singleton[i]) { //if you are not a singleton
-//                 singletonIndexSwap[i] = nonSingletonCount;
-//                 isRef.push_back(true);
-//                 nonSingletonCount++;
-//             }else {
-//                 singletons.push_back(nameMap[i]);
-//                 isSingleRef.push_back(true);
-//             }
-//         }
-//         refSingletonIndexSwap.clear();
-//
-//         for (long long i = refCount; i < singleton.size(); i++) {
-//             if (!singleton[i]) { //if you are not a singleton
-//                 singletonIndexSwap[i] = nonSingletonCount;
-//                 isRef.push_back(false);
-//                 nonSingletonCount++;
-//             }else {
-//                 singletons.push_back(nameMap[i]);
-//                 isSingleRef.push_back(false);
-//             }
-//         }
-//         singleton.clear();
-//         fitSingletonIndexSwap.clear();
-//
-//         numSingletons = singletons.size();
-//         closeness.resize(nonSingletonCount);
-//
-//         std::map<std::string, std::string> names;
-//         if (refnamefile != "") { util.readNames(refnamefile, names); }
-//
-//         if (fitnamefile != "") {
-//             std::map<std::string, std::string> fitnames;
-//             util.readNames(fitnamefile, fitnames);
-//
-//             names.insert(fitnames.begin(), fitnames.end()); //copy fit names into names
-//         }
-//
-//         if ((fitnamefile != "") || (refnamefile != "")) {
-//             for (int i = 0; i < singletons.size(); i++) {
-//                 std::map<std::string, std::string>::iterator it = names.find(singletons[i]);
-//                 if (it != names.end()) { //update singletons
-//                     singletons[i] = it->second;
-//                 }
-//             }
-//         }
-//
-//         //read reference file distances
-//         bool refHasName = false;
-//         if (refnamefile != "") { refHasName = true; }
-//         if (refdistformat == "column")        {  readColumn(refdistfile, refHasName, names, nameAssignment, singletonIndexSwap);     }
-//         else if (refdistformat == "phylip")   {  readPhylip(refdistfile, refHasName, names, nameAssignment, singletonIndexSwap);     }
-//
-//
-//         //read fit distances
-//         bool fitHasName = false;
-//         if (fitnamefile != "") { fitHasName = true; }
-//         if (fitdistformat == "column")        {  readColumn(fitdistfile, fitHasName, names, nameAssignment, singletonIndexSwap);     }
-//         else if (fitdistformat == "phylip")   {  readPhylip(fitdistfile, fitHasName, names, nameAssignment, singletonIndexSwap);     }
-//
-//
-//         //read in between distances
-//         bool hasName = fitHasName;
-//         if (!hasName && refHasName) { hasName = true; } //if either the ref or fit has a name file then std::set hasName
-//         if (betweendistformat == "column")        {  readColumn(betweendistfile, hasName, names, nameAssignment, singletonIndexSwap);     }
-//         else if (betweendistformat == "phylip")   {  readPhylip(betweendistfile, hasName, names, nameAssignment, singletonIndexSwap);     }
-//
-//         //find number of fitDists, refDists and between dists
-//         calcCounts();
-//
-//         return 0;
-//     }
-//     catch(exception& e) {
-//         m->errorOut(e, "OptiRefMatrix", "readFiles");
-//         exit(1);
-//     }
-// }
+int OptiRefMatrix::ReadFiles(const OptiData* refMatrix, const CountTableAdapter& refAdapter, const OptiData* fitMatrix, const CountTableAdapter& fitAdapter, const std::vector<std::string>& fastaSequences){
+    try {
+        std::map<std::string, long long> nameAssignment;
+        // if (refnamefile != "") { util.readNames(refnamefile, nameAssignment); }
+        // else  {
+        //     CountTable ct; ct.readTable(refcountfile, false, true);
+        //     std::map<std::string, int> temp = ct.getNameMap();
+        //     for (std::map<std::string, int>::iterator it = temp.begin(); it!= temp.end(); it++) {  nameAssignment[it->first] = it->second; }
+        // }
+
+        std::vector<std::string> nameList = refAdapter.GetSequences();
+        long long count = 0;
+        for (const auto& name : nameList) {
+            nameMap.emplace_back(name);
+            nameAssignment[name] = count++;
+        }
+
+        long long refCount = count;
+        singletons = refMatrix->GetSingletons();
+        std::vector<bool> isSingletonVector(nameList.size(), true);
+        std::unordered_set<std::string> singletonNames = {singletons.cbegin(), singletons.cend()};
+        // int nonSingletonCount = 0;
+        for (int i = 0; i < isSingletonVector.size(); i++) {
+            if (singletonNames.find(nameList[i]) != singletonNames.end()) {
+                // singletonIndexSwap[i] = nonSingletonCount;
+                // nonSingletonCount++;
+                continue;
+            }
+            //if you are not a singleton
+            isSingletonVector[i] = false;
+        }
+        // std::vector<bool> singleton; singleton.resize(count, true); //resize will only std::set new elements to true
+        // std::map<long long, long long> refSingletonIndexSwap; //index into
+        // if (refdistformat == "column")        {  refSingletonIndexSwap = readColumnSingletons(singleton, refdistfile, nameAssignment);          }
+        // else if (refdistformat == "phylip")   {  refSingletonIndexSwap = readPhylipSingletons(singleton, refdistfile, count, nameAssignment);   }
+
+        //read fit file to find singletons
+        // std::map<long long, long long> fitSingletonIndexSwap;
+        // std::map<std::string, long long> fitnameAssignment;
+        // if (fitnamefile != "") { util.readNames(fitnamefile, fitnameAssignment); }
+        // else  {
+        //     CountTable ct; ct.readTable(fitcountfile, false, true);
+        //     std::map<std::string, int> temp = ct.getNameMap();
+        //     for (std::map<std::string, int>::iterator it = temp.begin(); it!= temp.end(); it++) {  fitnameAssignment[it->first] = it->second; }
+        // }
+        std::vector<std::string> fitNameList = fitAdapter.GetSequences();
+        for (const auto& name : fitNameList) {
+            // it->second = count; count++;
+            nameMap.push_back(name);
+            nameAssignment[name] = count++;
+        }
+
+        // singleton.resize(count, true);
+        // if (fitdistformat == "column")        {  fitSingletonIndexSwap = readColumnSingletons(singleton, fitdistfile, nameAssignment);          }
+        // else if (fitdistformat == "phylip")   {  fitSingletonIndexSwap = readPhylipSingletons(singleton, fitdistfile, count, nameAssignment);   }
+
+        std::vector<std::string> fitSingletonNames = fitMatrix->GetSingletons();
+        isSingletonVector.resize(count, true);
+        singletonNames.insert(fitSingletonNames.begin, fitSingletonNames.end());
+        // const std::unordered_set<std::string> singletonNames = {singletons.cbegin(), singletons.cend()};
+        for (int i = 0; i < isSingletonVector.size(); i++) {
+            if (singletonNames.find(nameList[i]) != singletonNames.end()) {
+                // singletonIndexSwap[i] = nonSingletonCount;
+                // nonSingletonCount++;
+                continue;
+            }
+            //if you are not a singleton
+            isSingletonVector[i] = false;
+        }
+
+        fitPercent = ((count-refCount) / (float) count);
+
+        //read bewtween file to update singletons
+        readColumnSingletons(singleton, betweendistfile, nameAssignment);
+
+        long long nonSingletonCount = 0;
+        std::map<long long, long long> singletonIndexSwap;
+        for (long long i = 0; i < refCount; i++) {
+            if (!isSingletonVector[i]) { //if you are not a singleton
+                singletonIndexSwap[i] = nonSingletonCount;
+                isRef.push_back(true);
+                nonSingletonCount++;
+            }else {
+                singletons.push_back(nameMap[i]);
+                isSingleRef.push_back(true);
+            }
+        }
+        refSingletonIndexSwap.clear();
+
+        for (long long i = refCount; i < singleton.size(); i++) {
+            if (!singleton[i]) { //if you are not a singleton
+                singletonIndexSwap[i] = nonSingletonCount;
+                isRef.push_back(false);
+                nonSingletonCount++;
+            }else {
+                singletons.push_back(nameMap[i]);
+                isSingleRef.push_back(false);
+            }
+        }
+        singleton.clear();
+        fitSingletonIndexSwap.clear();
+
+        numSingletons = singletons.size();
+        closeness.resize(nonSingletonCount);
+
+        std::map<std::string, std::string> names;
+        if (refnamefile != "") { util.readNames(refnamefile, names); }
+
+        if (fitnamefile != "") {
+            std::map<std::string, std::string> fitnames;
+            util.readNames(fitnamefile, fitnames);
+
+            names.insert(fitnames.begin(), fitnames.end()); //copy fit names into names
+        }
+
+        if ((fitnamefile != "") || (refnamefile != "")) {
+            for (int i = 0; i < singletons.size(); i++) {
+                std::map<std::string, std::string>::iterator it = names.find(singletons[i]);
+                if (it != names.end()) { //update singletons
+                    singletons[i] = it->second;
+                }
+            }
+        }
+
+        //read reference file distances
+        bool refHasName = false;
+        if (refnamefile != "") { refHasName = true; }
+        if (refdistformat == "column")        {  readColumn(refdistfile, refHasName, names, nameAssignment, singletonIndexSwap);     }
+        else if (refdistformat == "phylip")   {  readPhylip(refdistfile, refHasName, names, nameAssignment, singletonIndexSwap);     }
+
+
+        //read fit distances
+        bool fitHasName = false;
+        if (fitnamefile != "") { fitHasName = true; }
+        if (fitdistformat == "column")        {  readColumn(fitdistfile, fitHasName, names, nameAssignment, singletonIndexSwap);     }
+        else if (fitdistformat == "phylip")   {  readPhylip(fitdistfile, fitHasName, names, nameAssignment, singletonIndexSwap);     }
+
+
+        //read in between distances
+        bool hasName = fitHasName;
+        if (!hasName && refHasName) { hasName = true; } //if either the ref or fit has a name file then std::set hasName
+        if (betweendistformat == "column")        {  readColumn(betweendistfile, hasName, names, nameAssignment, singletonIndexSwap);     }
+        else if (betweendistformat == "phylip")   {  readPhylip(betweendistfile, hasName, names, nameAssignment, singletonIndexSwap);     }
+
+        //find number of fitDists, refDists and between dists
+        calcCounts();
+
+        return 0;
+    }
+    catch(exception& e) {
+        m->errorOut(e, "OptiRefMatrix", "readFiles");
+        exit(1);
+    }
+}
 // /***********************************************************************/
 // std::map<long long, long long> OptiRefMatrix::readColumnSingletons(std::vector<bool>& singleton, std::string distFile, std::map<std::string, long long>& nameAssignment){
 //     try {
