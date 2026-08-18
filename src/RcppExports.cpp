@@ -10,6 +10,29 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// CreateFastaDataBase
+SEXP CreateFastaDataBase(const std::vector<std::string>& names, const std::vector<std::string>& sequences);
+RcppExport SEXP _clustur_CreateFastaDataBase(SEXP namesSEXP, SEXP sequencesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type names(namesSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type sequences(sequencesSEXP);
+    rcpp_result_gen = Rcpp::wrap(CreateFastaDataBase(names, sequences));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GetSequences
+int GetSequences(const SEXP& fastaDatabase);
+RcppExport SEXP _clustur_GetSequences(SEXP fastaDatabaseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type fastaDatabase(fastaDatabaseSEXP);
+    rcpp_result_gen = Rcpp::wrap(GetSequences(fastaDatabase));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -132,6 +155,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptiFit3
+Rcpp::List OptiFit3(const SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const Rcpp::DataFrame& refList, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff);
+RcppExport SEXP _clustur_OptiFit3(SEXP refDataSEXP, SEXP fitDataSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP refListSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type refData(refDataSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiFit3(refData, fitData, refFasta, fitFasta, refList, featureColumnName, binColumnName, cutoff));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ToListVector
+void ToListVector(const Rcpp::DataFrame& df);
+RcppExport SEXP _clustur_ToListVector(SEXP dfSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type df(dfSEXP);
+    ToListVector(df);
+    return R_NilValue;
+END_RCPP
+}
+// RemoveChacters
+void RemoveChacters(std::vector<std::string>& bins, const std::vector<std::string>& seqs);
+RcppExport SEXP _clustur_RemoveChacters(SEXP binsSEXP, SEXP seqsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<std::string>& >::type bins(binsSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type seqs(seqsSEXP);
+    RemoveChacters(bins, seqs);
+    return R_NilValue;
+END_RCPP
+}
 // CreateDataFrameFromSparseCountTable
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable);
 RcppExport SEXP _clustur_CreateDataFrameFromSparseCountTable(SEXP countTableSEXP) {
@@ -171,6 +233,8 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_clustur_CreateFastaDataBase", (DL_FUNC) &_clustur_CreateFastaDataBase, 2},
+    {"_clustur_GetSequences", (DL_FUNC) &_clustur_GetSequences, 1},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
@@ -180,6 +244,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 4},
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 5},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 5},
+    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 8},
+    {"_clustur_ToListVector", (DL_FUNC) &_clustur_ToListVector, 1},
+    {"_clustur_RemoveChacters", (DL_FUNC) &_clustur_RemoveChacters, 2},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_GetDist", (DL_FUNC) &_clustur_GetDist, 2},
     {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},

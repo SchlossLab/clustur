@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <cctype>
+#include <algorithm>
 
 #include "Adapters/CountTableAdapter.h"
 #include "Adapters/MatrixAdapter.h"
@@ -114,6 +115,30 @@ ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVecto
     if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
     return new WeightedLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
 }
+
+
+ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
+    const int size = otuBins.size();
+    std::string lastOtu = otuBins[otuBins.size() - 1];
+    lastOtu.erase(std::remove_if(lastOtu.begin(), lastOtu.end(), isalpha), lastOtu.end());
+    const int otuSize = std::stoi(lastOtu) - 1;
+    ListVector listVector(otuSize);
+    std::string currentOtuBin = otuBins[0];
+    std::string currentBinData = "";
+    size_t index = 0;
+    for (int i = 0; i < size; i++) {
+        if (currentOtuBin == otuBins[i]) {
+            currentBinData.append(sequences[i] + ",");
+            continue;
+        }
+        currentOtuBin = otuBins[i];
+        currentBinData.append(sequences[i] + ",");
+        listVector.set(index++, {currentBinData.begin(), currentBinData.end() - 1});
+        currentBinData = "";
+    }
+    return listVector;
+}
+
 
 //[[Rcpp::export]]
 Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std::string& featureColumnName,
@@ -254,6 +279,71 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
       Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
 }
 
+//[[Rcpp::export]]
+Rcpp::List OptiFit3(const SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta,
+    const Rcpp::DataFrame& fitFasta, const Rcpp::DataFrame& refList, const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff) {
+    // std::vector<int> binOtuIndexes = ConvertOtuBinsToIndexes(refList["bin_name"]);
+    std::vector<std::string> binSequences = refList["sequence_name"];
+    // otuNames.erase(std::remove_if(otuNames.begin(), otuNames.end(), isalpha), otuNames.end());
+    //
+    // otuNames.erase(std::remove(otuNames.begin(), otuNames.end(), 'a'), otuNames.end());
+    ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_sequence"],
+        refList["sequence_name"]);
+    const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
+    const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
+    const SparseDistanceMatrix* refSparseMatix =  refDistanceData.get()->GetSparseMatrix();
+    const ListVector* refListVector = refDistanceData.get()->GetListVector();
+    const bool refIsSim = refDistanceData.get()->GetIsSimularity();
+    const OptimatrixAdapter refOptiAdapter(cutoff);
+    const auto* refOptiMatrix = refOptiAdapter.ConvertToOptimatrix(refSparseMatix, refListVector, refIsSim);
+    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
+    delete refSparseMatix;
+    delete refListVector;
+
+    const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
+    const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
+    const SparseDistanceMatrix* fitSparseMatix =  fitDistanceData.get()->GetSparseMatrix();
+    const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
+    const bool fitIsSim = fitDistanceData.get()->GetIsSimularity();
+    const OptimatrixAdapter fitOptiAdapter(cutoff);
+    const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatix, fitListVector, fitIsSim);
+    FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
+    delete fitSparseMatix;
+    delete fitListVector;
+
+
+
+    auto* refMatrix = new OptiRefMatrix(refOptiMatrix, refCountTableAdapter, fitOptiMatrix, fitCountTableAdapter,
+        refFastaDatabase, fitFastaDatabase);
+    delete refOptiMatrix;
+    delete fitOptiMatrix;
+    // ClusterMetric* metric = new MCC();
+    // OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
+    // const auto* result = cluster.Execute();
+    // delete metric;
+    // delete refMatrix;
+    // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    // const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    // const auto label = result->GetListVector().label;
+    // const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+    //     featureColumnName, binColumnName);
+    // const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    // delete(result);
+
+    // return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+    //   Rcpp::Named("abundance") = tidySharedDataFrame,
+    //   Rcpp::Named("cluster") = clusterDataFrame,
+    //   Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+    //   Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    return Rcpp::List::create();
+}
+
+//[[Rcpp::export]]
+void ToListVector(const Rcpp::DataFrame& df) {
+   ListVector vec = CreateListVectorFromOtuList(df["bin_name"], df["sequence_name"]);
+   size_t v = vec.size();
+}
 
 //[[Rcpp::export]]
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {
@@ -277,3 +367,5 @@ double CreateSparseMatrix(const std::vector<std::string>& sequences, const doubl
     return 0;
 
 }
+
+

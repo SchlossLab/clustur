@@ -17,6 +17,8 @@
 #include <set>
 #include <unordered_set>
 #include <map>
+
+#include "FastaDatabase.h"
 #include "ListVector.h"
 #include "OptiData.h"
 
@@ -29,51 +31,15 @@ class OptiRefMatrix final : public OptiData {
 
 public:
     OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
-    const std::vector<std::string>& singleton, const double c) {
-        closeness = close;
-        nameMap = name;
-        singletons = singleton;
-        cutoff = c;
-    }
+    const std::vector<std::string>& singleton, const double c);
 
-    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight) {
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight);
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames);
 
-        numFitSingletons = 0;
-        numRefSingletons = 0;
-        numSingletons = 0;
-        numBetweenDists = 0;
-        numFitDists = 0;
-        numRefDists = 0;
-        numFitSeqs = 0;
-        refWeightMethod = refWeight;
+    OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
+                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);
 
-        fitPercent = fP / 100.0;
-        if (fitPercent < 0.001) { fitPercent = 0.10; Rcpp::warning("[WARNING]: fit percentage must be between 0.001 (0.1%) and 1.0 (100%). Setting to 0.10 or 10%. \n"); } //minumum of 0.1%
-        else if (fitPercent > 100.0) {  Rcpp::stop("[ERROR]: fit percentage must be between 0.0001 and 100.0\n"); }
-
-        square = false;
-        std::unordered_set<std::string> noRefNamesSet;
-        ReadFiles(matrix, adapter,noRefNamesSet);
-    }
-    ~OptiRefMatrix() = default;
-
-    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames) {
-
-        numFitSingletons = 0;
-        numRefSingletons = 0;
-        numSingletons = 0;
-        numBetweenDists = 0;
-        numFitDists = 0;
-        numRefDists = 0;
-        numFitSeqs = 0;
-        refWeightMethod = "accnos";
-
-        square = false;
-        ReadFiles(matrix, adapter,accnosRefFileNames);
-    }
-
-
-
+    ~OptiRefMatrix() override = default;
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;
     OptiData* extractMatrixSubset(std::unordered_set<long long>&);
     OptiData* extractMatrixSubset(std::unordered_set<std::string> &seqs);
@@ -84,15 +50,15 @@ public:
                   const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
 
     int ReadFiles(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-                  const CountTableAdapter &fitAdapter, const std::vector<std::string> &fastaSequences);
-    void ReadFastaForSingletons(const std::vector<std::string> &fastaSequences, std::vector<bool> &singletons, size_t index);
-
+                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);
+    void UpdateSingletons(const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
+                          std::vector<bool> &singletons, std::unordered_map<std::string, long long> &nameMap);
     long long getNumFitTrueSingletons(); //reads that are true singletons (no valid dists in matrix) and are flagged as fit
     [[nodiscard]] long long getNumFitSingletons() const { return numFitSingletons; } //user singletons
     [[nodiscard]] long long getNumDists() const    { return (numFitDists +numRefDists+numBetweenDists); } //all distances under cutoff
     [[nodiscard]] long long getNumFitDists() const { return numFitDists; } //user distances under cutoff
     [[nodiscard]] long long getNumRefDists() const { return numRefDists; } //ref distances under cutoff
-    std::unordered_set<long long> getIndexes(std::unordered_set<std::string> seqs);
+    std::unordered_set<long long> getIndexes(std::unordered_set<std::string> seqs) const;
 
     ListVector* getFitListSingle();
 
@@ -104,7 +70,7 @@ public:
     std::set<long long> getCloseFitSeqs(long long);
     std::set<long long> getCloseRefSeqs(long long);
 
-    std::map<std::string, long long> getNameIndexMap();
+    std::map<std::string, long long> getNameIndexMap() const;
 
     bool isCloseFit(long long, long long, bool&);
     std::vector<long long> getCloseSeqs(long long i);

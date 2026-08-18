@@ -17,6 +17,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
+            // Sorted in R before we create the counttable adapter
             const std::vector<std::string> sequences = count[name];
             sequenceNames = sequences;
             continue;

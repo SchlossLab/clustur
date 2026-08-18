@@ -29,7 +29,6 @@ ListVector::ListVector(const ListVector& other) {
     maxRank = other.maxRank;
 }
 
-
 /***********************************************************************/
 
 void ListVector::push_back(const std::string& seqNames) {
