@@ -42,6 +42,15 @@ void ListVector::push_back(const std::string& seqNames) {
     numSeqs += nNames;
 }
 
+void ListVector::push_back(const ListVector& listVector) {
+    const int currentSize = size();
+    const int newSize = currentSize + listVector.size();
+    resize(newSize);
+    for (int i = currentSize; i < newSize; i++) {
+        set(i, listVector.get(i - currentSize));
+    }
+}
+
 void ListVector::set(const int binNumber, const std::string &seqNames) {
     const int nNames_old = Utils::getNumNames(data[binNumber]);
     data[binNumber] = seqNames;

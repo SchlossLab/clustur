@@ -22,6 +22,7 @@ public:
 
     OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, double cutoff, long long ns);
 
+    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &listVector, double cutoff, long long ns);
     void Reset();
 
     ~OptiFitCluster() override = default;
@@ -43,7 +44,7 @@ public:
 protected:
     ClusterMetric* metric;
     OptiRefMatrix* matrix;
-
+    ListVector listVector;
     std::map<long long, long long> seqBin; //sequence# -> bin#
     std::vector<long long> randomizeSeqs;
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]
@@ -65,7 +66,7 @@ protected:
 
     ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
 
-    ClusterExport *runRefOptiCluster(OptiData *&matrix, ClusterMetric *&metric, ListVector *&refList,
+    ClusterExport *runRefOptiCluster(ListVector refList,
                                      std::map<std::string, int> &counts, std::string outStepFile);
 
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);

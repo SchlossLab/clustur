@@ -283,44 +283,40 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 Rcpp::List OptiFit3(const SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta,
     const Rcpp::DataFrame& fitFasta, const Rcpp::DataFrame& refList, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
-    // std::vector<int> binOtuIndexes = ConvertOtuBinsToIndexes(refList["bin_name"]);
-    std::vector<std::string> binSequences = refList["sequence_name"];
-    // otuNames.erase(std::remove_if(otuNames.begin(), otuNames.end(), isalpha), otuNames.end());
-    //
-    // otuNames.erase(std::remove(otuNames.begin(), otuNames.end(), 'a'), otuNames.end());
-    ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_sequence"],
+
+    ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
     const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
     const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* refSparseMatix =  refDistanceData.get()->GetSparseMatrix();
+    const SparseDistanceMatrix* refSparseMartix =  refDistanceData.get()->GetSparseMatrix();
     const ListVector* refListVector = refDistanceData.get()->GetListVector();
     const bool refIsSim = refDistanceData.get()->GetIsSimularity();
     const OptimatrixAdapter refOptiAdapter(cutoff);
-    const auto* refOptiMatrix = refOptiAdapter.ConvertToOptimatrix(refSparseMatix, refListVector, refIsSim);
+    const auto* refOptiMatrix = refOptiAdapter.ConvertToOptimatrix(refSparseMartix, refListVector, refIsSim);
     const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
-    delete refSparseMatix;
+    delete refSparseMartix;
     delete refListVector;
 
     const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
     const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* fitSparseMatix =  fitDistanceData.get()->GetSparseMatrix();
+    const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
     const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
     const bool fitIsSim = fitDistanceData.get()->GetIsSimularity();
     const OptimatrixAdapter fitOptiAdapter(cutoff);
-    const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatix, fitListVector, fitIsSim);
+    const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatrix, fitListVector, fitIsSim);
     FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
-    delete fitSparseMatix;
+    delete fitSparseMatrix;
     delete fitListVector;
 
 
 
     auto* refMatrix = new OptiRefMatrix(refOptiMatrix, refCountTableAdapter, fitOptiMatrix, fitCountTableAdapter,
-        refFastaDatabase, fitFastaDatabase);
+        refFastaDatabase, fitFastaDatabase, cutoff);
     delete refOptiMatrix;
     delete fitOptiMatrix;
-    // ClusterMetric* metric = new MCC();
-    // OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
-    // const auto* result = cluster.Execute();
+    ClusterMetric* metric = new MCC();
+    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0);
+    const auto* result = cluster.Execute();
     // delete metric;
     // delete refMatrix;
     // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
@@ -369,3 +365,21 @@ double CreateSparseMatrix(const std::vector<std::string>& sequences, const doubl
 }
 
 
+//[[Rcpp::export]]
+void AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
+    const Rcpp::DataFrame& refFasta,
+    const Rcpp::DataFrame& fitFasta,
+    const double cutoff) {
+
+    const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
+    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
+
+    const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
+    const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
+    const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
+    const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
+    FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
+
+    refDistanceData.get()->AddFittedDataToReference(fitSparseMatrix, fitListVector,
+        fitCountTableAdapter, refFastaDatabase, fitFastaDatabase, cutoff);
+}

@@ -144,6 +144,43 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     return countTable;
 }
 
+void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
+    const std::vector<std::string> sequences = other.GetSequences();
+    const size_t currentSequenceSize = sequenceNames.size();
+    sequenceNames.insert(sequenceNames.end(), sequences.begin(), sequences.end());
+    const size_t otherSequenceSize = sequences.size();
+    const size_t newSequenceSize = currentSequenceSize + otherSequenceSize;
+    nameToRowIndex.reserve(newSequenceSize);
+
+    for(size_t i = currentSequenceSize; i < newSequenceSize; i++) {
+        nameToRowIndex[sequences[i]] = i;
+    }
+
+    groups.insert(groups.end(), other.groups.begin(), other.groups.end());
+    for (const auto& group : groups) {
+        const bool currentHasGroup = dataFrameMap.find(group) != dataFrameMap.end();
+        const bool otherHasGroup = other.dataFrameMap.find(group) != other.dataFrameMap.end();
+
+        if (otherHasGroup && currentHasGroup)  { // If they both have it
+            const std::vector<double>& abundances = other.dataFrameMap.at(group);
+            dataFrameMap[group].insert(dataFrameMap[group].end(), abundances.begin(),
+                abundances.end());
+            continue;
+        }
+        // It always means one has it and one doesnt have the group
+        if (!otherHasGroup) {
+            dataFrameMap[group].resize(newSequenceSize, 0);
+            continue;
+        }
+        // Means !currentHasGroup
+        std::vector<double> newAbundances = std::vector<double>(currentSequenceSize, 0);
+        const std::vector<double>& abundances = other.dataFrameMap.at(group);
+        newAbundances.insert(newAbundances.end(), abundances.begin(), abundances.end());
+        dataFrameMap[group] = newAbundances;
+    }
+
+}
+
 
 void CountTableAdapter::CreateNameToIndex() {
     for(size_t i = 0; i < sequenceNames.size(); i++) {

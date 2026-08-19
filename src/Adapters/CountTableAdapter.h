@@ -24,6 +24,9 @@ public:
     [[nodiscard]] std::vector<double> GetColumnByName (const std::string& name) const;
     [[nodiscard]] std::vector<std::string> GetGroups() const;
     [[nodiscard]] Rcpp::DataFrame ReCreateDataFrame() const;
+
+    void AddCountTable(const CountTableAdapter& other);
+
 private:
     void CreateNameToIndex();
     std::unordered_map<std::string, size_t> nameToRowIndex;

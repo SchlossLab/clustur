@@ -37,7 +37,8 @@ public:
     OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames);
 
     OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);
+                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
+                  double cutoff);
 
     ~OptiRefMatrix() override = default;
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;
@@ -86,6 +87,7 @@ protected:
     std::map<long long, long long> weights; //seqeunce index in matrix to weight in chosing as reference
     std::string method, refWeightMethod;
     bool square;
+    double cutoff;
     //a refSingleton or Fitsingleton may not be a true singleton (no valid dists in matrix), but may be a refSeq with no distances to other refs but distances to fitseqs. a fitsingleton may have dists to refs but no dists to other fitseqs.
     long long numFitDists, numRefDists, numRefSingletons, numFitSingletons, numBetweenDists, numSingletons, numFitSeqs;
     float fitPercent;

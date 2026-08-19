@@ -61,6 +61,7 @@ public:
     bool setPrintedLabels(const bool pl) { printListHeaders = pl; return printListHeaders;}
     void setLabel(const std::string& l)	{label = l; }
     void push_back(const std::string&);
+    void push_back(const ListVector&);
     void set(int binNumber, const std::string& seqNames);
     std::string print(std::ostream&);
 

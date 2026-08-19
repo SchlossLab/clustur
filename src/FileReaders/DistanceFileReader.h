@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../Adapters/CountTableAdapter.h"
+#include "../DataStructures/FastaDatabase.h"
 #include "../DataStructures/ListVector.h"
 #include "../DataStructures/SparseDistanceMatrix.h"
 
@@ -31,6 +32,8 @@ public:
     [[nodiscard]] CountTableAdapter GetCountTableAdapter() const {return countTable;}
     [[nodiscard]] double GetCutoff() const {return cutoff;}
     [[nodiscard]] bool GetIsSimularity() const {return sim;}
+    void AddFittedDataToReference(const SparseDistanceMatrix*, const ListVector*, const CountTableAdapter &,
+                                  const FastaDatabase &database, const FastaDatabase &otherDatabase, const double cut);
 
 
 

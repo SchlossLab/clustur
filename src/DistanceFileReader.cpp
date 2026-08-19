@@ -6,10 +6,13 @@
 
 #include "FileReaders/DistanceFileReader.h"
 
+#include "DataStructures/FastaDatabase.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
                                        const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
-countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
+                                                                                                                                          countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
     const ListVector& listVector, const double cutoff, const bool isSim) :sparseMatrix(sparseDistanceMatrix),
@@ -54,4 +57,36 @@ void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &adapter) 
 
 Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     return countTable.ReCreateDataFrame();
+}
+
+void DistanceFileReader::AddFittedDataToReference(const SparseDistanceMatrix* otherSparseMatrix,
+    const ListVector* otherListVector,
+    const CountTableAdapter& otherCountTable,
+    const FastaDatabase& database,
+    const FastaDatabase& otherDatabase, const double cut) {
+
+    list.push_back(*otherListVector);
+    countTable.AddCountTable(otherCountTable);
+    sparseMatrix.addCells(*otherSparseMatrix);
+    const int newSize = list.size();
+    std::unordered_map<std::string, int> indexMap;
+    indexMap.reserve(newSize);
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    for (int i = 0; i < newSize; i++) {
+        indexMap[list.get(i)] = i;
+    }
+    const std::vector<FastaData>& refData = database.GetFastaDataBase();
+    const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
+    for (long long i = 0; i < refData.size(); i++) {
+        const std::string& refSequence = refData[i].sequence;
+        const int iIndex = indexMap[refSequence];
+        for (long long j = 0; j < otherData.size(); j++) {
+            if (const float result = static_cast<float>(calculator->Execute(refSequence,
+                otherData[j].sequence)); result < cut) {
+                const int jIndex = indexMap[otherData[j].sequence];
+                sparseMatrix.addCell(jIndex, {iIndex , result});
+            }
+        }
+    }
+
 }

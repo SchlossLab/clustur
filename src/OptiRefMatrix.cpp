@@ -65,7 +65,8 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-              const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences) {
+              const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
+              const double cutoff):cutoff(cutoff) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -296,12 +297,18 @@ void OptiRefMatrix::UpdateSingletons(const FastaDatabase &refFastaSequences, con
         for (size_t j = 0; j < fitData.size(); j++) {
             const FastaData& currentFitData = fitData[j];
             const long long fitIndex = nameMap[currentFitData.name];
-            if (!singletons[fitIndex]) continue; // We only want to check if singletons are no considering non-singletons
+            // if (!singletons[fitIndex]) continue; // We only want to check if singletons are no considering non-singletons
             if (const double result = calculator->Execute(currentRefData.sequence, currentFitData.sequence);
                 result > cutoff) continue;
+            closeness[refIndex].emplace_back(fitIndex);
+            closeness[fitIndex].emplace_back(refIndex);
             singletons[refIndex] = false;
             singletons[fitIndex] = false;
         }
+    }
+    for (auto& close : closeness) {
+        if (close.empty()) continue;
+        std::sort(close.begin(), close.end());
     }
 }
 
@@ -660,6 +667,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* refMatrix, const CountTableAdapter&
 
     //read bewtween file to update singletons
     // readColumnSingletons(singleton, betweendistfile, nameAssignment);
+    closeness = refMatrix->GetCloseness();
     UpdateSingletons(refFastaSequences, fitFastaSequences, isSingletonVector, nameAssignment);
 
     long long nonSingletonCount = 0;
@@ -690,8 +698,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* refMatrix, const CountTableAdapter&
     // fitSingletonIndexSwap.clear();
 
     numSingletons = singletons.size();
-    closeness.resize(nonSingletonCount);
-
+    // closeness.resize(nonSingletonCount);
     std::map<std::string, std::string> names;
     // if (refnamefile != "") { util.readNames(refnamefile, names); }
     //

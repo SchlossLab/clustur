@@ -53,10 +53,6 @@ ToListVector <- function(df) {
     invisible(.Call('_clustur_ToListVector', PACKAGE = 'clustur', df))
 }
 
-RemoveChacters <- function(bins, seqs) {
-    invisible(.Call('_clustur_RemoveChacters', PACKAGE = 'clustur', bins, seqs))
-}
-
 CreateDataFrameFromSparseCountTable <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
 }
@@ -67,5 +63,9 @@ GetDist <- function(sequenceOne, sequenceTwo) {
 
 CreateSparseMatrix <- function(sequences, cutoff) {
     .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
+}
+
+AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) {
+    invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff))
 }
 

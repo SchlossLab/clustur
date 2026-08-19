@@ -37,6 +37,7 @@ public:
         seqVec.resize(n);
     }
     void clear();
+    void addCells(const SparseDistanceMatrix &other);
     void addCell(unsigned long, PDistCell);
     int addCellSorted(unsigned long, PDistCell);
     std::vector<std::vector<PDistCell> > seqVec;

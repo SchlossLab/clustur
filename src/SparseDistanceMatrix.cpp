@@ -31,6 +31,24 @@ void SparseDistanceMatrix::clear(){
     seqVec.clear();
 }
 
+void SparseDistanceMatrix::addCells(const SparseDistanceMatrix &other) {
+    const size_t currentSize = seqVec.size();
+    const size_t otherSize = other.seqVec.size();
+    const size_t newSize = currentSize + otherSize;
+    resize(newSize);
+    for (size_t i = currentSize; i < newSize; ++i) {
+        std::vector<PDistCell> cells =  other.seqVec[i - currentSize];
+        for (size_t j = 0; j < cells.size(); ++j) {
+            cells[j].index += currentSize;
+        }
+        seqVec[i] = cells;
+    }
+    numNodes += other.numNodes;
+    if (other.smallDist < smallDist) {
+        smallDist = other.smallDist;
+    }
+}
+
 /***********************************************************************/
 
 float SparseDistanceMatrix::getSmallDist() const{

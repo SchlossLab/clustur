@@ -183,17 +183,6 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// RemoveChacters
-void RemoveChacters(std::vector<std::string>& bins, const std::vector<std::string>& seqs);
-RcppExport SEXP _clustur_RemoveChacters(SEXP binsSEXP, SEXP seqsSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::string>& >::type bins(binsSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type seqs(seqsSEXP);
-    RemoveChacters(bins, seqs);
-    return R_NilValue;
-END_RCPP
-}
 // CreateDataFrameFromSparseCountTable
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable);
 RcppExport SEXP _clustur_CreateDataFrameFromSparseCountTable(SEXP countTableSEXP) {
@@ -229,6 +218,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// AddDataToDistanceData
+void AddDataToDistanceData(SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
+RcppExport SEXP _clustur_AddDataToDistanceData(SEXP refDataSEXP, SEXP fitDataSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP& >::type refData(refDataSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    AddDataToDistanceData(refData, fitData, refFasta, fitFasta, cutoff);
+    return R_NilValue;
+END_RCPP
+}
 
 RcppExport SEXP run_testthat_tests(SEXP);
 
@@ -246,10 +249,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 5},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 8},
     {"_clustur_ToListVector", (DL_FUNC) &_clustur_ToListVector, 1},
-    {"_clustur_RemoveChacters", (DL_FUNC) &_clustur_RemoveChacters, 2},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_GetDist", (DL_FUNC) &_clustur_GetDist, 2},
     {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
+    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 5},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}
 };
