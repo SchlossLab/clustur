@@ -217,17 +217,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // AddDataToDistanceData
-void AddDataToDistanceData(SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
+double AddDataToDistanceData(SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
 RcppExport SEXP _clustur_AddDataToDistanceData(SEXP refDataSEXP, SEXP fitDataSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP& >::type refData(refDataSEXP);
     Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    AddDataToDistanceData(refData, fitData, refFasta, fitFasta, cutoff);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(AddDataToDistanceData(refData, fitData, refFasta, fitFasta, cutoff));
+    return rcpp_result_gen;
 END_RCPP
 }
 // CopyObject

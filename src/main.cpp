@@ -284,7 +284,7 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
 // fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
-    ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
+    const ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
     const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
     const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();
@@ -306,6 +306,7 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     // FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
     // delete fitSparseMatrix;
     // delete fitListVector;
+
 
 
 
@@ -362,12 +363,13 @@ double CreateSparseMatrix(const std::vector<std::string>& sequences, const doubl
 
 
 //[[Rcpp::export]]
-void AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
+double AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
     const Rcpp::DataFrame& refFasta,
     const Rcpp::DataFrame& fitFasta,
     const double cutoff) {
 
     const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
+    const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
     const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
 
     const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
@@ -378,6 +380,10 @@ void AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
 
     refDistanceData.get()->AddFittedDataToReference(fitSparseMatrix, fitListVector,
         fitCountTableAdapter, refFastaDatabase, fitFastaDatabase, cutoff);
+    const double fitCountSize = static_cast<double>(fitCountTableAdapter.GetSequences().size());
+    const double refCountSize = static_cast<double>(refCountTableAdapter.GetSequences().size());
+    const double result = fitCountSize / (fitCountSize + refCountSize);
+    return result;// Fit Percentage
 }
 
 //[[Rcpp::export]]

@@ -66,7 +66,7 @@ CreateSparseMatrix <- function(sequences, cutoff) {
 }
 
 AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) {
-    invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff))
+    .Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff)
 }
 
 CopyObject <- function(distanceObject) {
