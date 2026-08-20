@@ -224,7 +224,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     delete(sparseMatix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
+    OptiFitCluster cluster(refMatrix, metric,"denovo", cutoff, 0);
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
@@ -260,7 +260,8 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
     delete(sparseMatix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric, cutoff, 0);
+    OptiFitCluster cluster(refMatrix, metric,"userref", cutoff, 0);
+
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
@@ -280,40 +281,35 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 }
 
 //[[Rcpp::export]]
-Rcpp::List OptiFit3(const SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta,
-    const Rcpp::DataFrame& fitFasta, const Rcpp::DataFrame& refList, const std::string& featureColumnName, const std::string& binColumnName,
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
-
+// fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
     ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
-    const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
-    const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* refSparseMartix =  refDistanceData.get()->GetSparseMatrix();
-    const ListVector* refListVector = refDistanceData.get()->GetListVector();
-    const bool refIsSim = refDistanceData.get()->GetIsSimularity();
-    const OptimatrixAdapter refOptiAdapter(cutoff);
-    const auto* refOptiMatrix = refOptiAdapter.ConvertToOptimatrix(refSparseMartix, refListVector, refIsSim);
-    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
-    delete refSparseMartix;
-    delete refListVector;
-
-    const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
-    const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
-    const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
-    const bool fitIsSim = fitDistanceData.get()->GetIsSimularity();
-    const OptimatrixAdapter fitOptiAdapter(cutoff);
-    const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatrix, fitListVector, fitIsSim);
-    FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
-    delete fitSparseMatrix;
-    delete fitListVector;
-
+    const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
+    const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();
+    const SparseDistanceMatrix* combinedSparseMartix =  combinedDistanceData.get()->GetSparseMatrix();
+    const ListVector* combinedListVector = combinedDistanceData.get()->GetListVector();
+    const bool combinedIsSim = combinedDistanceData.get()->GetIsSimularity();
+    const OptimatrixAdapter combinedOptiAdapter(cutoff);
+    const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
+    delete combinedSparseMartix;
+    delete combinedListVector;
+    //
+    // const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
+    // const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
+    // const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
+    // const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
+    // const bool fitIsSim = fitDistanceData.get()->GetIsSimularity();
+    // const OptimatrixAdapter fitOptiAdapter(cutoff);
+    // const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatrix, fitListVector, fitIsSim);
+    // FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
+    // delete fitSparseMatrix;
+    // delete fitListVector;
 
 
-    auto* refMatrix = new OptiRefMatrix(refOptiMatrix, refCountTableAdapter, fitOptiMatrix, fitCountTableAdapter,
-        refFastaDatabase, fitFastaDatabase, cutoff);
-    delete refOptiMatrix;
-    delete fitOptiMatrix;
+
+    auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter, fitPercent, cutoff);
     ClusterMetric* metric = new MCC();
     OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0);
     const auto* result = cluster.Execute();
@@ -382,4 +378,11 @@ void AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
 
     refDistanceData.get()->AddFittedDataToReference(fitSparseMatrix, fitListVector,
         fitCountTableAdapter, refFastaDatabase, fitFastaDatabase, cutoff);
+}
+
+//[[Rcpp::export]]
+SEXP CopyObject(const SEXP& distanceObject) {
+    const Rcpp::XPtr<DistanceFileReader> refDistanceData(distanceObject);
+    DistanceFileReader* copy = new DistanceFileReader(*refDistanceData.get());
+    return Rcpp::XPtr<DistanceFileReader>(copy);
 }

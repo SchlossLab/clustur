@@ -16,6 +16,7 @@ class DistanceFileReader {
 public:
     virtual ~DistanceFileReader() = default;
     DistanceFileReader() = default;
+    DistanceFileReader(const DistanceFileReader&) = default;
     // We need to deduce type, the easy way to do that is to see if there is a number for the first item read.
     // Phylip files have a number of sequences located at the top. We can use that to our advantage.
     virtual bool Read(const std::string& filePath) {return false;}

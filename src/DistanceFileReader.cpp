@@ -75,18 +75,18 @@ void DistanceFileReader::AddFittedDataToReference(const SparseDistanceMatrix* ot
     for (int i = 0; i < newSize; i++) {
         indexMap[list.get(i)] = i;
     }
-    const std::vector<FastaData>& refData = database.GetFastaDataBase();
-    const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
-    for (long long i = 0; i < refData.size(); i++) {
-        const std::string& refSequence = refData[i].sequence;
-        const int iIndex = indexMap[refSequence];
-        for (long long j = 0; j < otherData.size(); j++) {
-            if (const float result = static_cast<float>(calculator->Execute(refSequence,
-                otherData[j].sequence)); result < cut) {
-                const int jIndex = indexMap[otherData[j].sequence];
-                sparseMatrix.addCell(jIndex, {iIndex , result});
-            }
-        }
-    }
+    // const std::vector<FastaData>& refData = database.GetFastaDataBase();
+    // const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
+    // for (long long i = 0; i < refData.size(); i++) {
+    //     const std::string& refSequence = refData[i].sequence;
+    //     const int iIndex = indexMap[refSequence];
+    //     for (long long j = 0; j < otherData.size(); j++) {
+    //         if (const float result = static_cast<float>(calculator->Execute(refSequence,
+    //             otherData[j].sequence)); result < cut) {
+    //             const int jIndex = indexMap[otherData[j].sequence];
+    //             sparseMatrix.addCell(jIndex, {iIndex , result});
+    //         }
+    //     }
+    // }
 
 }

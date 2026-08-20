@@ -145,15 +145,15 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
 }
 
 void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
-    const std::vector<std::string> sequences = other.GetSequences();
+    const std::vector<std::string>& sequences = other.GetSequences();
     const size_t currentSequenceSize = sequenceNames.size();
     sequenceNames.insert(sequenceNames.end(), sequences.begin(), sequences.end());
     const size_t otherSequenceSize = sequences.size();
     const size_t newSequenceSize = currentSequenceSize + otherSequenceSize;
     nameToRowIndex.reserve(newSequenceSize);
 
-    for(size_t i = currentSequenceSize; i < newSequenceSize; i++) {
-        nameToRowIndex[sequences[i]] = i;
+    for(size_t i = 0; i < otherSequenceSize; i++) {
+        nameToRowIndex[sequences[i]] = i + currentSequenceSize;
     }
 
     groups.insert(groups.end(), other.groups.begin(), other.groups.end());

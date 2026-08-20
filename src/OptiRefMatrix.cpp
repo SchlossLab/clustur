@@ -61,12 +61,11 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
     refWeightMethod = "accnos";
 
     square = false;
-    ReadFiles(matrix, adapter,accnosRefFileNames);
+    ReadFiles(matrix, adapter,accnosRefFileNames, true);
 }
 
-OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-              const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
-              const double cutoff):cutoff(cutoff) {
+OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter,
+              const float fitPercent, const double cutoff):cutoff(cutoff), fitPercent(fitPercent){
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -75,12 +74,11 @@ OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter 
     numFitDists = 0;
     numRefDists = 0;
     numFitSeqs = 0;
-
-    fitPercent = 0;
     refWeightMethod = "none";
 
     square = false;
-    ReadFiles(refMatrix, refAdapter, fitMatrix, fitAdapter, refFastaSequences, fitFastaSequences);
+    std::unordered_set<std::string> noRefNamesSet;
+    ReadFiles(refMatrix, refAdapter, noRefNamesSet, false);
 }
 
 /***********************************************************************/
@@ -444,7 +442,7 @@ void OptiRefMatrix::randomizeRefs() {
 /***********************************************************************/
 //for denovo method
 int OptiRefMatrix::ReadFiles(const OptiData* matrix,
-    const CountTableAdapter& adapter, std::unordered_set<std::string>& optionalRefNames) {
+    const CountTableAdapter& adapter, std::unordered_set<std::string>& optionalRefNames, const bool shuffle) {
     // std::string namefile, countfile;
     // if (dupsFormat == "name") { namefile = dupsFile; countfile = ""; }
     // else if (dupsFormat == "count") { countfile = dupsFile; namefile = ""; }
@@ -468,20 +466,24 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     // nameList.insert(nameList.end(), singletons.begin(), singletons.end());
     const long long numberOfSequences = nameList.size();
     std::vector<double> abundances(numberOfSequences, 1);
-    for (auto& name : nameList) {
-        if (name.empty()) continue;
-        if (refWeightMethod == "abundance")          { weights[count] = static_cast<long long>(adapter.FindTotalAbundance(name)); }
-        else if (refWeightMethod == "connectivity")  { weights[count] = 1;          } //initialize
-        else if (refWeightMethod == "accnos") { //fill fit indexes
-            if (optionalRefNames.find(name) == optionalRefNames.end()) { //you are not a reference sequence
-                fitSeqsIndexes.insert(count); //add as fit seq
+    if (shuffle) {
+        for (auto& name : nameList) {
+            if (name.empty()) continue;
+            if (refWeightMethod == "abundance")          { weights[count] = static_cast<long long>(adapter.FindTotalAbundance(name)); }
+            else if (refWeightMethod == "connectivity")  { weights[count] = 1;          } //initialize
+            else if (refWeightMethod == "accnos") { //fill fit indexes
+                if (optionalRefNames.find(name) == optionalRefNames.end()) { //you are not a reference sequence
+                    fitSeqsIndexes.insert(count); //add as fit seq
+                }
             }
+            count++;
+            // it->second = count; count++;
+            nameMap.push_back(name);
+            // nameAssignment[it->first] = it->second;
         }
-        count++;
-        // it->second = count; count++;
-        nameMap.push_back(name);
-        // nameAssignment[it->first] = it->second;
     }
+    else nameMap = nameList;
+
     // for (std::map<std::string, long long>::iterator it = nameAssignment.begin(); it!= nameAssignment.end(); it++) {
     //     if (refWeightMethod == "abundance")          { weights[count] = it->second; }
     //     else if (refWeightMethod == "connectivity")  { weights[count] = 1;          } //initialize
@@ -537,20 +539,22 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
 
 
     //randomly select the "fit" seqs
-    const long long numToSelect = static_cast<long long>(static_cast<float>(matrix->GetNameList().size()) * fitPercent);
-    if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
-    else {
-        if (refWeightMethod != "accnos") { //fitIndexes are filled above { //randomly select references
-            long long numSelected = 0;
-            // const long long totalSeqs = numberOfSequences;
-            std::vector<long long> fitSeqsIndexes2(numberOfSequences, 0);
-            std::iota(fitSeqsIndexes2.begin(), fitSeqsIndexes2.end(), 0);
-            Utils::mothurRandomShuffle(fitSeqsIndexes2);
-            fitSeqsIndexes =  {fitSeqsIndexes2.begin(), fitSeqsIndexes2.begin() + numToSelect};
-            // while (numSelected < numToSelect) {
-            //     fitSeqsIndexes.insert(Utils::getRandomIndex(numberOfSequences-1)); //no repeats
-            //     numSelected = fitSeqsIndexes.size();
-            // }
+    if (shuffle) {
+        const long long numToSelect = static_cast<long long>(static_cast<float>(matrix->GetNameList().size()) * fitPercent);
+        if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
+        else {
+            if (refWeightMethod != "accnos") { //fitIndexes are filled above { //randomly select references
+                long long numSelected = 0;
+                // const long long totalSeqs = numberOfSequences;
+                std::vector<long long> fitSeqsIndexes2(numberOfSequences, 0);
+                std::iota(fitSeqsIndexes2.begin(), fitSeqsIndexes2.end(), 0);
+                Utils::mothurRandomShuffle(fitSeqsIndexes2);
+                fitSeqsIndexes =  {fitSeqsIndexes2.begin(), fitSeqsIndexes2.begin() + numToSelect};
+                // while (numSelected < numToSelect) {
+                //     fitSeqsIndexes.insert(Utils::getRandomIndex(numberOfSequences-1)); //no repeats
+                //     numSelected = fitSeqsIndexes.size();
+                // }
+            }
         }
     }
 

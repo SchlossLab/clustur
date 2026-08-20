@@ -19,10 +19,9 @@
 class OptiFitCluster : public ClusterMethod {
 
 public:
+    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff, long long ns);
+    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff, long long ns);
 
-    OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, double cutoff, long long ns);
-
-    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &listVector, double cutoff, long long ns);
     void Reset();
 
     ~OptiFitCluster() override = default;
@@ -51,6 +50,7 @@ protected:
     std::map<long long, std::string> binLabels; //for fitting - maps binNumber to existing reference label
     long long maxRefBinNumber;
     bool closed, denovo;
+    std::string method;
     std::set<std::string> unfittedNames;
     double cutoff;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;

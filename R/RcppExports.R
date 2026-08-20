@@ -45,8 +45,8 @@ OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff)
     .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff)
 }
 
-OptiFit3 <- function(refData, fitData, refFasta, fitFasta, refList, featureColumnName, binColumnName, cutoff) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, refList, featureColumnName, binColumnName, cutoff)
+OptiFit3 <- function(combinedData, refList, fitPercent, featureColumnName, binColumnName, cutoff) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, fitPercent, featureColumnName, binColumnName, cutoff)
 }
 
 ToListVector <- function(df) {
@@ -67,5 +67,9 @@ CreateSparseMatrix <- function(sequences, cutoff) {
 
 AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) {
     invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff))
+}
+
+CopyObject <- function(distanceObject) {
+    .Call('_clustur_CopyObject', PACKAGE = 'clustur', distanceObject)
 }
 

@@ -27,8 +27,9 @@
 
 
 /***********************************************************************/
-OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const double cutoff, const long long ns)
-    : metric(met), matrix(mt), cutoff(cutoff), numComboSingletons(ns) {
+OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std::string& method,
+    const double cutoff, const long long ns)
+    : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
     closed = false;
 
@@ -36,14 +37,16 @@ OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const doub
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
 
-OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& listVector, const double cutoff, const long long ns)
-    : metric(met), matrix(mt), listVector(listVector), cutoff(cutoff), numComboSingletons(ns) {
+OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
+    const double cutoff, const long long ns)
+    : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
     closed = false;
-
+    method = "refcluster";
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
+
 
 void OptiFitCluster::Reset() {
     maxRefBinNumber = 0;
@@ -72,6 +75,7 @@ ClusterExport * OptiFitCluster::Execute() {
     // else if (metricName == "fdr")        { metric = new FDR();              }
     // else if (metricName == "fpfn")       { metric = new FPFN();             }
 
+
     std::map<std::string, int> counts;
     // std::string dupsFile = countfile; nameOrCount = "count";
     // if (namefile != "") { dupsFile = namefile; nameOrCount = "name"; }
@@ -81,7 +85,15 @@ ClusterExport * OptiFitCluster::Execute() {
     // fileroot = outputdir + util.getRootName(util.getSimpleName(distfile));
 
     std::string listFile = ""; std::string bestListFileName = ""; std::string outputName = "";
-
+    if (method == "denovo") {
+        return runDenovoOptiCluster(counts, outputName);
+    }
+    if (method == "userref") {
+        std::unordered_set<std::string> refNames; std::vector<std::string> refLabels; std::vector< std::vector<std::string> > otus;
+        return runUserRefOptiCluster(metric,refLabels, otus);
+    }
+    // if method = refcluster
+    return runRefOptiCluster(listVector, counts, outputName);
     if (selfReference) { //de novo
         // std::map<std::string, std::string> variables;
         // variables["[filename]"] = fileroot;

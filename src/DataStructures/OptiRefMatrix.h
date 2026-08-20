@@ -36,9 +36,8 @@ public:
     OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight);
     OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames);
 
-    OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
-                  double cutoff);
+    OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, float fitPercent, double cutoff);
+
 
     ~OptiRefMatrix() override = default;
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;
@@ -48,7 +47,7 @@ public:
     void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
-                  const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
+                  const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames, bool shuffle = true);
 
     int ReadFiles(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
                   const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);
