@@ -313,21 +313,21 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     ClusterMetric* metric = new MCC();
     OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0);
     const auto* result = cluster.Execute();
-    // delete metric;
-    // delete refMatrix;
-    // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
-    // const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
-    // const auto label = result->GetListVector().label;
-    // const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
-    //     featureColumnName, binColumnName);
-    // const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
-    // delete(result);
+    delete metric;
+    delete refMatrix;
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(combinedCountTableAdapter, result, binColumnName);
+    delete(result);
 
-    // return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
-    //   Rcpp::Named("abundance") = tidySharedDataFrame,
-    //   Rcpp::Named("cluster") = clusterDataFrame,
-    //   Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
-    //   Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
     return Rcpp::List::create();
 }
 
