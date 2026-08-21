@@ -9,24 +9,20 @@ GetSequences <- function(fastaDatabase) {
     .Call('_clustur_GetSequences', PACKAGE = 'clustur', fastaDatabase)
 }
 
-DetermineIfPhylipOrColumnFile <- function(filePath) {
-    .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
-}
-
-ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
-    .Call('_clustur_ProcessDistanceFiles', PACKAGE = 'clustur', filePath, countTable, cutoff, isSim)
-}
-
-ProcessSparseMatrix <- function(xPosition, yPosition, data, countTable, cutoff, isSim) {
-    .Call('_clustur_ProcessSparseMatrix', PACKAGE = 'clustur', xPosition, yPosition, data, countTable, cutoff, isSim)
-}
-
 GetDistanceDataFrame <- function(fileReader) {
     .Call('_clustur_GetDistanceDataFrame', PACKAGE = 'clustur', fileReader)
 }
 
 GetCountTable <- function(fileReader) {
     .Call('_clustur_GetCountTable', PACKAGE = 'clustur', fileReader)
+}
+
+CreateDataFrameFromSparseCountTable <- function(countTable) {
+    .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
+}
+
+CreateSparseMatrix <- function(sequences, cutoff) {
+    .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
 }
 
 Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff) {
@@ -49,20 +45,16 @@ OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnNam
     .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff)
 }
 
-ToListVector <- function(df) {
-    invisible(.Call('_clustur_ToListVector', PACKAGE = 'clustur', df))
+DetermineIfPhylipOrColumnFile <- function(filePath) {
+    .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }
 
-CreateDataFrameFromSparseCountTable <- function(countTable) {
-    .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
+ProcessDistanceFiles <- function(filePath, countTable, cutoff, isSim) {
+    .Call('_clustur_ProcessDistanceFiles', PACKAGE = 'clustur', filePath, countTable, cutoff, isSim)
 }
 
-GetDist <- function(sequenceOne, sequenceTwo) {
-    .Call('_clustur_GetDist', PACKAGE = 'clustur', sequenceOne, sequenceTwo)
-}
-
-CreateSparseMatrix <- function(sequences, cutoff) {
-    .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
+ProcessSparseMatrix <- function(xPosition, yPosition, data, countTable, cutoff, isSim) {
+    .Call('_clustur_ProcessSparseMatrix', PACKAGE = 'clustur', xPosition, yPosition, data, countTable, cutoff, isSim)
 }
 
 AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) {

@@ -1,26 +1,21 @@
-#include <Rcpp.h>
-#include <cctype>
-#include <algorithm>
+//
+// Created by Gregory Johnson on 8/21/26.
+//
 
-#include "Adapters/CountTableAdapter.h"
-#include "Adapters/MatrixAdapter.h"
+#include <Rcpp.h>
+
 #include "Adapters/OptimatrixAdapter.h"
 #include "Clusters/AverageLinkage.h"
+#include "Clusters/ClusterMethod.h"
 #include "Clusters/CompleteLinkage.h"
-#include "Clusters/SingleLinkage.h"
-#include "Clusters/WeightedLinkage.h"
 #include "Clusters/OptiCluster.h"
 #include "Clusters/Optifitcluster.h"
+#include "Clusters/SingleLinkage.h"
+#include "Clusters/WeightedLinkage.h"
 #include "Clusters/Metrics/mcc.h"
 #include "Clusters/Metrics/tptn.h"
-#include "DataExporters/ClusterExport.h"
-#include "SharedFileData/SharedFileBuilder.h"
 #include "FileReaders/DistanceFileReader.h"
-#include "FileReaders/ColumnDistanceMatrixReader.h"
-#include "FileReaders/ReadPhylipMatrix.h"
-#include "MothurDependencies/CreateDistanceMatrix.h"
-#include "MothurDependencies/OneGapPairwiseDistance.h"
-#include "MothurDependencies/PairwiseDistanceCalculator.h"
+#include "SharedFileData/SharedFileBuilder.h"
 
 
 Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
@@ -34,79 +29,6 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     return tidySharedDataFrame;
 }
 
-//[[Rcpp::export]]
-bool DetermineIfPhylipOrColumnFile(const std::string& filePath) {
-    std::ifstream data(filePath);
-
-    if(!data.is_open()) {
-        Rcpp::Rcout << "Please enter a valid file path\n";
-        Rcpp::stop("Invalid file path.");
-    }
-    std::string line;
-    std::getline(data, line);
-    bool isPhylip = true;
-    int count = 0;
-    for(const auto& character: line) {
-        if(character != '\n' && std::isspace(character))
-            count++;
-    }
-    if(count > 1)
-        isPhylip = false;
-    data.close();
-    return isPhylip;
-}
-
-//[[Rcpp::export]]
-SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& countTable, const double cutoff,
-    const bool isSim) {
-    const bool isPhylip = DetermineIfPhylipOrColumnFile(filePath);
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(countTable);
-    if(isPhylip) {
-        DistanceFileReader* read = new ReadPhylipMatrix(cutoff, isSim);
-        read->SetCountTableAdapter(countTableAdapter);
-        if (const bool succeeded = read->Read(filePath); !succeeded) {
-            const std::set<std::string> params = read->GetFailureParameters();
-            delete read;
-
-            Utils::CheckForDistanceFileError(params);
-        }
-
-        return Rcpp::XPtr<DistanceFileReader>(read);
-    }
-    DistanceFileReader* read = new ColumnDistanceMatrixReader(cutoff, isSim);
-    read->SetCountTableAdapter(countTableAdapter);
-    if (const bool succeeded = read->Read(filePath); !succeeded) {
-        const std::set<std::string> params = read->GetFailureParameters();
-        delete read;
-        Utils::CheckForDistanceFileError(params);
-    }
-    return Rcpp::XPtr<DistanceFileReader>(read);
-}
-
- //[[Rcpp::export]]
- SEXP ProcessSparseMatrix(const std::vector<int> &xPosition,
-     const std::vector<int> &yPosition, const std::vector<double> &data, const Rcpp::DataFrame& countTable,
-     const double cutoff, const bool isSim) {
-     CountTableAdapter countTableAdapter;
-     countTableAdapter.CreateDataFrameMap(countTable);
-     const MatrixAdapter adapter(xPosition, yPosition, data, cutoff, isSim, countTableAdapter);
-     auto* read = new DistanceFileReader(adapter.CreateSparseMatrix(),
-         adapter.CreateListVector(), countTableAdapter, cutoff, isSim);
-     return Rcpp::XPtr<DistanceFileReader>(read);
- }
-
-//[[Rcpp::export]]
-Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader) {
-    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
-    return ptr.get()->SparseMatrixToDataFrame();
-}
-
-//[[Rcpp::export]]
-Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
-    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
-    return ptr.get()->GetCountTable();
-}
 
 ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
     SparseDistanceMatrix* matrix, RAbundVector& rAbund, const double cutoff, const double adjust = -1) {
@@ -138,6 +60,7 @@ ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, 
     }
     return listVector;
 }
+
 
 
 //[[Rcpp::export]]
@@ -296,20 +219,6 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
     delete combinedSparseMartix;
     delete combinedListVector;
-    //
-    // const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
-    // const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
-    // const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
-    // const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
-    // const bool fitIsSim = fitDistanceData.get()->GetIsSimularity();
-    // const OptimatrixAdapter fitOptiAdapter(cutoff);
-    // const auto* fitOptiMatrix = fitOptiAdapter.ConvertToOptimatrix(fitSparseMatrix, fitListVector, fitIsSim);
-    // FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
-    // delete fitSparseMatrix;
-    // delete fitListVector;
-
-
-
 
     auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter,
         {accnos.begin(), accnos.end()});
@@ -332,65 +241,4 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
       Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
       Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
     return Rcpp::List::create();
-}
-
-//[[Rcpp::export]]
-void ToListVector(const Rcpp::DataFrame& df) {
-   ListVector vec = CreateListVectorFromOtuList(df["bin_name"], df["sequence_name"]);
-   size_t v = vec.size();
-}
-
-//[[Rcpp::export]]
-Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {
-    CountTableAdapter adapter;
-    adapter.CreateDataFrameMapFromSparseCountTable(countTable);
-    return adapter.ReCreateDataFrame();
-}
-
-//[[Rcpp::export]]
-double GetDist(const std::string& sequenceOne, const std::string& sequenceTwo) {
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
-    return calculator->Execute(sequenceOne, sequenceTwo);
-}
-
-
-//[[Rcpp::export]]
-double CreateSparseMatrix(const std::vector<std::string>& sequences, const double cutoff) {
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
-    SparseDistanceMatrix matrix = CreateDistanceMatrix::CreateSparseDistanceMatrix(sequences, calculator, cutoff);
-    delete calculator;
-    return 0;
-
-}
-
-
-//[[Rcpp::export]]
-double AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
-    const Rcpp::DataFrame& refFasta,
-    const Rcpp::DataFrame& fitFasta,
-    const double cutoff) {
-
-    const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
-    const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
-    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
-
-    const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
-    const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
-    const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
-    FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
-
-    refDistanceData.get()->AddFittedDataToReference(fitSparseMatrix, fitListVector,
-        fitCountTableAdapter, refFastaDatabase, fitFastaDatabase, cutoff);
-    const double fitCountSize = static_cast<double>(fitCountTableAdapter.GetSequences().size());
-    const double refCountSize = static_cast<double>(refCountTableAdapter.GetSequences().size());
-    const double result = fitCountSize / (fitCountSize + refCountSize);
-    return result;// Fit Percentage
-}
-
-//[[Rcpp::export]]
-SEXP CopyObject(const SEXP& distanceObject) {
-    const Rcpp::XPtr<DistanceFileReader> refDistanceData(distanceObject);
-    DistanceFileReader* copy = new DistanceFileReader(*refDistanceData.get());
-    return Rcpp::XPtr<DistanceFileReader>(copy);
 }

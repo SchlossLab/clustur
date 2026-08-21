@@ -249,9 +249,9 @@ optifit <- function(dist, cutoff, feature_column_name = "feature", bin_column_na
     accnos <- get_count_table(final_dist)$Representative.Sequences
     ref_fasta <- strollur::read_fasta(ref_fasta)
     fit_fasta <- strollur::read_fasta(fit_fasta)
-    fit_percent <- AddDataToDistanceData(copied_ref, fit_dist, ref_fasta, fit_fasta, cutoff)
+    fit_percent <- AddDataToDistanceData(copied_ref, fit_dist, ref_fasta, fit_fasta, 0.03)
     ref_list <- strollur::read_mothur_list(ref_list)
-    result <- OptiFit3(copied_ref, ref_list, fit_percent, feature_column_name, bin_column_name, cutoff = 0.2)
+    result <- OptiFit3(copied_ref, ref_list, accnos, fit_percent, feature_column_name, bin_column_name, cutoff = 0.03)
   }
   else {
     stop(paste0("You either have forget to supply proper parameters are you did not supply all,",
