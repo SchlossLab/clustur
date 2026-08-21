@@ -157,6 +157,7 @@ void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
     }
 
     groups.insert(groups.end(), other.groups.begin(), other.groups.end());
+    groups.emplace_back("total");
     for (const auto& group : groups) {
         const bool currentHasGroup = dataFrameMap.find(group) != dataFrameMap.end();
         const bool otherHasGroup = other.dataFrameMap.find(group) != other.dataFrameMap.end();

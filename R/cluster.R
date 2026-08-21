@@ -246,11 +246,12 @@ optifit <- function(dist, cutoff, feature_column_name = "feature", bin_column_na
   } else if (!ref_parameters_check) {
     message("ref_fasta, ref_list, fit_dist, and fit_fasta are not NULL, running reference based optifit.")
     copied_ref <- CopyObject(dist)
+    accnos <- get_count_table(final_dist)$Representative.Sequences
     ref_fasta <- strollur::read_fasta(ref_fasta)
     fit_fasta <- strollur::read_fasta(fit_fasta)
     fit_percent <- AddDataToDistanceData(copied_ref, fit_dist, ref_fasta, fit_fasta, cutoff)
     ref_list <- strollur::read_mothur_list(ref_list)
-    result <- OptiFit3(copied_ref, ref_list, fit_percent, feature_column_name, bin_column_name, cutoff)
+    result <- OptiFit3(copied_ref, ref_list, fit_percent, feature_column_name, bin_column_name, cutoff = 0.2)
   }
   else {
     stop(paste0("You either have forget to supply proper parameters are you did not supply all,",

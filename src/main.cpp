@@ -281,7 +281,8 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 }
 
 //[[Rcpp::export]]
-Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos,
+    const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
 // fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
     const ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
@@ -310,7 +311,8 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
 
 
 
-    auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter, fitPercent, cutoff);
+    auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter,
+        {accnos.begin(), accnos.end()});
     ClusterMetric* metric = new MCC();
     OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0);
     const auto* result = cluster.Execute();

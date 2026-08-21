@@ -47,7 +47,7 @@ public:
     void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
-                  const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames, bool shuffle = true);
+                  const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
 
     int ReadFiles(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
                   const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);

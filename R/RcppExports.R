@@ -45,8 +45,8 @@ OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff)
     .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff)
 }
 
-OptiFit3 <- function(combinedData, refList, fitPercent, featureColumnName, binColumnName, cutoff) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, fitPercent, featureColumnName, binColumnName, cutoff)
+OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff)
 }
 
 ToListVector <- function(df) {

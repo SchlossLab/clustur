@@ -18,7 +18,7 @@ int GetSequences(const SEXP& fastaDatabase) {
     const Rcpp::XPtr<FastaDatabase> data(fastaDatabase);
     Rcpp::Rcout << data->GetFastaDataBase()[0].name << std::endl;
     Rcpp::Rcout << data->GetFastaDataBase()[0].sequence << std::endl;
-    int res = data->GetFastaDataBase().size();
+    const int res = data->GetFastaDataBase().size();
     return res;
 }
 

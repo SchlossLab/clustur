@@ -156,18 +156,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiFit3
-Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff);
-RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP fitPercentSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP) {
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff);
+RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP fitPercentSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const SEXP& >::type combinedData(combinedDataSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type accnos(accnosSEXP);
     Rcpp::traits::input_parameter< const float >::type fitPercent(fitPercentSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, fitPercent, featureColumnName, binColumnName, cutoff));
+    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -257,7 +258,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 4},
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 5},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 5},
-    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 6},
+    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 7},
     {"_clustur_ToListVector", (DL_FUNC) &_clustur_ToListVector, 1},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_GetDist", (DL_FUNC) &_clustur_GetDist, 2},
