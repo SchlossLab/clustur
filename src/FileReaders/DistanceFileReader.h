@@ -36,7 +36,8 @@ public:
     void AddFittedDataToReference(const SparseDistanceMatrix*, const ListVector*, const CountTableAdapter &,
                                   const FastaDatabase &database, const FastaDatabase &otherDatabase, const double cut);
 
-
+    void AddInBetweenData(ListVector &otherListVector, CountTableAdapter &otherCountTable,
+                          const FastaDatabase &database, const FastaDatabase &otherDatabase, double cut);
 
 protected:
     SparseDistanceMatrix sparseMatrix{};

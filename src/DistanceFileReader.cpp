@@ -89,3 +89,53 @@ void DistanceFileReader::AddFittedDataToReference(const SparseDistanceMatrix* ot
     }
 
 }
+
+
+void DistanceFileReader::AddInBetweenData(
+   ListVector& otherListVector,
+    CountTableAdapter& otherCountTable,
+    const FastaDatabase& database,
+    const FastaDatabase& otherDatabase, const double cut) {
+    const size_t otherSize = otherCountTable.GetSequences().size();
+    const size_t currentSize = countTable.GetSequences().size();
+    SparseDistanceMatrix otherSparseMatrix;
+    otherSparseMatrix.resize(otherSize);
+    otherSparseMatrix.addCells(sparseMatrix);
+    sparseMatrix = otherSparseMatrix;
+    otherCountTable.AddCountTable(countTable);
+    countTable = otherCountTable;
+
+    const int newSize = otherSize + currentSize;
+
+    otherListVector.push_back(list);
+    list = ListVector(newSize);
+    std::unordered_map<std::string, int> indexMap;
+    indexMap.reserve(newSize);
+
+
+    int counter = 0;
+    for (int i = 0; i < newSize; i++) {
+        std::string names = otherListVector.get(i);
+        std::vector<std::string> splitNames;
+        Utils::splitAtComma(names, splitNames);
+        for (const auto& splitName : splitNames) {
+            list.set(counter, splitName);
+            indexMap[splitName] = counter++;
+        }
+    }
+
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    const std::vector<FastaData>& refData = database.GetFastaDataBase();
+    const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
+    for (const auto &[refName, refSequence] : refData) {
+        const int iIndex = indexMap[refName];
+        for (const auto &[fitName, fitSequence] : otherData) {
+            if (const float result = static_cast<float>(calculator->Execute(refSequence,
+                fitSequence)); result < cut) {
+                const int jIndex = indexMap[fitName];
+                sparseMatrix.addCell(jIndex, {iIndex , result});
+                }
+        }
+    }
+
+}

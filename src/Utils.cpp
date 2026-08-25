@@ -5,6 +5,10 @@
 
 #include "MothurDependencies/Utils.h"
 
+#include "Clusters/AverageLinkage.h"
+#include "Clusters/CompleteLinkage.h"
+#include "Clusters/SingleLinkage.h"
+#include "Clusters/WeightedLinkage.h"
 #include "Clusters/Metrics/accuracy.h"
 #include "Clusters/Metrics/f1score.h"
 #include "Clusters/Metrics/fdr.h"
@@ -167,11 +171,42 @@ float Utils::ceilDist(const float dist, const int precision){
         return static_cast<int>(ceil(dist * precision))/static_cast<float>(precision);
 }
 
+ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *listVector, SparseDistanceMatrix *matrix,
+    RAbundVector &rAbund, const double cutoff, const double adjust) {
+    if (method == "furthest")	return new CompleteLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
+    if(method == "nearest") return new SingleLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
+    if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
+    return new WeightedLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
+}
+
+ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
+    const size_t size = otuBins.size();
+    std::string lastOtu = otuBins[otuBins.size() - 1];
+    lastOtu.erase(std::remove_if(lastOtu.begin(), lastOtu.end(), isalpha), lastOtu.end());
+    const int otuSize = std::stoi(lastOtu) - 1;
+    ListVector listVector(otuSize);
+    std::string currentOtuBin = otuBins[0];
+    std::string currentBinData = "";
+    size_t index = 0;
+    for (int i = 0; i < size; i++) {
+        if (currentOtuBin == otuBins[i]) {
+            currentBinData.append(sequences[i] + ",");
+            continue;
+        }
+        currentOtuBin = otuBins[i];
+        currentBinData.append(sequences[i] + ",");
+        listVector.set(index++, {currentBinData.begin(), currentBinData.end() - 1});
+        currentBinData = "";
+    }
+    return listVector;
+}
+
+
+
 void Utils::AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>>& map,
                                  const std::string& data, const std::vector<std::string>& headers) {
-    Utils utils;
     std::vector<std::string> splitStrings;
-    utils.splitAtComma(data, splitStrings);
+    splitAtComma(data, splitStrings);
     for(size_t i = 0; i < headers.size(); i++) {
         map[headers[i]].emplace_back(splitStrings[i]);
     }

@@ -10,9 +10,12 @@
 #include <sstream>
 #include <unordered_map>
 #include <Rcpp.h>
-
 #include "../Clusters/ClusterMetric.h"
 
+class ClusterMethod;
+class SparseDistanceMatrix;
+class ListVector;
+class RAbundVector;
 class Utils {
 public:
     Utils() = default;
@@ -30,8 +33,12 @@ public:
     static void splitAtComma(const std::string& s, std::vector<std::string>& container);
     static bool isEqual(float num1, float num2);
     static float ceilDist(float dist, int precision);
+    static ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
+    SparseDistanceMatrix* matrix, RAbundVector& rAbund, double cutoff, double adjust = -1);
     template <typename T>
     static void SortVector(std::vector<T>&);
+
+    static ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences);
     static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
     //Error Checking

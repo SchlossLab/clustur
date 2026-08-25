@@ -29,40 +29,6 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
     return tidySharedDataFrame;
 }
 
-
-ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
-    SparseDistanceMatrix* matrix, RAbundVector& rAbund, const double cutoff, const double adjust = -1) {
-    if (method == "furthest")	return new CompleteLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
-    if(method == "nearest") return new SingleLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
-    if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
-    return new WeightedLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
-}
-
-
-ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
-    const int size = otuBins.size();
-    std::string lastOtu = otuBins[otuBins.size() - 1];
-    lastOtu.erase(std::remove_if(lastOtu.begin(), lastOtu.end(), isalpha), lastOtu.end());
-    const int otuSize = std::stoi(lastOtu) - 1;
-    ListVector listVector(otuSize);
-    std::string currentOtuBin = otuBins[0];
-    std::string currentBinData = "";
-    size_t index = 0;
-    for (int i = 0; i < size; i++) {
-        if (currentOtuBin == otuBins[i]) {
-            currentBinData.append(sequences[i] + ",");
-            continue;
-        }
-        currentOtuBin = otuBins[i];
-        currentBinData.append(sequences[i] + ",");
-        listVector.set(index++, {currentBinData.begin(), currentBinData.end() - 1});
-        currentBinData = "";
-    }
-    return listVector;
-}
-
-
-
 //[[Rcpp::export]]
 Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std::string& featureColumnName,
     const std::string& binColumnName, const double cutoff) {
@@ -74,7 +40,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     RAbundVector rAbund = listVector->getRAbundVector();
     if(cutoff < lastCutoff)
         sparseMatrix->FilterSparseMatrix(cutoff);
-    ClusterMethod* clusterMethod = GetClusterMethod(method, listVector, sparseMatrix,
+    ClusterMethod* clusterMethod = Utils::GetClusterMethod(method, listVector, sparseMatrix,
         rAbund, cutoff);
     const auto result = clusterMethod->Execute();
     const auto label = result->GetListVector().label;
@@ -208,7 +174,7 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff) {
 // fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
-    const ListVector refListOtuVector = CreateListVectorFromOtuList(refList["bin_name"],
+    const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
     const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
     const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();

@@ -210,6 +210,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// AddRefData
+void AddRefData(const SEXP& fitData, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
+RcppExport SEXP _clustur_AddRefData(SEXP fitDataSEXP, SEXP refCountTableSEXP, SEXP refListSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refCountTable(refCountTableSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    AddRefData(fitData, refCountTable, refList, refFasta, fitFasta, cutoff);
+    return R_NilValue;
+END_RCPP
+}
 // CopyObject
 SEXP CopyObject(const SEXP& distanceObject);
 RcppExport SEXP _clustur_CopyObject(SEXP distanceObjectSEXP) {
@@ -240,6 +255,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
     {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 5},
+    {"_clustur_AddRefData", (DL_FUNC) &_clustur_AddRefData, 6},
     {"_clustur_CopyObject", (DL_FUNC) &_clustur_CopyObject, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

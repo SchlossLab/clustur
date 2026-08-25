@@ -260,3 +260,26 @@ optifit <- function(dist, cutoff, feature_column_name = "feature", bin_column_na
   class(result) <- "mothur_cluster"
   result
 }
+
+
+
+
+
+fit_cluster <- function(ref_list, ref_fasta, ref_count, fit_dist, fit_fasta) {
+  count_table <- amazon_count
+  ref_list <- final_list
+  ref_count <- final_count
+  ref_fasta <- final_fasta
+  fit_fasta <- amazon_fasta
+  fit_dist <- amazon_dist
+
+  ref_fasta <- strollur::read_fasta(ref_fasta)
+  fit_fasta <- strollur::read_fasta(fit_fasta)
+
+  ref_list <- strollur::read_mothur_list(ref_list)
+  copied_data <- CopyObject(fit_dist)
+  class(copied_data) <- "distance_object"
+  AddRefData(copied_data, ref_count, ref_list, ref_fasta, fit_fasta, 0.1)
+  OptiFit3(copied_data, ref_list,  get_count_table(final_dist)$Representative.Sequences,
+  0.2, "feature", "bin", 0.2)
+}

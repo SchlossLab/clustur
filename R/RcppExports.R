@@ -61,6 +61,10 @@ AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) 
     .Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff)
 }
 
+AddRefData <- function(fitData, refCountTable, refList, refFasta, fitFasta, cutoff) {
+    invisible(.Call('_clustur_AddRefData', PACKAGE = 'clustur', fitData, refCountTable, refList, refFasta, fitFasta, cutoff))
+}
+
 CopyObject <- function(distanceObject) {
     .Call('_clustur_CopyObject', PACKAGE = 'clustur', distanceObject)
 }
