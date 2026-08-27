@@ -57,8 +57,8 @@ ProcessSparseMatrix <- function(xPosition, yPosition, data, countTable, cutoff, 
     .Call('_clustur_ProcessSparseMatrix', PACKAGE = 'clustur', xPosition, yPosition, data, countTable, cutoff, isSim)
 }
 
-AddDataToDistanceData <- function(refData, fitData, refFasta, fitFasta, cutoff) {
-    .Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', refData, fitData, refFasta, fitFasta, cutoff)
+AddDataToDistanceData <- function(fitData, refList, refCountTable, refFasta, fitFasta, cutoff) {
+    invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', fitData, refList, refCountTable, refFasta, fitFasta, cutoff))
 }
 
 AddRefData <- function(fitData, refCountTable, refList, refFasta, fitFasta, cutoff) {

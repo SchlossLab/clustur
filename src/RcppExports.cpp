@@ -196,18 +196,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // AddDataToDistanceData
-double AddDataToDistanceData(SEXP& refData, const SEXP& fitData, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
-RcppExport SEXP _clustur_AddDataToDistanceData(SEXP refDataSEXP, SEXP fitDataSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
+void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
+RcppExport SEXP _clustur_AddDataToDistanceData(SEXP fitDataSEXP, SEXP refListSEXP, SEXP refCountTableSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP& >::type refData(refDataSEXP);
     Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refCountTable(refCountTableSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(AddDataToDistanceData(refData, fitData, refFasta, fitFasta, cutoff));
-    return rcpp_result_gen;
+    AddDataToDistanceData(fitData, refList, refCountTable, refFasta, fitFasta, cutoff);
+    return R_NilValue;
 END_RCPP
 }
 // AddRefData
@@ -254,7 +254,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
-    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 5},
+    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 6},
     {"_clustur_AddRefData", (DL_FUNC) &_clustur_AddRefData, 6},
     {"_clustur_CopyObject", (DL_FUNC) &_clustur_CopyObject, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},

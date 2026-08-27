@@ -279,7 +279,8 @@ fit_cluster <- function(ref_list, ref_fasta, ref_count, fit_dist, fit_fasta) {
   ref_list <- strollur::read_mothur_list(ref_list)
   copied_data <- CopyObject(fit_dist)
   class(copied_data) <- "distance_object"
+  AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, 0.1)
   AddRefData(copied_data, ref_count, ref_list, ref_fasta, fit_fasta, 0.1)
   OptiFit3(copied_data, ref_list,  get_count_table(final_dist)$Representative.Sequences,
-  0.2, "feature", "bin", 0.2)
+  0.1, "feature", "bin", 0.03)
 }

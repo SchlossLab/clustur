@@ -74,27 +74,22 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
 
 
 //[[Rcpp::export]]
-double AddDataToDistanceData(SEXP& refData, const SEXP& fitData,
+void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList,const Rcpp::DataFrame& refCountTable,
     const Rcpp::DataFrame& refFasta,
     const Rcpp::DataFrame& fitFasta,
     const double cutoff) {
 
-    const Rcpp::XPtr<DistanceFileReader> refDistanceData(refData);
-    const CountTableAdapter refCountTableAdapter = refDistanceData.get()->GetCountTableAdapter();
-    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
-
     const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
-    const CountTableAdapter fitCountTableAdapter = fitDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* fitSparseMatrix =  fitDistanceData.get()->GetSparseMatrix();
-    const ListVector* fitListVector = fitDistanceData.get()->GetListVector();
-    FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
 
-    refDistanceData.get()->AddFittedDataToReference(fitSparseMatrix, fitListVector,
-        fitCountTableAdapter, refFastaDatabase, fitFastaDatabase, cutoff);
-    const double fitCountSize = static_cast<double>(fitCountTableAdapter.GetSequences().size());
-    const double refCountSize = static_cast<double>(refCountTableAdapter.GetSequences().size());
-    const double result = fitCountSize / (fitCountSize + refCountSize);
-    return result;// Fit Percentage
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(refCountTable);
+    const FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
+    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
+    const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
+      refList["sequence_name"]);
+
+    fitDistanceData.get()->AddFittedDataToReference(refListOtuVector, countTableAdapter,
+        fitFastaDatabase, refFastaDatabase, cutoff);
 }
 
 //[[Rcpp::export]]

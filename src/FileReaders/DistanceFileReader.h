@@ -33,8 +33,8 @@ public:
     [[nodiscard]] CountTableAdapter GetCountTableAdapter() const {return countTable;}
     [[nodiscard]] double GetCutoff() const {return cutoff;}
     [[nodiscard]] bool GetIsSimularity() const {return sim;}
-    void AddFittedDataToReference(const SparseDistanceMatrix*, const ListVector*, const CountTableAdapter &,
-                                  const FastaDatabase &database, const FastaDatabase &otherDatabase, const double cut);
+    void AddFittedDataToReference(const ListVector &otherListVector,
+                                  const CountTableAdapter &, const FastaDatabase &database, const FastaDatabase &otherDatabase, double cut);
 
     void AddInBetweenData(ListVector &otherListVector, CountTableAdapter &otherCountTable,
                           const FastaDatabase &database, const FastaDatabase &otherDatabase, double cut);

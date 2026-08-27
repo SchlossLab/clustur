@@ -59,27 +59,39 @@ Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
     return countTable.ReCreateDataFrame();
 }
 
-void DistanceFileReader::AddFittedDataToReference(const SparseDistanceMatrix* otherSparseMatrix,
-    const ListVector* otherListVector,
+void DistanceFileReader::AddFittedDataToReference(
+    const ListVector& otherListVector,
     const CountTableAdapter& otherCountTable,
     const FastaDatabase& database,
     const FastaDatabase& otherDatabase, const double cut) {
-
-    list.push_back(*otherListVector);
+    const size_t otherSize = otherCountTable.GetSequences().size();
+    const size_t currentSize = countTable.GetSequences().size();
+    list.push_back(otherListVector);
     countTable.AddCountTable(otherCountTable);
-    sparseMatrix.addCells(*otherSparseMatrix);
-    const int newSize = list.size();
+    sparseMatrix.resize(currentSize + otherSize);
+    const int newSize = otherSize + currentSize;
+    list.resize(newSize);
     std::unordered_map<std::string, int> indexMap;
     indexMap.reserve(newSize);
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
-    for (int i = 0; i < newSize; i++) {
+    for (int i = 0; i < currentSize; i++) {
         indexMap[list.get(i)] = i;
     }
-    const std::vector<FastaData>& refData = database.GetFastaDataBase();
-    const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
+    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    int counter = currentSize;
+    for (int i = 0; i < newSize; i++) {
+        std::string names = otherListVector.get(i);
+        std::vector<std::string> splitNames;
+        Utils::splitAtComma(names, splitNames);
+        for (const auto& splitName : splitNames) {
+            list.set(counter, splitName);
+            indexMap[splitName] = counter++;
+        }
+    }
+    const std::vector<FastaData>& refData = otherDatabase.GetFastaDataBase();
+    const std::vector<FastaData>& fitData = database.GetFastaDataBase();
     for (const auto &[refName, refSequence] : refData) {
         const int iIndex = indexMap[refName];
-        for (const auto &[fitName, fitSequence] : otherData) {
+        for (const auto &[fitName, fitSequence] : fitData) {
             if (const float result = static_cast<float>(calculator->Execute(refSequence,
                 fitSequence)); result < cut) {
                 const int jIndex = indexMap[fitName];
@@ -87,7 +99,6 @@ void DistanceFileReader::AddFittedDataToReference(const SparseDistanceMatrix* ot
             }
         }
     }
-
 }
 
 

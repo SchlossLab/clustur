@@ -32,9 +32,9 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
             nameOffset++;
             continue;
         }
-        std::vector<long long> cells(cell.size());
-        size_t counter = 0;
-        // cells.reserve(cell.size());
+        std::vector<long long> cells;
+        // size_t counter = 0;
+        cells.reserve(cell.size());
         for(const auto& row : cell) {
             float distance = row.dist;
             if (distance == -1) {
@@ -43,7 +43,8 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
                 distance = 1.0f - distance;
             }
             if(distance <= cutoff) {
-                cells[counter++] = (indexSwap[row.index]);
+                cells.emplace_back(indexSwap[row.index]);
+                // cells[counter++] = (indexSwap[row.index]);
                 nameList[indexSwap[row.index]] = listVector->get(row.index);
             }
         }

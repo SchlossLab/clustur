@@ -122,12 +122,17 @@ void ListVector::resize(const int size) {
 
 std::string ListVector::print(std::ostream &output) {
     std::map<std::string, int> ct;
+    int counter = 0;
     for (const auto & i : data) {
         if (!i.empty()) {
             std::string bin = i;
             std::vector<std::string> binNames;
             Utils::splitAtComma(bin, binNames);
             if (!std::isdigit(bin[0])) {
+                if(binNames.empty()) {
+                    continue;
+                    //Rcpp::stop("Errored out in print");
+                }
                 binNames[0] = "";
                 //continue;
             }
@@ -135,6 +140,7 @@ std::string ListVector::print(std::ostream &output) {
                 ct[key] = 1;
             }
         }
+        counter++;
     }
 
     return print(output, ct);
