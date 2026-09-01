@@ -19,8 +19,10 @@
 class OptiFitCluster : public ClusterMethod {
 
 public:
-    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff, long long ns);
-    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff, long long ns);
+    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
+        long long ns, bool selfReference = false, bool isClosed = false);
+    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff,
+        long long ns, bool selfReference = false, bool isClosed = false);
 
     void Reset();
 
@@ -69,9 +71,15 @@ protected:
     ClusterExport *runRefOptiCluster(ListVector refList,
                                      std::map<std::string, int> &counts, std::string outStepFile);
 
+    void runSensSpec(OptiRefMatrix *&matrix, ListVector *&list, std::string &sensSpecFile) const;
+
+
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
+private:
+    bool selfReference;
+    bool printRef;
 
 };
 

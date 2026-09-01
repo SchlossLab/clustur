@@ -104,6 +104,22 @@ public:
         return true;
     }
 
+    [[nodiscard]] virtual std::map<std::string, long long> getNameIndexMap() const {
+        std::map<std::string, long long> nameIndexes;
+        for (int i = 0; i < nameMap.size(); i++) {
+            std::vector<std::string> thisBinsSeqs; Utils::splitAtComma(nameMap[i], thisBinsSeqs);
+            if (i < closeness.size()) { nameIndexes[thisBinsSeqs[0]] = i;  }
+        }
+        return nameIndexes;
+    }
+
+    [[nodiscard]] virtual long long getNumDists() const {
+        size_t foundDists = 0;
+        for (const auto & closenes : closeness) {
+            foundDists += closenes.size();
+        }
+        return static_cast<long long>(foundDists);
+    }
 
 protected:
     double cutoff{};

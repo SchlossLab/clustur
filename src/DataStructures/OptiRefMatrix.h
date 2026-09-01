@@ -55,7 +55,7 @@ public:
                           std::vector<bool> &singletons, std::unordered_map<std::string, long long> &nameMap);
     long long getNumFitTrueSingletons(); //reads that are true singletons (no valid dists in matrix) and are flagged as fit
     [[nodiscard]] long long getNumFitSingletons() const { return numFitSingletons; } //user singletons
-    [[nodiscard]] long long getNumDists() const    { return (numFitDists +numRefDists+numBetweenDists); } //all distances under cutoff
+    [[nodiscard]] long long getNumDists() const override    { return (numFitDists +numRefDists+numBetweenDists); } //all distances under cutoff
     [[nodiscard]] long long getNumFitDists() const { return numFitDists; } //user distances under cutoff
     [[nodiscard]] long long getNumRefDists() const { return numRefDists; } //ref distances under cutoff
     std::unordered_set<long long> getIndexes(std::unordered_set<std::string> seqs) const;

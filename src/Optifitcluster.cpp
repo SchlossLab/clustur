@@ -24,24 +24,28 @@
 #include <chrono>
 
 #include "Clusters/Cluster.h"
+#include "MothurDependencies/SensSpecCalc.h"
 
 
 /***********************************************************************/
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std::string& method,
-    const double cutoff, const long long ns)
+    const double cutoff, const long long ns, const bool selfRef, const bool isClosed)
     : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
-    closed = false;
-
+    closed = isClosed;
+    selfReference = selfRef;
+    printRef = selfRef;
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
 
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
-    const double cutoff, const long long ns)
+    const double cutoff, const long long ns, const bool selfRef, const bool isClosed)
     : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
-    closed = false;
+    selfReference = selfRef;
+    printRef = selfRef;
+    closed = isClosed;
     method = "refcluster";
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
@@ -59,7 +63,6 @@ void OptiFitCluster::Reset() {
 
 ClusterExport * OptiFitCluster::Execute() {
     time_t estart = time(nullptr);
-    constexpr bool selfReference = false;
     // if (metricName == "mcc")             { metric = new MCC();              }
     // else if (metricName == "sens")       { metric = new Sensitivity();      }
     // else if (metricName == "spec")       { metric = new Specificity();      }
@@ -237,7 +240,7 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     double reftruePositives, reftrueNegatives, reffalsePositives, reffalseNegatives, numRefSeqs;
     numRefSeqs = 0; reftruePositives = 0; reffalsePositives = 0; reffalseNegatives = 0; reftrueNegatives = 0;
 
-    if (meth == "closed") { closed = true; }
+    // if (meth == "closed") { closed = true; }
     denovo = denov;
 
     std::vector< std::vector< long long> > translatedBins;
@@ -695,7 +698,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     constexpr double stableMetric = 0;
     constexpr int maxIters = 100;
     bool printStepsHeader = true;
-    constexpr int denovoIters = 100;
+    constexpr int denovoIters = 10;
     int smallestBins = -1;
     size_t index = 0;
     // Could thread?
@@ -929,117 +932,6 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     return list;
 }
 
-// ClusterExport OptiFitCluster::runUserRefOptiCluster(OptiData*& matrix, ClusterMetric*& metric, map<string, int>& counts, string outStepFile, vector<string> refListLabels, vector<vector<string> > otus){
-//
-//         bool printStepsHeader = true;
-//         // tag = cluster.getTag();
-//
-//         int iters = 0;
-//         double listVectorMetric = 0; //worst state
-//         double delta = 1;
-//
-//         if (!createAccnos) {
-//
-//             m->mothurOut("\nClustering references from " + distfile + "\n");
-//
-//             //get "ref" seqs for initialize inputs
-//             OptiData* refMatrix = matrix->extractRefMatrix();
-//             ListVector* refList = clusterRefs(refMatrix, metric); delete refMatrix;
-//
-//             for (int i = 0; i < refList->getNumBins(); i++) {
-//                 vector<string> binNames;
-//                 string bin = refList->get(i);
-//                 if (bin != "") {
-//                     util.splitAtComma(bin, binNames);
-//                     otus.push_back(binNames);
-//                 }
-//             }
-//
-//             //add tag to OTULabels to indicate the reference
-//             refListLabels = refList->getLabels();
-//             for (int i = 0; i < refListLabels.size(); i++) { refListLabels[i] = "Ref_" + refListLabels[i];  }
-//             refList->setLabels(refListLabels);
-//             delete refList;
-//         }
-//
-//         cluster.initialize(listVectorMetric, true, otus, refListLabels, method, false);
-//
-//         long long numBins = cluster.getNumBins();
-//         double tp, tn, fp, fn;
-//         vector<double> results = cluster.getStats(tp, tn, fp, fn);
-//
-//         double fittp, fittn, fitfp, fitfn;
-//         long long numFitBins = cluster.getNumFitBins();
-//         vector<double> fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
-//
-//         m->mothurOut("\nFitting " + toString(matrix->getNumFitSeqs()+matrix->getNumFitSingletons()+matrix->getNumFitTrueSingletons()) + " sequences to reference otus.\n");
-//
-//         m->mothurOut("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
-//
-//         outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, false, 0);
-//
-//
-//         while ((delta > stableMetric) && (iters < maxIters)) { //
-//
-//             if (m->getControl_pressed()) { break; }
-//             double oldMetric = listVectorMetric;
-//
-//             cluster.update(listVectorMetric);
-//
-//             delta = abs(oldMetric - listVectorMetric);
-//             iters++;
-//
-//             results = cluster.getStats(tp, tn, fp, fn);
-//             numBins = cluster.getNumBins();
-//             numFitBins = cluster.getNumFitBins();
-//             fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
-//
-//             outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
-//         }
-//         m->mothurOutEndLine(); m->mothurOutEndLine();
-//
-//         if (m->getControl_pressed()) {  return 0; }
-//
-//         ListVector* list = cluster.getFittedList(toString(cutoff), printref);
-//         list->setLabel(toString(cutoff));
-//
-//         string sensspecFilename = fileroot+ tag + ".sensspec";
-//         ofstream sensFile;
-//         util.openOutputFile(sensspecFilename,    sensFile);
-//         outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
-//
-//         if (method == "closed") {
-//             sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-//             int numBins = list->getNumBins();
-//             if (printref) { //combo
-//                 results = cluster.getStats(tp, tn, fp, fn);
-//                 sensFile << cutoff << '\t' << cutoff << '\t' << numBins << '\t' << tp << '\t' << tn << '\t' << fp << '\t' << fn;
-//                 for (int i = 0; i < results.size(); i++) {  sensFile << '\t' << results[i]; } sensFile << '\n';
-//             }else { //fit
-//                 fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
-//                 sensFile << cutoff << '\t' << cutoff << '\t' << numBins << '\t' << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn;
-//                 for (int i = 0; i < fitresults.size(); i++) {  sensFile << "\t" << fitresults[i]; } sensFile << endl;
-//             }
-//             set<string> unfitted = cluster.getUnfittedNames();
-//
-//             string accnosFilename = fileroot+ "optifit_scrap.accnos";
-//             outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
-//
-//             ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
-//             for (set<string>::iterator it = unfitted.begin(); it != unfitted.end(); it++) {
-//                 accOut << *it << endl;
-//             }
-//             accOut.close();
-//         }else {
-//             runSensSpec(matrix, metric, list, counts, sensFile);
-//         }
-//         sensFile.close();
-//
-//         return list;
-// }
-
-
-
 ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, std::vector<std::string> refListLabels,
 std::vector<std::vector<std::string> > otus){
     bool printStepsHeader = true;
@@ -1097,7 +989,7 @@ std::vector<std::vector<std::string> > otus){
 
     // Rcpp::message("\n\nlist\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
 
-    std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
+    std::vector<std::string> sensfileHeaders{"label","cutoff","numotus","tp","tn","fp","fn","sensitivity",
     "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
     // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
 
@@ -1120,7 +1012,7 @@ std::vector<std::vector<std::string> > otus){
 
         delta = abs(oldMetric - listVectorMetric);
         iters++;
-
+        // stats = getStats(tp, tn, fp, fn);
         results = getStats(tp, tn, fp, fn);
         numBins = getNumBins();
         numFitBins = getNumFitBins();
@@ -1156,31 +1048,41 @@ std::vector<std::vector<std::string> > otus){
     // util.openOutputFile(sensspecFilename,    sensFile);
     // outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
 
-    // if (method == "closed") {
-    //     sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-    //     int numBins = list->getNumBins();
-    //     if (printref) { //combo
-    //         results = cluster.getStats(tp, tn, fp, fn);
-    //         sensFile << cutoff << '\t' << cutoff << '\t' << numBins << '\t' << tp << '\t' << tn << '\t' << fp << '\t' << fn;
-    //         for (int i = 0; i < results.size(); i++) {  sensFile << '\t' << results[i]; } sensFile << '\n';
-    //     }else { //fit
-    //         fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
-    //         sensFile << cutoff << '\t' << cutoff << '\t' << numBins << '\t' << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn;
-    //         for (int i = 0; i < fitresults.size(); i++) {  sensFile << "\t" << fitresults[i]; } sensFile << endl;
-    //     }
-    //     set<string> unfitted = cluster.getUnfittedNames();
-    //
-    //     string accnosFilename = fileroot+ "optifit_scrap.accnos";
-    //     outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
-    //
-    //     ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
-    //     for (set<string>::iterator it = unfitted.begin(); it != unfitted.end(); it++) {
-    //         accOut << *it << endl;
-    //     }
-    //     accOut.close();
-    // }else {
-    //     runSensSpec(matrix, metric, list, counts, sensFile);
-    // }
+    // sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(tp) + ',' +
+    //            std::to_string(tn) + ',' +
+    //            std::to_string(fp) + ',' + std::to_string(fn) + ',';
+    // for (double res: results) { sensFile += std::to_string(res) + ','; }
+    // Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
+    if (closed) {//method == "closed") {
+        // sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+        int numBins = list->getNumBins();
+        if (printRef) { //combo
+            results = getStats(tp, tn, fp, fn);
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(tp) +
+                ',' + std::to_string(tn) + ',' + std::to_string(fp) + ',' + std::to_string(fn) + ',';
+
+            for (double res: results) { sensFile += std::to_string(res) + ','; }
+        }else { //fit
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(fittp) +
+               ',' + std::to_string(fittn) + ',' + std::to_string(fitfp) + ',' + std::to_string(fitfn) + ',';
+
+            fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
+            for (double res: fitresults) { sensFile += std::to_string(res) + ','; }
+        }
+        std::set<std::string> unfitted = getUnfittedNames();
+
+        // string accnosFilename = fileroot+ "optifit_scrap.accnos";
+        // outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
+        //
+        // ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
+        // for (auto it = unfitted.begin(); it != unfitted.end(); it++) {
+        //     accOut << *it << endl;
+        // }
+        // accOut.close();
+    }else {
+        runSensSpec(matrix, list, sensFile);
+    }
+    Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
     // sensFile.close();
 
     return result;
@@ -1349,36 +1251,90 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     // util.openOutputFile(sensspecFilename,    sensFile);
     // outputNames.push_back(sensspecFilename); outputTypes["sensspec"].push_back(sensspecFilename);
     //
-    // if (method == "closed") {
-    //     sensFile << "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-    //
-    //     if (printref) { //combo
-    //         results = cluster.getStats(tp, tn, fp, fn);
-    //         sensFile << cutoff << '\t' << cutoff << '\t' << tp << '\t' << tn << '\t' << fp << '\t' << fn;
-    //         for (int i = 0; i < results.size(); i++) {  sensFile << '\t' << results[i]; } sensFile << '\n';
-    //     }else { //fit
-    //         fitresults = cluster.getFitStats(fittp, fittn, fitfp, fitfn);
-    //         sensFile << cutoff << '\t' << cutoff << '\t' << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn;
-    //         for (int i = 0; i < fitresults.size(); i++) {  sensFile << "\t" << fitresults[i]; } sensFile << endl;
-    //     }
-    //     set<string> unfitted = cluster.getUnfittedNames();
-    //
-    //     string accnosFilename = fileroot+ "optifit_scrap.accnos";
-    //     outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
-    //
-    //     ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
-    //     for (set<string>::iterator it = unfitted.begin(); it != unfitted.end(); it++) {
-    //         accOut << *it << endl;
-    //     }
-    //     accOut.close();
-    //
-    // }else {
-    //     runSensSpec(matrix, metric, list, counts, sensFile);
-    // }
-   // sensFile.close();
+
+    if (closed) {//method == "closed") {
+        // sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+        int numBins = list->getNumBins();
+        if (printRef) { //combo
+            results = getStats(tp, tn, fp, fn);
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(tp) +
+                ',' + std::to_string(tn) + ',' + std::to_string(fp) + ',' + std::to_string(fn) + ',';
+
+            for (double res: results) { sensFile += std::to_string(res) + ','; }
+        }else { //fit
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(fittp) +
+               ',' + std::to_string(fittn) + ',' + std::to_string(fitfp) + ',' + std::to_string(fitfn) + ',';
+
+            fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
+            for (double res: fitresults) { sensFile += std::to_string(res) + ','; }
+        }
+        std::set<std::string> unfitted = getUnfittedNames();
+
+        // string accnosFilename = fileroot+ "optifit_scrap.accnos";
+        // outputNames.push_back(accnosFilename); outputTypes["accnos"].push_back(accnosFilename);
+        //
+        // ofstream accOut; util.openOutputFile(accnosFilename,    accOut);
+        // for (auto it = unfitted.begin(); it != unfitted.end(); it++) {
+        //     accOut << *it << endl;
+        // }
+        // accOut.close();
+    }else {
+        runSensSpec(matrix, list, sensFile);
+    }
 
     delete list;
     return result;
     // return listFileName;
+
+}
+
+
+void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std::string& sensSpecFile) const {
+
+    // sensSpecFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+        double truePositives, trueNegatives, falsePositives, falseNegatives;
+        std::string label = list->getLabel();
+        int numBins = list->getNumBins();
+
+        if (printRef) { //pass whole matrix
+            SensSpecCalc senscalc(*matrix, list);
+            senscalc.getResults(*matrix, truePositives, trueNegatives, falsePositives, falseNegatives);
+        }else { //pass subset matrix
+            std::vector<long long> fSeqs = matrix->getFitSeqs();
+            // std::set<long long> fitSeqs = Utils::mothurConvert(fSeqs);
+            std::unordered_set<long long> fitSeqs{fSeqs.begin(), fSeqs.end()};
+            OptiData* fitMatrix = matrix->extractMatrixSubset(fitSeqs);
+            SensSpecCalc senscalc(*fitMatrix, list);
+            senscalc.getResults(*fitMatrix, truePositives, trueNegatives, falsePositives, falseNegatives);
+            delete fitMatrix;
+        }
+
+        double tp =  truePositives;
+        double fp =  falsePositives;
+        double tn =  trueNegatives;
+        double fn =  falseNegatives;
+
+        Sensitivity sens;   double sensitivity = sens.getValue(tp, tn, fp, fn);
+        Specificity spec;   double specificity = spec.getValue(tp, tn, fp, fn);
+        PPV ppv;            double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
+        NPV npv;            double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);
+        FDR fdr;            double falseDiscoveryRate = fdr.getValue(tp, tn, fp, fn);
+        Accuracy acc;       double accuracy = acc.getValue(tp, tn, fp, fn);
+        MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
+        F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn);
+
+        sensSpecFile += label + '\t' + std::to_string(cutoff) + '\t' + std::to_string(numBins) + '\t';
+        sensSpecFile += std::to_string(truePositives) + '\t' + std::to_string(trueNegatives) + '\t' +
+            std::to_string(falsePositives) + '\t' + std::to_string(falseNegatives) + '\t';
+
+        sensSpecFile += std::to_string(sensitivity) + '\t' + std::to_string(specificity) + '\t' +
+            std::to_string(positivePredictiveValue) + '\t' + std::to_string(negativePredictiveValue) + '\t';
+
+        sensSpecFile += std::to_string(falseDiscoveryRate) + '\t' + std::to_string(accuracy) +
+            '\t' + std::to_string(matthewsCorrCoef) + '\t' + std::to_string(f1Score) + "\n";
+
+        // m->mothurOut(label + "\t" + toString(cutoff) + "\t" + toString(numBins) + "\t"+ toString(truePositives) + "\t" + toString(trueNegatives) + "\t" + toString(falsePositives) + "\t" + toString(falseNegatives) + "\t");
+        // m->mothurOut(toString(sensitivity) + "\t" + toString(specificity) + "\t" + toString(positivePredictiveValue) + "\t" + toString(negativePredictiveValue) + "\t");
+        // m->mothurOut(toString(falseDiscoveryRate) + "\t" + toString(accuracy) + "\t" + toString(matthewsCorrCoef) + "\t" + toString(f1Score) + "\n\n");
 
 }
