@@ -1190,7 +1190,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     bool printStepsHeader = true;
     // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, true, 0);
 
-    std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
+    std::vector<std::string> sensfileHeaders{"label","cutoff","numOtus", "tp","tn","fp","fn","sensitivity",
   "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
     // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
 
@@ -1324,15 +1324,15 @@ void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std:
         MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
         F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn);
 
-        sensSpecFile += label + '\t' + std::to_string(cutoff) + '\t' + std::to_string(numBins) + '\t';
-        sensSpecFile += std::to_string(truePositives) + '\t' + std::to_string(trueNegatives) + '\t' +
-            std::to_string(falsePositives) + '\t' + std::to_string(falseNegatives) + '\t';
+        sensSpecFile += label + ',' + std::to_string(cutoff) + ',' + std::to_string(numBins) + ',';
+        sensSpecFile += std::to_string(truePositives) + ',' + std::to_string(trueNegatives) + ',' +
+            std::to_string(falsePositives) + ',' + std::to_string(falseNegatives) + ',';
 
-        sensSpecFile += std::to_string(sensitivity) + '\t' + std::to_string(specificity) + '\t' +
-            std::to_string(positivePredictiveValue) + '\t' + std::to_string(negativePredictiveValue) + '\t';
+        sensSpecFile += std::to_string(sensitivity) + ',' + std::to_string(specificity) + ',' +
+            std::to_string(positivePredictiveValue) + ',' + std::to_string(negativePredictiveValue) + ',';
 
-        sensSpecFile += std::to_string(falseDiscoveryRate) + '\t' + std::to_string(accuracy) +
-            '\t' + std::to_string(matthewsCorrCoef) + '\t' + std::to_string(f1Score) + "\n";
+        sensSpecFile += std::to_string(falseDiscoveryRate) + ',' + std::to_string(accuracy) +
+            ',' + std::to_string(matthewsCorrCoef) + ',' + std::to_string(f1Score) + "\n";
 
         // m->mothurOut(label + "\t" + toString(cutoff) + "\t" + toString(numBins) + "\t"+ toString(truePositives) + "\t" + toString(trueNegatives) + "\t" + toString(falsePositives) + "\t" + toString(falseNegatives) + "\t");
         // m->mothurOut(toString(sensitivity) + "\t" + toString(specificity) + "\t" + toString(positivePredictiveValue) + "\t" + toString(negativePredictiveValue) + "\t");
