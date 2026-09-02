@@ -108,8 +108,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiFit
-Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const double fitPercent, const bool isClosed, const bool selfReference);
-RcppExport SEXP _clustur_OptiFit(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP fitPercentSEXP, SEXP isClosedSEXP, SEXP selfReferenceSEXP) {
+Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const double fitPercent, const bool isClosed, const bool printRef, const bool selfReference);
+RcppExport SEXP _clustur_OptiFit(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP fitPercentSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -119,14 +119,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const double >::type fitPercent(fitPercentSEXP);
     Rcpp::traits::input_parameter< const bool >::type isClosed(isClosedSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
     Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit(distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, selfReference));
+    rcpp_result_gen = Rcpp::wrap(OptiFit(distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiFit2
-Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const std::vector<std::string>& accnos, const double cutoff, const bool isClosed, const bool selfReference);
-RcppExport SEXP _clustur_OptiFit2(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP accnosSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP selfReferenceSEXP) {
+Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const std::vector<std::string>& accnos, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference);
+RcppExport SEXP _clustur_OptiFit2(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP accnosSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -136,14 +137,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<std::string>& >::type accnos(accnosSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const bool >::type isClosed(isClosedSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
     Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit2(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, selfReference));
+    rcpp_result_gen = Rcpp::wrap(OptiFit2(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiFit3
-Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, bool isClosed, bool selfReference);
-RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP fitPercentSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP selfReferenceSEXP) {
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference);
+RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP fitPercentSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -154,9 +156,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    Rcpp::traits::input_parameter< bool >::type isClosed(isClosedSEXP);
-    Rcpp::traits::input_parameter< bool >::type selfReference(selfReferenceSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, selfReference));
+    Rcpp::traits::input_parameter< const bool >::type isClosed(isClosedSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
+    Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -254,9 +257,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 5},
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 4},
-    {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 7},
-    {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 7},
-    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 9},
+    {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 8},
+    {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 8},
+    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 10},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

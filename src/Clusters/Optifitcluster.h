@@ -20,16 +20,16 @@ class OptiFitCluster : public ClusterMethod {
 
 public:
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
-        long long ns, bool selfReference = false, bool isClosed = false);
+        long long ns, bool selfRef, bool printReference, bool isClosed);
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff,
-        long long ns, bool selfReference = false, bool isClosed = false);
+        long long ns, bool selfRef, bool printReference, bool isClosed );
 
     void Reset();
 
     ~OptiFitCluster() override = default;
     ClusterExport* Execute() override;
     int initialize(double& value, bool randomize, std::vector<std::vector<std::string>>& existingBins,
-        const std::vector<std::string>&, const std::string&, bool);
+        const std::vector<std::string>&, bool);
     bool update(double&); //returns whether list changed and MCC
     [[nodiscard]] std::string getTag() const { std::string tag = "optifit_" + metric->getName(); return tag; }
     long long getNumBins();
@@ -64,12 +64,12 @@ protected:
     ClusterExport *runDenovoOptiCluster(std::map<std::string, int> &counts,
                                         std::string outStepFile);
 
-    ClusterExport *runUserRefOptiCluster(ClusterMetric *&metric, std::vector<std::string> refListLabels, std::vector<std::vector<std::string>> otus);
+    ClusterExport *runUserRefOptiCluster(ClusterMetric *&metric, const std::vector<std::string>& refListLabels, std::vector<std::vector<std::string>> otus);
 
     ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
 
     ClusterExport *runRefOptiCluster(ListVector refList,
-                                     std::map<std::string, int> &counts, std::string outStepFile);
+                                     std::map<std::string, int> &counts, const std::string& outStepFile);
 
     void runSensSpec(OptiRefMatrix *&matrix, ListVector *&list, std::string &sensSpecFile) const;
 

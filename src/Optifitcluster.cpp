@@ -29,22 +29,22 @@
 
 /***********************************************************************/
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std::string& method,
-    const double cutoff, const long long ns, const bool selfRef, const bool isClosed)
+    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed)
     : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
     closed = isClosed;
     selfReference = selfRef;
-    printRef = selfRef;
+    printRef = printReference;
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
 
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
-    const double cutoff, const long long ns, const bool selfRef, const bool isClosed)
+    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed)
     : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns) {
     maxRefBinNumber = 0;
     selfReference = selfRef;
-    printRef = selfRef;
+    printRef = printReference;
     closed = isClosed;
     method = "refcluster";
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
@@ -236,11 +236,10 @@ ClusterExport * OptiFitCluster::Execute() {
 
 /***********************************************************************/
 int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<std::vector<std::string > >& existingBins,
-                               const std::vector<std::string>& bls, const std::string& meth, const bool denov) {
+                               const std::vector<std::string>& bls, const bool denov) {
     double reftruePositives, reftrueNegatives, reffalsePositives, reffalseNegatives, numRefSeqs;
     numRefSeqs = 0; reftruePositives = 0; reffalsePositives = 0; reffalseNegatives = 0; reftrueNegatives = 0;
 
-    // if (meth == "closed") { closed = true; }
     denovo = denov;
 
     std::vector< std::vector< long long> > translatedBins;
@@ -639,7 +638,9 @@ ListVector* OptiFitCluster::getFittedList(std::string label, bool includerefs) {
 
             if (singleton != nullptr) { //add in any sequences above cutoff in read. Removing these saves clustering time.
                 for (int i = 0; i < singleton->getNumBins(); i++) {
-                    if (singleton->get(i) != "") { list->push_back(singleton->get(i)); }
+                    if (!singleton->get(i).empty()) {
+                        list->push_back(singleton->get(i));
+                    }
                 }
                 numSingletonBins += singleton->getNumBins();
                 delete singleton;
@@ -654,13 +655,15 @@ ListVector* OptiFitCluster::getFittedList(std::string label, bool includerefs) {
 
             if (singleton != nullptr) { //add in any sequences above cutoff in read. Removing these saves clustering time.
                 for (int i = 0; i < singleton->getNumBins(); i++) {
-                    if (singleton->get(i) != "") { unfittedNames.insert(singleton->get(i)); }
+                    if (!singleton->get(i).empty()) {
+                        unfittedNames.insert(singleton->get(i));
+                    }
                 }
                 delete singleton;
             }
         }
     }else {
-        if (label != "") {
+        if (!label.empty()) {
             // Rcpp::Rcout << ("\nFitted all " + std::to_string(list->getNumSeqs()) + " sequences to existing OTUs. \n");
         }
     }
@@ -731,7 +734,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         for (auto & refListLabel : refListLabels) { refListLabel = "Ref_" + refListLabel;  }
         refList.setLabels(refListLabels);
 
-        initialize(listVectorMetric, true, otus, refList.getLabels(), "", true);
+        initialize(listVectorMetric, true, otus, refList.getLabels(), true);
 
         // delete refList;
 
@@ -932,7 +935,7 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     return list;
 }
 
-ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, std::vector<std::string> refListLabels,
+ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, const std::vector<std::string>& refListLabels,
 std::vector<std::vector<std::string> > otus){
     bool printStepsHeader = true;
     const std::string cutoffString = std::to_string(cutoff);
@@ -971,7 +974,7 @@ std::vector<std::vector<std::string> > otus){
     //  refList.setLabels(refListLabels);
  //}
 
-    initialize(listVectorMetric, true, otus, refListLabels, "", false);
+    initialize(listVectorMetric, true, otus, refListLabels, false);
 
     long long numBins = getNumBins();
     double tp, tn, fp, fn;
@@ -1145,7 +1148,7 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
     return list;
 }
 
-ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<std::string, int>& counts, std::string outStepFile){
+ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<std::string, int>& counts, const std::string& outStepFile){
     int iters = 0;
     double listVectorMetric = 0; //worst state
     double delta = 1;
@@ -1171,7 +1174,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     // }
     counts.insert(refCounts.begin(), refCounts.end());
 
-    initialize(listVectorMetric, true, otus, refList.getLabels(), "", false);
+    initialize(listVectorMetric, true, otus, refList.getLabels(),false);
     const std::string cutoffString = std::to_string(cutoff);
     long long numBins = getNumBins();
     double tp, tn, fp, fn;
@@ -1254,15 +1257,15 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
 
     if (closed) {//method == "closed") {
         // sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
-        int numBins = list->getNumBins();
+        int numberOfBins = list->getNumBins();
         if (printRef) { //combo
             results = getStats(tp, tn, fp, fn);
-            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(tp) +
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numberOfBins) + "," + std::to_string(tp) +
                 ',' + std::to_string(tn) + ',' + std::to_string(fp) + ',' + std::to_string(fn) + ',';
 
             for (double res: results) { sensFile += std::to_string(res) + ','; }
         }else { //fit
-            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numBins) + "," + std::to_string(fittp) +
+            sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(numberOfBins) + "," + std::to_string(fittp) +
                ',' + std::to_string(fittn) + ',' + std::to_string(fitfp) + ',' + std::to_string(fitfn) + ',';
 
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
@@ -1281,11 +1284,9 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     }else {
         runSensSpec(matrix, list, sensFile);
     }
-
+    Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
     delete list;
     return result;
-    // return listFileName;
-
 }
 
 

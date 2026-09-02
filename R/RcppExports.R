@@ -33,16 +33,16 @@ OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff) {
     .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff)
 }
 
-OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, selfReference = FALSE) {
-    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, selfReference)
+OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE) {
+    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference)
 }
 
-OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, selfReference = FALSE) {
-    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, selfReference)
+OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE) {
+    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference)
 }
 
-OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, selfReference = TRUE) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, selfReference)
+OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference)
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {
