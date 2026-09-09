@@ -14,6 +14,7 @@
 #include "Clusters/WeightedLinkage.h"
 #include "Clusters/Metrics/mcc.h"
 #include "Clusters/Metrics/tptn.h"
+#include "DataStructures/SplitMatrix.h"
 #include "FileReaders/DistanceFileReader.h"
 #include "SharedFileData/SharedFileBuilder.h"
 
@@ -202,6 +203,45 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(combinedCountTableAdapter, result, binColumnName);
     delete(result);
 
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    return Rcpp::List::create();
+}
+
+//[[Rcpp::export]]
+Rcpp::List OptiSplit(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos,
+    const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff, const bool isClosed = true, const bool printRef = false, const bool selfReference = true) {
+
+    const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
+          refList["sequence_name"]);
+    const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
+    const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();
+    const SparseDistanceMatrix* combinedSparseMartix =  combinedDistanceData.get()->GetSparseMatrix();
+    const ListVector* combinedListVector = combinedDistanceData.get()->GetListVector();
+    const bool combinedIsSim = combinedDistanceData.get()->GetIsSimularity();
+    const OptimatrixAdapter combinedOptiAdapter(cutoff);
+    const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
+    delete combinedSparseMartix;
+    delete combinedListVector;
+
+    auto* splitMatrix = new SplitMatrix(combinedOptiMatrix, combinedCountTableAdapter,
+        {accnos.begin(), accnos.end()});
+    ClusterMetric* metric = new MCC();
+    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, selfReference, printRef, isClosed);
+    const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(combinedCountTableAdapter, result, binColumnName);
+    delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,
       Rcpp::Named("cluster") = clusterDataFrame,

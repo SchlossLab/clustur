@@ -242,3 +242,128 @@ ClusterMetric * Utils::GetClusterMetric(const std::string &metric) {
     if (metric == "fdr")        { return new FDR();              }
     if (metric == "fpfn")       { return new FPFN();             }
 }
+
+float Utils::removeConfidences(std::string& tax) {
+
+    std::string temp = tax; float dummy; if (!hasConfidenceScore(temp, dummy)) { return 0; }
+
+    std::string taxon;
+    std::string newTax = "";
+    std::string confidenceScore = "0";
+
+    //remove last ";"
+    if (tax.length() > 1) { tax = tax.substr(0, tax.length()-1); }
+    std::vector<std::string> taxons; splitAtChar(tax, taxons, ';');
+
+    for (const auto & taxonValue : taxons) {
+
+        //if (m->getControl_pressed()) { return 0; }
+
+        taxon = taxonValue;
+
+        int pos = taxon.find_last_of('(');
+        if (pos != -1) {
+            //is it a number?
+            int pos2 = taxon.find_last_of(')');
+            if (pos2 != -1) {
+                std::string temp = taxon.substr(pos+1, (pos2-(pos+1)));
+                if (isPositiveNumeric(temp)) {
+                    taxon = taxon.substr(0, pos); //rip off confidence
+                    confidenceScore = temp;
+                }
+            }
+        }
+        taxon += ";";
+
+        newTax += taxon;
+    }
+
+    tax = newTax;
+
+    float confidence = 0; mothurConvert(confidenceScore, confidence);
+
+    return confidence;
+}
+
+bool Utils::hasConfidenceScore(std::string& taxon, float& confidence) {
+    const size_t openParen = taxon.find_last_of('(');
+    const size_t closeParen = taxon.find_last_of(')');
+
+    if ((openParen != std::string::npos) && (closeParen != std::string::npos)) {
+        const std::string confidenceScore = taxon.substr(openParen+1, (closeParen-(openParen+1)));
+        if (isPositiveNumeric(confidenceScore)) {  //its a confidence
+            taxon = taxon.substr(0, openParen); //rip off confidence
+            mothurConvert(confidenceScore, confidence);
+            return true;
+        }
+        confidence = 0; //its part of the taxon
+    } else {
+        confidence = 0;
+    }
+
+    return false;
+
+}
+
+bool Utils::isPositiveNumeric(const std::string& stringToCheck){
+
+    bool numeric = false;
+
+    if (stringToCheck.empty()) { numeric = false;  }
+    else if(stringToCheck.find_first_not_of("0123456789.") == std::string::npos) { numeric = true; }
+
+    return numeric;
+
+}
+
+void Utils::splitAtChar(std::string& prefix, std::string& suffix, char c) {
+    std::string individual = "";
+    int estimLength = prefix.size();
+    for(int i=0;i<estimLength;i++) {
+        if(prefix[i] == c){
+            suffix = prefix.substr(i+1);
+            prefix = individual;
+            break;
+        }
+        else{
+            individual += prefix[i];
+        }
+    }
+}
+
+void Utils::splitAtChar(std::string& s, std::vector<std::string>& container, char symbol) {
+
+    //special case to escape things
+    if (symbol == '-') { splitAtDash(s, container); return; }
+
+    //parse string by delim and store in vector
+    split(s, symbol, std::back_inserter(container));
+    return;
+
+}
+
+
+void Utils::splitAtDash(const std::string& estim, std::vector<std::string>& container) {
+    std::string individual = "";
+    int estimLength = estim.size();
+    bool prevEscape = false;
+
+    for(int i=0;i<estimLength;i++){
+        if(estim[i] == '-'){
+            if (prevEscape) {  individual += estim[i]; prevEscape = false;  } //add in dash because it was escaped.
+            else {
+                container.push_back(individual);
+                individual = "";
+            }
+        }else if(estim[i] == '\\'){
+            if (i < estimLength-1) {
+                if (estim[i+1] == '-') { prevEscape=true; }  //are you a backslash before a dash, if yes ignore
+                else { individual += estim[i]; prevEscape = false;  } //if no, add in
+            }else { individual += estim[i]; }
+        }else {
+            individual += estim[i];
+        }
+    }
+
+    container.push_back(individual);
+}

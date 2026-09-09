@@ -4,6 +4,9 @@
 
 #include "ClusterSplit.h"
 
+#include "../DataStructures/OptiData.h"
+#include "../DataStructures/SplitMatrix.h"
+
 ClusterExport * ClusterSplit::Execute() {
     time_t estart;
     // vector<string> listFileNames;
@@ -36,44 +39,47 @@ ClusterExport * ClusterSplit::Execute() {
         //splitting
         estart = time(nullptr); bool usingVsearchToCLuster = false;
         // if ((method == "agc") || (method == "dgc")) { usingVsearchToCLuster = true; if (cutoffNotSet) {  m->mothurOut("\nYou did not set a cutoff, using 0.03.\n"); cutoff = 0.03; } }
-
+    	// SplitMatrix* split = new SplitMatrix(taxaData, taxonomyCutoff);
         // m->mothurOut("Splitting the file...\n");
         // current->setMothurCalling(true);
 
         //split matrix into non-overlapping groups
-        SplitMatrix* split = new SplitMatrix(fastafile, namefile, countfile, taxFile, taxLevelCutoff, cutoff,  processors, classic, outputdir, usingVsearchToCLuster);
+        //SplitMatrix* split = new SplitMatrix(fastafile, namefile, countfile, taxFile, taxLevelCutoff, cutoff,  processors, classic, outputdir, usingVsearchToCLuster);
 
-        if (fastafile != "") {  current->setFastaFile(fastafile);  }
+        //if (fastafile != "") {  current->setFastaFile(fastafile);  }
 
-        if (m->getControl_pressed()) { delete split; return 0; }
+        // if (m->getControl_pressed()) { delete split; return 0; }
 
-        singletonName = split->getSingletonNames();
-        distName = split->getDistanceFiles();  //returns map of distance files -> namefile sorted by distance file size
-        delete split;
-        current->setMothurCalling(false);
+        // std::vector<std::string> singletonName = split->getSingletonNames();// create  multiple optimatrices
+        // std::vector<std::map<std::string, std::string>> distName = split->getDistanceFiles();  //returns map of distance files -> namefile sorted by distance file size
+        // delete split;
+		// The split data
+    	std::vector<OptiData*> splitMatrices =
+    		SplitMatrix::splitClassify(taxaData, fastaData, calculator, cutoff, taxonomyCutoff);
+        // current->setMothurCalling(false);
 
-        if (m->getDebug()) { m->mothurOut("[DEBUG]: distName.size() = " + toString(distName.size()) + ".\n"); }
+        // if (m->getDebug()) { m->mothurOut("[DEBUG]: distName.size() = " + std::to_string(distName.size()) + ".\n"); }
 
-        m->mothurOut("It took " + toString(time(nullptr) - estart) + " seconds to split the distance file.\n");
+        Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to split the distance file.\n");
 
-        //output a merged distance file
-        if (makeDist)		{ createMergedDistanceFile(distName); }
+        // output a merged distance file
+        // if (makeDist)		{ createMergedDistanceFile(distName); }
 
-        if (m->getControl_pressed()) { return 0; }
+        // if (m->getControl_pressed()) { return 0; }
 
         estart = time(nullptr);
-
-        if (!runCluster) {
-            string filename = printFile(singletonName, distName);
-
-            m->mothurOutEndLine();
-            m->mothurOut("Output File Names:\n\n"); m->mothurOut(filename); m->mothurOutEndLine();
-            for (int i = 0; i < distName.size(); i++) {	m->mothurOut(distName[i].begin()->first); m->mothurOutEndLine(); m->mothurOut(distName[i].begin()->second); m->mothurOutEndLine();	}
-            m->mothurOutEndLine();
-
-            return 0;
-        }
-        deleteFiles = true;
+        //
+        // if (!runCluster) {
+        //     std::string filename = printFile(singletonName, distName);
+        //
+        //     m->mothurOutEndLine();
+        //     m->mothurOut("Output File Names:\n\n"); m->mothurOut(filename); m->mothurOutEndLine();
+        //     for (int i = 0; i < distName.size(); i++) {	m->mothurOut(distName[i].begin()->first); m->mothurOutEndLine(); m->mothurOut(distName[i].begin()->second); m->mothurOutEndLine();	}
+        //     m->mothurOutEndLine();
+        //
+        //     return 0;
+        // }
+        bool deleteFiles = true;
     }
 	//****************** break up files between processes and cluster each file set ******************************//
 
@@ -89,20 +95,21 @@ ClusterExport * ClusterSplit::Execute() {
         }
     }
 
-	if (m->getControl_pressed()) { for (int i = 0; i < listFileNames.size(); i++) { util.mothurRemove(listFileNames[i]); } return 0; }
+	// if (m->getControl_pressed()) { for (int i = 0; i < listFileNames.size(); i++) { util.mothurRemove(listFileNames[i]); } return 0; }
 
-	if (!util.isEqual(saveCutoff, cutoff)) { m->mothurOut("\nCutoff was " + toString(saveCutoff) + " changed cutoff to " + toString(cutoff)); m->mothurOutEndLine();  }
+	if (!Utils::isEqual(saveCutoff, cutoff)) { Rcpp::message("\nCutoff was " + std::to_string(saveCutoff) +
+		" changed cutoff to " + std::to_string(cutoff));  }
 
-	m->mothurOut("It took " + toString(time(nullptr) - estart) + " seconds to cluster\n");
+	Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to cluster\n");
 
 	//****************** merge list file and create rabund and sabund files ******************************//
 	estart = time(nullptr);
-	m->mothurOut("Merging the clustered files...\n");
+	//m->mothurOut("Merging the clustered files...\n");
 
 	ListVector* listSingle;
-	map<double, int> labelBins = completeListFile(listFileNames, singletonName, labels, listSingle); //returns map of label to numBins
+	std::map<double, int> labelBins = completeListFile(listFileNames, singletonName, labels, listSingle); //returns map of label to numBins
 
-	if (m->getControl_pressed()) { if (listSingle != nullptr) { delete listSingle; } for (int i = 0; i < outputNames.size(); i++) { util.mothurRemove(outputNames[i]); } return 0; }
+//	if (m->getControl_pressed()) { if (listSingle != nullptr) { delete listSingle; } for (int i = 0; i < outputNames.size(); i++) { util.mothurRemove(outputNames[i]); } return 0; }
 
 	mergeLists(listFileNames, labelBins, listSingle);
 
@@ -140,4 +147,196 @@ ClusterExport * ClusterSplit::Execute() {
 	for (int i = 0; i < outputNames.size(); i++) {	m->mothurOut(outputNames[i] +"\n"); 	} m->mothurOutEndLine();
 
 	return 0;
+}
+//**********************************************************************************************************************
+std::map<double, int> ClusterSplit::completeListFile(std::vector<std::string> listNames, std::string singleton,
+	std::set<std::string>& userLabels, ListVector*& listSingle){
+		std::map<double, int> labelBin;
+		std::vector<double> orderFloat;
+		int numSingleBins;
+
+		//read in singletons
+		if (singleton != "none") {
+
+            listSingle = new ListVector();
+            if (type == "count") {
+
+                CountTable ct; ct.readTable(singleton, false, false);
+
+                std::vector<std::string> singletonSeqNames = ct.getNamesOfSeqs();
+
+                for (int i = 0; i < singletonSeqNames.size(); i++) {
+	                listSingle->push_back(singletonSeqNames[i]);
+                }
+
+            }else if (type == "name") {
+                std::map<std::string, std::string> singletonSeqNames; Utils::readNames(singleton, singletonSeqNames);
+
+                for (std::map<std::string, std::string>::iterator it = singletonSeqNames.begin(); it != singletonSeqNames.end(); it++) {
+	                listSingle->push_back(it->second);
+                }
+            }
+
+			util.mothurRemove(singleton);
+
+			numSingleBins = listSingle->getNumBins();
+        }else{  listSingle = nullptr; numSingleBins = 0;  }
+
+        //go through users set and make them floats so we can sort them
+        for(const auto & userLabel : userLabels) {
+            double temp = -10.0;
+
+            if ((userLabel != "unique") && (convertTestFloat(userLabel, temp) ))	{	util.mothurConvert(*it, temp);	}
+            else if (userLabel == "unique")										{	temp = -1.0;		}
+
+            if ((temp < cutoff) || util.isEqual(cutoff, temp)) {
+                orderFloat.push_back(temp);
+                labelBin[temp] = numSingleBins; //initialize numbins
+            }
+        }
+
+		//sort order
+		sort(orderFloat.begin(), orderFloat.end());
+		userLabels.clear();
+
+		//get the list info from each file
+		for (int k = 0; k < listNames.size(); k++) {
+
+			if (m->getControl_pressed()) {
+				if (listSingle != nullptr) { delete listSingle; listSingle = nullptr; util.mothurRemove(singleton);  }
+				for (int i = 0; i < listNames.size(); i++) {   util.mothurRemove(listNames[i]);  }
+				return labelBin;
+			}
+
+			InputData* input = new InputData(listNames[k], "list", nullVector);
+			ListVector* list = input->getListVector();
+			string lastLabel = list->getLabel();
+
+			string filledInList = listNames[k] + "filledInTemp";
+			ofstream outFilled;
+			util.openOutputFile(filledInList, outFilled);
+            bool printHeaders = true;
+
+
+			//for each label needed
+			for(double & l : orderFloat){
+
+				std::string thisLabel;
+				if (Utils::isEqual(orderFloat[l],-1)) { thisLabel = "unique"; }
+				else {
+					thisLabel = std::to_string(l,  length-1);
+				}
+
+				//this file has reached the end
+				if (list == nullptr) {
+					list = input->getListVector(lastLabel, true);
+				}else{	//do you have the distance, or do you need to fill in
+
+					float labelFloat;
+					if (const std::string& labelString = list->getLabel(); labelString == "unique") {
+						labelFloat = -1.0;
+					}
+					else {
+						labelFloat = atof(labelString);
+						// convert(list->getLabel(), labelFloat);
+					}
+
+					//check for missing labels
+					if (labelFloat > l) { //you are missing the label, get the next smallest one
+						//if its bigger get last label, otherwise keep it
+						delete list;
+						list = input->getListVector(lastLabel, true);  //get last list vector to use, you actually want to move back in the file
+					}
+					lastLabel = list->getLabel();
+				}
+
+				//print to new file
+				list->setLabel(thisLabel);
+                list->setPrintedLabels(printHeaders);
+                list->print(outFilled, true); printHeaders = false;
+
+				//update labelBin
+				labelBin[l] += list->getNumBins();
+
+				delete list;
+
+				list = input->getListVector();
+			}
+
+			if (list != nullptr) { delete list; }
+			delete input;
+
+			outFilled.close();
+			util.mothurRemove(listNames[k]);
+			rename(filledInList.c_str(), listNames[k].c_str());
+		}
+
+		return labelBin;
+}
+
+
+vector<string> ClusterSplit::createProcesses(vector< map<string, string> > distName, set<string>& labels){
+    //sanity check
+    if (processors > distName.size()) { processors = distName.size(); }
+    deleteFiles = false; //so if we need to recalc the processors the files are still there
+    vector<string> listFiles;
+    vector < vector < map<string, string> > > dividedNames; //distNames[1] = vector of filenames for process 1...
+    dividedNames.resize(processors);
+
+    //for each file group figure out which process will complete it
+    //want to divide the load intelligently so the big files are spread between processes
+    for (int i = 0; i < distName.size(); i++) {
+        int processToAssign = (i+1) % processors;
+        if (processToAssign == 0) { processToAssign = processors; }
+
+        dividedNames[(processToAssign-1)].push_back(distName[i]);
+        if ((processToAssign-1) == 1) { m->mothurOut(distName[i].begin()->first + "\n"); }
+    }
+
+    //now lets reverse the order of ever other process, so we balance big files running with little ones
+    for (int i = 0; i < processors; i++) {
+        int remainder = ((i+1) % processors);
+        if (remainder) {  reverse(dividedNames[i].begin(), dividedNames[i].end());  }
+    }
+
+    if (m->getControl_pressed()) { return listFiles; }
+
+
+    //create array of worker threads
+    vector<std::thread*> workerThreads;
+    vector<clusterData*> data;
+
+    //Lauch worker threads
+    for (int i = 0; i < processors-1; i++) {
+        clusterData* dataBundle = new clusterData(showabund, classic, deleteFiles, dividedNames[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
+        dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
+        data.push_back(dataBundle);
+
+        workerThreads.push_back(new std::thread(cluster, dataBundle));
+    }
+
+
+    clusterData* dataBundle = new clusterData(showabund, classic, deleteFiles, dividedNames[0], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
+    dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
+    cluster(dataBundle);
+    listFiles = dataBundle->listFileNames;
+    tag = dataBundle->tag;
+    cutoff = dataBundle->cutoff;
+    labels = dataBundle->labels;
+
+
+    for (int i = 0; i < processors-1; i++) {
+        workerThreads[i]->join();
+
+        listFiles.insert(listFiles.end(), data[i]->listFileNames.begin(), data[i]->listFileNames.end());
+        labels.insert(data[i]->labels.begin(), data[i]->labels.end());
+        if (data[i]->cutoff < cutoff) { cutoff = data[i]->cutoff; }
+
+        delete data[i];
+        delete workerThreads[i];
+    }
+    delete dataBundle;
+    deleteFiles = true;
+
+    return listFiles;
 }

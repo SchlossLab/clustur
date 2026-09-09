@@ -44,6 +44,12 @@ public:
     //Error Checking
     static void CheckForDistanceFileError(const std::set<std::string>&);
     static ClusterMetric* GetClusterMetric(const std::string& metric);
+    static float removeConfidences(std::string &tax);
+    static bool hasConfidenceScore(std::string &taxon, float &confidence);
+    static bool isPositiveNumeric(const std::string &stringToCheck);
+    static void splitAtChar(std::string &prefix, std::string &suffix, char c);
+    static void splitAtChar(std::string &s, std::vector<std::string> &container, char symbol);
+    static void splitAtDash(const std::string &estim, std::vector<std::string> &container);
 
     template <typename Out>
     static void split(const std::string &s, const char delim, Out result) {

@@ -5,7 +5,7 @@
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include <Rcpp.h>
 
-double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std::string &sequenceTwo) {
+double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const {
     if (sequenceOne.size() != sequenceTwo.size()) Rcpp::stop("Two sequences must have same size");
 
     bool isOpenGap = false;

@@ -45,6 +45,10 @@ OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnNam
     .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference)
 }
 
+OptiSplit <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE) {
+    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference)
+}
+
 DetermineIfPhylipOrColumnFile <- function(filePath) {
     .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }

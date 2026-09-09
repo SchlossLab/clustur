@@ -11,7 +11,7 @@ class PairwiseDistanceCalculator {
 public:
     PairwiseDistanceCalculator() = default;
     virtual ~PairwiseDistanceCalculator() = default;
-    virtual double Execute(const std::string& sequenceOne, const std::string& sequenceTwo) = 0;
+    virtual double Execute(const std::string& sequenceOne, const std::string& sequenceTwo) const = 0;
 };
 
 

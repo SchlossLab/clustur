@@ -163,6 +163,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// OptiSplit
+Rcpp::List OptiSplit(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference);
+RcppExport SEXP _clustur_OptiSplit(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP fitPercentSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type combinedData(combinedDataSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type accnos(accnosSEXP);
+    Rcpp::traits::input_parameter< const float >::type fitPercent(fitPercentSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
+    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const bool >::type isClosed(isClosedSEXP);
+    Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
+    Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiSplit(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -260,6 +280,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 8},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 8},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 10},
+    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
