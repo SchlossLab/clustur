@@ -85,15 +85,15 @@ ClusterExport * ClusterSplit::Execute() {
 
     listFileNames = createProcesses(distName, labels);
 
-    if (deleteFiles) {
-        //delete the temp files now that we are done
-        for (int i = 0; i < distName.size(); i++) {
-            string thisNamefile = distName[i].begin()->second;
-            string thisDistFile = distName[i].begin()->first;
-            util.mothurRemove(thisNamefile);
-            util.mothurRemove(thisDistFile);
-        }
-    }
+    // if (deleteFiles) {
+    //     //delete the temp files now that we are done
+    //     for (int i = 0; i < distName.size(); i++) {
+    //         string thisNamefile = distName[i].begin()->second;
+    //         string thisDistFile = distName[i].begin()->first;
+    //         util.mothurRemove(thisNamefile);
+    //         util.mothurRemove(thisDistFile);
+    //     }
+    // }
 
 	// if (m->getControl_pressed()) { for (int i = 0; i < listFileNames.size(); i++) { util.mothurRemove(listFileNames[i]); } return 0; }
 
@@ -275,48 +275,56 @@ std::map<double, int> ClusterSplit::completeListFile(std::vector<std::string> li
 }
 
 
-vector<string> ClusterSplit::createProcesses(vector< map<string, string> > distName, set<string>& labels){
+std::vector<std::string> ClusterSplit::createProcesses(std::vector<OptiData*>& distanceMatrices, std::set<std::string>& labels,
+	size_t processors){
     //sanity check
-    if (processors > distName.size()) { processors = distName.size(); }
-    deleteFiles = false; //so if we need to recalc the processors the files are still there
-    vector<string> listFiles;
-    vector < vector < map<string, string> > > dividedNames; //distNames[1] = vector of filenames for process 1...
-    dividedNames.resize(processors);
+	const size_t matricesSize = distanceMatrices.size();
+    if (processors > matricesSize) {
+	    processors = matricesSize;
+    }
+  //  deleteFiles = false; //so if we need to recalc the processors the files are still there
+   // vector<string> listFiles;
+    std::vector<std::vector<OptiData*>> dividedWork(processors); //distNames[1] = vector of filenames for process 1...
+    // dividedNames.resize(processors);
 
     //for each file group figure out which process will complete it
     //want to divide the load intelligently so the big files are spread between processes
-    for (int i = 0; i < distName.size(); i++) {
+    for (int i = 0; i < matricesSize; i++) {
         int processToAssign = (i+1) % processors;
-        if (processToAssign == 0) { processToAssign = processors; }
+        if (processToAssign == 0) {
+	        processToAssign = processors;
+        }
 
-        dividedNames[(processToAssign-1)].push_back(distName[i]);
-        if ((processToAssign-1) == 1) { m->mothurOut(distName[i].begin()->first + "\n"); }
+        dividedWork[(processToAssign-1)].emplace_back(distanceMatrices[i]);
+        // if ((processToAssign-1) == 1) { m->mothurOut(distName[i].begin()->first + "\n"); }
     }
 
     //now lets reverse the order of ever other process, so we balance big files running with little ones
     for (int i = 0; i < processors; i++) {
         int remainder = ((i+1) % processors);
-        if (remainder) {  reverse(dividedNames[i].begin(), dividedNames[i].end());  }
+        if (remainder) { std::reverse(dividedWork[i].begin(), dividedWork[i].end());  }
     }
 
-    if (m->getControl_pressed()) { return listFiles; }
+    // if (m->getControl_pressed()) { return listFiles; }
 
 
     //create array of worker threads
-    vector<std::thread*> workerThreads;
-    vector<clusterData*> data;
+    std::vector<std::thread*> workerThreads;
+    std::vector<ClusterData*> data;
 
     //Lauch worker threads
-    for (int i = 0; i < processors-1; i++) {
-        clusterData* dataBundle = new clusterData(showabund, classic, deleteFiles, dividedNames[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
-        dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
+    for (int i = 1; i < processors; i++) {
+        // ClusterData* dataBundle = new ClusterData(showabund, classic, deleteFiles, dividedWork[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
+        // dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
+
+    	ClusterData* dataBundle = new ClusterData(dividedWork[i], );
         data.push_back(dataBundle);
 
         workerThreads.push_back(new std::thread(cluster, dataBundle));
     }
 
 
-    clusterData* dataBundle = new clusterData(showabund, classic, deleteFiles, dividedNames[0], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
+    ClusterData* dataBundle = new ClusterData(showabund, classic, deleteFiles, dividedWork[0], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
     dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
     cluster(dataBundle);
     listFiles = dataBundle->listFileNames;
@@ -339,4 +347,32 @@ vector<string> ClusterSplit::createProcesses(vector< map<string, string> > distN
     deleteFiles = true;
 
     return listFiles;
+}
+
+
+
+void ClusterSplit::cluster(ClusterData* params){
+	double smallestCutoff = params->cutoff;
+	params->clusterMethod->Execute();
+	//cluster each distance file
+	for (int i = 0; i < params->distNames.size(); i++) {
+
+		string thisNamefile = params->distNames[i].begin()->second;
+		string thisDistFile = params->distNames[i].begin()->first;
+
+		params->setNamesCount(thisNamefile);
+
+		string listFileName = "";
+		if (params->classic)    {  listFileName = clusterClassicFile(thisDistFile, thisNamefile, smallestCutoff, params);   }
+		else                    {  listFileName = clusterFile(thisDistFile, thisNamefile, smallestCutoff, params);          }
+
+		if (params->m->getControl_pressed()) { //clean up
+			for (int i = 0; i < listFileNames.size(); i++) {	params->util.mothurRemove(listFileNames[i]); 	}
+			params->listFileNames.clear(); break;
+		}
+		params->listFileNames.push_back(listFileName);
+	}
+	params->cutoff = smallestCutoff;
+}
+
 }

@@ -177,6 +177,7 @@ ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *l
     if(method == "nearest") return new SingleLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
     if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
     return new WeightedLinkage(&rAbund, listVector, matrix, cutoff, method, adjust);
+
 }
 
 ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
