@@ -7,13 +7,14 @@
  */
 
 
-#include "FastaDatabase.h"
-#include "OptiData.h"
-#include "PhyloTree.h"
-#include "splitmatrix.h"
-#include "../MothurDependencies/OneGapPairwiseDistance.h"
-#include "../MothurDependencies/PairwiseDistanceCalculator.h"
-#include "../MothurDependencies/Utils.h"
+#include "DataStructures/FastaDatabase.h"
+#include "DataStructures/OptiData.h"
+#include "DataStructures/OptiDataComponentFactory.h"
+#include "DataStructures/PhyloTree.h"
+#include "DataStructures/splitmatrix.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+#include "MothurDependencies/PairwiseDistanceCalculator.h"
+#include "MothurDependencies/Utils.h"
 
 /***********************************************************************/
 // SplitMatrix::SplitMatrix(std::string ffile, std::string name, std::string count, std::string tax, float c, float cu, int p, bool cl, std::string output, bool v){
@@ -95,7 +96,7 @@
 //
 // }
 
-std::vector<OptiData*>  SplitMatrix::splitClassify(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
+std::vector<OptiDataComponent>  SplitMatrix::splitClassify(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
 	PairwiseDistanceCalculator* calculator, const double cutoff, int taxLevel) {
 	PhyloTree phylo;
 	for (const auto&[name, taxonomy] : data) {
@@ -130,7 +131,7 @@ std::vector<OptiData*>  SplitMatrix::splitClassify(const std::vector<TaxonomyDat
 }
 
 /***********************************************************************/
-std::vector<OptiData*>  SplitMatrix::createDistanceFilesFromTax(const FastaDatabase& fastaData, PairwiseDistanceCalculator* calculator,
+std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const FastaDatabase& fastaData, PairwiseDistanceCalculator* calculator,
 	std::vector<std::vector<std::string> >& seqGroups, const std::vector<std::string> &groupNames, const double cutoff) {
 
     int numGroups = seqGroups.size();
@@ -147,7 +148,7 @@ std::vector<OptiData*>  SplitMatrix::createDistanceFilesFromTax(const FastaDatab
   //  if (m->getDebug()) { for (int i = 0; i < numGroups; i++) { m->mothurOut("[DEBUG]: Number of unique sequences for group " + groupNames[i] + " (" + tostd::string(i+1) + " of " + tostd::string(numGroups) + "): " + tostd::string(seqGroups[i].size()) + "\n\n"); } }
 
     //process each group
-	std::vector<OptiData*> result(numGroups);
+	std::vector<OptiDataComponent> result(numGroups);
     for (int i = 0; i < numGroups; i++) {
 
       //  if (m->getControl_pressed()) { outNonSingleton.close(); Utils::mothurRemove(nonSingletonsFile); for (int i = 0; i < dists.size(); i++) { Utils::mothurRemove((dists[i].begin()->first)); Utils::mothurRemove((dists[i].begin()->second)); } dists.clear(); return 0; }
@@ -188,7 +189,8 @@ std::vector<OptiData*>  SplitMatrix::createDistanceFilesFromTax(const FastaDatab
         // std::string outputFileRoot = thisOutputDir + Utils::getRootName(Utils::getSimpleName(fastafile)) + tostd::string(i) + ".";
         //
         // std::string outputformat = "column"; if (classic) { outputformat = "lt"; }
-		result[i] = new OptiData(fastaData, calculator, thisGroupsNames, cutoff);
+    	result[i] = OptiDataComponentFactory::CreateOptiDataComponent(fastaData, calculator, thisGroupsNames);
+		// result[i] = new OptiData(fastaData, calculator, thisGroupsNames, cutoff);
         // OptiData* optidata = new OptiData(fastaData, calculator, thisGroupsNames, 0.3);
         // Command* commansd;
         // std::vector< std::vector< int > > kmerDB; std::vector< int > lengths;
@@ -380,7 +382,7 @@ inline bool compareFileSizes(std::map<std::string, std::string> left, std::map<s
 }
 /***********************************************************************/
 //returns std::map of distance files -> namefile sorted by distance file size
-std::vector< std::map< std::string, std::string> > SplitMatrix::getDistanceFiles(){
-	sort(dists.begin(), dists.end(), compareFileSizes);
-	return dists;
-}
+// std::vector< std::map< std::string, std::string> > SplitMatrix::getDistanceFiles(){
+// 	sort(dists.begin(), dists.end(), compareFileSizes);
+// 	return dists;
+// }

@@ -18,10 +18,11 @@ Imports:
     Matrix,
     methods,
     Rcpp (>= 1.0.12),
-    utils
+    utils,
+    RcppThread
 Depends:
     R (>= 3.5.0)
-LinkingTo: Rcpp,
+LinkingTo: Rcpp, RcppThread
     testthat
 Suggests:
     knitr,

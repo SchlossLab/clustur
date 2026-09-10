@@ -13,6 +13,8 @@
 #include <vector>
 #include <string>
 #include <map>
+
+#include "OptidataComponents.h"
 #include "../DataStructures/TaxonomyData.h"
 
 #include "../Adapters/CountTableAdapter.h"
@@ -27,7 +29,8 @@ public:
 	// SplitMatrix(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
 	// PairwiseDistanceCalculator* calculator, float c, int taxLevel);
 
-	static std::vector<OptiData*> splitClassify(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
+
+	static std::vector<OptiDataComponent> splitClassify(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
 	PairwiseDistanceCalculator* calculator, double cutoff, int taxLevel);
 
 
@@ -49,7 +52,7 @@ private:
 	// PairwiseDistanceCalculator* calculator;
 	// std::vector<OptiData*> optidataMatrices;
 
-	static std::vector<OptiData*> createDistanceFilesFromTax(const FastaDatabase& fastaData, PairwiseDistanceCalculator* calculator,
+	static std::vector<OptiDataComponent> createDistanceFilesFromTax(const FastaDatabase& fastaData, PairwiseDistanceCalculator* calculator,
 		std::vector<std::vector<std::string> >& seqGroups, const std::vector<std::string> &groupNames, double cutoff);
     // int createDistanceFilesFromTax(std::vector<std::vector<std::string> >&, std::vector<std::string>);
     // int createFastaFilesFromTax(std::vector<std::vector<std::string> >&, std::vector<std::string>);

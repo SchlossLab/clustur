@@ -7,8 +7,8 @@
  *
  */
 
-#include "phylotree.h"
-#include "../MothurDependencies/Utils.h"
+#include "DataStructures/phylotree.h"
+#include "MothurDependencies/Utils.h"
 
 /**************************************************************************************************/
 

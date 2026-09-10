@@ -6,42 +6,13 @@
 #define REFACTOR_OPTIDATA_H
 #include <vector>
 #include <string>
-#include <unordered_set>
+#include "SparseDistanceMatrix.h"
 #include "../DataStructures/ListVector.h"
-#include "../MothurDependencies/PairwiseDistanceCalculator.h"
 
 
 class OptiData {
 public:
     OptiData() = default;
-    OptiData(const FastaDatabase& database, const PairwiseDistanceCalculator* calculator,
-        const std::unordered_set<std::string>& filteredNameList, const double cutoff):cutoff(cutoff) {
-        std::unordered_map<std::string, size_t> nameToIndex;
-        nameToIndex.reserve(filteredNameList.size());
-        const std::vector<FastaData>& data = database.GetFastaDataBase();
-        nameMap.resize(filteredNameList.size());
-        size_t count = 0;
-        for (const auto& name : filteredNameList) {
-            nameMap[count] = name;
-            nameToIndex[name] = count++;
-        }
-        for (const auto& [name, sequence] : data) {
-            if (filteredNameList.find(name) == filteredNameList.end()) continue;
-            const size_t& index = nameToIndex[name];
-            for (const auto& [otherName, otherSequence] : data) {
-                if (filteredNameList.find(name) == filteredNameList.end()) continue;
-                if (calculator->Execute(name, otherName) > cutoff) continue;
-                size_t otherIndex = nameToIndex[otherName];
-                closeness[index].emplace_back(otherIndex);
-                closeness[otherIndex].emplace_back(index);
-            }
-        }
-        for (const auto& [name, index] : nameToIndex) {
-            if (closeness[index].size() < 0) {
-                singletons.emplace_back(name);
-            }
-        }
-    }
     virtual ~OptiData() = default;
     void MoveData(OptiData* other) {
         cutoff = other->cutoff;

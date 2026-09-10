@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "ClusterParameters.h"
+#include "OptidataComponents.h"
 
 struct ClusterData {
         // Utils util;
@@ -20,15 +21,16 @@ struct ClusterData {
         // vector< map<string, string> > distNames;
         // set<string> labels;
         // vector<string> listFileNames;
-        std::vector<OptiData*> dividedData;
-        ClusterMethod* clusterMethod{};
+        std::vector<OptiDataComponent> dividedData;
         ClusterParameters* clusterParameters{};
+        ClusterMetric* metric;
+        std::vector<ClusterExport*> results{};
         double cutoff{};
 
         ClusterData() = default;
-        explicit ClusterData(const std::vector<OptiData*>& dividedData, ClusterMethod* method,
-            ClusterParameters* parameters, const double cutoff) :
-        dividedData(dividedData), clusterMethod(method), clusterParameters(parameters), cutoff(cutoff){}
+        explicit ClusterData(const std::vector<OptiDataComponent>& dividedData,
+            ClusterParameters* parameters, ClusterMetric* metric,  const double cutoff) :
+        dividedData(dividedData), clusterParameters(parameters), metric(metric), cutoff(cutoff){}
         // clusterData(bool showab, bool cla, bool df, vector< map<string, string> > dN, bool cns, double cu, int prec, int len, string meth, string opd, string vl, string ty) {
             // showabund = showab;
             // distNames = dN;

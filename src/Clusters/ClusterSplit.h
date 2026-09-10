@@ -10,19 +10,31 @@
 #include "../DataStructures/TaxonomyData.h"
 #include "../MothurDependencies/PairwiseDistanceCalculator.h"
 #include "../DataStructures/ClusterData.h"
+#include <Rcpp.h>
+// [[Rcpp::plugins(cpp11)]]
+// [[Rcpp::depends(RcppThread)]]
+#include <RcppThread.h>
 
 class ClusterSplit : ClusterMethod {
 public:
     ClusterSplit(const FastaDatabase& fastaDatabase, const std::vector<TaxonomyData>& taxaData,
-        PairwiseDistanceCalculator* calculator, double cutoff, int taxonomyCutoff);
+        PairwiseDistanceCalculator* calculator, ClusterParameters* parameters, ClusterMetric* metric,
+        double cutoff, int taxonomyCutoff);
     ~ClusterSplit() override;
     ClusterExport * Execute() override;
 
-    void cluster(ClusterData *params);
+    ClusterExport *mergeLists(const std::vector<ClusterExport *> &exportedResults);
+
+    std::vector<ClusterExport *> createProcesses(std::vector<OptiDataComponent> &distanceMatrices,
+                                                 std::set<std::string> &labels, size_t processors);
+
+    void cluster(ClusterData *params) const;
 
 private:
     FastaDatabase fastaData;
     PairwiseDistanceCalculator* calculator;
+    ClusterParameters* clusterParameters;
+    ClusterMetric* metric;
     std::vector<TaxonomyData> taxaData;
     int taxonomyCutoff;
     double cutoff;
