@@ -22,14 +22,14 @@ struct ClusterData {
         // set<string> labels;
         // vector<string> listFileNames;
         std::vector<OptiDataComponent> dividedData;
-        ClusterParameters* clusterParameters{};
+        ClusterParameters clusterParameters{};
         ClusterMetric* metric;
         std::vector<ClusterExport*> results{};
         double cutoff{};
 
         ClusterData() = default;
         explicit ClusterData(const std::vector<OptiDataComponent>& dividedData,
-            ClusterParameters* parameters, ClusterMetric* metric,  const double cutoff) :
+            ClusterParameters parameters, ClusterMetric* metric,  const double cutoff) :
         dividedData(dividedData), clusterParameters(parameters), metric(metric), cutoff(cutoff){}
         // clusterData(bool showab, bool cla, bool df, vector< map<string, string> > dN, bool cns, double cu, int prec, int len, string meth, string opd, string vl, string ty) {
             // showabund = showab;

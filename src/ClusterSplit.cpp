@@ -2,12 +2,19 @@
 // Created by Gregory Johnson on 9/2/26.
 //
 
+#include <utility>
+
 #include "Clusters/ClusterSplit.h"
 
 #include "Clusters/OptiCluster.h"
 #include "Adapters/OptimatrixAdapter.h"
 #include "DataStructures/OptiData.h"
 #include "DataStructures/SplitMatrix.h"
+
+ClusterSplit::ClusterSplit(FastaDatabase fastaDatabase, const std::vector<TaxonomyData> &taxaData,
+	PairwiseDistanceCalculator *calculator, ClusterParameters parameters, ClusterMetric *metric, const double cutoff,
+	const int taxonomyCutoff):fastaData(std::move(fastaDatabase)), calculator(calculator), clusterParameters(parameters),
+	metric(metric), taxaData(taxaData), taxonomyCutoff(taxonomyCutoff), cutoff(cutoff){}
 
 ClusterExport * ClusterSplit::Execute() {
     time_t estart;
@@ -62,7 +69,7 @@ ClusterExport * ClusterSplit::Execute() {
 
         // if (m->getDebug()) { m->mothurOut("[DEBUG]: distName.size() = " + std::to_string(distName.size()) + ".\n"); }
 
-        Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to split the distance file.\n");
+        // Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to split the distance file.\n");
 
         // output a merged distance file
         // if (makeDist)		{ createMergedDistanceFile(distName); }
@@ -99,10 +106,12 @@ ClusterExport * ClusterSplit::Execute() {
 
 	// if (m->getControl_pressed()) { for (int i = 0; i < listFileNames.size(); i++) { util.mothurRemove(listFileNames[i]); } return 0; }
 
-	if (!Utils::isEqual(saveCutoff, cutoff)) { Rcpp::message("\nCutoff was " + std::to_string(saveCutoff) +
-		" changed cutoff to " + std::to_string(cutoff));  }
+	if (!Utils::isEqual(saveCutoff, cutoff)) {
+		// Rcpp::message("\nCutoff was " + std::to_string(saveCutoff) +
+		// " changed cutoff to " + std::to_string(cutoff));
+	}
 
-	Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to cluster\n");
+	// Rcpp::message("It took " + std::to_string(time(nullptr) - estart) + " seconds to cluster\n");
 
 	//****************** merge list file and create rabund and sabund files ******************************//
 	estart = time(nullptr);
@@ -377,7 +386,7 @@ void ClusterSplit::cluster(ClusterData* params) const {
 	double smallestCutoff = params->cutoff;
 	params->results.reserve(params->dividedData.size());
 	for (const auto&[matrix, listVector] : params->dividedData) {
-		if (params->clusterParameters->GetClusterType() == "opti") {
+		if (params->clusterParameters.GetClusterType() == "opti") {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(matrix, listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, cutoff, 0);
@@ -387,7 +396,7 @@ void ClusterSplit::cluster(ClusterData* params) const {
 			continue;
 		}
 		RAbundVector rAbund = listVector->getRAbundVector();
-		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters->GetClusterType(), listVector, matrix,
+		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters.GetClusterType(), listVector, matrix,
 			rAbund, cutoff);
 		params->results.emplace_back(method->Execute());
 		delete method;

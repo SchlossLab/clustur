@@ -24,6 +24,7 @@
 #include "Clusters/Metrics/tp.h"
 #include "Clusters/Metrics/tptn.h"
 
+
 void Utils::mothurRandomShuffle(std::vector<int>& randomize){
     Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
     const int size = static_cast<int>(randomize.size());
@@ -367,4 +368,15 @@ void Utils::splitAtDash(const std::string& estim, std::vector<std::string>& cont
     }
 
     container.push_back(individual);
+}
+
+std::vector<TaxonomyData> Utils::CreateTaxonomyData(const Rcpp::DataFrame &data) {
+    const std::vector<std::string>& sequenceName = data["sequence_name"];
+    const std::vector<std::string>& taxonomy = data["taxonomy"];
+    const size_t size = taxonomy.size();
+    std::vector<TaxonomyData> taxonomyData(size);
+    for (size_t i = 0; i < size; ++i) {
+        taxonomyData[i] = {sequenceName[i], taxonomy[i]};
+    }
+    return taxonomyData;
 }

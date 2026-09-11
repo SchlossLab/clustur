@@ -104,8 +104,8 @@ std::vector<OptiDataComponent>  SplitMatrix::splitClassify(const std::vector<Tax
 	}
 	phylo.assignHeirarchyIDs(0);
 	if (taxLevel > phylo.getMaxLevel()) {
-		Rcpp::message("splitcutoff is greater than the longest taxonomy, using " +
-		std::to_string(phylo.getMaxLevel())); taxLevel = phylo.getMaxLevel();
+		// Rcpp::message("splitcutoff is greater than the longest taxonomy, using " +
+		// std::to_string(phylo.getMaxLevel())); taxLevel = phylo.getMaxLevel();
 	}
 	std::vector<std::vector<std::string> > seqGroups; //seqFroups[0] -> vector of string containing names of seqs assigned to group 0
 	std::vector<std::string> taxGroupNames;
@@ -155,10 +155,10 @@ std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const Fa
 
         std::unordered_set<std::string> thisGroupsNames = {seqGroups[i].begin(), seqGroups[i].end()};//Utils::mothurConvert(seqGroups[i]);
 
-        Rcpp::message("/******************************************/\n");
-        Rcpp::message("Selecting sequences for group " + groupNames[i] + " (" + std::to_string(i+1) + " of " +
-        	std::to_string(numGroups) + ")\nNumber of unique sequences: " +  std::to_string(seqGroups[i].size()) +
-        	"\n\n");
+        // Rcpp::message("/******************************************/\n");
+        // Rcpp::message("Selecting sequences for group " + groupNames[i] + " (" + std::to_string(i+1) + " of " +
+        // 	std::to_string(numGroups) + ")\nNumber of unique sequences: " +  std::to_string(seqGroups[i].size()) +
+        // 	"\n\n");
 
         std::string outName = "";
         // if (namefile != "") {
@@ -182,8 +182,8 @@ std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const Fa
         //
         // StorageDatabase* thisDB;
 
-        Rcpp::message("\nCalculating distances for group " + groupNames[i] + " (" + std::to_string(i+1) + " of " +
-        	std::to_string(numGroups) + "):\n");
+        // Rcpp::message("\nCalculating distances for group " + groupNames[i] + " (" + std::to_string(i+1) + " of " +
+        // 	std::to_string(numGroups) + "):\n");
         // thisOutputDir = outputDir;
         // if (outputDir == "") {  thisOutputDir += Utils::hasPath(fastafile);  }
         // std::string outputFileRoot = thisOutputDir + Utils::getRootName(Utils::getSimpleName(fastafile)) + tostd::string(i) + ".";

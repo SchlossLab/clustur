@@ -11,6 +11,8 @@
 #include <unordered_map>
 #include <Rcpp.h>
 #include "../Clusters/ClusterMetric.h"
+#include "../DataStructures/FastaDatabase.h"
+#include "../DataStructures/TaxonomyData.h"
 
 class ClusterMethod;
 class SparseDistanceMatrix;
@@ -50,7 +52,7 @@ public:
     static void splitAtChar(std::string &prefix, std::string &suffix, char c);
     static void splitAtChar(std::string &s, std::vector<std::string> &container, char symbol);
     static void splitAtDash(const std::string &estim, std::vector<std::string> &container);
-
+    static std::vector<TaxonomyData> CreateTaxonomyData(const Rcpp::DataFrame& data);
     template <typename Out>
     static void split(const std::string &s, const char delim, Out result) {
         std::istringstream iss(s);

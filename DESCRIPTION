@@ -22,7 +22,7 @@ Imports:
     RcppThread
 Depends:
     R (>= 3.5.0)
-LinkingTo: Rcpp, RcppThread
+LinkingTo: Rcpp, RcppThread,
     testthat
 Suggests:
     knitr,

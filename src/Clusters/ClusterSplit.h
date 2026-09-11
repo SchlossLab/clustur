@@ -15,12 +15,12 @@
 // [[Rcpp::depends(RcppThread)]]
 #include <RcppThread.h>
 
-class ClusterSplit : ClusterMethod {
+class ClusterSplit final : ClusterMethod {
 public:
-    ClusterSplit(const FastaDatabase& fastaDatabase, const std::vector<TaxonomyData>& taxaData,
-        PairwiseDistanceCalculator* calculator, ClusterParameters* parameters, ClusterMetric* metric,
+    ClusterSplit(FastaDatabase  fastaDatabase, const std::vector<TaxonomyData>& taxaData,
+        PairwiseDistanceCalculator* calculator, ClusterParameters parameters, ClusterMetric* metric,
         double cutoff, int taxonomyCutoff);
-    ~ClusterSplit() override;
+    ~ClusterSplit() override = default;
     ClusterExport * Execute() override;
 
     ClusterExport *mergeLists(const std::vector<ClusterExport *> &exportedResults);
@@ -33,7 +33,7 @@ public:
 private:
     FastaDatabase fastaData;
     PairwiseDistanceCalculator* calculator;
-    ClusterParameters* clusterParameters;
+    ClusterParameters clusterParameters;
     ClusterMetric* metric;
     std::vector<TaxonomyData> taxaData;
     int taxonomyCutoff;
