@@ -92,7 +92,7 @@ ClusterExport * ClusterSplit::Execute() {
     }
 	//****************** break up files between processes and cluster each file set ******************************//
 	std::set<std::string> labels;
-    const std::vector<ClusterExport*> results = createProcesses(splitMatrices, labels, 3);
+    const std::vector<ClusterExport*> results = createProcesses(splitMatrices, labels, 1);
 
     // if (deleteFiles) {
     //     //delete the temp files now that we are done

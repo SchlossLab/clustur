@@ -27,16 +27,31 @@ public:
             listVector->set(count, name);
             nameToIndex[name] = count++;
         }
-        for (const auto& [name, sequence] : data) {
-            if (filteredNameList.find(name) == filteredNameList.end()) continue;
-            const size_t& index = nameToIndex[name];
-            for (const auto& [otherName, otherSequence] : data) {
-                if (filteredNameList.find(name) == filteredNameList.end()) continue;
-                const size_t& otherIndex = nameToIndex[otherName];
-                const double result = calculator->Execute(name, otherName);
+        // for (const auto& [name, sequence] : data) {
+        //     if (filteredNameList.find(name) == filteredNameList.end()) continue;
+        //     const size_t& index = nameToIndex[name];
+        //     for (const auto& [otherName, otherSequence] : data) {
+        //         if (filteredNameList.find(name) == filteredNameList.end()) continue;
+        //         const size_t& otherIndex = nameToIndex[otherName];
+        //         const double result = calculator->Execute(name, otherName);
+        //         matrix->addCell(otherIndex, PDistCell(index, result));
+        //     }
+        // }
+        const size_t dataSize = data.size();
+        for (size_t i = 0; i < dataSize; i++) {
+            const FastaData& fastaData = data[i];
+            if (filteredNameList.find(fastaData.name) == filteredNameList.end()) continue;
+            const size_t& index = nameToIndex[fastaData.name];
+            for (size_t j = i + 1; j < dataSize; j++) {
+                const FastaData& otherFastaData = data[j];
+                if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
+                const size_t& otherIndex = nameToIndex[otherFastaData.name];
+                const double result = calculator->Execute(fastaData.sequence,
+                    otherFastaData.sequence);
                 matrix->addCell(otherIndex, PDistCell(index, result));
             }
         }
+
         return {matrix, listVector};
     }
 };
