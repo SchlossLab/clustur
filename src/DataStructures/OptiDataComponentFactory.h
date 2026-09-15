@@ -4,6 +4,9 @@
 
 #ifndef REFACTOR_OPTIDATACOMPONENTFACTORY_H
 #define REFACTOR_OPTIDATACOMPONENTFACTORY_H
+#include <RcppThread.h>
+#include <mutex>
+#include <atomic>
 #include "FastaDatabase.h"
 #include "OptidataComponents.h"
 #include "../MothurDependencies/PairwiseDistanceCalculator.h"
@@ -13,18 +16,18 @@ public:
     OptiDataComponentFactory() = default;
     ~OptiDataComponentFactory() = default;
     static OptiDataComponent CreateOptiDataComponent(const FastaDatabase& database, const PairwiseDistanceCalculator* calculator,
-        const std::unordered_set<std::string>& filteredNameList, const double cutoff) {
+        const std::unordered_set<std::string>& filteredNameList, const double cutoff, const int numberOfThreads) {
         const size_t filteredNameSize = filteredNameList.size();
-        SparseDistanceMatrix* matrix = new SparseDistanceMatrix();
-        ListVector* listVector = new ListVector();
-        matrix->resize(filteredNameSize);
-        listVector->resize(filteredNameSize);
+        SparseDistanceMatrix matrix;
+        ListVector listVector;
+        matrix.resize(filteredNameSize);
+        listVector.resize(filteredNameSize);
         std::unordered_map<std::string, size_t> nameToIndex;
         nameToIndex.reserve(filteredNameSize);
         const std::vector<FastaData>& data = database.GetFastaDataBase();
         size_t count = 0;
         for (const auto& name : filteredNameList) {
-            listVector->set(count, name);
+            listVector.set(count, name);
             nameToIndex[name] = count++;
         }
         // for (const auto& [name, sequence] : data) {
@@ -37,21 +40,41 @@ public:
         //         matrix->addCell(otherIndex, PDistCell(index, result));
         //     }
         // }
+
+
         const size_t dataSize = data.size();
-        for (size_t i = 0; i < dataSize; i++) {
+        std::mutex mutex;
+        RcppThread::parallelFor(0, dataSize, [&filteredNameList, &matrix, &data, &mutex, &calculator,
+            &cutoff, &dataSize, &nameToIndex](size_t i) {
             const FastaData& fastaData = data[i];
-            if (filteredNameList.find(fastaData.name) == filteredNameList.end()) continue;
-            const size_t& index = nameToIndex[fastaData.name];
-            for (size_t j = i + 1; j < dataSize; j++) {
+           if (filteredNameList.find(fastaData.name) == filteredNameList.end()) return;
+           const size_t& index = nameToIndex[fastaData.name];
+            for (size_t j = 0; j < dataSize; j++) {
                 const FastaData& otherFastaData = data[j];
                 if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
                 const size_t& otherIndex = nameToIndex[otherFastaData.name];
                 const double result = calculator->Execute(fastaData.sequence,
-                    otherFastaData.sequence);
+                  otherFastaData.sequence);
                 if (result > cutoff) continue;
-                matrix->addCell(otherIndex, PDistCell(index, result));
+                mutex.lock();
+                matrix.addCell(otherIndex, PDistCell(index, result));
+                mutex.unlock();
             }
-        }
+        }, numberOfThreads);
+        // for (size_t i = 0; i < dataSize; i++) {
+        //     const FastaData& fastaData = data[i];
+        //     if (filteredNameList.find(fastaData.name) == filteredNameList.end()) continue;
+        //     const size_t& index = nameToIndex[fastaData.name];
+        //     for (size_t j = i + 1; j < dataSize; j++) {
+        //         const FastaData& otherFastaData = data[j];
+        //         if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
+        //         const size_t& otherIndex = nameToIndex[otherFastaData.name];
+        //         const double result = calculator->Execute(fastaData.sequence,
+        //             otherFastaData.sequence);
+        //         if (result > cutoff) continue;
+        //         matrix->addCell(otherIndex, PDistCell(index, result));
+        //     }
+        // }
 
         return {matrix, listVector};
     }

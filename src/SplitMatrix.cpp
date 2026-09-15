@@ -97,7 +97,7 @@
 // }
 
 std::vector<OptiDataComponent>  SplitMatrix::splitClassify(const std::vector<TaxonomyData>& data, const FastaDatabase& fastaDatabase,
-	PairwiseDistanceCalculator* calculator, const double cutoff, int taxLevel) {
+	const PairwiseDistanceCalculator* calculator, const double cutoff, const int taxLevel, const int numberOfThreads) {
 	PhyloTree phylo;
 	for (const auto&[name, taxonomy] : data) {
 		phylo.addSeqToTree(name, taxonomy);
@@ -127,12 +127,13 @@ std::vector<OptiDataComponent>  SplitMatrix::splitClassify(const std::vector<Tax
 	}
 	// if (usingVsearchToCLuster)  { createFastaFilesFromTax(seqGroups, taxGroupNames);        }
 	// else                        {  createDistanceFilesFromTax(seqGroups, taxGroupNames);    }
-	return createDistanceFilesFromTax(fastaDatabase, calculator, seqGroups, taxGroupNames, cutoff);
+	return createDistanceFilesFromTax(fastaDatabase, calculator, seqGroups, taxGroupNames, cutoff, numberOfThreads);
 }
 
 /***********************************************************************/
-std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const FastaDatabase& fastaData, PairwiseDistanceCalculator* calculator,
-	std::vector<std::vector<std::string> >& seqGroups, const std::vector<std::string> &groupNames, const double cutoff) {
+std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const FastaDatabase& fastaData, const PairwiseDistanceCalculator* calculator,
+	std::vector<std::vector<std::string> >& seqGroups, const std::vector<std::string> &groupNames, const double cutoff,
+	const int numberOfThreads) {
 
     int numGroups = seqGroups.size();
     // std::string thisOutputDir = outputDir;
@@ -189,7 +190,8 @@ std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const Fa
         // std::string outputFileRoot = thisOutputDir + Utils::getRootName(Utils::getSimpleName(fastafile)) + tostd::string(i) + ".";
         //
         // std::string outputformat = "column"; if (classic) { outputformat = "lt"; }
-    	result[i] = OptiDataComponentFactory::CreateOptiDataComponent(fastaData, calculator, thisGroupsNames, cutoff);
+    	result[i] = OptiDataComponentFactory::CreateOptiDataComponent(fastaData, calculator, thisGroupsNames,
+    		cutoff, numberOfThreads);
 		// result[i] = new OptiData(fastaData, calculator, thisGroupsNames, cutoff);
         // OptiData* optidata = new OptiData(fastaData, calculator, thisGroupsNames, 0.3);
         // Command* commansd;

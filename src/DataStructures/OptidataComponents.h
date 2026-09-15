@@ -7,7 +7,7 @@
 #include "SparseDistanceMatrix.h"
 #include "ListVector.h"
 struct OptiDataComponent {
-    SparseDistanceMatrix* matrix;
-    ListVector* listVector;
+    SparseDistanceMatrix matrix;
+    ListVector listVector;
 };
 #endif //REFACTOR_OPTIDATACOMPONENTS_H

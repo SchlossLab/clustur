@@ -45,8 +45,8 @@ OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnNam
     .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference)
 }
 
-OptiSplit <- function(distData, fastaData, taxonomyData, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff) {
-    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', distData, fastaData, taxonomyData, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff)
+OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, numberOfThreads) {
+    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, numberOfThreads)
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {

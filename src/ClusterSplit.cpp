@@ -13,8 +13,8 @@
 
 ClusterSplit::ClusterSplit(FastaDatabase fastaDatabase, const std::vector<TaxonomyData> &taxaData,
 	PairwiseDistanceCalculator *calculator, ClusterParameters parameters, ClusterMetric *metric, const double cutoff,
-	const int taxonomyCutoff):fastaData(std::move(fastaDatabase)), calculator(calculator), clusterParameters(parameters),
-	metric(metric), taxaData(taxaData), taxonomyCutoff(taxonomyCutoff), cutoff(cutoff){}
+	const int taxonomyCutoff, const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator), clusterParameters(parameters),
+	metric(metric), taxaData(taxaData), taxonomyCutoff(taxonomyCutoff), numberOfThreads(numberOfThreads), cutoff(cutoff){}
 
 ClusterExport * ClusterSplit::Execute() {
     time_t estart;
@@ -64,7 +64,7 @@ ClusterExport * ClusterSplit::Execute() {
         // delete split;
 		// The split data
     	splitMatrices =
-    		SplitMatrix::splitClassify(taxaData, fastaData, calculator, cutoff, taxonomyCutoff);
+    		SplitMatrix::splitClassify(taxaData, fastaData, calculator, cutoff, taxonomyCutoff, numberOfThreads);
         // current->setMothurCalling(false);
 
         // if (m->getDebug()) { m->mothurOut("[DEBUG]: distName.size() = " + std::to_string(distName.size()) + ".\n"); }
@@ -92,7 +92,7 @@ ClusterExport * ClusterSplit::Execute() {
     }
 	//****************** break up files between processes and cluster each file set ******************************//
 	std::set<std::string> labels;
-    const std::vector<ClusterExport*> results = createProcesses(splitMatrices, labels, 1);
+    const std::vector<ClusterExport*> results = createProcesses(splitMatrices, labels, numberOfThreads);
 
     // if (deleteFiles) {
     //     //delete the temp files now that we are done
@@ -366,8 +366,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
 	std::vector<ClusterExport*> results;
 	results.reserve(distanceMatrices.size());
-    for (int i = 0; i < processors-1; i++) {
-        workerThreads[i]->join();
+    for (int i = 1; i < processors; i++) {
+        workerThreads[i - 1]->join();
 		// results.insert(results.end(), data[i]->results.begin(), data[i]->results.end());
     	std::move(data[i]->results.begin(), data[i]->results.end(), std::back_inserter(results));
         // listFiles.insert(listFiles.end(), data[i]->listFileNames.begin(), data[i]->listFileNames.end());
@@ -375,12 +375,12 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
         // if (data[i]->cutoff < cutoff) { cutoff = data[i]->cutoff; }
 
         delete data[i];
-        delete workerThreads[i];
+        delete workerThreads[i - 1];
     }
 	std::move(dataBundle->results.begin(), dataBundle->results.end(), std::back_inserter(results));
 	// results.insert(results.end(), dataBundle->results.begin(), dataBundle->results.end());
 	dataBundle->results.clear();
-    delete dataBundle;
+	delete dataBundle;
     //deleteFiles = true;
 
     return results;
@@ -389,27 +389,27 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 void ClusterSplit::cluster(SplitClusterData* params) const {
 	double smallestCutoff = params->cutoff;
 	params->results.reserve(params->dividedData.size());
-	for (const auto&[matrix, listVector] : params->dividedData) {
+	for (auto&[matrix, listVector] : params->dividedData) {
 		if (params->clusterParameters.GetClusterType() == "opti") {
 			OptimatrixAdapter adapter(cutoff);
-			OptiData* data = adapter.ConvertToOptimatrix(matrix, listVector, false);
+			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, cutoff, 0);
 			params->results.emplace_back(method->Execute());
 			delete method;
 			delete data;
 			continue;
 		}
-		RAbundVector rAbund = listVector->getRAbundVector();
-		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters.GetClusterType(), listVector, matrix,
+		RAbundVector rAbund = listVector.getRAbundVector();
+		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters.GetClusterType(), &listVector, &matrix,
 			rAbund, cutoff);
 		params->results.emplace_back(method->Execute());
 		delete method;
 
 	}
-	for (auto & dividedData : params->dividedData) {
-		delete dividedData.listVector;
-		delete dividedData.matrix;
-	}
+	// for (auto & dividedData : params->dividedData) {
+	// 	delete dividedData.listVector;
+	// 	delete dividedData.matrix;
+	// }
 	// params->clusterMethod->Execute();
 	// //cluster each distance file
 	// for (int i = 0; i < params->distNames.size(); i++) {

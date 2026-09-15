@@ -19,7 +19,7 @@ class ClusterSplit final : ClusterMethod {
 public:
     ClusterSplit(FastaDatabase  fastaDatabase, const std::vector<TaxonomyData>& taxaData,
         PairwiseDistanceCalculator* calculator, ClusterParameters parameters, ClusterMetric* metric,
-        double cutoff, int taxonomyCutoff);
+        double cutoff, int taxonomyCutoff, int numberOfThreads);
     ~ClusterSplit() override = default;
     ClusterExport * Execute() override;
 
@@ -37,6 +37,7 @@ private:
     ClusterMetric* metric;
     std::vector<TaxonomyData> taxaData;
     int taxonomyCutoff;
+    int numberOfThreads;
     double cutoff;
 
 };

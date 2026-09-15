@@ -217,33 +217,20 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
 }
 
 //[[Rcpp::export]]
-Rcpp::List OptiSplit(const SEXP& distData, const Rcpp::DataFrame& fastaData,
-    const Rcpp::DataFrame& taxonomyData, const std::string& clusterMethod,
+Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
+    const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod,
     const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff, const int taxonomyCutoff) {
-
-    const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
-    const CountTableAdapter combinedCountTableAdapter = distanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* combinedSparseMartix =  distanceData.get()->GetSparseMatrix();
-    const ListVector* combinedListVector = distanceData.get()->GetListVector();
-    const bool combinedIsSim = distanceData.get()->GetIsSimularity();
-    const OptimatrixAdapter combinedOptiAdapter(cutoff);
-    const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
-    delete combinedSparseMartix;
-    delete combinedListVector;
+    const double cutoff, const int taxonomyCutoff, const int numberOfThreads) {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
     FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
     std::vector<TaxonomyData> taxonomyDatabase = Utils::CreateTaxonomyData(taxonomyData);
     PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
     ClusterParameters parameter(clusterMethod);
     ClusterMetric* metric = new MCC();
     ClusterSplit cluster(fastaDatabase, taxonomyDatabase, calculator,
-        parameter, metric, cutoff, taxonomyCutoff);
+        parameter, metric, cutoff, taxonomyCutoff, numberOfThreads);
 
-
-    // auto* splitMatrix = new SplitMatrix(combinedOptiMatrix, combinedCountTableAdapter,
-    //     {accnos.begin(), accnos.end()});
-    // ClusterMetric* metric = new MCC();
-    // OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, selfReference, printRef, isClosed);
     const auto* result = cluster.Execute();
     delete metric;
     // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
@@ -251,7 +238,7 @@ Rcpp::List OptiSplit(const SEXP& distData, const Rcpp::DataFrame& fastaData,
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
-    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(combinedCountTableAdapter, result, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
       Rcpp::Named("abundance") = tidySharedDataFrame,

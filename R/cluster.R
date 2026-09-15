@@ -270,3 +270,16 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
   class(result) <- "mothur_cluster"
   result
 }
+
+#' @export
+opti_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, 
+                       feature_column_name, bin_column_name, cutoff, taxonomy_cutoff, 
+                       number_of_threads = 1) {
+  
+
+  fasta <- strollur::read_fasta(fasta_file)
+  taxonomy <- strollur::read_mothur_taxonomy(taxonomy_file)
+
+  OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
+            bin_column_name, cutoff, taxonomy_cutoff, number_of_threads)
+}
