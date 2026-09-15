@@ -189,7 +189,7 @@ std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const Fa
         // std::string outputFileRoot = thisOutputDir + Utils::getRootName(Utils::getSimpleName(fastafile)) + tostd::string(i) + ".";
         //
         // std::string outputformat = "column"; if (classic) { outputformat = "lt"; }
-    	result[i] = OptiDataComponentFactory::CreateOptiDataComponent(fastaData, calculator, thisGroupsNames);
+    	result[i] = OptiDataComponentFactory::CreateOptiDataComponent(fastaData, calculator, thisGroupsNames, cutoff);
 		// result[i] = new OptiData(fastaData, calculator, thisGroupsNames, cutoff);
         // OptiData* optidata = new OptiData(fastaData, calculator, thisGroupsNames, 0.3);
         // Command* commansd;

@@ -337,14 +337,14 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
     //create array of worker threads
     std::vector<RcppThread::Thread*> workerThreads;
-    std::vector<ClusterData*> data(dividedWork.size());
+    std::vector<SplitClusterData*> data(dividedWork.size());
 
     //Lauch worker threads
     for (int i = 1; i < processors; i++) {
         // ClusterData* dataBundle = new ClusterData(showabund, classic, deleteFiles, dividedWork[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
         // dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
 
-    	ClusterData* dataBundle = new ClusterData(dividedWork[i], clusterParameters, metric, cutoff);
+    	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric, cutoff);
     	data[i] = dataBundle;
         // data.push_back(dataBundle);
 
@@ -354,7 +354,7 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
     }
 
 
-	ClusterData* dataBundle = new ClusterData(dividedWork[0], clusterParameters, metric, cutoff);
+	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric, cutoff);
 	data[0] = dataBundle;
 	// data.push_back(dataBundle);
     //dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
@@ -368,7 +368,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 	results.reserve(distanceMatrices.size());
     for (int i = 0; i < processors-1; i++) {
         workerThreads[i]->join();
-		results.insert(results.end(), data[i]->results.begin(), data[i]->results.end());
+		// results.insert(results.end(), data[i]->results.begin(), data[i]->results.end());
+    	std::move(data[i]->results.begin(), data[i]->results.end(), std::back_inserter(results));
         // listFiles.insert(listFiles.end(), data[i]->listFileNames.begin(), data[i]->listFileNames.end());
         // labels.insert(data[i]->labels.begin(), data[i]->labels.end());
         // if (data[i]->cutoff < cutoff) { cutoff = data[i]->cutoff; }
@@ -376,13 +377,16 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
         delete data[i];
         delete workerThreads[i];
     }
+	std::move(dataBundle->results.begin(), dataBundle->results.end(), std::back_inserter(results));
+	// results.insert(results.end(), dataBundle->results.begin(), dataBundle->results.end());
+	dataBundle->results.clear();
     delete dataBundle;
     //deleteFiles = true;
 
     return results;
 }
 
-void ClusterSplit::cluster(ClusterData* params) const {
+void ClusterSplit::cluster(SplitClusterData* params) const {
 	double smallestCutoff = params->cutoff;
 	params->results.reserve(params->dividedData.size());
 	for (const auto&[matrix, listVector] : params->dividedData) {

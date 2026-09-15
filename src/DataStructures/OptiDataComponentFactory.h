@@ -13,7 +13,7 @@ public:
     OptiDataComponentFactory() = default;
     ~OptiDataComponentFactory() = default;
     static OptiDataComponent CreateOptiDataComponent(const FastaDatabase& database, const PairwiseDistanceCalculator* calculator,
-        const std::unordered_set<std::string>& filteredNameList) {
+        const std::unordered_set<std::string>& filteredNameList, const double cutoff) {
         const size_t filteredNameSize = filteredNameList.size();
         SparseDistanceMatrix* matrix = new SparseDistanceMatrix();
         ListVector* listVector = new ListVector();
@@ -48,6 +48,7 @@ public:
                 const size_t& otherIndex = nameToIndex[otherFastaData.name];
                 const double result = calculator->Execute(fastaData.sequence,
                     otherFastaData.sequence);
+                if (result > cutoff) continue;
                 matrix->addCell(otherIndex, PDistCell(index, result));
             }
         }

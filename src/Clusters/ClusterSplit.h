@@ -9,7 +9,7 @@
 #include "../DataStructures/OptiData.h"
 #include "../DataStructures/TaxonomyData.h"
 #include "../MothurDependencies/PairwiseDistanceCalculator.h"
-#include "../DataStructures/ClusterData.h"
+#include "../DataStructures/SplitClusterData.h"
 #include <Rcpp.h>
 // [[Rcpp::plugins(cpp11)]]
 // [[Rcpp::depends(RcppThread)]]
@@ -28,7 +28,7 @@ public:
     std::vector<ClusterExport *> createProcesses(std::vector<OptiDataComponent> &distanceMatrices,
                                                  std::set<std::string> &labels, size_t processors);
 
-    void cluster(ClusterData *params) const;
+    void cluster(SplitClusterData *params) const;
 
 private:
     FastaDatabase fastaData;
