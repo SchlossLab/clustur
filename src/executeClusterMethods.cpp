@@ -21,6 +21,7 @@
 #include "DataStructures/SplitMatrix.h"
 #include "FileReaders/DistanceFileReader.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
+#include "RNG/RandomNumberSitmo.h"
 #include "SharedFileData/SharedFileBuilder.h"
 
 
@@ -246,4 +247,17 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
       // Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
       // Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
     // return Rcpp::List::create();
+}
+//[[Rcpp::export]]
+std::vector<int> ShuffleCpp(std::vector<int>& vec, const int seed = 10) {
+    std::mt19937 rng(seed);
+    std::shuffle(vec.begin(), vec.end(), rng);
+    return vec;
+}
+
+//[[Rcpp::export]]
+std::vector<int> ShuffleSitmo(std::vector<int>& vec, const int seed = 10) {
+    RandomNumberSitmo rng(seed);
+    std::shuffle(vec.begin(), vec.end(), rng);
+    return vec;
 }

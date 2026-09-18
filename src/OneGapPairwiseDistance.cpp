@@ -6,7 +6,7 @@
 #include <Rcpp.h>
 
 double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const {
-    if (sequenceOne.size() != sequenceTwo.size()) Rcpp::stop("Two sequences must have same size");
+    if (sequenceOne.size() != sequenceTwo.size()) return -1;
 
     bool isOpenGap = false;
     size_t seqWithoutGapsSize = 0;

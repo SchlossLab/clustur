@@ -183,6 +183,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ShuffleCpp
+std::vector<int> ShuffleCpp(std::vector<int>& vec, const int seed);
+RcppExport SEXP _clustur_ShuffleCpp(SEXP vecSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int>& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(ShuffleCpp(vec, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ShuffleSitmo
+std::vector<int> ShuffleSitmo(std::vector<int>& vec, const int seed);
+RcppExport SEXP _clustur_ShuffleSitmo(SEXP vecSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<int>& >::type vec(vecSEXP);
+    Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(ShuffleSitmo(vec, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -281,6 +305,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 8},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 10},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 9},
+    {"_clustur_ShuffleCpp", (DL_FUNC) &_clustur_ShuffleCpp, 2},
+    {"_clustur_ShuffleSitmo", (DL_FUNC) &_clustur_ShuffleSitmo, 2},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

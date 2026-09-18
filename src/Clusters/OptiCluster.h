@@ -6,7 +6,6 @@
 #define REFACTOR_OPTICLUSTER_H
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include <map>
 #include "ClusterMethod.h"
 #include "ClusterMetric.h"

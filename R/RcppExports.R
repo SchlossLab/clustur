@@ -49,6 +49,14 @@ OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featur
     .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, numberOfThreads)
 }
 
+ShuffleCpp <- function(vec, seed = 10L) {
+    .Call('_clustur_ShuffleCpp', PACKAGE = 'clustur', vec, seed)
+}
+
+ShuffleSitmo <- function(vec, seed = 10L) {
+    .Call('_clustur_ShuffleSitmo', PACKAGE = 'clustur', vec, seed)
+}
+
 DetermineIfPhylipOrColumnFile <- function(filePath) {
     .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }

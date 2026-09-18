@@ -1,7 +1,6 @@
 //
 // Created by Gregory Johnson on 3/29/24.
 //
-#include <Rcpp.h>
 #include <unordered_set>
 #include <fstream>
 #include "Clusters/OptiCluster.h"

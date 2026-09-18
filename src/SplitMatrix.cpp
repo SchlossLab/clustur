@@ -151,7 +151,7 @@ std::vector<OptiDataComponent>  SplitMatrix::createDistanceFilesFromTax(const Fa
     //process each group
 	std::vector<OptiDataComponent> result(numGroups);
     for (int i = 0; i < numGroups; i++) {
-
+		Rcpp::Rcout << "Computing: " << std::to_string(i) << "/" << std::to_string(numGroups) << std::endl;
       //  if (m->getControl_pressed()) { outNonSingleton.close(); Utils::mothurRemove(nonSingletonsFile); for (int i = 0; i < dists.size(); i++) { Utils::mothurRemove((dists[i].begin()->first)); Utils::mothurRemove((dists[i].begin()->second)); } dists.clear(); return 0; }
 
         std::unordered_set<std::string> thisGroupsNames = {seqGroups[i].begin(), seqGroups[i].end()};//Utils::mothurConvert(seqGroups[i]);
