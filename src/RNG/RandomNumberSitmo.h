@@ -7,7 +7,7 @@
 #include <threefry.h>
 class RandomNumberSitmo {
 public:
-    using result_type = unsigned int;
+    using result_type = uint64_t;
     explicit RandomNumberSitmo(int seed) {
         rngEngine.seed(seed);
     }
@@ -18,7 +18,7 @@ public:
 
     static constexpr result_type max()
     {
-        return sitmo::threefry::max();
+        return RAND_MAX;
     }
 
     result_type operator()()
@@ -29,7 +29,7 @@ public:
     result_type NextRandomValue() {
         double dis = max() - min();
         double result = min() + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
-        return static_cast<int>(result);
+        return static_cast<uint64_t>(result);
     }
 
 private:
