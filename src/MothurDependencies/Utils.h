@@ -13,6 +13,7 @@
 #include "../Clusters/ClusterMetric.h"
 #include "../DataStructures/FastaDatabase.h"
 #include "../DataStructures/TaxonomyData.h"
+#include "../RNG/RandomNumberSitmo.h"
 
 class ClusterMethod;
 class SparseDistanceMatrix;
@@ -39,6 +40,9 @@ public:
     SparseDistanceMatrix* matrix, RAbundVector& rAbund, double cutoff, double adjust = -1);
     template <typename T>
     static void SortVector(std::vector<T>&);
+
+    template<class T>
+    static void Shuffle(std::vector<T> &vec, RandomNumberSitmo &sitmo);
 
     static ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences);
     static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
@@ -68,6 +72,14 @@ public:
 template<typename T>
 void Utils::SortVector(std::vector<T>& vector) {
     std::sort(vector.begin(), vector.end());
+}
+
+template<typename T>
+void Utils::Shuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
+    for (size_t i = vec.size() - 1; i > 0; --i) {
+        const int randomNumber = sitmo.GetRandomNumber(0, vec.size() - 1);
+        std::swap(vec[i], vec[randomNumber]);
+    }
 }
 
 

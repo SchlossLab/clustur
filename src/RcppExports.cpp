@@ -195,6 +195,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// GetRandomNumber
+std::vector<double> GetRandomNumber(double low, double high, int amount, int seed);
+RcppExport SEXP _clustur_GetRandomNumber(SEXP lowSEXP, SEXP highSEXP, SEXP amountSEXP, SEXP seedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type low(lowSEXP);
+    Rcpp::traits::input_parameter< double >::type high(highSEXP);
+    Rcpp::traits::input_parameter< int >::type amount(amountSEXP);
+    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
+    rcpp_result_gen = Rcpp::wrap(GetRandomNumber(low, high, amount, seed));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ShuffleSitmo
 std::vector<int> ShuffleSitmo(std::vector<int>& vec, const int seed);
 RcppExport SEXP _clustur_ShuffleSitmo(SEXP vecSEXP, SEXP seedSEXP) {
@@ -306,6 +320,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 10},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 9},
     {"_clustur_ShuffleCpp", (DL_FUNC) &_clustur_ShuffleCpp, 2},
+    {"_clustur_GetRandomNumber", (DL_FUNC) &_clustur_GetRandomNumber, 4},
     {"_clustur_ShuffleSitmo", (DL_FUNC) &_clustur_ShuffleSitmo, 2},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},

@@ -255,9 +255,21 @@ std::vector<int> ShuffleCpp(std::vector<int>& vec, const int seed = 10) {
     return vec;
 }
 
+
+
+//[[Rcpp::export]]
+std::vector<double> GetRandomNumber(double low, double high, int amount, int seed = 10) {
+    RandomNumberSitmo rng(seed);
+    std::vector<double> rngVec(amount);
+    for (int i = 0; i < amount; i++) {
+        rngVec[i] = rng.GetRandomNumber(low, high);
+    }
+    return rngVec;
+
+}
 //[[Rcpp::export]]
 std::vector<int> ShuffleSitmo(std::vector<int>& vec, const int seed = 10) {
     RandomNumberSitmo rng(seed);
-    std::shuffle(vec.begin(), vec.end(), rng);
+    Utils::Shuffle(vec, rng);
     return vec;
 }

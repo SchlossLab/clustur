@@ -31,6 +31,10 @@ public:
         double result = min() + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
         return static_cast<uint64_t>(result);
     }
+    result_type GetRandomNumber(const double min = 0.0, const double max = 1.0) {
+        double dis = max - min + 1;
+        return min + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
+    }
 
 private:
     sitmo::threefry rngEngine;

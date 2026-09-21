@@ -53,6 +53,10 @@ ShuffleCpp <- function(vec, seed = 10L) {
     .Call('_clustur_ShuffleCpp', PACKAGE = 'clustur', vec, seed)
 }
 
+GetRandomNumber <- function(low, high, amount, seed = 10L) {
+    .Call('_clustur_GetRandomNumber', PACKAGE = 'clustur', low, high, amount, seed)
+}
+
 ShuffleSitmo <- function(vec, seed = 10L) {
     .Call('_clustur_ShuffleSitmo', PACKAGE = 'clustur', vec, seed)
 }

@@ -11,7 +11,7 @@
 #include "DataStructures/OptiData.h"
 #include "DataStructures/OptiDataComponentFactory.h"
 #include "DataStructures/PhyloTree.h"
-#include "DataStructures/splitmatrix.h"
+#include "DataStructures/SplitMatrix.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include "MothurDependencies/PairwiseDistanceCalculator.h"
 #include "MothurDependencies/Utils.h"
