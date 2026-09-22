@@ -13,8 +13,8 @@
 
 ClusterSplit::ClusterSplit(FastaDatabase fastaDatabase, const std::vector<TaxonomyData> &taxaData,
 	PairwiseDistanceCalculator *calculator, ClusterParameters parameters, ClusterMetric *metric, const double cutoff,
-	const int taxonomyCutoff, const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator), clusterParameters(parameters),
-	metric(metric), taxaData(taxaData), taxonomyCutoff(taxonomyCutoff), numberOfThreads(numberOfThreads), cutoff(cutoff){}
+	const int taxonomyCutoff, const int seed, const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator), clusterParameters(parameters),
+	metric(metric), taxaData(taxaData), taxonomyCutoff(taxonomyCutoff), seed(seed), numberOfThreads(numberOfThreads), cutoff(cutoff){}
 
 ClusterExport * ClusterSplit::Execute() {
     time_t estart;
@@ -344,7 +344,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
         // ClusterData* dataBundle = new ClusterData(showabund, classic, deleteFiles, dividedWork[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
         // dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
 
-    	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric, cutoff);
+    	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric,
+    		RandomNumberSitmo(seed + i), cutoff);
     	data[i] = dataBundle;
         // data.push_back(dataBundle);
 
@@ -354,7 +355,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
     }
 
 
-	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric, cutoff);
+	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric,
+		RandomNumberSitmo(seed), cutoff);
 	data[0] = dataBundle;
 	// data.push_back(dataBundle);
     //dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
@@ -393,7 +395,7 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 		if (params->clusterParameters.GetClusterType() == "opti") {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
-			ClusterMethod* method = new OptiCluster(data, params->metric, cutoff, 0);
+			ClusterMethod* method = new OptiCluster(data, params->metric, params->rng, cutoff, 0);
 			params->results.emplace_back(method->Execute());
 			delete method;
 			delete data;

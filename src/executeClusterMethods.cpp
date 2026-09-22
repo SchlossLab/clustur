@@ -65,7 +65,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
 
 //[[Rcpp::export]]
 Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff) {
+    const double cutoff, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
@@ -85,7 +85,8 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
     else
         metric = new MCC();
 
-    OptiCluster cluster(optiMatrix, metric, cutoff, 0);
+    const RandomNumberSitmo rng(seed);
+    OptiCluster cluster(optiMatrix, metric, rng, cutoff, 0);
     const auto* result = cluster.Execute();
 
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
@@ -109,7 +110,7 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 //[[Rcpp::export]]
 Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const double fitPercent = 50, const bool isClosed = true, const bool printRef = true,
-    const bool selfReference = false) {
+    const bool selfReference = false, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
@@ -117,12 +118,13 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     const bool isSim = distanceData.get()->GetIsSimularity();
     const OptimatrixAdapter optiAdapter(cutoff);
     const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
-    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, fitPercent, "");
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, fitPercent, "", seed);
     delete optiMatrix;
     delete(sparseMatix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric,"denovo", cutoff, 0, selfReference, printRef, isClosed);
+    OptiFitCluster cluster(refMatrix, metric,"denovo", cutoff, 0, selfReference,
+        printRef, isClosed, seed);
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
@@ -144,7 +146,8 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
 //[[Rcpp::export]]
 Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const std::vector<std::string>& accnos,
-    const double cutoff, const bool isClosed = true, const bool printRef = true, const bool selfReference = false) {
+    const double cutoff, const bool isClosed = true, const bool printRef = true, const bool selfReference = false,
+    const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
@@ -153,12 +156,13 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
     const OptimatrixAdapter optiAdapter(cutoff);
     const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
     auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter,
-        {accnos.begin(), accnos.end()});
+        {accnos.begin(), accnos.end()}, seed);
     delete optiMatrix;
     delete(sparseMatix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric,"userref", cutoff, 0, selfReference, printRef, isClosed);
+    OptiFitCluster cluster(refMatrix, metric,"userref", cutoff, 0, selfReference,
+        printRef, isClosed, seed);
 
     const auto* result = cluster.Execute();
     delete metric;
@@ -181,7 +185,8 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 //[[Rcpp::export]]
 Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos,
     const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff, const bool isClosed = true, const bool printRef = false, const bool selfReference = true) {
+    const double cutoff, const bool isClosed = true, const bool printRef = false, const bool selfReference = true,
+    const int seed = 123) {
 // fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
     const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
@@ -196,9 +201,9 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     delete combinedListVector;
 
     auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter,
-        {accnos.begin(), accnos.end()});
+        {accnos.begin(), accnos.end()}, seed);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, selfReference, printRef, isClosed);
+    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, selfReference, printRef, isClosed, seed);
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
@@ -221,7 +226,7 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
 Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod,
     const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff, const int taxonomyCutoff, const int numberOfThreads) {
+    const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads) {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
@@ -230,7 +235,7 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     ClusterParameters parameter(clusterMethod);
     ClusterMetric* metric = new MCC();
     ClusterSplit cluster(fastaDatabase, taxonomyDatabase, calculator,
-        parameter, metric, cutoff, taxonomyCutoff, numberOfThreads);
+        parameter, metric, cutoff, taxonomyCutoff, seed, numberOfThreads);
 
     const auto* result = cluster.Execute();
     delete metric;
@@ -247,29 +252,4 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
       // Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
       // Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
     // return Rcpp::List::create();
-}
-//[[Rcpp::export]]
-std::vector<int> ShuffleCpp(std::vector<int>& vec, const int seed = 10) {
-    std::mt19937 rng(seed);
-    std::shuffle(vec.begin(), vec.end(), rng);
-    return vec;
-}
-
-
-
-//[[Rcpp::export]]
-std::vector<double> GetRandomNumber(double low, double high, int amount, int seed = 10) {
-    RandomNumberSitmo rng(seed);
-    std::vector<double> rngVec(amount);
-    for (int i = 0; i < amount; i++) {
-        rngVec[i] = rng.GetRandomNumber(low, high);
-    }
-    return rngVec;
-
-}
-//[[Rcpp::export]]
-std::vector<int> ShuffleSitmo(std::vector<int>& vec, const int seed = 10) {
-    RandomNumberSitmo rng(seed);
-    Utils::Shuffle(vec, rng);
-    return vec;
 }

@@ -20,9 +20,9 @@ class OptiFitCluster : public ClusterMethod {
 
 public:
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed);
+        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed );
+        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
 
     void Reset();
 
@@ -58,6 +58,7 @@ protected:
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;
     long long  numFitSeqs, insertLocation, numFitSingletons;
     long long  numComboSeqs, numComboSingletons;
+    RandomNumberSitmo rng;
 
     int findInsert();
 

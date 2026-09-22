@@ -18,7 +18,7 @@
 
 
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const long long ns) : matrix(mt),
     metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
@@ -28,7 +28,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     combofalseNegatives(0),
     numFitSeqs(0), numFitSingletons(0),
     numComboSeqs(0),
-    numComboSingletons(0),
+    numComboSingletons(0), rngEngine(rng),
     cutoff(cutoff) {
     truePositives = 0;
     trueNegatives = 0;
@@ -37,7 +37,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     stableMetric = 0;
 }
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
     metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
@@ -47,7 +47,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     combofalseNegatives(0),
     numFitSeqs(0), numFitSingletons(0),
     numComboSeqs(0),
-    numComboSingletons(0),
+    numComboSingletons(0), rngEngine(rng),
     stableMetric(stableMetric),
     cutoff(cutoff) {
     truePositives = 0;
@@ -94,7 +94,7 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
         //     randomizeSeqs.push_back(i);
         // }
 
-        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
         for (const auto seq: seqBin) {
@@ -113,7 +113,7 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
             randomizeSeqs.push_back(i);
         }
 
-        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
         for (const auto seq : seqBin) {

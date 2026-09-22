@@ -22,14 +22,15 @@
 /***********************************************************************/
 
 OptiRefMatrix::OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
-const std::vector<std::string>& singleton, const double c) {
+const std::vector<std::string>& singleton, const double c, const int seed):seed(seed) {
     closeness = close;
     nameMap = name;
     singletons = singleton;
     cutoff = c;
 }
 
-OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight) {
+OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP,
+    const std::string& refWeight, const int seed):seed(seed) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -49,7 +50,8 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
     ReadFiles(matrix, adapter,noRefNamesSet);
 }
 
-OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames) {
+OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter,
+    std::unordered_set<std::string> accnosRefFileNames, const int seed):seed(seed) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -65,7 +67,8 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter,
-              const float fitPercent, const double cutoff):cutoff(cutoff), fitPercent(fitPercent){
+              const float fitPercent, const double cutoff, const int seed):seed(seed), cutoff(cutoff),
+fitPercent(fitPercent){
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -133,7 +136,7 @@ OptiData* OptiRefMatrix::extractRefMatrix() {
 
     for (int i = 0; i < isSingleRef.size(); i++) { if (isSingleRef[i]) { subsetSingletons.push_back(singletons[i]); } }
 
-    auto* unfittedMatrix = new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff);
+    auto* unfittedMatrix = new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff, seed);
 
     return unfittedMatrix;
 }
@@ -197,7 +200,7 @@ OptiData* OptiRefMatrix::extractMatrixSubset(std::unordered_set<long long> & seq
 
     }
 
-    return new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff);
+    return new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff, seed);
 }
 /***********************************************************************/
 std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<std::string> > & binNames, std::vector<std::vector<long long> > & fixedBins) {
@@ -546,7 +549,8 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
             // const long long totalSeqs = numberOfSequences;
             std::vector<long long> fitSeqsIndexes2(numberOfSequences, 0);
             std::iota(fitSeqsIndexes2.begin(), fitSeqsIndexes2.end(), 0);
-            Utils::mothurRandomShuffle(fitSeqsIndexes2);
+            RandomNumberSitmo rng(seed);
+            Utils::mothurRandomShuffle(fitSeqsIndexes2, rng);
             fitSeqsIndexes =  {fitSeqsIndexes2.begin(), fitSeqsIndexes2.begin() + numToSelect};
             // while (numSelected < numToSelect) {
             //     fitSeqsIndexes.insert(Utils::getRandomIndex(numberOfSequences-1)); //no repeats

@@ -25,20 +25,6 @@
 #include "Clusters/Metrics/tptn.h"
 
 
-void Utils::mothurRandomShuffle(std::vector<int>& randomize){
-    Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
-    const int size = static_cast<int>(randomize.size());
-    randomValues = Rcpp::sample(randomValues, size);
-    randomize = Rcpp::as<std::vector<int>>(randomValues);
-}
-
-void Utils::mothurRandomShuffle(std::vector<long long>& randomize){
-    Rcpp::IntegerVector randomValues = Rcpp::wrap(randomize);
-    const int size = static_cast<int>(randomize.size());
-    randomValues = Rcpp::sample(randomValues, size);
-    randomize = Rcpp::as<std::vector<long long>>(randomValues);
-}
-
 int Utils::getRandomIndex(const int highest){
         if (highest == 0) { return 0; }
     return static_cast<int>(R::runif(0, highest));

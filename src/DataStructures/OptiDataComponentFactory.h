@@ -43,38 +43,24 @@ public:
 
 
         const size_t dataSize = data.size();
-        // std::mutex mutex;
-        // RcppThread::parallelFor(0, dataSize, [&filteredNameList, &matrix, &data, &mutex, &calculator,
-        //     &cutoff, &dataSize, &nameToIndex](size_t i) {
-        //     const FastaData& fastaData = data[i];
-        //    if (filteredNameList.find(fastaData.name) == filteredNameList.end()) return;
-        //    const size_t& index = nameToIndex[fastaData.name];
-        //     for (size_t j = 0; j < dataSize; j++) {
-        //         const FastaData& otherFastaData = data[j];
-        //         if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
-        //         const size_t& otherIndex = nameToIndex[otherFastaData.name];
-        //         const double result = calculator->Execute(fastaData.sequence,
-        //           otherFastaData.sequence);
-        //         if (result > cutoff) continue;
-        //         mutex.lock();
-        //         matrix.addCell(otherIndex, PDistCell(index, result));
-        //         mutex.unlock();
-        //     }
-        // }, numberOfThreads);
-        for (size_t i = 0; i < dataSize; i++) {
+        std::mutex mutex;
+        RcppThread::parallelFor(0, dataSize, [&filteredNameList, &matrix, &data, &mutex, &calculator,
+            &cutoff, &dataSize, &nameToIndex](size_t i) {
             const FastaData& fastaData = data[i];
-            if (filteredNameList.find(fastaData.name) == filteredNameList.end()) continue;
-            const size_t& index = nameToIndex[fastaData.name];
-            for (size_t j = i + 1; j < dataSize; j++) {
+           if (filteredNameList.find(fastaData.name) == filteredNameList.end()) return;
+           const size_t& index = nameToIndex[fastaData.name];
+            for (size_t j = 0; j < dataSize; j++) {
                 const FastaData& otherFastaData = data[j];
                 if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
                 const size_t& otherIndex = nameToIndex[otherFastaData.name];
                 const double result = calculator->Execute(fastaData.sequence,
-                    otherFastaData.sequence);
+                  otherFastaData.sequence);
                 if (result > cutoff) continue;
+                mutex.lock();
                 matrix.addCell(otherIndex, PDistCell(index, result));
+                mutex.unlock();
             }
-        }
+        }, numberOfThreads);
 
         return {matrix, listVector};
     }

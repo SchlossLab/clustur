@@ -16,8 +16,8 @@
 class OptiCluster final : public ClusterMethod {
     public:
 
-    OptiCluster(OptiData* mt, ClusterMetric* met, double cutoff, long long ns);
-    OptiCluster(OptiData* mt, ClusterMetric* met, double cutoff, double stableMetric, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, double stableMetric, long long ns);
     ~OptiCluster() override;
     ClusterExport* Execute() override;
     [[nodiscard]] std::string getTag() const { std::string tag = "opti_" + metric->getName(); return tag; }
@@ -37,6 +37,7 @@ protected:
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]
     std::map<long long, std::string> binLabels; //for fitting - maps binNumber to existing reference label
     std::vector<long long> seqBin; //sequence# -> bin#
+    RandomNumberSitmo rngEngine;
 
     long long numSeqs, insertLocation, numSingletons;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;

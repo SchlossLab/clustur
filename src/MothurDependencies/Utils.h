@@ -22,8 +22,8 @@ class RAbundVector;
 class Utils {
 public:
     Utils() = default;
-    static void mothurRandomShuffle(std::vector<int>& randomize);
-    static void mothurRandomShuffle(std::vector<long long>& randomize);
+    // static void mothurRandomShuffle(std::vector<int>& randomize);
+    // static void mothurRandomShuffle(std::vector<long long>& randomize);
     static int getRandomIndex(int highest);
     static int getNumNames(std::string names);
     static bool mothurConvert(const std::string& item, int& num);
@@ -42,7 +42,7 @@ public:
     static void SortVector(std::vector<T>&);
 
     template<class T>
-    static void Shuffle(std::vector<T> &vec, RandomNumberSitmo &sitmo);
+    static void mothurRandomShuffle(std::vector<T> &vec, RandomNumberSitmo &sitmo);
 
     static ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences);
     static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
@@ -75,7 +75,7 @@ void Utils::SortVector(std::vector<T>& vector) {
 }
 
 template<typename T>
-void Utils::Shuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
+void Utils::mothurRandomShuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
     for (size_t i = vec.size() - 1; i > 0; --i) {
         const int randomNumber = sitmo.GetRandomNumber(0, vec.size() - 1);
         std::swap(vec[i], vec[randomNumber]);

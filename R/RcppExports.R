@@ -29,36 +29,24 @@ Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cuto
     .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff)
 }
 
-OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff) {
-    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff)
+OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L) {
+    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed)
 }
 
-OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE) {
-    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference)
+OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, seed = 123L) {
+    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, seed)
 }
 
-OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE) {
-    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference)
+OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, seed = 123L) {
+    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, seed)
 }
 
-OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference)
+OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE, seed = 123L) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, seed)
 }
 
-OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, numberOfThreads) {
-    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, numberOfThreads)
-}
-
-ShuffleCpp <- function(vec, seed = 10L) {
-    .Call('_clustur_ShuffleCpp', PACKAGE = 'clustur', vec, seed)
-}
-
-GetRandomNumber <- function(low, high, amount, seed = 10L) {
-    .Call('_clustur_GetRandomNumber', PACKAGE = 'clustur', low, high, amount, seed)
-}
-
-ShuffleSitmo <- function(vec, seed = 10L) {
-    .Call('_clustur_ShuffleSitmo', PACKAGE = 'clustur', vec, seed)
+OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads) {
+    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads)
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {

@@ -29,8 +29,9 @@
 
 /***********************************************************************/
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std::string& method,
-    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed)
-    : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns) {
+    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed,
+    const int seed)
+    : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns), rng(RandomNumberSitmo(seed)) {
     maxRefBinNumber = 0;
     closed = isClosed;
     selfReference = selfRef;
@@ -40,8 +41,9 @@ OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std:
 }
 
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
-    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed)
-    : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns) {
+    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed,
+    const int seed)
+    : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns), rng(RandomNumberSitmo(seed)) {
     maxRefBinNumber = 0;
     selfReference = selfRef;
     printRef = printReference;
@@ -167,8 +169,7 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     insertLocation = bins.size();
     // std::vector<long long> temp;
     bins.emplace_back();
-
-    if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
+    if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rng); }
 
     value = comboValue;
     // TODO: FInd why there are more slots in the bins than there are sequences...
@@ -573,7 +574,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
 
         //get "ref" seqs for initialize inputs
         OptiData* refMatrix = matrix->extractRefMatrix(); // This is an empty matrix, that is the issue
-        OptiCluster clust(refMatrix, new MCC(), cutoff, 0.0001, 0);
+        OptiCluster clust(refMatrix, new MCC(), rng, cutoff, 0.0001, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
         delete refMatrix;
@@ -714,7 +715,7 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     ListVector* list = nullptr;
     auto* opti = new OptiMatrix();
     opti->MoveData(unfittedMatrix);
-    OptiCluster cluster(opti, metric, opti->GetCutoff(), 0);
+    OptiCluster cluster(opti, metric, rng, opti->GetCutoff(), 0);
     int iters = 0;
     double listVectorMetric = 0; //worst state
     double delta = 1;
@@ -875,8 +876,7 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
     // Rcpp::message("\nClustering " + std::to_string(refsMatrix->GetNameList().size()+refsMatrix->getNumSingletons()) + " reference sequences.\n");
 
     ListVector list;
-
-    OptiCluster cluster(refsMatrix, metric, 0, 0);
+    OptiCluster cluster(refsMatrix, metric, rng, 0, 0);
     constexpr int maxIters = 100;
     int iters = 0;
     double listVectorMetric = 0; //worst state
