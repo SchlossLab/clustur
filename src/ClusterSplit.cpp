@@ -396,7 +396,9 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, params->rng, cutoff, 0);
-			params->results.emplace_back(method->Execute());
+			ClusterExport* result = method->Execute();
+			params->results.emplace_back(result);
+			RcppThread::Rcout << std::to_string(result->GetListVector().listVector.size()) << std::endl;
 			delete method;
 			delete data;
 			continue;

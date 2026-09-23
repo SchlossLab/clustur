@@ -76,6 +76,7 @@ void Utils::SortVector(std::vector<T>& vector) {
 
 template<typename T>
 void Utils::mothurRandomShuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
+    if (vec.empty()) return;
     for (size_t i = vec.size() - 1; i > 0; --i) {
         const int randomNumber = sitmo.GetRandomNumber(0, vec.size() - 1);
         std::swap(vec[i], vec[randomNumber]);

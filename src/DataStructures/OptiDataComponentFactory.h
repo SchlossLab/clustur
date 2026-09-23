@@ -34,10 +34,12 @@ public:
         //     if (filteredNameList.find(name) == filteredNameList.end()) continue;
         //     const size_t& index = nameToIndex[name];
         //     for (const auto& [otherName, otherSequence] : data) {
+        //         if (name == otherName) continue;
         //         if (filteredNameList.find(name) == filteredNameList.end()) continue;
         //         const size_t& otherIndex = nameToIndex[otherName];
-        //         const double result = calculator->Execute(name, otherName);
-        //         matrix->addCell(otherIndex, PDistCell(index, result));
+        //         const double result = calculator->Execute(sequence, otherSequence);
+        //         if (result > cutoff) continue;
+        //         matrix.addCell(otherIndex, PDistCell(index, result));
         //     }
         // }
 
