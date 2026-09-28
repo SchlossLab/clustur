@@ -27,11 +27,14 @@ struct SplitClusterData {
     RandomNumberSitmo rng;
     std::vector<ClusterExport*> results{};
     double cutoff{};
+    int threadNumber;
 
     SplitClusterData() = default;
     explicit SplitClusterData(const std::vector<OptiDataComponent>& dividedData,
-        ClusterParameters parameters, ClusterMetric* metric, const RandomNumberSitmo& rng, const double cutoff) :
-    dividedData(dividedData), clusterParameters(parameters), metric(metric), rng(rng), cutoff(cutoff){}
+        ClusterParameters parameters, ClusterMetric* metric, const RandomNumberSitmo& rng, const double cutoff,
+        const int threadNumber) :
+    dividedData(dividedData), clusterParameters(parameters), metric(metric), rng(rng), cutoff(cutoff),
+    threadNumber(threadNumber){}
     // ~ClusterData() {
     //     for (auto& res : results) {
     //         delete res;

@@ -337,68 +337,55 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
     //create array of worker threads
     std::vector<RcppThread::Thread*> workerThreads;
-    std::vector<SplitClusterData*> data(dividedWork.size());
+    std::vector<SplitClusterData*> data;
+	data.reserve(dividedWork.size() - 1);
 
     //Lauch worker threads
     for (int i = 1; i < processors; i++) {
-        // ClusterData* dataBundle = new ClusterData(showabund, classic, deleteFiles, dividedWork[i+1], cutoffNotSet, cutoff, precision, length, method, outputdir, vsearchLocation, type);
-        // dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
-
     	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric,
-    		RandomNumberSitmo(seed + i), cutoff);
-    	data[i] = dataBundle;
-        // data.push_back(dataBundle);
+    		RandomNumberSitmo(seed + i), cutoff, i);
+        data.emplace_back(dataBundle);
 
-        workerThreads.push_back(new RcppThread::Thread([&] {
+        workerThreads.push_back(new RcppThread::Thread([&, dataBundle] {
 	        cluster(dataBundle);
         }));
     }
 
 
 	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric,
-		RandomNumberSitmo(seed), cutoff);
-	data[0] = dataBundle;
-	// data.push_back(dataBundle);
-    //dataBundle->setOptiOptions(metricName, stableMetric, initialize, maxIters);
+		RandomNumberSitmo(seed), cutoff, 0);
     cluster(dataBundle);
-    // listFiles = dataBundle->listFileNames;
-    // tag = dataBundle->tag;
-    // cutoff = dataBundle->cutoff;
-    // labels = dataBundle->labels;
 
-	std::vector<ClusterExport*> results;
+	std::vector<ClusterExport*> results = dataBundle->results;
 	results.reserve(distanceMatrices.size());
-    for (int i = 1; i < processors; i++) {
-        workerThreads[i - 1]->join();
-		// results.insert(results.end(), data[i]->results.begin(), data[i]->results.end());
-    	std::move(data[i]->results.begin(), data[i]->results.end(), std::back_inserter(results));
-        // listFiles.insert(listFiles.end(), data[i]->listFileNames.begin(), data[i]->listFileNames.end());
-        // labels.insert(data[i]->labels.begin(), data[i]->labels.end());
-        // if (data[i]->cutoff < cutoff) { cutoff = data[i]->cutoff; }
-
-        delete data[i];
+    for (int i = 0; i < processors - 1; i++) {
+        workerThreads[i]->join();
         delete workerThreads[i - 1];
     }
-	std::move(dataBundle->results.begin(), dataBundle->results.end(), std::back_inserter(results));
-	// results.insert(results.end(), dataBundle->results.begin(), dataBundle->results.end());
+	for (const auto& result: data) {
+		results.insert(results.end(), result->results.cbegin(), result->results.cend());
+	}
+
 	dataBundle->results.clear();
 	delete dataBundle;
+	for (auto & dat : data) {
+		delete dat;
+	}
+
     //deleteFiles = true;
 
     return results;
 }
 
 void ClusterSplit::cluster(SplitClusterData* params) const {
-	double smallestCutoff = params->cutoff;
 	params->results.reserve(params->dividedData.size());
 	for (auto&[matrix, listVector] : params->dividedData) {
 		if (params->clusterParameters.GetClusterType() == "opti") {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, params->rng, cutoff, 0);
-			ClusterExport* result = method->Execute();
-			params->results.emplace_back(result);
-			RcppThread::Rcout << std::to_string(result->GetListVector().listVector.size()) << std::endl;
+			// ClusterExport* result = ;
+			params->results.emplace_back(method->Execute());
 			delete method;
 			delete data;
 			continue;

@@ -40,6 +40,7 @@ private:
     int seed;
     int numberOfThreads;
     double cutoff;
+    const std::mutex mutex;
 
 };
 

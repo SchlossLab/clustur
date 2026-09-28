@@ -51,7 +51,7 @@ public:
             const FastaData& fastaData = data[i];
            if (filteredNameList.find(fastaData.name) == filteredNameList.end()) return;
            const size_t& index = nameToIndex[fastaData.name];
-            for (size_t j = 0; j < dataSize; j++) {
+            for (size_t j = i + 1; j < dataSize; j++) {
                 const FastaData& otherFastaData = data[j];
                 if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
                 const size_t& otherIndex = nameToIndex[otherFastaData.name];

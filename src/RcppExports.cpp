@@ -188,6 +188,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// Dist_Seqs
+void Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile);
+RcppExport SEXP _clustur_Dist_Seqs(SEXP fastaDataSEXP, SEXP outputFileSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fastaData(fastaDataSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type outputFile(outputFileSEXP);
+    Dist_Seqs(fastaData, outputFile);
+    return R_NilValue;
+END_RCPP
+}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -286,6 +297,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 9},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 11},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
+    {"_clustur_Dist_Seqs", (DL_FUNC) &_clustur_Dist_Seqs, 2},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

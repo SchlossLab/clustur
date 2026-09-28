@@ -49,6 +49,10 @@ OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featur
     .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads)
 }
 
+Dist_Seqs <- function(fastaData, outputFile) {
+    invisible(.Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile))
+}
+
 DetermineIfPhylipOrColumnFile <- function(filePath) {
     .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }

@@ -253,3 +253,28 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
       // Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
     // return Rcpp::List::create();
 }
+
+#include <fstream>
+//[[Rcpp::export]]
+void Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
+    std::ofstream seqFile(outputFile);
+    const FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
+    if (!seqFile.is_open()) {
+        Rcpp::stop("Could not open sequence file.");
+    }
+    seqFile << "Sequence\tSequence\tDistance\n";
+    const PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    const std::vector<FastaData>& fastaVectorData = fastaDatabase.GetFastaDataBase();
+    for (size_t i = 0; i < fastaVectorData.size(); i++) {
+        for (size_t j = 0; j < fastaVectorData.size(); j++) {
+            if (i == j) continue;
+            if ( fastaVectorData[i].name == "U68609" && fastaVectorData[j].name == "U68595") {
+                Rcpp::Rcout << " hi";
+            }
+            seqFile << fastaVectorData[i].name << "\t" << fastaVectorData[j].name
+            << "\t" << std::to_string(calculator->Execute(fastaVectorData[i].sequence,
+                fastaVectorData[j].sequence)) << "\n";
+        }
+    }
+    seqFile.close();
+}
