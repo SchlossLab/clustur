@@ -64,7 +64,7 @@ OptiCluster::~OptiCluster() {
 
 /***********************************************************************/
 //randomly assign sequences to OTUs
-int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {
+int OptiCluster::Initialize(double &value, const bool randomize, const std::string& initialize) {
     numSeqs = matrix->getNumSeqs();
     truePositives = 0;
     falsePositives = 0;
@@ -296,6 +296,13 @@ ListVector OptiCluster::getList() const {
     return list;
 }
 
+void OptiCluster::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    initialize = params.at("initialize");
+    delta = std::stod(params.at("delta"));
+    maxIters = std::stoi(params.at("iters"));
+}
+
 /***********************************************************************/
 std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, double &fn) const {
     long long singletn = matrix->getNumSingletons() + numSingletons;
@@ -398,8 +405,9 @@ ClusterExport* OptiCluster::Execute() {
     std::string clusterMetrics;
     std::string sensFile;
     bool canShuffle = true;
-    double delta = 1;
-    int maxIters = 100;
+    int iters = 0;
+    // double delta = 1;
+    // int maxIters = 100;
     std::ofstream listFile;
     std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
         "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
@@ -419,13 +427,13 @@ ClusterExport* OptiCluster::Execute() {
     //     metric = new TPTN();
     // }
 
-    int iters = 0;
+
     double listVectorMetric = 0; //worst state
     long long numBins;
     double tp, tn, fp, fn;
     std::vector<double> stats;
     std::vector<std::string> clusterMetricList;
-    initialize(listVectorMetric, canShuffle, initializeString);
+    Initialize(listVectorMetric, canShuffle, initializeString);
     stats = getStats(tp, tn, fp, fn);
     numBins = getNumBins();
     clusterMetrics = ("0,0," + std::to_string(cutoff) + "," + std::to_string(numBins) + "," +

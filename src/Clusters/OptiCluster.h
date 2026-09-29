@@ -22,13 +22,14 @@ class OptiCluster final : public ClusterMethod {
     ClusterExport* Execute() override;
     [[nodiscard]] std::string getTag() const { std::string tag = "opti_" + metric->getName(); return tag; }
     [[nodiscard]] long long getNumBins() const;
-    int initialize(double&, bool, const std::string&);  //randomize and place in "best" OTUs
+    int Initialize(double&, bool, const std::string&);  //randomize and place in "best" OTUs
 
     bool update(double&); //returns whether list changed and MCC
     std::vector<double> getStats( double&,  double&,  double&,  double&) const;
     [[nodiscard]] std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     [[nodiscard]] std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
     [[nodiscard]] ListVector getList() const;
+    void SetClusterParameters(const ClusterParameters &) override;
 
 protected:
     OptiData* matrix;
@@ -47,6 +48,10 @@ protected:
     double stableMetric;
     long long findInsert() const;
     double cutoff;
+private:
+    int maxIters = 100;
+    double delta;
+    std::string initialize;
 };
 
 

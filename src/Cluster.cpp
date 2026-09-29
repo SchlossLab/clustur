@@ -65,7 +65,6 @@ ClusterExport* Cluster::ExecuteCluster() {
     auto* clusterData = new ClusterData("");
     // 0.158123 <= 0.1511
     while ((dMatrix->getSmallDist() <= currentCutoff) && (dMatrix->getNNodes() > 0)) {
-        constexpr double precision = 100;
         //TODO We are getting values that are just barely grater than 0, we need to figure out how to deal with them
         update(currentCutoff);
         ClusterInformation data;

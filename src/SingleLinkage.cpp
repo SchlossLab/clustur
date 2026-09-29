@@ -22,6 +22,11 @@ ClusterExport* SingleLinkage::Execute() {
     return ExecuteCluster();
 }
 
+void SingleLinkage::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    precision = std::stoi(params.at("precision"));
+}
+
 /***********************************************************************/
 //This function updates the distance based on the nearest neighbor method.
 bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {

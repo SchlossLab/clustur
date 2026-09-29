@@ -107,7 +107,8 @@ read_dist <- function(distance_file, count_table,
 cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
                     bin_column_name_to = "bin", random_seed = 123,
-                    strollur_object = NULL) {
+                    precision = 100, delta = 0.0001, iters = 100, 
+                    initialize = "singleton", strollur_object = NULL) {
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -119,10 +120,12 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
   df <- data.frame()
  if (method != "opticlust") {
     df <- Cluster(distance_object, method,
-                  feature_column_name_to, bin_column_name_to, cutoff)
+                  feature_column_name_to, bin_column_name_to, cutoff,
+                  precision)
   } else {
     df <- OptiClust(distance_object, feature_column_name_to,
-                      bin_column_name_to, cutoff, random_seed)
+                      bin_column_name_to, cutoff, random_seed,
+                      delta, iters, initialize)
     df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
                                                      "label", "num_otus",
                                                      "cutoff", "tp", "tn",

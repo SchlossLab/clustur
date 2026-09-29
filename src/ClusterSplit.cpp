@@ -177,7 +177,7 @@ ClusterExport* ClusterSplit::mergeLists(const std::vector<ClusterExport*>& expor
 	ClusterExport* result = new ClusterExport();
 	result->SetListVector(completeListVector, std::to_string(cutoff));
 	return result;
-		// std::map<double, int> labelBin;
+		// std::map<double, int> labelBin ;
 		// std::vector<double> orderFloat;
 		// int numSingleBins;
 		//
@@ -360,7 +360,7 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 	results.reserve(distanceMatrices.size());
     for (int i = 0; i < processors - 1; i++) {
         workerThreads[i]->join();
-        delete workerThreads[i - 1];
+        delete workerThreads[i];
     }
 	for (const auto& result: data) {
 		results.insert(results.end(), result->results.cbegin(), result->results.cend());
@@ -384,7 +384,7 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, params->rng, cutoff, 0);
-			// ClusterExport* result = ;
+			method->SetClusterParameters(params->clusterParameters);
 			params->results.emplace_back(method->Execute());
 			delete method;
 			delete data;
@@ -393,6 +393,7 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 		RAbundVector rAbund = listVector.getRAbundVector();
 		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters.GetClusterType(), &listVector, &matrix,
 			rAbund, cutoff);
+		method->SetClusterParameters(params->clusterParameters);
 		params->results.emplace_back(method->Execute());
 		delete method;
 

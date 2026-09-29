@@ -25,12 +25,12 @@ CreateSparseMatrix <- function(sequences, cutoff) {
     .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
 }
 
-Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff) {
-    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff)
+Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff, precision = 100L) {
+    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff, precision)
 }
 
-OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L) {
-    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed)
+OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L, delta = 1, iters = 100L, initialize = "singleton") {
+    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize)
 }
 
 OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, seed = 123L) {

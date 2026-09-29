@@ -29,6 +29,7 @@ public:
                                                  std::set<std::string> &labels, size_t processors);
 
     void cluster(SplitClusterData *params) const;
+    void SetClusterParameters(const ClusterParameters &) override {};
 
 private:
     FastaDatabase fastaData;

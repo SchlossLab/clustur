@@ -16,7 +16,7 @@
 
 /***********************************************************************/
 
-class OptiFitCluster : public ClusterMethod {
+class OptiFitCluster final : public ClusterMethod {
 
 public:
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
@@ -78,6 +78,10 @@ protected:
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
+
+public:
+    void SetClusterParameters(const ClusterParameters &) override {}
+
 private:
     bool selfReference;
     bool printRef;

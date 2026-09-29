@@ -15,6 +15,7 @@ public:
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
     ClusterExport * Execute() override;
+    void SetClusterParameters(const ClusterParameters &) override;
 
 private:
     unsigned long saveRow;

@@ -39,7 +39,7 @@ Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const
 
 //[[Rcpp::export]]
 Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std::string& featureColumnName,
-    const std::string& binColumnName, const double cutoff) {
+    const std::string& binColumnName, const double cutoff, const int precision = 100) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto lastCutoff = distanceData.get()->GetCutoff();
@@ -48,8 +48,11 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     RAbundVector rAbund = listVector->getRAbundVector();
     if(cutoff < lastCutoff)
         sparseMatrix->FilterSparseMatrix(cutoff);
+    ClusterParameters params;
+    params.SetParameters("precision", std::to_string(precision));
     ClusterMethod* clusterMethod = Utils::GetClusterMethod(method, listVector, sparseMatrix,
         rAbund, cutoff);
+    clusterMethod->SetClusterParameters(params);
     const auto result = clusterMethod->Execute();
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
@@ -65,7 +68,9 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
 
 //[[Rcpp::export]]
 Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName,
-    const double cutoff, const int seed = 123) {
+    const double cutoff, const int seed = 123, const double delta = 1, const int iters = 100,
+    const std::string& initialize = "singleton") {
+
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
@@ -86,7 +91,12 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
         metric = new MCC();
 
     const RandomNumberSitmo rng(seed);
+    ClusterParameters params;
+    params.SetParameters("delta", std::to_string(delta));
+    params.SetParameters("iters", std::to_string(iters));
+    params.SetParameters("initialize", initialize);
     OptiCluster cluster(optiMatrix, metric, rng, cutoff, 0);
+    cluster.SetClusterParameters(params);
     const auto* result = cluster.Execute();
 
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();

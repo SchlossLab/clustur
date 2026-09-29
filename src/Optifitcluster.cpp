@@ -720,7 +720,7 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     double listVectorMetric = 0; //worst state
     double delta = 1;
 
-    cluster.initialize(listVectorMetric, true, "singleton");
+    cluster.Initialize(listVectorMetric, true, "singleton");
 
     long long numBins = cluster.getNumBins();
     // Rcpp::Rcout << ("\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
@@ -882,7 +882,7 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
     double listVectorMetric = 0; //worst state
     double delta = 1;
 
-    cluster.initialize(listVectorMetric, true, "singleton");
+    cluster.Initialize(listVectorMetric, true, "singleton");
 
     long long numBins = cluster.getNumBins();
     // Rcpp::message("\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
