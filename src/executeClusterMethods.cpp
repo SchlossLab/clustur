@@ -245,7 +245,7 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     ClusterParameters parameter(clusterMethod);
     ClusterMetric* metric = new MCC();
     ClusterSplit cluster(fastaDatabase, taxonomyDatabase, calculator,
-        parameter, metric, cutoff, taxonomyCutoff, seed, numberOfThreads);
+        parameter, metric, countTableAdapter, cutoff, taxonomyCutoff, seed, numberOfThreads);
 
     const auto* result = cluster.Execute();
     delete metric;

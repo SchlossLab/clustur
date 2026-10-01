@@ -11,6 +11,10 @@ cluster(
   feature_column_name_to = "feature",
   bin_column_name_to = "bin",
   random_seed = 123,
+  precision = 100,
+  delta = 1e-04,
+  iters = 100,
+  initialize = "singleton",
   strollur_object = NULL
 )
 }

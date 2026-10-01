@@ -15,11 +15,13 @@
 // [[Rcpp::depends(RcppThread)]]
 #include <RcppThread.h>
 
+#include "../Adapters/CountTableAdapter.h"
+
 class ClusterSplit final : ClusterMethod {
 public:
     ClusterSplit(FastaDatabase  fastaDatabase, const std::vector<TaxonomyData>& taxaData,
         PairwiseDistanceCalculator* calculator, ClusterParameters parameters, ClusterMetric* metric,
-        double cutoff, int taxonomyCutoff, int seed, int numberOfThreads);
+        CountTableAdapter  adapter, double cutoff, int taxonomyCutoff, int seed, int numberOfThreads);
     ~ClusterSplit() override = default;
     ClusterExport * Execute() override;
 
@@ -37,6 +39,7 @@ private:
     ClusterParameters clusterParameters;
     ClusterMetric* metric;
     std::vector<TaxonomyData> taxaData;
+    CountTableAdapter countTableAdapter;
     int taxonomyCutoff;
     int seed;
     int numberOfThreads;

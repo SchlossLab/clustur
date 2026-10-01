@@ -270,8 +270,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 }
 
 #' @export
-opti_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, 
-                       feature_column_name, bin_column_name, cutoff, taxonomy_cutoff, 
+cluster_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, cutoff,
+                       taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
                        random_seed = 123, number_of_threads = 1) {
   
 
