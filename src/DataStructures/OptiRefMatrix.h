@@ -31,12 +31,15 @@ class OptiRefMatrix final : public OptiData {
 
 public:
     OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
-    const std::vector<std::string>& singleton, const double c);
+    const std::vector<std::string>& singleton, double c, int seed);
 
-    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP, const std::string& refWeight);
-    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, std::unordered_set<std::string> accnosRefFileNames);
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP,
+        const std::string& refWeight, int seed);
+    OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter,
+        std::unordered_set<std::string> accnosRefFileNames, int seed);
 
-    OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, float fitPercent, double cutoff);
+    OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter, float fitPercent,
+        double cutoff, int seed);
 
 
     ~OptiRefMatrix() override = default;
@@ -85,6 +88,7 @@ protected:
     // std::vector<std::string> nameMap;
     std::map<long long, long long> weights; //seqeunce index in matrix to weight in chosing as reference
     std::string method, refWeightMethod;
+    int seed;
     bool square;
     double cutoff;
     //a refSingleton or Fitsingleton may not be a true singleton (no valid dists in matrix), but may be a refSeq with no distances to other refs but distances to fitseqs. a fitsingleton may have dists to refs but no dists to other fitseqs.

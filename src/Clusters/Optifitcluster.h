@@ -16,13 +16,13 @@
 
 /***********************************************************************/
 
-class OptiFitCluster : public ClusterMethod {
+class OptiFitCluster final : public ClusterMethod {
 
 public:
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed);
+        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
     OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed );
+        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
 
     void Reset();
 
@@ -58,6 +58,7 @@ protected:
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;
     long long  numFitSeqs, insertLocation, numFitSingletons;
     long long  numComboSeqs, numComboSingletons;
+    RandomNumberSitmo rng;
 
     int findInsert();
 
@@ -77,6 +78,10 @@ protected:
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
+
+public:
+    void SetClusterParameters(const ClusterParameters &) override {}
+
 private:
     bool selfReference;
     bool printRef;

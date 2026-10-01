@@ -30,7 +30,7 @@ protected:
     virtual bool clusterBins();
     virtual bool clusterNames();
     virtual bool updateMap();
-
+    int precision = 100;
 
     RAbundVector* rabund{};
     ListVector* list{};

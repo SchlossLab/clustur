@@ -26,6 +26,11 @@ ClusterExport* AverageLinkage::Execute() {
     return ExecuteCluster();
 }
 
+void AverageLinkage::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    precision = std::stoi(params.at("precision"));
+}
+
 
 /***********************************************************************/
 //This function updates the distance based on the average linkage method.

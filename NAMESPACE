@@ -3,6 +3,7 @@
 S3method(read_count,character)
 S3method(read_count,strollur)
 export(cluster)
+export(cluster_split)
 export(create_sparse_matrix)
 export(example_path)
 export(get_abundance)

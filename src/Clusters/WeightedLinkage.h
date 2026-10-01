@@ -17,6 +17,8 @@ public:
 
     ClusterExport * Execute() override;
 
+    void SetClusterParameters(const ClusterParameters &) override;
+
 private:
     unsigned long saveRow;
     unsigned long saveCol;

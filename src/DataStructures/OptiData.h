@@ -6,7 +6,7 @@
 #define REFACTOR_OPTIDATA_H
 #include <vector>
 #include <string>
-#include <unordered_set>
+#include "SparseDistanceMatrix.h"
 #include "../DataStructures/ListVector.h"
 
 
@@ -127,8 +127,6 @@ protected:
     std::vector<std::string> singletons; //name of seqs with NO distances in matrix, if name file is given then it contains 2nd column of namefile
     std::vector<std::string> nameMap;
 };
-
-
 
 
 #endif //REFACTOR_OPTIDATA_H

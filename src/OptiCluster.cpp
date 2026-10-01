@@ -1,7 +1,6 @@
 //
 // Created by Gregory Johnson on 3/29/24.
 //
-#include <Rcpp.h>
 #include <unordered_set>
 #include <fstream>
 #include "Clusters/OptiCluster.h"
@@ -19,7 +18,7 @@
 
 
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const long long ns) : matrix(mt),
     metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
@@ -29,7 +28,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     combofalseNegatives(0),
     numFitSeqs(0), numFitSingletons(0),
     numComboSeqs(0),
-    numComboSingletons(0),
+    numComboSingletons(0), rngEngine(rng),
     cutoff(cutoff) {
     truePositives = 0;
     trueNegatives = 0;
@@ -38,7 +37,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     stableMetric = 0;
 }
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
     metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
@@ -48,7 +47,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const double cutoff, 
     combofalseNegatives(0),
     numFitSeqs(0), numFitSingletons(0),
     numComboSeqs(0),
-    numComboSingletons(0),
+    numComboSingletons(0), rngEngine(rng),
     stableMetric(stableMetric),
     cutoff(cutoff) {
     truePositives = 0;
@@ -65,7 +64,7 @@ OptiCluster::~OptiCluster() {
 
 /***********************************************************************/
 //randomly assign sequences to OTUs
-int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {
+int OptiCluster::Initialize(double &value, const bool randomize, const std::string& initialize) {
     numSeqs = matrix->getNumSeqs();
     truePositives = 0;
     falsePositives = 0;
@@ -95,7 +94,7 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
         //     randomizeSeqs.push_back(i);
         // }
 
-        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
         for (const auto seq: seqBin) {
@@ -114,7 +113,7 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
             randomizeSeqs.push_back(i);
         }
 
-        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs); }
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
         for (const auto seq : seqBin) {
@@ -297,6 +296,13 @@ ListVector OptiCluster::getList() const {
     return list;
 }
 
+void OptiCluster::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    initialize = params.at("initialize");
+    delta = std::stod(params.at("delta"));
+    maxIters = std::stoi(params.at("iters"));
+}
+
 /***********************************************************************/
 std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, double &fn) const {
     long long singletn = matrix->getNumSingletons() + numSingletons;
@@ -399,8 +405,9 @@ ClusterExport* OptiCluster::Execute() {
     std::string clusterMetrics;
     std::string sensFile;
     bool canShuffle = true;
-    double delta = 1;
-    int maxIters = 100;
+    int iters = 0;
+    // double delta = 1;
+    // int maxIters = 100;
     std::ofstream listFile;
     std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
         "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
@@ -420,13 +427,13 @@ ClusterExport* OptiCluster::Execute() {
     //     metric = new TPTN();
     // }
 
-    int iters = 0;
+
     double listVectorMetric = 0; //worst state
     long long numBins;
     double tp, tn, fp, fn;
     std::vector<double> stats;
     std::vector<std::string> clusterMetricList;
-    initialize(listVectorMetric, canShuffle, initializeString);
+    Initialize(listVectorMetric, canShuffle, initializeString);
     stats = getStats(tp, tn, fp, fn);
     numBins = getNumBins();
     clusterMetrics = ("0,0," + std::to_string(cutoff) + "," + std::to_string(numBins) + "," +

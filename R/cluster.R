@@ -107,7 +107,8 @@ read_dist <- function(distance_file, count_table,
 cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
                     bin_column_name_to = "bin", random_seed = 123,
-                    strollur_object = NULL) {
+                    precision = 100, delta = 0.0001, iters = 100, 
+                    initialize = "singleton", strollur_object = NULL) {
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -116,18 +117,15 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
     stop("`method` parameter can only be opticlust, furthest, nearest,
          average, or weighted.")
   }
-  set.seed(random_seed)
   df <- data.frame()
-  if(method == "optifit") {
-    df <- OptiFit(distance_object, feature_column_name_to,
-                      bin_column_name_to, cutoff)
-  }
-  else if (method != "opticlust") {
+ if (method != "opticlust") {
     df <- Cluster(distance_object, method,
-                  feature_column_name_to, bin_column_name_to, cutoff)
+                  feature_column_name_to, bin_column_name_to, cutoff,
+                  precision)
   } else {
     df <- OptiClust(distance_object, feature_column_name_to,
-                      bin_column_name_to, cutoff)
+                      bin_column_name_to, cutoff, random_seed,
+                      delta, iters, initialize)
     df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
                                                      "label", "num_otus",
                                                      "cutoff", "tp", "tn",
@@ -234,7 +232,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL,
-                    fit_percent = 50, closed = TRUE, print_ref = FALSE) {
+                    fit_percent = 50, closed = TRUE, print_ref = FALSE, random_seed = 123) {
   if(fit_percent < 0.01) {
     fit_percent = 0.01
   }
@@ -248,11 +246,11 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
                    " all NULL. Running Optifit using denovo."))
     # run denovo
     result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref,
-                      selfReference = FALSE)
+                      selfReference = FALSE, random_seed)
   } else if (!is.null(accnos)) {
     message("Accnos file is not null, running optifit using accnos.")
     result <- OptiFit2(fit_dist, feature_column_name, bin_column_name, accnos, cutoff, closed, print_ref,
-                       selfReference = FALSE)
+                       selfReference = FALSE, random_seed)
   } else if (!ref_parameters_check) {
     message("ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.")
     ref_fasta <- strollur::read_fasta(ref_fasta)
@@ -261,7 +259,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     copied_data <- CopyObject(fit_dist)
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff)
     result <- OptiFit3(copied_data, ref_list,  get_count_table(final_dist)$Representative.Sequences,
-             0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE)
+             0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE, random_seed)
   }
   else {
     stop(paste0("You either have forget to supply proper parameters are you did not supply all,",
@@ -269,4 +267,17 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
   }
   class(result) <- "mothur_cluster"
   result
+}
+
+#' @export
+cluster_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, cutoff,
+                       taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
+                       random_seed = 123, number_of_threads = 1) {
+  
+
+  fasta <- strollur::read_fasta(fasta_file)
+  taxonomy <- strollur::read_mothur_taxonomy(taxonomy_file)
+
+  OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
+            bin_column_name, cutoff, taxonomy_cutoff, random_seed, number_of_threads)
 }

@@ -16,6 +16,8 @@ public:
     std::string getTag() override;
 
     ClusterExport * Execute() override;
+
+    void SetClusterParameters(const ClusterParameters &) override;
 };
 
 #endif //COMPLETELINKAGE_H

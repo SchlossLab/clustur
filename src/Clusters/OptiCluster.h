@@ -6,7 +6,6 @@
 #define REFACTOR_OPTICLUSTER_H
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include <map>
 #include "ClusterMethod.h"
 #include "ClusterMetric.h"
@@ -17,19 +16,20 @@
 class OptiCluster final : public ClusterMethod {
     public:
 
-    OptiCluster(OptiData* mt, ClusterMetric* met, double cutoff, long long ns);
-    OptiCluster(OptiData* mt, ClusterMetric* met, double cutoff, double stableMetric, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, double stableMetric, long long ns);
     ~OptiCluster() override;
     ClusterExport* Execute() override;
     [[nodiscard]] std::string getTag() const { std::string tag = "opti_" + metric->getName(); return tag; }
     [[nodiscard]] long long getNumBins() const;
-    int initialize(double&, bool, const std::string&);  //randomize and place in "best" OTUs
+    int Initialize(double&, bool, const std::string&);  //randomize and place in "best" OTUs
 
     bool update(double&); //returns whether list changed and MCC
     std::vector<double> getStats( double&,  double&,  double&,  double&) const;
     [[nodiscard]] std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     [[nodiscard]] std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
     [[nodiscard]] ListVector getList() const;
+    void SetClusterParameters(const ClusterParameters &) override;
 
 protected:
     OptiData* matrix;
@@ -38,6 +38,7 @@ protected:
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]
     std::map<long long, std::string> binLabels; //for fitting - maps binNumber to existing reference label
     std::vector<long long> seqBin; //sequence# -> bin#
+    RandomNumberSitmo rngEngine;
 
     long long numSeqs, insertLocation, numSingletons;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;
@@ -47,6 +48,10 @@ protected:
     double stableMetric;
     long long findInsert() const;
     double cutoff;
+private:
+    int maxIters = 100;
+    double delta;
+    std::string initialize;
 };
 
 

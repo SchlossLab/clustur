@@ -11,6 +11,9 @@
 #include <unordered_map>
 #include <Rcpp.h>
 #include "../Clusters/ClusterMetric.h"
+#include "../DataStructures/FastaDatabase.h"
+#include "../DataStructures/TaxonomyData.h"
+#include "../RNG/RandomNumberSitmo.h"
 
 class ClusterMethod;
 class SparseDistanceMatrix;
@@ -19,8 +22,8 @@ class RAbundVector;
 class Utils {
 public:
     Utils() = default;
-    static void mothurRandomShuffle(std::vector<int>& randomize);
-    static void mothurRandomShuffle(std::vector<long long>& randomize);
+    // static void mothurRandomShuffle(std::vector<int>& randomize);
+    // static void mothurRandomShuffle(std::vector<long long>& randomize);
     static int getRandomIndex(int highest);
     static int getNumNames(std::string names);
     static bool mothurConvert(const std::string& item, int& num);
@@ -38,13 +41,22 @@ public:
     template <typename T>
     static void SortVector(std::vector<T>&);
 
+    template<class T>
+    static void mothurRandomShuffle(std::vector<T> &vec, RandomNumberSitmo &sitmo);
+
     static ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences);
     static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
     //Error Checking
     static void CheckForDistanceFileError(const std::set<std::string>&);
     static ClusterMetric* GetClusterMetric(const std::string& metric);
-
+    static float removeConfidences(std::string &tax);
+    static bool hasConfidenceScore(std::string &taxon, float &confidence);
+    static bool isPositiveNumeric(const std::string &stringToCheck);
+    static void splitAtChar(std::string &prefix, std::string &suffix, char c);
+    static void splitAtChar(std::string &s, std::vector<std::string> &container, char symbol);
+    static void splitAtDash(const std::string &estim, std::vector<std::string> &container);
+    static std::vector<TaxonomyData> CreateTaxonomyData(const Rcpp::DataFrame& data);
     template <typename Out>
     static void split(const std::string &s, const char delim, Out result) {
         std::istringstream iss(s);
@@ -60,6 +72,15 @@ public:
 template<typename T>
 void Utils::SortVector(std::vector<T>& vector) {
     std::sort(vector.begin(), vector.end());
+}
+
+template<typename T>
+void Utils::mothurRandomShuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
+    if (vec.empty()) return;
+    for (size_t i = vec.size() - 1; i > 0; --i) {
+        const int randomNumber = sitmo.GetRandomNumber(0, vec.size() - 1);
+        std::swap(vec[i], vec[randomNumber]);
+    }
 }
 
 

@@ -382,3 +382,46 @@ test_that("opticluster will generate a warning if the mcc
             expect_warning(df <- cluster(distance_data, cutoff,
                                          method = "opticlust"))
           })
+
+
+test_that("cluster_split works", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  fasta <- test_path("extdata", "amazon.align")
+  taxonomy <- test_path("extdata", "amazon.taxonomy")
+
+  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3)
+
+  expect_equal(class(df$cluster), "data.frame")
+  expect_equal(class(df$abundance), "data.frame")
+  expect_true(all(df$label == 0.2))
+  expect_true(nrow(df$abundance) == 41)
+  expect_true(nrow(df$cluster) == 41)
+
+})
+
+test_that("cluster_fit works", {
+
+  final_count <- read_count(test_path("extdata", "final.count_table"))
+  final_dist <- read_dist(test_path("extdata", "final.dist"), final_count, 0.03)
+  final_fasta <- test_path("extdata", "final.align")
+  final_list <- test_path("extdata", "final.phylip.opti_mcc.0.03.list")
+  final_tax <- test_path("extdata", "final.taxonomy")
+
+  # Find a smaller fasta database akin to amazon_data
+
+
+  denovo <- optifit(final_dist, 0.03)
+  denovo_open <- optifit(final_dist, 0.03, closed = FALSE)
+  accnos <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20])
+  accnos_open <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20], closed=FALSE)
+
+  ref_cluster <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
+                        ref_list = final_list, fit_fasta = amazon_fasta)
+  ref_cluster_open <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
+                        ref_list = final_list, fit_fasta = amazon_fasta, closed = FALSE)
+  ref_cluster_open_print_ref <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
+                        ref_list = final_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE)
+
+
+})
