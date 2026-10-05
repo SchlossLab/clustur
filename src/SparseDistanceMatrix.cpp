@@ -15,7 +15,7 @@ SparseDistanceMatrix::SparseDistanceMatrix() : numNodes(0), smallDist(MOTHURMAX)
 SparseDistanceMatrix::SparseDistanceMatrix(const size_t size) : numNodes(0), smallDist(MOTHURMAX) {
     sorted = false;
     aboveCutoff = MOTHURMAX;
-    seqVec.resize(size);
+    resize(size);
 }
 
 

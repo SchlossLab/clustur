@@ -124,6 +124,7 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     std::vector<std::string> names(size);
     std::unordered_map<std::string, size_t> groupIndexes;
     for(size_t i = 0; i < groups.size(); i++) {
+        // if groups are duplicated, then the index will be wrong.
         groupIndexes[groups[i]] = i;
     }
     for(const auto&[name, columnData]: dataFrameMap) {
@@ -155,10 +156,17 @@ void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
     for(size_t i = 0; i < otherSequenceSize; i++) {
         nameToRowIndex[sequences[i]] = i + currentSequenceSize;
     }
-
+    //std::vector<std::string> uniqueGroups = {groups.begin(), groups.end()};
     groups.insert(groups.end(), other.groups.begin(), other.groups.end());
+    std::sort(groups.begin(), groups.end());
+    // const auto iter = std::unique(uniqueGroups.begin(), uniqueGroups.end());
+    // groups = {uniqueGroups.begin(), uniqueGroups.end()};
+    groups = {groups.begin(), std::unique(groups.begin(), groups.end())};
+    // groups.insert(groups.end(), other.groups.begin(), other.groups.end());
     groups.emplace_back("total");
     for (const auto& group : groups) {
+        //If the same name they will double copy into the same group
+        //
         const bool currentHasGroup = dataFrameMap.find(group) != dataFrameMap.end();
         const bool otherHasGroup = other.dataFrameMap.find(group) != other.dataFrameMap.end();
 
@@ -179,6 +187,7 @@ void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
         newAbundances.insert(newAbundances.end(), abundances.begin(), abundances.end());
         dataFrameMap[group] = newAbundances;
     }
+
 
 }
 

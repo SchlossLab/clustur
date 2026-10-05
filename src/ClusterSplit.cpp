@@ -53,6 +53,9 @@ ClusterExport * ClusterSplit::Execute() {
 		if (nonSingletons.find(seq) != nonSingletons.end()) continue; // its a singleton
 		singletons.set(counter++, seq);
 	}
+	if (singletons.size() == 0) {
+		return completeList;
+	}
 	// Add all the other sequences to singleton
 	const int singletonSize = singletons.size();
 	const int completedListVectorSize = completedListVector.size();

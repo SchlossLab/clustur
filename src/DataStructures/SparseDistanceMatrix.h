@@ -35,6 +35,9 @@ public:
         if(n > seqVec.max_size() || n <= 0)
             return;
         seqVec.resize(n);
+        for (auto& cell : seqVec) {
+            cell.reserve(n);
+        }
     }
     void clear();
     void addCells(const SparseDistanceMatrix &other);

@@ -257,8 +257,9 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     fit_fasta <- strollur::read_fasta(fit_fasta)
     ref_list <- strollur::read_mothur_list(ref_list)
     copied_data <- CopyObject(fit_dist)
+    class(copied_data) <- "distance_object"
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff)
-    result <- OptiFit3(copied_data, ref_list,  get_count_table(final_dist)$Representative.Sequences,
+    result <- OptiFit3(copied_data, ref_list,  get_count_table(copied_data)$Representative.Sequences,
              0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE, random_seed)
   }
   else {

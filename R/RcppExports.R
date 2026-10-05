@@ -50,7 +50,15 @@ OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featur
 }
 
 Dist_Seqs <- function(fastaData, outputFile) {
-    invisible(.Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile))
+    .Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile)
+}
+
+start_profiler <- function(str) {
+    .Call('_clustur_start_profiler', PACKAGE = 'clustur', str)
+}
+
+stop_profiler <- function() {
+    .Call('_clustur_stop_profiler', PACKAGE = 'clustur')
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {

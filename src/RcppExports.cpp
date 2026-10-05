@@ -193,14 +193,36 @@ BEGIN_RCPP
 END_RCPP
 }
 // Dist_Seqs
-void Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile);
+int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile);
 RcppExport SEXP _clustur_Dist_Seqs(SEXP fastaDataSEXP, SEXP outputFileSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fastaData(fastaDataSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type outputFile(outputFileSEXP);
-    Dist_Seqs(fastaData, outputFile);
-    return R_NilValue;
+    rcpp_result_gen = Rcpp::wrap(Dist_Seqs(fastaData, outputFile));
+    return rcpp_result_gen;
+END_RCPP
+}
+// start_profiler
+SEXP start_profiler(const SEXP& str);
+RcppExport SEXP _clustur_start_profiler(SEXP strSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type str(strSEXP);
+    rcpp_result_gen = Rcpp::wrap(start_profiler(str));
+    return rcpp_result_gen;
+END_RCPP
+}
+// stop_profiler
+SEXP stop_profiler();
+RcppExport SEXP _clustur_stop_profiler() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(stop_profiler());
+    return rcpp_result_gen;
 END_RCPP
 }
 // DetermineIfPhylipOrColumnFile
@@ -302,6 +324,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 11},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
     {"_clustur_Dist_Seqs", (DL_FUNC) &_clustur_Dist_Seqs, 2},
+    {"_clustur_start_profiler", (DL_FUNC) &_clustur_start_profiler, 1},
+    {"_clustur_stop_profiler", (DL_FUNC) &_clustur_stop_profiler, 0},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

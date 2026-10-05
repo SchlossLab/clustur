@@ -266,25 +266,39 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
 
 #include <fstream>
 //[[Rcpp::export]]
-void Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
+int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
     std::ofstream seqFile(outputFile);
     const FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
-    if (!seqFile.is_open()) {
-        Rcpp::stop("Could not open sequence file.");
-    }
+     if (!seqFile.is_open()) {
+         Rcpp::stop("Could not open sequence file.");
+     }
     seqFile << "Sequence\tSequence\tDistance\n";
+    SparseDistanceMatrix matrix;
     const PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
     const std::vector<FastaData>& fastaVectorData = fastaDatabase.GetFastaDataBase();
+    matrix.resize(fastaVectorData.size());
     for (size_t i = 0; i < fastaVectorData.size(); i++) {
-        for (size_t j = 0; j < fastaVectorData.size(); j++) {
-            if (i == j) continue;
-            if ( fastaVectorData[i].name == "U68609" && fastaVectorData[j].name == "U68595") {
-                Rcpp::Rcout << " hi";
-            }
+        for (size_t j = i + 1; j < fastaVectorData.size(); j++) {
             seqFile << fastaVectorData[i].name << "\t" << fastaVectorData[j].name
             << "\t" << std::to_string(calculator->Execute(fastaVectorData[i].sequence,
                 fastaVectorData[j].sequence)) << "\n";
         }
     }
     seqFile.close();
+    return 0;
+}
+
+#include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
+#include <Rcpp.h>
+
+// [[Rcpp::export]]
+SEXP start_profiler(const SEXP& str) {
+    ProfilerStart(Rcpp::as<const char*>(str));
+    return R_NilValue;
+}
+
+// [[Rcpp::export]]
+SEXP stop_profiler() {
+    ProfilerStop();
+    return R_NilValue;
 }
