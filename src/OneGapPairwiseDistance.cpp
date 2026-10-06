@@ -10,7 +10,7 @@ double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std
     bool openGapA = false;
     bool openGapB = false;
     const int alignLength = static_cast<int>(sequenceOne.length());
-        
+    
     const int start = setStart(sequenceOne, sequenceTwo);
     const int end = setEnd(sequenceOne, sequenceTwo);
         
@@ -19,30 +19,39 @@ double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std
     for(int i=start;i<alignLength;i++){
             
         //comparing gaps, ignore
-        if((sequenceOne[i] == '-' && sequenceTwo[i] == '-') || (sequenceOne[i] == '.' && sequenceTwo[i] == '-') || (sequenceOne[i] == '-' && sequenceTwo[i] == '.')){    maxMinLength--;    }
+        const char sequenceOneChar = sequenceOne[i];
+        const char sequenceTwoChar = sequenceTwo[i];
+
+        if((sequenceOneChar == '-' && sequenceTwoChar == '-') || (sequenceOneChar == '.' && sequenceTwoChar == '-') ||
+            (sequenceOneChar == '-' && sequenceTwoChar == '.')) {
+            maxMinLength--;
+            continue;
+        }
         //trailing gaps, quit we already calculated all the diffs
-        else if(sequenceOne[i] == '.' && sequenceTwo[i] == '.'){ break; }
+        if(sequenceOneChar == '.' && sequenceTwoChar == '.'){ break; }
             
-        else if(sequenceTwo[i] != '-' && (sequenceOne[i] == '-' || sequenceOne[i] == '.')){ //sequenceTwo is a base, sequenceOne is a gap
+        if(sequenceTwoChar != '-' && (sequenceOneChar == '-' || sequenceOneChar == '.')){ //sequenceTwo is a base, sequenceOne is a gap
             if(!openGapA){
                 difference++;
                 openGapA = true;
                 openGapB = false;
             }else { maxMinLength--; }
+            continue;
         }
-        else if(sequenceOne[i] != '-' && (sequenceTwo[i] == '-' || sequenceTwo[i] == '.')){ //sequenceOne is a base, sequenceTwo is a gap
+        if(sequenceOneChar != '-' && (sequenceTwoChar == '-' || sequenceTwoChar == '.')){ //sequenceOne is a base, sequenceTwo is a gap
             if(!openGapB){
                 difference++;
                 openGapA = false;
                 openGapB = true;
             }else { maxMinLength--; }
+            continue;
         }
-        else if(sequenceOne[i] != '-' && sequenceTwo[i] != '-'){ //both bases
+        if(sequenceOneChar != '-' && sequenceTwoChar != '-'){ //both bases
             openGapA = false;
             openGapB = false;
                 
             //no match
-            if(sequenceOne[i] != sequenceTwo[i]){ difference++; }
+            if(sequenceOneChar != sequenceTwoChar){ difference++; }
         }
             
 

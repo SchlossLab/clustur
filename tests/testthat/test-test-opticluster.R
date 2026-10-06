@@ -401,27 +401,25 @@ test_that("cluster_split works", {
 })
 
 test_that("cluster_fit works", {
+  amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
+  amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.3)
 
-  final_count <- read_count(test_path("extdata", "final.count_table"))
-  final_dist <- read_dist(test_path("extdata", "final.dist"), final_count, 0.03)
-  final_fasta <- test_path("extdata", "final.align")
-  final_list <- test_path("extdata", "final.phylip.opti_mcc.0.03.list")
-  final_tax <- test_path("extdata", "final.taxonomy")
-
-  # Find a smaller fasta database akin to amazon_data
+  esophagus_fasta <- test_path("extdata", "esophagus.align")
+  esophagus_count <- read_count(test_path("extdata", "esophagus.count_table"))
+  amazon_fasta <- test_path("extdata", "amazon.align")
+  esophagus_list <- test_path("extdata", "esophagus.opti_mcc.0.03.list")
 
 
-  denovo <- optifit(final_dist, 0.03)
-  denovo_open <- optifit(final_dist, 0.03, closed = FALSE)
+  denovo <- optifit(amazon_dist, 0.03)
+  denovo <- optifit(amazon_dist, 0.03, close = TRUE)
   accnos <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20])
   accnos_open <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20], closed=FALSE)
 
-  ref_cluster <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
-                        ref_list = final_list, fit_fasta = amazon_fasta)
-  ref_cluster_open <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
-                        ref_list = final_list, fit_fasta = amazon_fasta, closed = FALSE)
-  ref_cluster_open_print_ref <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = final_fasta, ref_count = final_count, 
-                        ref_list = final_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE)
-
+  ref_cluster <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta)
+  ref_cluster_open <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE)
+  ref_cluster_open_print_ref <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE)
 
 })

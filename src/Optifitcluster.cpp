@@ -602,7 +602,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         double tp, tn, fp, fn;
         std::string clusterMetrics;
         std::string sensFile;
-        std::vector<double> stats = getStats(tp, tn, fp, fn);
+        std::vector<double> results = getStats(tp, tn, fp, fn);
         std::vector<std::string> clusterMetricList;
         double fittp, fittn, fitfp, fitfn;
         long long numFitBins = getNumFitBins();
@@ -625,7 +625,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
             delta = abs(oldMetric - listVectorMetric);
             iters++;
 
-            stats = getStats(tp, tn, fp, fn);
+            results = getStats(tp, tn, fp, fn);
             ListVector* listVector = getFittedList(cutoffString, false);
             numFitBins = listVector->getNumBins();
             delete listVector;
@@ -659,7 +659,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(tp) + ',' +
                 std::to_string(tn) + ',' +
                 std::to_string(fp) + ',' + std::to_string(fn) + ',';
-        for (double res: stats) { sensFile += std::to_string(res) + ','; }
+        for (double res: results) { sensFile += std::to_string(res) + ','; }
         Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
 
         delete list;
