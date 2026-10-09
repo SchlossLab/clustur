@@ -821,7 +821,7 @@ std::vector<std::vector<std::string> > otus){
         }
         Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
 
-        // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
+        outputSteps("", printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
     }
     //    m->mothurOutEndLine(); m->mothurOutEndLine();
 
@@ -973,7 +973,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
         delta = abs(oldMetric - listVectorMetric);
         iters++;
 
-        // results = getStats(tp, tn, fp, fn);
+        results = getStats(tp, tn, fp, fn);
         numBins = getNumBins();
         numFitBins = getNumFitBins();
         fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
@@ -987,6 +987,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
             clusterMetrics += (std::to_string(stat) + ",");
         }
         Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+        outputSteps("", printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
 
     }
     std::ofstream listFile;
@@ -1075,5 +1076,54 @@ void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std:
         // m->mothurOut(label + "\t" + toString(cutoff) + "\t" + toString(numBins) + "\t"+ toString(truePositives) + "\t" + toString(trueNegatives) + "\t" + toString(falsePositives) + "\t" + toString(falseNegatives) + "\t");
         // m->mothurOut(toString(sensitivity) + "\t" + toString(specificity) + "\t" + toString(positivePredictiveValue) + "\t" + toString(negativePredictiveValue) + "\t");
         // m->mothurOut(toString(falseDiscoveryRate) + "\t" + toString(accuracy) + "\t" + toString(matthewsCorrCoef) + "\t" + toString(f1Score) + "\n\n");
+
+}
+
+void OptiFitCluster::outputSteps(const std::string& outputName, bool& printHeaders, double tp, double tn, double fp, double fn, std::vector<double> results, long long numBins, double fittp, double fittn, double fitfp, double fitfn, std::vector<double> fitresults, long long numFitBins, int iter, bool printToFile, int denovoIter) {
+    if (!selfReference) { //writes to file as well
+        if (printHeaders) { Rcpp::Rcout << ("\n\nstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");  }
+
+       Rcpp::Rcout << ("combo\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t"+ std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) + "\t") << std::endl;
+        for (int i = 0; i < results.size(); i++) {Rcpp::Rcout << (std::to_string(results[i]) + "\t");  }//Rcpp::messageEndLine();
+
+        Rcpp::Rcout << ("fit\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numFitBins) + "\t"+ std::to_string(cutoff) + "\t" + std::to_string(fittp) + "\t" + std::to_string(fittn) + "\t" + std::to_string(fitfp) + "\t" + std::to_string(fitfn) + "\t") << std::endl;
+        for (int i = 0; i < fitresults.size(); i++) {Rcpp::Rcout << (std::to_string(fitresults[i]) + "\t");  } Rcpp::Rcout << std::endl; //Rcpp::messageEndLine();
+
+        // ofstream outStep;
+        // if (printHeaders)   {
+        //     util.openOutputFile(outputName, outStep);
+        //     outStep << "state\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+        //     printHeaders = false;
+        // }else                { util.openOutputFileAppend(outputName, outStep);   }
+        //
+        // outStep << "combo\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t" << tp << '\t' << tn << '\t' << fp << '\t' << fn << '\t';
+        // for (int i = 0; i < results.size(); i++) {  outStep << results[i] << "\t"; } outStep << endl;
+        //
+        // outStep << "fit\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numFitBins) + "\t" + std::to_string(cutoff) + "\t" << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn << '\t';
+        // for (int i = 0; i < fitresults.size(); i++) {  outStep << fitresults[i] << "\t"; } outStep << endl;
+    }else {
+        //print results for each iter???
+        if (printToFile) {
+           // ofstream outStep;
+           if (printHeaders)   {
+               // util.openOutputFile(outputName, outStep);
+               Rcpp::Rcout << "list\t\tstate\titer\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+               printHeaders = false;
+           }//else                { util.openOutputFileAppend(outputName, outStep);
+
+
+            //outStep << std::to_string(denovoIter+1) + "\tcombo\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t" + std::to_string(cutoff) + "\t" << tp << '\t' << tn << '\t' << fp << '\t' << fn << '\t';
+            //for (int i = 0; i < results.size(); i++) {  outStep << results[i] << "\t"; } outStep << endl;
+
+           // outStep << std::to_string(denovoIter+1) + "\tfit\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numFitBins) + "\t" + std::to_string(cutoff) + "\t" << fittp << '\t' << fittn << '\t' << fitfp << '\t' << fitfn << '\t';
+           // for (int i = 0; i < fitresults.size(); i++) {  outStep << fitresults[i] << "\t"; } outStep << endl;
+        }else {
+            Rcpp::Rcout << (std::to_string(denovoIter+1) + "\t" + "combo\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numBins) + "\t"+ std::to_string(cutoff) + "\t" + std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) + "\t") << std::endl;
+            for (int i = 0; i < results.size(); i++) { Rcpp::Rcout << (std::to_string(results[i]) + "\t");  } Rcpp::Rcout << std::endl;//m->mothurOutEndLine();
+
+            Rcpp::Rcout << (std::to_string(denovoIter+1) + "\t" +"fit\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numFitBins) + "\t"+ std::to_string(cutoff) + "\t" + std::to_string(fittp) + "\t" + std::to_string(fittn) + "\t" + std::to_string(fitfp) + "\t" + std::to_string(fitfn) + "\t") << std::endl;
+            for (int i = 0; i < fitresults.size(); i++) {  Rcpp::Rcout << (std::to_string(fitresults[i]) + "\t");  } Rcpp::Rcout << std::endl;// m->mothurOutEndLine();
+        }
+    }
 
 }

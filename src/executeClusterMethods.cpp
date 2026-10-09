@@ -211,9 +211,12 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
         refList["sequence_name"]);
     const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
     const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();
-    const SparseDistanceMatrix* combinedSparseMartix =  combinedDistanceData.get()->GetSparseMatrix();
+    SparseDistanceMatrix* combinedSparseMartix = combinedDistanceData.get()->GetSparseMatrix();
     const ListVector* combinedListVector = combinedDistanceData.get()->GetListVector();
     const bool combinedIsSim = combinedDistanceData.get()->GetIsSimularity();
+    const auto lastCutoff = combinedDistanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        combinedSparseMartix->FilterSparseMatrix(cutoff);
     const OptimatrixAdapter combinedOptiAdapter(cutoff);
     const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
     delete combinedSparseMartix;

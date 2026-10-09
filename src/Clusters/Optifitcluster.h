@@ -74,6 +74,11 @@ protected:
 
     void runSensSpec(OptiRefMatrix *&matrix, ListVector *&list, std::string &sensSpecFile) const;
 
+    void outputSteps(const std::string &outputName, bool &printHeaders, double tp, double tn, double fp, double fn,
+                     std::vector<double> results, long long numBins, double fittp, double fittn, double fitfp,
+                     double fitfn,
+                     std::vector<double> fitresults, long long numFitBins, int iter, bool printToFile, int denovoIter);
+
 
     std::vector<double> getCloseFarCounts(long long seq, long long newBin);
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);

@@ -402,7 +402,7 @@ test_that("cluster_split works", {
 
 test_that("cluster_fit works", {
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
-  amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.3)
+  amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.03)
 
   esophagus_fasta <- test_path("extdata", "esophagus.align")
   esophagus_count <- read_count(test_path("extdata", "esophagus.count_table"))
