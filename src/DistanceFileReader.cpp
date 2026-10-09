@@ -8,6 +8,8 @@
 
 #include "DataStructures/FastaDatabase.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
+#include <RcppThread.h>
+#include <mutex>
 
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
@@ -63,7 +65,7 @@ void DistanceFileReader::AddFittedDataToReference(
     const ListVector& otherListVector,
     const CountTableAdapter& otherCountTable,
     const FastaDatabase& database,
-    const FastaDatabase& otherDatabase, const double cut) {
+    const FastaDatabase& otherDatabase, const double cut, const int numberOfThreads) {
     const size_t otherSize = otherCountTable.GetSequences().size();
     const size_t currentSize = countTable.GetSequences().size();
     list.push_back(otherListVector);
@@ -87,66 +89,26 @@ void DistanceFileReader::AddFittedDataToReference(
             indexMap[splitName] = counter++;
         }
     }
+    CalculateDistances(database, otherDatabase, calculator, indexMap, cut, numberOfThreads);
+}
+void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
+    const FastaDatabase& otherDatabase, const PairwiseDistanceCalculator* calculator,
+    const std::unordered_map<std::string, int>& indexMap, const double cut, const int numberOfThreads) {
     const std::vector<FastaData>& refData = otherDatabase.GetFastaDataBase();
     const std::vector<FastaData>& fitData = database.GetFastaDataBase();
-    for (const auto &[refName, refSequence] : refData) {
-        const int iIndex = indexMap[refName];
+    std::mutex mutex;
+    RcppThread::parallelFor(0, refData.size(), [&](size_t i) {
+        const std::string& refName = refData[i].name;
+        const std::string& refSequence = refData[i].sequence;
+        const int iIndex = indexMap.at(refName);
         for (const auto &[fitName, fitSequence] : fitData) {
             if (const float result = static_cast<float>(calculator->Execute(refSequence,
                 fitSequence)); result < cut) {
-                const int jIndex = indexMap[fitName];
+                const int jIndex = indexMap.at(fitName);
+                mutex.lock();
                 sparseMatrix.addCell(jIndex, {iIndex , result});
+                mutex.unlock();
             }
         }
-    }
-}
-
-
-void DistanceFileReader::AddInBetweenData(
-   ListVector& otherListVector,
-    CountTableAdapter& otherCountTable,
-    const FastaDatabase& database,
-    const FastaDatabase& otherDatabase, const double cut) {
-    const size_t otherSize = otherCountTable.GetSequences().size();
-    const size_t currentSize = countTable.GetSequences().size();
-    SparseDistanceMatrix otherSparseMatrix;
-    otherSparseMatrix.resize(otherSize);
-    otherSparseMatrix.addCells(sparseMatrix);
-    sparseMatrix = otherSparseMatrix;
-    otherCountTable.AddCountTable(countTable);
-    countTable = otherCountTable;
-
-    const int newSize = otherSize + currentSize;
-
-    otherListVector.push_back(list);
-    list = ListVector(newSize);
-    std::unordered_map<std::string, int> indexMap;
-    indexMap.reserve(newSize);
-
-
-    int counter = 0;
-    for (int i = 0; i < newSize; i++) {
-        std::string names = otherListVector.get(i);
-        std::vector<std::string> splitNames;
-        Utils::splitAtComma(names, splitNames);
-        for (const auto& splitName : splitNames) {
-            list.set(counter, splitName);
-            indexMap[splitName] = counter++;
-        }
-    }
-
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
-    const std::vector<FastaData>& refData = database.GetFastaDataBase();
-    const std::vector<FastaData>& otherData = otherDatabase.GetFastaDataBase();
-    for (const auto &[refName, refSequence] : refData) {
-        const int iIndex = indexMap[refName];
-        for (const auto &[fitName, fitSequence] : otherData) {
-            if (const float result = static_cast<float>(calculator->Execute(refSequence,
-                fitSequence)); result < cut) {
-                const int jIndex = indexMap[fitName];
-                sparseMatrix.addCell(jIndex, {iIndex , result});
-                }
-        }
-    }
-
+    }, numberOfThreads);
 }

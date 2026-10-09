@@ -11,6 +11,7 @@
 #include "../DataStructures/FastaDatabase.h"
 #include "../DataStructures/ListVector.h"
 #include "../DataStructures/SparseDistanceMatrix.h"
+#include "../MothurDependencies/PairwiseDistanceCalculator.h"
 
 class DistanceFileReader {
 public:
@@ -34,10 +35,13 @@ public:
     [[nodiscard]] double GetCutoff() const {return cutoff;}
     [[nodiscard]] bool GetIsSimularity() const {return sim;}
     void AddFittedDataToReference(const ListVector &otherListVector,
-                                  const CountTableAdapter &, const FastaDatabase &database, const FastaDatabase &otherDatabase, double cut);
+                                  const CountTableAdapter &, const FastaDatabase &database,
+                                  const FastaDatabase &otherDatabase, double cut, int numberOfThreads = 1);
 
-    void AddInBetweenData(ListVector &otherListVector, CountTableAdapter &otherCountTable,
-                          const FastaDatabase &database, const FastaDatabase &otherDatabase, double cut);
+private:
+    void CalculateDistances(const FastaDatabase& database,
+                            const FastaDatabase& otherDatabase, const PairwiseDistanceCalculator* calculator,
+                            const std::unordered_map<std::string, int>& indexMap, double cut, int numberOfThreads);
 
 protected:
     SparseDistanceMatrix sparseMatrix{};

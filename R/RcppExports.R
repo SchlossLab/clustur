@@ -53,14 +53,6 @@ Dist_Seqs <- function(fastaData, outputFile) {
     .Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile)
 }
 
-start_profiler <- function(str) {
-    .Call('_clustur_start_profiler', PACKAGE = 'clustur', str)
-}
-
-stop_profiler <- function() {
-    .Call('_clustur_stop_profiler', PACKAGE = 'clustur')
-}
-
 DetermineIfPhylipOrColumnFile <- function(filePath) {
     .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }
@@ -73,12 +65,8 @@ ProcessSparseMatrix <- function(xPosition, yPosition, data, countTable, cutoff, 
     .Call('_clustur_ProcessSparseMatrix', PACKAGE = 'clustur', xPosition, yPosition, data, countTable, cutoff, isSim)
 }
 
-AddDataToDistanceData <- function(fitData, refList, refCountTable, refFasta, fitFasta, cutoff) {
-    invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', fitData, refList, refCountTable, refFasta, fitFasta, cutoff))
-}
-
-AddRefData <- function(fitData, refCountTable, refList, refFasta, fitFasta, cutoff) {
-    invisible(.Call('_clustur_AddRefData', PACKAGE = 'clustur', fitData, refCountTable, refList, refFasta, fitFasta, cutoff))
+AddDataToDistanceData <- function(fitData, refList, refCountTable, refFasta, fitFasta, cutoff, numberOfThreads = 1L) {
+    invisible(.Call('_clustur_AddDataToDistanceData', PACKAGE = 'clustur', fitData, refList, refCountTable, refFasta, fitFasta, cutoff, numberOfThreads))
 }
 
 CopyObject <- function(distanceObject) {

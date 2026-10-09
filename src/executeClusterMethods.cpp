@@ -296,18 +296,3 @@ int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
     seqFile.close();
     return 0;
 }
-
-#include "../../../../Downloads/gperftools-2.15/src/gperftools/profiler.h"
-#include <Rcpp.h>
-
-// [[Rcpp::export]]
-SEXP start_profiler(const SEXP& str) {
-    ProfilerStart(Rcpp::as<const char*>(str));
-    return R_NilValue;
-}
-
-// [[Rcpp::export]]
-SEXP stop_profiler() {
-    ProfilerStop();
-    return R_NilValue;
-}

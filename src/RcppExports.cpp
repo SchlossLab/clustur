@@ -204,27 +204,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// start_profiler
-SEXP start_profiler(const SEXP& str);
-RcppExport SEXP _clustur_start_profiler(SEXP strSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type str(strSEXP);
-    rcpp_result_gen = Rcpp::wrap(start_profiler(str));
-    return rcpp_result_gen;
-END_RCPP
-}
-// stop_profiler
-SEXP stop_profiler();
-RcppExport SEXP _clustur_stop_profiler() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(stop_profiler());
-    return rcpp_result_gen;
-END_RCPP
-}
 // DetermineIfPhylipOrColumnFile
 bool DetermineIfPhylipOrColumnFile(const std::string& filePath);
 RcppExport SEXP _clustur_DetermineIfPhylipOrColumnFile(SEXP filePathSEXP) {
@@ -267,8 +246,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // AddDataToDistanceData
-void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
-RcppExport SEXP _clustur_AddDataToDistanceData(SEXP fitDataSEXP, SEXP refListSEXP, SEXP refCountTableSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
+void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff, const int numberOfThreads);
+RcppExport SEXP _clustur_AddDataToDistanceData(SEXP fitDataSEXP, SEXP refListSEXP, SEXP refCountTableSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP, SEXP numberOfThreadsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
@@ -277,22 +256,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    AddDataToDistanceData(fitData, refList, refCountTable, refFasta, fitFasta, cutoff);
-    return R_NilValue;
-END_RCPP
-}
-// AddRefData
-void AddRefData(const SEXP& fitData, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff);
-RcppExport SEXP _clustur_AddRefData(SEXP fitDataSEXP, SEXP refCountTableSEXP, SEXP refListSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refCountTable(refCountTableSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refList(refListSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
-    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    AddRefData(fitData, refCountTable, refList, refFasta, fitFasta, cutoff);
+    Rcpp::traits::input_parameter< const int >::type numberOfThreads(numberOfThreadsSEXP);
+    AddDataToDistanceData(fitData, refList, refCountTable, refFasta, fitFasta, cutoff, numberOfThreads);
     return R_NilValue;
 END_RCPP
 }
@@ -324,13 +289,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 11},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
     {"_clustur_Dist_Seqs", (DL_FUNC) &_clustur_Dist_Seqs, 2},
-    {"_clustur_start_profiler", (DL_FUNC) &_clustur_start_profiler, 1},
-    {"_clustur_stop_profiler", (DL_FUNC) &_clustur_stop_profiler, 0},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
-    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 6},
-    {"_clustur_AddRefData", (DL_FUNC) &_clustur_AddRefData, 6},
+    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 7},
     {"_clustur_CopyObject", (DL_FUNC) &_clustur_CopyObject, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

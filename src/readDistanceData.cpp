@@ -77,7 +77,7 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
 void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList,const Rcpp::DataFrame& refCountTable,
     const Rcpp::DataFrame& refFasta,
     const Rcpp::DataFrame& fitFasta,
-    const double cutoff) {
+    const double cutoff, const int numberOfThreads = 1) {
 
     const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
 
@@ -89,25 +89,7 @@ void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList,c
       refList["sequence_name"]);
 
     fitDistanceData.get()->AddFittedDataToReference(refListOtuVector, countTableAdapter,
-        fitFastaDatabase, refFastaDatabase, cutoff);
-}
-
-//[[Rcpp::export]]
-void AddRefData(const SEXP& fitData, const Rcpp::DataFrame& refCountTable,
-    const Rcpp::DataFrame& refList,
-    const Rcpp::DataFrame& refFasta,
-    const Rcpp::DataFrame& fitFasta,
-    const double cutoff) {
-
-    const FastaDatabase fitFastaDatabase(fitFasta["sequence_name"], fitFasta["sequence"]);
-    const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
-    ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
-    refList["sequence_name"]);
-    CountTableAdapter countTableAdapter;
-    countTableAdapter.CreateDataFrameMap(refCountTable);
-    const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
-    fitDistanceData.get()->AddInBetweenData(refListOtuVector, countTableAdapter,
-                                            fitFastaDatabase, refFastaDatabase, cutoff);
+        fitFastaDatabase, refFastaDatabase, cutoff, numberOfThreads);
 }
 
 

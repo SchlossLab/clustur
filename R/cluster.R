@@ -232,7 +232,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL,
-                    fit_percent = 50, closed = TRUE, print_ref = FALSE, random_seed = 123) {
+                    fit_percent = 50, closed = TRUE, print_ref = FALSE, random_seed = 123, number_of_threads = 1) {
   if(fit_percent < 0.01) {
     fit_percent = 0.01
   }
@@ -258,7 +258,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     ref_list <- strollur::read_mothur_list(ref_list)
     copied_data <- CopyObject(fit_dist)
     class(copied_data) <- "distance_object"
-    AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff)
+    AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff, number_of_threads)
     result <- OptiFit3(copied_data, ref_list,  get_count_table(copied_data)$Representative.Sequences,
              0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE, random_seed)
   }
