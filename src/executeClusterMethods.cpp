@@ -73,12 +73,15 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 
     const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
-    const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
-    const auto listVector = distanceData.get()->GetListVector();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
+    auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
     const OptimatrixAdapter optiAdapter(cutoff);
-    auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
-    delete(sparseMatix);
+    auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
+    delete(sparseMatrix);
     delete(listVector);
     ClusterMetric* metric = nullptr;
     if (!optiMatrix->mccValidCalc()) {
@@ -123,14 +126,17 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     const bool selfReference = false, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
-    const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
-    const auto listVector = distanceData.get()->GetListVector();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
+    auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
     const OptimatrixAdapter optiAdapter(cutoff);
-    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
     auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, fitPercent, "", seed);
     delete optiMatrix;
-    delete(sparseMatix);
+    delete(sparseMatrix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
     OptiFitCluster cluster(refMatrix, metric,"denovo", cutoff, 0, selfReference,
@@ -160,15 +166,18 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
     const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
-    const auto sparseMatix =  distanceData.get()->GetSparseMatrix();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
     const auto listVector = distanceData.get()->GetListVector();
     const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
     const OptimatrixAdapter optiAdapter(cutoff);
-    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatix, listVector, isSim);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
     auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter,
         {accnos.begin(), accnos.end()}, seed);
     delete optiMatrix;
-    delete(sparseMatix);
+    delete(sparseMatrix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
     OptiFitCluster cluster(refMatrix, metric,"userref", cutoff, 0, selfReference,

@@ -52,6 +52,10 @@ OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* m
         closeness[count] = cells;
         count++;
     }
+    const size_t currentClosenessSize = closeness.size();
+    for (size_t i = currentClosenessSize; i < size; i++) {
+        nameList[i] = singletons[i - currentClosenessSize];
+    }
     return new OptiMatrix{closeness, nameList, singletons, cutoff};
 }
 

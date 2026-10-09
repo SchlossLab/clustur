@@ -462,10 +462,10 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     //select sequences to be reference
 
     // refWeightMethod = "abundance";
-    closeness = matrix->GetCloseness();
+    // closeness = matrix->GetCloseness();
     std::set<long long> fitSeqsIndexes;
     long long count = 0;
-    const std::vector<std::string> nameList = adapter.GetSequences();
+    const std::vector<std::string> nameList = matrix->GetNameList();
     // nameList.insert(nameList.end(), singletons.begin(), singletons.end());
     const long long numberOfSequences = nameList.size();
     std::vector<double> abundances(numberOfSequences, 1);
@@ -507,20 +507,25 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     // else if (distFormat == "phylip")   {  singletonIndexSwap = readPhylipSingletons(singleton, distFile, count, nameAssignment);    }
     //
 
-
+    // std::unordered_map<int, int> singletonIndexSwap;
     singletons = matrix->GetSingletons();
     std::vector<bool> isSingletonVector(nameList.size(), true);
     const std::unordered_set<std::string> singletonNames = {singletons.cbegin(), singletons.cend()};
     int nonSingletonCount = 0;
     for (int i = 0; i < isSingletonVector.size(); i++) {
-        if (singletonNames.find(nameList[i]) != singletonNames.end()) {
-            // singletonIndexSwap[i] = nonSingletonCount;
-            // nonSingletonCount++;
-            continue;
-        }
+        if (singletonNames.find(nameList[i]) != singletonNames.end()) continue;
         //if you are not a singleton
         isSingletonVector[i] = false;
+        // singletonIndexSwap[i] = nonSingletonCount++;
     }
+
+    closeness = matrix->GetCloseness();
+    // const std::vector<std::vector<long long>>& matrixCloseness = matrix->GetCloseness();
+    // for (int i =0; i < isSingletonVector.size(); i++) {
+    //     if (isSingletonVector[i]) continue;
+    //     int index = singletonIndexSwap[i];
+    //     closeness[index] = matrixCloseness[index];
+    // }
 
 
     // std::map<std::string, std::string> names;

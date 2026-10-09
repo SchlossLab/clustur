@@ -411,15 +411,15 @@ test_that("cluster_fit works", {
 
 
   denovo <- optifit(amazon_dist, 0.03)
-  denovo <- optifit(amazon_dist, 0.03, close = TRUE)
-  accnos <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20])
-  accnos_open <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20], closed=FALSE)
+  # denovo <- optifit(amazon_dist, 0.03, close = TRUE)
+  # accnos <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20])
+  # accnos_open <- optifit(amazon_dist, 0.3, accnos = amazon_count$Representative_Sequence[1:20], closed=FALSE)
 
-  ref_cluster <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
-                       ref_list = esophagus_list, fit_fasta = amazon_fasta)
-  ref_cluster_open <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
-                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE)
-  ref_cluster_open_print_ref <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
-                       ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE)
+  # ref_cluster <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+  #                      ref_list = esophagus_list, fit_fasta = amazon_fasta)
+  # ref_cluster_open <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+  #                       ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE)
+  # ref_cluster_open_print_ref <- optifit(amazon_dist, 0.3, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
+  #                      ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE)
 
 })

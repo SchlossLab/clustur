@@ -237,6 +237,7 @@ bool OptiFitCluster::update(double& listMetric) {
             }
 
             std::set<long long> binsToTry;
+            // seq number is incorrect, we need to convert it to the actual number or else it will always be over
             std::set<long long> closeSeqs = matrix->getCloseRefSeqs(seqNumber);
             for (long long closeSeq : closeSeqs) { binsToTry.insert(seqBin[closeSeq]); }
 
@@ -357,6 +358,7 @@ std::vector<double> OptiFitCluster::getStats(double& tp,  double& tn,  double& f
     Accuracy acc;       double accuracy = acc.getValue(tp, tn, fp, fn); results.push_back(accuracy);
     MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn); results.push_back(matthewsCorrCoef);
     F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn); results.push_back(f1Score);
+    Rcpp::Rcout <<  "mcc: " << mcc.getValue(tp, tn, fp, fn) << std::endl;
 
     return results;
 }
