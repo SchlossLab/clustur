@@ -96,19 +96,36 @@ void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
     const std::unordered_map<std::string, int>& indexMap, const double cut, const int numberOfThreads) {
     const std::vector<FastaData>& refData = otherDatabase.GetFastaDataBase();
     const std::vector<FastaData>& fitData = database.GetFastaDataBase();
+    const size_t dataSize = refData.size();
+    const size_t otherDataSize = fitData.size();
+    const size_t size = dataSize + otherDataSize;
     std::mutex mutex;
-    RcppThread::parallelFor(0, refData.size(), [&](size_t i) {
-        const std::string& refName = refData[i].name;
-        const std::string& refSequence = refData[i].sequence;
-        const int iIndex = indexMap.at(refName);
-        for (const auto &[fitName, fitSequence] : fitData) {
-            if (const float result = static_cast<float>(calculator->Execute(refSequence,
-                fitSequence)); result < cut) {
-                const int jIndex = indexMap.at(fitName);
-                mutex.lock();
-                sparseMatrix.addCell(jIndex, {iIndex , result});
-                mutex.unlock();
-            }
+    RcppThread::parallelFor(0, size, [&](size_t i) {
+        // const std::string& refName = refData[i].name;
+        // const std::string& refSequence = refData[i].sequence;
+        const bool useMainFasta = i < dataSize;
+        const auto&[fastaName, fastaSequence] = useMainFasta ? refData[i] : fitData[i - dataSize];
+        const int iIndex = indexMap.at(fastaName);
+        for (size_t j = i + 1; j < size; j++) {
+            const bool otherUseMainFasta = j < dataSize;
+            const auto&[name, sequence] = otherUseMainFasta ? refData[j] : fitData[j - dataSize];
+            if (const float result = static_cast<float>(calculator->Execute(fastaSequence,
+               sequence)); result < cut) {
+               const int jIndex = indexMap.at(name);
+               mutex.lock();
+               sparseMatrix.addCell(jIndex, {iIndex , result});
+               mutex.unlock();
+           }
+
         }
+        // for (const auto &[fitName, fitSequence] : fitData) {
+        //     if (const float result = static_cast<float>(calculator->Execute(refSequence,
+        //         fitSequence)); result < cut) {
+        //         const int jIndex = indexMap.at(fitName);
+        //         mutex.lock();
+        //         sparseMatrix.addCell(jIndex, {iIndex , result});
+        //         mutex.unlock();
+        //     }
+        // }
     }, numberOfThreads);
 }

@@ -168,23 +168,46 @@ ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *l
 }
 
 ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
-    const size_t size = otuBins.size();
-    std::string lastOtu = otuBins[otuBins.size() - 1];
-    lastOtu.erase(std::remove_if(lastOtu.begin(), lastOtu.end(), isalpha), lastOtu.end());
-    const int otuSize = std::stoi(lastOtu) - 1;
-    ListVector listVector(otuSize);
-    std::string currentOtuBin = otuBins[0];
-    std::string currentBinData = "";
-    size_t index = 0;
+    const int size = static_cast<int>(otuBins.size());
+    // std::string lastOtu = otuBins[otuBins.size() - 1];
+    // lastOtu.erase(std::remove_if(lastOtu.begin(), lastOtu.end(), isalpha), lastOtu.end());
+    // const int otuSize = std::stoi(lastOtu) - 1;
+    // ListVector listVector(otuSize);
+    // std::string currentOtuBin = otuBins[0];
+    // std::string currentBinData = "";
+    // size_t index = 0;
+    // for (int i = 0; i < size; i++) {
+    //     if (currentOtuBin == otuBins[i]) {
+    //         currentBinData.append(sequences[i] + ",");
+    //         continue;
+    //     }
+    //     currentOtuBin = otuBins[i];
+    //     currentBinData.append(sequences[i] + ",");
+    //     listVector.set(index++, {currentBinData.begin(), currentBinData.end() - 1});
+    //     currentBinData = "";
+    // }
+    // // return listVector;
+    std::unordered_map<std::string, std::string> otuBinMap;
+    std::vector<std::string> uniqueOtus;
+    uniqueOtus.reserve(size);
+
+    otuBinMap.reserve(size);
+    std::string previousOtu = "";
+    for (const auto& otus : otuBins) {
+        if (previousOtu == otus) continue;
+        otuBinMap[otus].reserve(size);
+        previousOtu = otus;
+        uniqueOtus.emplace_back(otus);
+    }
     for (int i = 0; i < size; i++) {
-        if (currentOtuBin == otuBins[i]) {
-            currentBinData.append(sequences[i] + ",");
-            continue;
-        }
-        currentOtuBin = otuBins[i];
-        currentBinData.append(sequences[i] + ",");
-        listVector.set(index++, {currentBinData.begin(), currentBinData.end() - 1});
-        currentBinData = "";
+        otuBinMap[otuBins[i]].append(sequences[i] + ",");
+    }
+    const int uniqueOtusSize = static_cast<int>(uniqueOtus.size());
+    ListVector listVector(uniqueOtusSize);
+    for (int i = 0; i < uniqueOtusSize; i++) {
+        otuBinMap[uniqueOtus[i]].pop_back();
+        listVector.set(i, otuBinMap[uniqueOtus[i]]);
+
     }
     return listVector;
 }

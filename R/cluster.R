@@ -253,13 +253,14 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
                        selfReference = FALSE, random_seed)
   } else if (!ref_parameters_check) {
     message("ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.")
+    # all ref list names have to be present in the fasta error catch that later
     ref_fasta <- strollur::read_fasta(ref_fasta)
     fit_fasta <- strollur::read_fasta(fit_fasta)
     ref_list <- strollur::read_mothur_list(ref_list)
     copied_data <- CopyObject(fit_dist)
     class(copied_data) <- "distance_object"
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff, number_of_threads)
-    result <- OptiFit3(copied_data, ref_list,  get_count_table(copied_data)$Representative.Sequences,
+    result <- OptiFit3(copied_data, ref_list,  ref_fasta$sequence_name,
              0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE, random_seed)
   }
   else {

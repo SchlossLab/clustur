@@ -404,11 +404,10 @@ test_that("cluster_fit works", {
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
   amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.03)
 
-  esophagus_fasta <- test_path("extdata", "esophagus.align")
-  esophagus_count <- read_count(test_path("extdata", "esophagus.count_table"))
+  esophagus_fasta <- test_path("extdata", "esophagus.unique.align")
+  esophagus_count <- read_count(test_path("extdata", "esophagus.unique.count_table"))
   amazon_fasta <- test_path("extdata", "amazon.align")
-  esophagus_list <- test_path("extdata", "esophagus.opti_mcc.0.03.list")
-
+  esophagus_list <- test_path("extdata", "esophagus.unique.opti_mcc.0.03.list")
 
   denovo <- optifit(amazon_dist, 0.03)
   denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
@@ -416,7 +415,7 @@ test_that("cluster_fit works", {
   accnos_open <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40], closed=FALSE)
 
   ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
-                       ref_list = esophagus_list, fit_fasta = amazon_fasta, number_of_threads = parallel::detectCores())
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta, number_of_threads = parallel::detectCores(), print_ref = TRUE)
   ref_cluster_open <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
                         ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, number_of_threads = parallel::detectCores())
   ref_cluster_open_print_ref <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
