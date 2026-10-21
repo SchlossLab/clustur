@@ -9,9 +9,9 @@
 
 /***********************************************************************/
 
-WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c, std::string s, const float a) :
-    Cluster(rav, lv, dm, c, std::move(s), a)
-{
+WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm,
+    const int seed, const float c, std::string s, const float a) :
+    Cluster(rav, lv, dm, seed, c, std::move(s), a) {
     saveRow = -1;
     saveCol = -1;
 }

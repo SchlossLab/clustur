@@ -18,7 +18,7 @@
 class Cluster {
 
 public:
-    Cluster(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
+    Cluster(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed, float, std::string, float);
     Cluster() = default;
     virtual ~Cluster() = default;
     ClusterExport* ExecuteCluster();
@@ -35,6 +35,7 @@ protected:
     RAbundVector* rabund{};
     ListVector* list{};
     SparseDistanceMatrix* dMatrix{};
+    RandomNumberSitmo rng;
 
     unsigned long smallRow{}, smallCol{}, nRowCells{}, nColCells{};
     float cutoff{};

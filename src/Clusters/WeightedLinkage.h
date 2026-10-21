@@ -11,7 +11,8 @@
 
 class WeightedLinkage final : public Cluster, public ClusterMethod {
 public:
-    WeightedLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
+    WeightedLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed,
+        float, std::string, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
 

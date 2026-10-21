@@ -18,17 +18,17 @@
 
 
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const long long ns) : matrix(mt),
-    metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const long long ns) : matrix(mt),
+    metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
+    fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
     combotruePositives(0),
     combotrueNegatives(0),
     combofalsePositives(0),
-    combofalseNegatives(0),
-    numFitSeqs(0), numFitSingletons(0),
-    numComboSeqs(0),
-    numComboSingletons(0), rngEngine(rng),
+    combofalseNegatives(0), numFitSeqs(0),
+    numFitSingletons(0),
+    numComboSeqs(0), numComboSingletons(0),
     cutoff(cutoff) {
     truePositives = 0;
     trueNegatives = 0;
@@ -37,17 +37,17 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSit
     stableMetric = 0;
 }
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const RandomNumberSitmo& rng, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
-    metric(met), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0), fittrueNegatives(0),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
+    metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
+    fittrueNegatives(0),
     fitfalsePositives(0),
     fitfalseNegatives(0),
     combotruePositives(0),
     combotrueNegatives(0),
     combofalsePositives(0),
-    combofalseNegatives(0),
-    numFitSeqs(0), numFitSingletons(0),
-    numComboSeqs(0),
-    numComboSingletons(0), rngEngine(rng),
+    combofalseNegatives(0), numFitSeqs(0),
+    numFitSingletons(0),
+    numComboSeqs(0), numComboSingletons(0),
     stableMetric(stableMetric),
     cutoff(cutoff) {
     truePositives = 0;

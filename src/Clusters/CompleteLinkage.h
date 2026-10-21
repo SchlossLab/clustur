@@ -11,7 +11,8 @@
 
 class CompleteLinkage final : public Cluster, public ClusterMethod {
 public:
-    CompleteLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, const std::string &, float);
+    CompleteLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed,
+        float, const std::string &, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
 

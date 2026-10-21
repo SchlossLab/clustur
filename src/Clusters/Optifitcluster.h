@@ -59,6 +59,7 @@ protected:
     long long  numFitSeqs, insertLocation, numFitSingletons;
     long long  numComboSeqs, numComboSingletons;
     RandomNumberSitmo rng;
+    int seed;
 
     int findInsert();
 

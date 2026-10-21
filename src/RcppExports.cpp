@@ -80,8 +80,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // Cluster
-Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int precision);
-RcppExport SEXP _clustur_Cluster(SEXP DistanceDataSEXP, SEXP methodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP precisionSEXP) {
+Rcpp::List Cluster(const SEXP& DistanceData, const std::string& method, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int seed, const int precision);
+RcppExport SEXP _clustur_Cluster(SEXP DistanceDataSEXP, SEXP methodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP seedSEXP, SEXP precisionSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -90,8 +90,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type featureColumnName(featureColumnNameSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type binColumnName(binColumnNameSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
+    Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< const int >::type precision(precisionSEXP);
-    rcpp_result_gen = Rcpp::wrap(Cluster(DistanceData, method, featureColumnName, binColumnName, cutoff, precision));
+    rcpp_result_gen = Rcpp::wrap(Cluster(DistanceData, method, featureColumnName, binColumnName, cutoff, seed, precision));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -282,7 +283,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
-    {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 6},
+    {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 7},
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 8},
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 9},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 9},

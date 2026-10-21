@@ -5,7 +5,8 @@
 #include "MothurDependencies/Utils.h"
 #include "RNG/SubSample.h"
 
-std::set<long long> SubSample::getWeightedSample(std::map<long long, long long>& nameMap, const long long num) {
+std::set<long long> SubSample::getWeightedSample(std::map<long long, long long>& nameMap, RandomNumberSitmo& rng,
+    const long long num) {
     std::set<long long> sampleNames;
 
     const long long totalSeqs = nameMap.size();
@@ -42,7 +43,7 @@ std::set<long long> SubSample::getWeightedSample(std::map<long long, long long>&
     weights.clear();
     
     while(numSampled != num) {
-        long long index = Utils::getRandomIndex(total); //random index including weights
+        long long index = Utils::getRandomIndex(static_cast<int>(total), rng); //random index including weights
         
         std::map<long long, std::set<long long> >::iterator itWeight = cumulative.lower_bound(index);
         

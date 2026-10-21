@@ -18,8 +18,9 @@
 
 /***********************************************************************/
 
-Cluster::Cluster(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c, std::string f,
-                 const float cs) : rabund(rav), list(lv), dMatrix(dm), method(std::move(f)), adjust(cs) {
+Cluster::Cluster(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const int seed,
+    const float c, std::string f, const float cs) :
+    rabund(rav), list(lv), dMatrix(dm), rng(seed), method(std::move(f)), adjust(cs) {
     mapWanted = false; //set to true by mgcluster to speed up overlap merge
 
     //save, so you can modify as it changes in average neighbor
@@ -121,7 +122,7 @@ ClusterExport* Cluster::ExecuteCluster() {
 
 /***********************************************************************/
 bool Cluster::update(double &cutOFF) {
-    smallCol = dMatrix->getSmallestCell(smallRow);
+    smallCol = dMatrix->getSmallestCell(smallRow, rng);
     if (static_cast<int>(smallCol) == -1)
         return false;
     nColCells = dMatrix->seqVec[smallCol].size();

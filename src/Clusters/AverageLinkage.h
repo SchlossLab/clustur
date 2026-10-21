@@ -11,7 +11,8 @@
 
 class AverageLinkage final: public Cluster, public ClusterMethod {
 public:
-    AverageLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, std::string, float);
+    AverageLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed,
+        float, std::string, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
     ClusterExport * Execute() override;

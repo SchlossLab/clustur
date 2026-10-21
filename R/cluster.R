@@ -121,7 +121,7 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
  if (method != "opticlust") {
     df <- Cluster(distance_object, method,
                   feature_column_name_to, bin_column_name_to, cutoff,
-                  precision)
+                  random_seed, precision)
   } else {
     df <- OptiClust(distance_object, feature_column_name_to,
                       bin_column_name_to, cutoff, random_seed,

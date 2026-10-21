@@ -22,7 +22,7 @@
 /***********************************************************************/
 
 OptiRefMatrix::OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
-const std::vector<std::string>& singleton, const double c, const int seed):seed(seed) {
+const std::vector<std::string>& singleton, const double c, const int seed):rng(seed), seed(seed) {
     closeness = close;
     nameMap = name;
     singletons = singleton;
@@ -30,7 +30,7 @@ const std::vector<std::string>& singleton, const double c, const int seed):seed(
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP,
-    const std::string& refWeight, const int seed):seed(seed) {
+    const std::string& refWeight, const int seed):rng(seed), seed(seed) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -51,7 +51,7 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter,
-    std::unordered_set<std::string> accnosRefFileNames, const int seed):seed(seed) {
+    std::unordered_set<std::string> accnosRefFileNames, const int seed):rng(seed), seed(seed) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;
@@ -67,7 +67,7 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData *refMatrix, const CountTableAdapter &refAdapter,
-              const float fitPercent, const double cutoff, const int seed):seed(seed), cutoff(cutoff),
+              const float fitPercent, const double cutoff, const int seed):rng(seed), seed(seed), cutoff(cutoff),
 fitPercent(fitPercent){
 
     numFitSingletons = 0;
@@ -408,7 +408,7 @@ ListVector* OptiRefMatrix::getFitListSingle() {
     return singlelist;
 }
 /***********************************************************************/
-void OptiRefMatrix::randomizeRefs(RandomNumberSitmo& rng) {
+void OptiRefMatrix::randomizeRefs() {
     const long long totalSeqs = (isRef.size()+isSingleRef.size());
     const long long numToSelect = totalSeqs * fitPercent;
     const long long refSingletonCutoff = isRef.size();
@@ -416,7 +416,7 @@ void OptiRefMatrix::randomizeRefs(RandomNumberSitmo& rng) {
 
     //select sequences to be reference
     std::set<long long> fitSeqsIndexes;
-    if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
+    if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, rng, numToSelect);  } //you have weighted selection
     else {
         long long numSelected = 0;
         while (numSelected < numToSelect) {
@@ -546,7 +546,7 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     //randomly select the "fit" seqs
 
     const long long numToSelect = static_cast<long long>(static_cast<float>(matrix->GetNameList().size()) * fitPercent);
-    if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, numToSelect);  } //you have weighted selection
+    if (!weights.empty()) {  fitSeqsIndexes = SubSample::getWeightedSample(weights, rng, numToSelect);  } //you have weighted selection
     else {
         if (refWeightMethod != "accnos") { //fitIndexes are filled above { //randomly select references
             long long numSelected = 0;

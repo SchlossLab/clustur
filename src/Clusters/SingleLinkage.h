@@ -11,7 +11,8 @@
 
 class SingleLinkage final : public Cluster, public ClusterMethod {
 public:
-    SingleLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, float, const std::string&, float);
+    SingleLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed, float,
+        const std::string&, float);
     bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
     std::string getTag() override;
 

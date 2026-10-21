@@ -24,7 +24,8 @@ class SubSample {
     public:
         SubSample() = default;
         ~SubSample() = default;
-        static std::set<long long> getWeightedSample(std::map<long long, long long>&, long long); //map of sequence names -> weight (could be abundance or some other measure), num to sample
+        static std::set<long long> getWeightedSample(std::map<long long, long long>&, RandomNumberSitmo&,
+            long long); //map of sequence names -> weight (could be abundance or some other measure), num to sample
 
 };
 

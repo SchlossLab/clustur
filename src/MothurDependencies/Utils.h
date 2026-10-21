@@ -24,7 +24,6 @@ public:
     Utils() = default;
     // static void mothurRandomShuffle(std::vector<int>& randomize);
     // static void mothurRandomShuffle(std::vector<long long>& randomize);
-    static int getRandomIndex(int highest);
     static int getRandomIndex(int highest, RandomNumberSitmo &sitmo);
     static int getNumNames(std::string names);
     static bool mothurConvert(const std::string& item, int& num);
@@ -38,7 +37,7 @@ public:
     static bool isEqual(float num1, float num2);
     static float ceilDist(float dist, int precision);
     static ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
-    SparseDistanceMatrix* matrix, RAbundVector& rAbund, double cutoff, double adjust = -1);
+    SparseDistanceMatrix* matrix, RAbundVector& rAbund, int seed, double cutoff, double adjust = -1);
     template <typename T>
     static void SortVector(std::vector<T>&);
 

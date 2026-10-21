@@ -47,7 +47,7 @@ public:
     OptiData* extractMatrixSubset(std::unordered_set<long long>&);
     OptiData* extractMatrixSubset(std::unordered_set<std::string> &seqs);
     OptiData* extractRefMatrix();
-    void randomizeRefs(RandomNumberSitmo&);
+    void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
                   const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
@@ -88,6 +88,7 @@ protected:
     // std::vector<std::string> nameMap;
     std::map<long long, long long> weights; //seqeunce index in matrix to weight in chosing as reference
     std::string method, refWeightMethod;
+    RandomNumberSitmo rng;
     int seed;
     bool square;
     double cutoff;

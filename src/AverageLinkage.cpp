@@ -11,8 +11,8 @@
 /***********************************************************************/
 
 AverageLinkage::AverageLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm,
-const float c, std::string s, const float a) :
-Cluster(rav, lv, dm, c, std::move(s), a),saveRow(-1), saveCol(-1), rowBin(-1), colBin(-1),totalBin(-1)
+    const int seed, const float c, std::string s, const float a) :
+Cluster(rav, lv, dm, seed, c, std::move(s), a),saveRow(-1), saveCol(-1), rowBin(-1), colBin(-1),totalBin(-1)
 {}
 
 

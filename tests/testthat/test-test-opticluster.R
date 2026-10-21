@@ -395,8 +395,8 @@ test_that("cluster_split works", {
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
   expect_true(all(df$label == 0.2))
-  expect_true(nrow(df$abundance) == 55)
-  expect_true(nrow(df$cluster) == 55)
+  expect_true(nrow(df$abundance) == 45)
+  expect_true(nrow(df$cluster) == 45)
 
 })
 

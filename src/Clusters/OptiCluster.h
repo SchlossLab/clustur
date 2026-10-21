@@ -16,8 +16,8 @@
 class OptiCluster final : public ClusterMethod {
     public:
 
-    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, long long ns);
-    OptiCluster(OptiData* mt, ClusterMetric* met, const RandomNumberSitmo& rng, double cutoff, double stableMetric, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, int seed, double cutoff, long long ns);
+    OptiCluster(OptiData* mt, ClusterMetric* met, int seed, double cutoff, double stableMetric, long long ns);
     ~OptiCluster() override;
     ClusterExport* Execute() override;
     [[nodiscard]] std::string getTag() const { std::string tag = "opti_" + metric->getName(); return tag; }

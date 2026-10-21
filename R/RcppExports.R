@@ -25,8 +25,8 @@ CreateSparseMatrix <- function(sequences, cutoff) {
     .Call('_clustur_CreateSparseMatrix', PACKAGE = 'clustur', sequences, cutoff)
 }
 
-Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff, precision = 100L) {
-    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff, precision)
+Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cutoff, seed = 123L, precision = 100L) {
+    .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff, seed, precision)
 }
 
 OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L, delta = 1, iters = 100L, initialize = "singleton") {

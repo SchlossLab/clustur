@@ -26,7 +26,7 @@ public:
 
     ~SparseDistanceMatrix(){ clear(); }
     [[nodiscard]] int getNNodes() const;
-    unsigned long getSmallestCell(unsigned long& row);		//Return the cell with the smallest distance
+    unsigned long getSmallestCell(unsigned long& row, RandomNumberSitmo&);		//Return the cell with the smallest distance
     [[nodiscard]] float getSmallDist() const;
     static bool heapComparator(const PDistCell& a, const PDistCell& b);
     int rmCell(unsigned long, unsigned long);

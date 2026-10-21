@@ -132,7 +132,7 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
     //Lauch worker threads
     for (int i = 1; i < processors; i++) {
     	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric,
-    		RandomNumberSitmo(seed + i), cutoff, i);
+    		seed + i, cutoff, i);
         data.emplace_back(dataBundle);
 
         workerThreads.push_back(new RcppThread::Thread([&, dataBundle] {
@@ -142,7 +142,7 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
 
 	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric,
-		RandomNumberSitmo(seed), cutoff, 0);
+		seed, cutoff, 0);
     cluster(dataBundle);
 
 	std::vector<ClusterExport*> results = dataBundle->results;
@@ -172,7 +172,7 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 		if (params->clusterParameters.GetClusterType() == "opti") {
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
-			ClusterMethod* method = new OptiCluster(data, params->metric, params->rng, cutoff, 0);
+			ClusterMethod* method = new OptiCluster(data, params->metric, params->seed, cutoff, 0);
 			method->SetClusterParameters(params->clusterParameters);
 			params->results.emplace_back(method->Execute());
 			delete method;
@@ -181,7 +181,7 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 		}
 		RAbundVector rAbund = listVector.getRAbundVector();
 		ClusterMethod* method = Utils::GetClusterMethod(params->clusterParameters.GetClusterType(), &listVector, &matrix,
-			rAbund, cutoff);
+			rAbund, params->seed, cutoff);
 		method->SetClusterParameters(params->clusterParameters);
 		params->results.emplace_back(method->Execute());
 		delete method;
