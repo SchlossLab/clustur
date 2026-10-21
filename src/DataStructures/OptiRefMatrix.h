@@ -47,7 +47,7 @@ public:
     OptiData* extractMatrixSubset(std::unordered_set<long long>&);
     OptiData* extractMatrixSubset(std::unordered_set<std::string> &seqs);
     OptiData* extractRefMatrix();
-    void randomizeRefs();
+    void randomizeRefs(RandomNumberSitmo&);
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
                   const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);

@@ -283,7 +283,6 @@ std::vector<long long> OptiRefMatrix::getFitSeqs() {
         if (!isRef[i]) { fitSeqsIndexes.push_back(i);  }
     }
     return fitSeqsIndexes;
-
 }
 
 void OptiRefMatrix::UpdateSingletons(const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
@@ -409,7 +408,7 @@ ListVector* OptiRefMatrix::getFitListSingle() {
     return singlelist;
 }
 /***********************************************************************/
-void OptiRefMatrix::randomizeRefs() {
+void OptiRefMatrix::randomizeRefs(RandomNumberSitmo& rng) {
     const long long totalSeqs = (isRef.size()+isSingleRef.size());
     const long long numToSelect = totalSeqs * fitPercent;
     const long long refSingletonCutoff = isRef.size();
@@ -421,7 +420,7 @@ void OptiRefMatrix::randomizeRefs() {
     else {
         long long numSelected = 0;
         while (numSelected < numToSelect) {
-            fitSeqsIndexes.insert(Utils::getRandomIndex(totalSeqs-1)); //no repeats
+            fitSeqsIndexes.insert(Utils::getRandomIndex(totalSeqs - 1, rng)); //no repeats
             numSelected = fitSeqsIndexes.size();
         }
     }

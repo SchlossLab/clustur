@@ -56,7 +56,6 @@ OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const List
 
 void OptiFitCluster::Reset() {
     maxRefBinNumber = 0;
-    closed = false;
 
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
@@ -170,7 +169,6 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     // std::vector<long long> temp;
     bins.emplace_back();
     if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rng); }
-
     value = comboValue;
     // TODO: FInd why there are more slots in the bins than there are sequences...
     return value;
@@ -358,7 +356,7 @@ std::vector<double> OptiFitCluster::getStats(double& tp,  double& tn,  double& f
     Accuracy acc;       double accuracy = acc.getValue(tp, tn, fp, fn); results.push_back(accuracy);
     MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn); results.push_back(matthewsCorrCoef);
     F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn); results.push_back(f1Score);
-    Rcpp::Rcout <<  "mcc: " << mcc.getValue(tp, tn, fp, fn) << std::endl;
+    // Rcpp::Rcout <<  "mcc: " << mcc.getValue(tp, tn, fp, fn) << std::endl;
 
     return results;
 }
@@ -566,6 +564,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     int smallestBins = -1;
     size_t index = 0;
     // Could thread?
+    OptiData ref = *matrix->extractRefMatrix();
     for (int i = 0; i < denovoIters; i++) {
 
         // OptiFitCluster cluster(matrix, metric, 0);
@@ -575,7 +574,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         double delta = 1;
 
         //get "ref" seqs for initialize inputs
-        OptiData* refMatrix = matrix->extractRefMatrix(); // This is an empty matrix, that is the issue
+        OptiData* refMatrix = new OptiData(ref); // This is an empty matrix, that is the issue
         OptiCluster clust(refMatrix, new MCC(), rng, cutoff, 0.0001, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
@@ -628,25 +627,23 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
             iters++;
 
             results = getStats(tp, tn, fp, fn);
-            ListVector* listVector = getFittedList(cutoffString, false);
-            numFitBins = listVector->getNumBins();
-            delete listVector;
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
             numBins = getNumBins();
             auto endTime = std::chrono::system_clock::now();
             std::chrono::duration<double> currentTime = endTime - startTime;
             clusterMetrics = (std::to_string(i) + "," + std::to_string(currentTime.count()) + "," +
-                              cutoffString + "," + std::to_string(numFitBins) + "," +
-                              cutoffString + "," + std::to_string(fittp) + "," + std::to_string(fittn) + ","
-                              + std::to_string(fitfp) + "," + std::to_string(fitfn) + ",");
+                              cutoffString + "," + std::to_string(numBins) + "," +
+                              cutoffString + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
+                              + std::to_string(fp) + "," + std::to_string(fn) + ",");
             for (double stat: fitresults) {
                 clusterMetrics += (std::to_string(stat) + ",");
             }
             Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+            //outputSteps("", printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
+
 
         }
-        ListVector* list = getFittedList(cutoffString, false);
-
+        ListVector* list = getFittedList(cutoffString, printRef);
         if (const int binCount = static_cast<int>(list->getNumBins());
             clusterInformation.numberOfOtu == -1 || binCount < clusterInformation.numberOfOtu) {
             clusterInformation.label = cutoffString;
@@ -666,7 +663,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
 
         delete list;
         Reset();
-        matrix->randomizeRefs();
+        matrix->randomizeRefs(rng);
     }
 
     // tag = "optifit_" + metric->getName() + "_denovo";
