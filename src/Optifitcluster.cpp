@@ -28,31 +28,35 @@
 
 
 /***********************************************************************/
-OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const std::string& method,
-    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed,
-    const int seed)
-    : metric(met), matrix(mt), method(method), cutoff(cutoff), numComboSingletons(ns), rng(RandomNumberSitmo(seed)),
-    seed(seed){
+OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met,
+    const double cutoff, const long long ns, const int seed) : metric(met), matrix(mt), closed(false),
+    denovo(false), cutoff(cutoff), insertLocation(0), numComboSingletons(ns),
+    rng(RandomNumberSitmo(seed)),seed(seed), selfReference(false), printRef(false), denovoIters(10),
+    maxIters(100) {
     maxRefBinNumber = 0;
-    closed = isClosed;
-    selfReference = selfRef;
-    printRef = printReference;
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
 }
 
 OptiFitCluster::OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
-    const double cutoff, const long long ns, const bool selfRef, const bool printReference, const bool isClosed,
-    const int seed)
-    : metric(met), matrix(mt), listVector(refListVector), cutoff(cutoff), numComboSingletons(ns),
-    rng(RandomNumberSitmo(seed)), seed(seed) {
+    const double cutoff, const long long ns, const int seed)
+    : metric(met), matrix(mt), listVector(refListVector), closed(false), denovo(false), cutoff(cutoff),
+      insertLocation(0),
+      numComboSingletons(ns),
+      rng(RandomNumberSitmo(seed)), seed(seed), selfReference(false), printRef(false), denovoIters(10), maxIters(100) {
     maxRefBinNumber = 0;
-    selfReference = selfRef;
-    printRef = printReference;
-    closed = isClosed;
-    method = "refcluster";
-    numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
-    numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
+    numFitSeqs = 0;
+    fittruePositives = 0;
+    fitfalsePositives = 0;
+    fitfalseNegatives = 0;
+    fittrueNegatives = 0;
+    numFitSingletons = 0;
+    numComboSeqs = 0;
+    numComboSingletons = 0;
+    combotruePositives = 0;
+    combofalsePositives = 0;
+    combofalseNegatives = 0;
+    combotrueNegatives = 0;
 }
 
 
@@ -560,9 +564,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     OptifitClusterInformation clusterInformation;
     clusterInformation.numberOfOtu = -1;
     constexpr double stableMetric = 0;
-    constexpr int maxIters = 100;
     bool printStepsHeader = true;
-    constexpr int denovoIters = 10;
     int smallestBins = -1;
     size_t index = 0;
     // Could thread?
@@ -757,12 +759,21 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     return list;
 }
 
+void OptiFitCluster::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& map = parameters.GetClusterParameters();
+    selfReference = std::stoi(map.at("selfReference"));
+    printRef = std::stoi(map.at("printRef"));
+    method = map.at("method");
+    closed = std::stoi(map.at("closed"));
+    denovoIters = std::stoi(map.at("denovoIters"));
+    maxIters = std::stoi(map.at("iters"));
+}
+
 ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, const std::vector<std::string>& refListLabels,
-std::vector<std::vector<std::string> > otus){
+                                                     std::vector<std::vector<std::string> > otus){
     bool printStepsHeader = true;
     const std::string cutoffString = std::to_string(cutoff);
     constexpr double stableMetric = 0;
-    constexpr int maxIters = 100;
     OptifitClusterData *result = new OptifitClusterData("");
     OptifitClusterInformation clusterInformation;
 
@@ -878,7 +889,6 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
 
     ListVector list;
     OptiCluster cluster(refsMatrix, metric, seed, 0, 0);
-    constexpr int maxIters = 100;
     int iters = 0;
     double listVectorMetric = 0; //worst state
     double delta = 1;
@@ -923,7 +933,6 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     int iters = 0;
     double listVectorMetric = 0; //worst state
     double delta = 1;
-    int maxIters = 100;
     constexpr double stableMetric = 0;
 
     std::vector<std::vector<std::string> > otus;

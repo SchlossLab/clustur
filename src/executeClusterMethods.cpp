@@ -123,7 +123,7 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 //[[Rcpp::export]]
 Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const double fitPercent = 50, const bool isClosed = true, const bool printRef = true,
-    const bool selfReference = false, const int seed = 123) {
+    const bool selfReference = false, const int maxIters = 100, const int denovoIters = 10, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
@@ -139,8 +139,15 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     delete(sparseMatrix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric,"denovo", cutoff, 0, selfReference,
-        printRef, isClosed, seed);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "denovo");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", std::to_string(denovoIters));
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
@@ -163,7 +170,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
 Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const std::vector<std::string>& accnos,
     const double cutoff, const bool isClosed = true, const bool printRef = true, const bool selfReference = false,
-    const int seed = 123) {
+    const int maxIters = 100, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
@@ -180,8 +187,15 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
     delete(sparseMatrix);
     delete(listVector);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric,"userref", cutoff, 0, selfReference,
-        printRef, isClosed, seed);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "userref");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", "10");
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
 
     const auto* result = cluster.Execute();
     delete metric;
@@ -203,9 +217,9 @@ Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, 
 
 //[[Rcpp::export]]
 Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos,
-    const float fitPercent, const std::string& featureColumnName, const std::string& binColumnName,
+    const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const bool isClosed = true, const bool printRef = false, const bool selfReference = true,
-    const int seed = 123) {
+    const int maxIters = 100, const int seed = 123) {
 // fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
     const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
         refList["sequence_name"]);
@@ -225,7 +239,15 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter,
         {accnos.begin(), accnos.end()}, seed);
     ClusterMetric* metric = new MCC();
-    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, selfReference, printRef, isClosed, seed);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "refcluster");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", "10");
+    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;

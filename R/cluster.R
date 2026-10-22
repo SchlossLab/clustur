@@ -231,26 +231,28 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 
 #' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
-                    ref_count = NULL, ref_list = NULL, fit_fasta = NULL,
-                    fit_percent = 50, closed = TRUE, print_ref = FALSE, random_seed = 123, number_of_threads = 1) {
-  if(fit_percent < 0.01) {
-    fit_percent = 0.01
-  }
-  else if(fit_percent > 100) {
-    fit_percent = 100
-  }
+                    ref_count = NULL, ref_list = NULL, fit_fasta = NULL, fit_percent = 50, closed = TRUE, print_ref = FALSE,
+                    random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, 
+                    number_of_threads = 1) {
+
   result <- c()
   ref_parameters_check <- all( as.logical(lapply(list(ref_fasta, ref_list, fit_fasta, ref_count), is.null)))
   if (ref_parameters_check && is.null(accnos)) {
      message(paste0("accnos, ref_fasta, ref_count, ref_list, and fit_fasta parameters are",
                    " all NULL. Running Optifit using denovo."))
+    if(fit_percent < 0.01) {
+      fit_percent = 0.01
+    }
+    else if(fit_percent > 100) {
+      fit_percent = 100
+    }
     # run denovo
-    result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref,
-                      selfReference = FALSE, random_seed)
+    result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref, 
+                      selfReference = FALSE, max_iterations, denovo_iters, random_seed)
   } else if (!is.null(accnos)) {
     message("Accnos file is not null, running optifit using accnos.")
     result <- OptiFit2(fit_dist, feature_column_name, bin_column_name, accnos, cutoff, closed, print_ref,
-                       selfReference = FALSE, random_seed)
+                       selfReference = FALSE, max_iterations, random_seed)
   } else if (!ref_parameters_check) {
     message("ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.")
     # all ref list names have to be present in the fasta error catch that later
@@ -260,8 +262,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     copied_data <- CopyObject(fit_dist)
     class(copied_data) <- "distance_object"
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff, number_of_threads)
-    result <- OptiFit3(copied_data, ref_list,  ref_fasta$sequence_name,
-             0.1, "feature", "bin", cutoff, closed, print_ref, selfReference = TRUE, random_seed)
+    result <- OptiFit3(copied_data, ref_list, ref_fasta$sequence_name, feature_column_name, bin_column_name, cutoff, closed,
+                       print_ref, selfReference = TRUE, max_iterations, random_seed)
   }
   else {
     stop(paste0("You either have forget to supply proper parameters are you did not supply all,",

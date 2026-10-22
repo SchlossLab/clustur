@@ -33,16 +33,16 @@ OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, se
     .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize)
 }
 
-OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, seed = 123L) {
-    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, seed)
+OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, maxIters = 100L, denovoIters = 10L, seed = 123L) {
+    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, maxIters, denovoIters, seed)
 }
 
-OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, seed = 123L) {
-    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, seed)
+OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, maxIters = 100L, seed = 123L) {
+    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, maxIters, seed)
 }
 
-OptiFit3 <- function(combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE, seed = 123L) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, fitPercent, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, seed)
+OptiFit3 <- function(combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE, maxIters = 100L, seed = 123L) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, seed)
 }
 
 OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads) {

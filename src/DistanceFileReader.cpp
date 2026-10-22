@@ -101,8 +101,6 @@ void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
     const size_t size = dataSize + otherDataSize;
     std::mutex mutex;
     RcppThread::parallelFor(0, size, [&](size_t i) {
-        // const std::string& refName = refData[i].name;
-        // const std::string& refSequence = refData[i].sequence;
         const bool useMainFasta = i < dataSize;
         const auto&[fastaName, fastaSequence] = useMainFasta ? refData[i] : fitData[i - dataSize];
         const int iIndex = indexMap.at(fastaName);
@@ -118,14 +116,5 @@ void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
            }
 
         }
-        // for (const auto &[fitName, fitSequence] : fitData) {
-        //     if (const float result = static_cast<float>(calculator->Execute(refSequence,
-        //         fitSequence)); result < cut) {
-        //         const int jIndex = indexMap.at(fitName);
-        //         mutex.lock();
-        //         sparseMatrix.addCell(jIndex, {iIndex , result});
-        //         mutex.unlock();
-        //     }
-        // }
     }, numberOfThreads);
 }

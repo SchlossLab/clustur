@@ -187,6 +187,7 @@ void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
         newAbundances.insert(newAbundances.end(), abundances.begin(), abundances.end());
         dataFrameMap[group] = newAbundances;
     }
+    groups.pop_back();
 
 
 }

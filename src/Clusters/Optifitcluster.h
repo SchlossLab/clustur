@@ -19,10 +19,10 @@
 class OptiFitCluster final : public ClusterMethod {
 
 public:
-    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const std::string &method, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
-    OptiFitCluster(OptiRefMatrix *mt, ClusterMetric *met, const ListVector &refListVector, double cutoff,
-        long long ns, bool selfRef, bool printReference, bool isClosed, int seed);
+    OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met,
+        double cutoff, long long ns, int seed);
+    OptiFitCluster(OptiRefMatrix* mt, ClusterMetric* met, const ListVector& refListVector,
+        double cutoff, long long ns, int seed);
 
     void Reset();
 
@@ -86,11 +86,13 @@ protected:
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
 
 public:
-    void SetClusterParameters(const ClusterParameters &) override {}
+    void SetClusterParameters(const ClusterParameters &) override;
 
 private:
     bool selfReference;
     bool printRef;
+    int denovoIters;
+    int maxIters;
 
 };
 
