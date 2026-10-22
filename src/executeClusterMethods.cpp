@@ -321,3 +321,10 @@ int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
     seqFile.close();
     return 0;
 }
+
+//[[Rcpp::export]]
+std::vector<int> Shuffle(std::vector<int> rand, int seed = 123) {
+    RandomNumberSitmo rng(seed);
+    Utils::mothurRandomShuffle(rand, rng);
+    return rand;
+}

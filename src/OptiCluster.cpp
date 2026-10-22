@@ -452,7 +452,7 @@ ClusterExport* OptiCluster::Execute() {
         auto startTime = std::chrono::system_clock::now();
         update(listVectorMetric);
 
-        delta = std::abs(oldMetric - listVectorMetric);
+        delta = std::fabs(oldMetric - listVectorMetric);
         iters++;
 
         stats = getStats(tp, tn, fp, fn);

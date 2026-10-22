@@ -22,6 +22,7 @@
 #include "DataExporters/OptifitClusterData.h"
 #include "DataStructures/OptiRefMatrix.h"
 #include <chrono>
+#include <cmath>
 
 #include "Clusters/Cluster.h"
 #include "MothurDependencies/SensSpecCalc.h"
@@ -449,7 +450,7 @@ ListVector* OptiFitCluster::getFittedList(std::string label, bool includerefs) {
 
     if (denovo || includerefs) { //add in refs
         std::vector<long long> refs = matrix->getRefSeqs();
-
+        Rcpp::Rcout << refs.size() << " references" << std::endl;
         for (long long ref : refs) {
             const auto it = seqBin.find(ref);
 
@@ -480,9 +481,11 @@ ListVector* OptiFitCluster::getFittedList(std::string label, bool includerefs) {
             // Rcpp::Rcout << ("\n**************** Clustering the unfitted sequences ****************\n");
 
             OptiData* unFittedMatrix = matrix->extractMatrixSubset(unFitted);
+            Rcpp::Rcout << unFittedMatrix->GetNameList().size() << " SubSet" << std::endl;
             //matrix->extractMatrixSubset(unFitted)
 
             ListVector* unfittedList = clusterUnfitted(unFittedMatrix, label); //unfittedList includes unfitted singletons
+            Rcpp::Rcout << std::to_string(unfittedList->getNumBins()) << " List Unfitted" << std::endl;
 
             if (unfittedList != nullptr) {
 
@@ -500,7 +503,7 @@ ListVector* OptiFitCluster::getFittedList(std::string label, bool includerefs) {
 
             //add in fit singletons
             ListVector* singleton = matrix->getFitListSingle();
-
+            Rcpp::Rcout << std::to_string(singleton->getNumBins()) << " Singleton" << std::endl;
             if (singleton != nullptr) { //add in any sequences above cutoff in read. Removing these saves clustering time.
                 for (int i = 0; i < singleton->getNumBins(); i++) {
                     if (!singleton->get(i).empty()) {
@@ -621,13 +624,13 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
             "fp","fn","sensitivity","specificity","ppv","npv",
             "fdr", "accuracy", "mcc", "f1score"};
 
-        while ((delta > stableMetric) && (iters < maxIters)) { //
+        while ((delta > stableMetric) && (iters < maxIters)) {
 
             double oldMetric = listVectorMetric;
             auto startTime = std::chrono::system_clock::now();
             update(listVectorMetric);
 
-            delta = abs(oldMetric - listVectorMetric);
+            delta = std::fabs(oldMetric - listVectorMetric);
             iters++;
 
             results = getStats(tp, tn, fp, fn);
@@ -722,7 +725,9 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
     int iters = 0;
     double listVectorMetric = 0; //worst state
     double delta = 1;
-
+    Rcpp::Rcout << "Closeness: " << std::to_string(opti->GetCloseness().size()) << std::endl;
+    Rcpp::Rcout << "Singleton: " << std::to_string(opti->GetSingletons().size()) << std::endl;
+    Rcpp::Rcout << "NameList: " << std::to_string(opti->GetNameList().size()) << std::endl;
     cluster.Initialize(listVectorMetric, true, "singleton");
 
     long long numBins = cluster.getNumBins();
@@ -742,11 +747,13 @@ ListVector* OptiFitCluster::clusterUnfitted(OptiData* unfittedMatrix, std::strin
 
         cluster.update(listVectorMetric);
 
-        delta = abs(oldMetric - listVectorMetric);
+        delta = std::fabs(oldMetric - listVectorMetric);
+        Rcpp::Rcout << "Delta: " << delta << std::endl;
         iters++;
 
         results = cluster.getStats(tp, tn, fp, fn);
         numBins = cluster.getNumBins();
+        Rcpp::Rcout << "Number of bins: " << numBins << std::endl;
 
         // Rcpp::Rcout << (std::to_string(iters) + "\t" + std::to_string(time(nullptr) - start) + "\t" + label + "\t" + std::to_string(numBins) + "\t" + label + "\t"+ std::to_string(tp) + "\t" + std::to_string(tn) + "\t" + std::to_string(fp) + "\t" + std::to_string(fn) + "\t");
 
@@ -813,7 +820,7 @@ ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, con
         auto startTime = std::chrono::system_clock::now();
         update(listVectorMetric);
 
-        delta = abs(oldMetric - listVectorMetric);
+        delta = std::fabs(oldMetric - listVectorMetric);
         iters++;
         // stats = getStats(tp, tn, fp, fn);
         results = getStats(tp, tn, fp, fn);
@@ -916,7 +923,7 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
 
         cluster.update(listVectorMetric);
 
-        delta = abs(oldMetric - listVectorMetric);
+        delta = std::fabs(oldMetric - listVectorMetric);
         iters++;
 
         results = cluster.getStats(tp, tn, fp, fn);
@@ -947,9 +954,15 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     std::map<std::string, int> refCounts;
     counts.insert(refCounts.begin(), refCounts.end());
 
+
     initialize(listVectorMetric, true, otus, refList.getLabels(),false);
+
+
     const std::string cutoffString = std::to_string(cutoff);
     long long numBins = getNumBins();
+
+    Rcpp::Rcout << "Bins: " << numBins << std::endl;
+    Rcpp::Rcout << "FitBins: " << getNumFitBins() << std::endl;
     double tp, tn, fp, fn;
     std::vector<double> results = getStats(tp, tn, fp, fn);
     std::string clusterMetrics;
@@ -971,14 +984,10 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
       "fp","fn","sensitivity","specificity","ppv","npv",
         "fdr", "accuracy", "mcc", "f1score"};
     while ((delta > stableMetric) && (iters < maxIters)) { //
-
-       //  if (m->getControl_pressed()) { break; }
         auto startTime = std::chrono::system_clock::now();
         double oldMetric = listVectorMetric;
-
         update(listVectorMetric);
-
-        delta = abs(oldMetric - listVectorMetric);
+        delta = std::fabs(oldMetric - listVectorMetric);
         iters++;
 
         results = getStats(tp, tn, fp, fn);
@@ -994,8 +1003,9 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
         for (double stat: fitresults) {
             clusterMetrics += (std::to_string(stat) + ",");
         }
+        Rcpp::Rcout << "Bins: " << getFittedList(std::to_string(cutoff), true)->getNumBins() << std::endl;
         Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
-        outputSteps("", printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
+       // outputSteps("", printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, iters, false, 0);
 
     }
     std::ofstream listFile;
