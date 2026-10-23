@@ -29,22 +29,8 @@ public:
         for (const auto& name : filteredNameList) {
 
             listVector.set(count, name);
-            Rcpp::Rcout << name << " : " << count << std::endl;
             nameToIndex[name] = count++;
         }
-        // for (const auto& [name, sequence] : data) {
-        //     if (filteredNameList.find(name) == filteredNameList.end()) continue;
-        //     const size_t& index = nameToIndex[name];
-        //     for (const auto& [otherName, otherSequence] : data) {
-        //         if (name == otherName) continue;
-        //         if (filteredNameList.find(name) == filteredNameList.end()) continue;
-        //         const size_t& otherIndex = nameToIndex[otherName];
-        //         const double result = calculator->Execute(sequence, otherSequence);
-        //         if (result > cutoff) continue;
-        //         matrix.addCell(otherIndex, PDistCell(index, result));
-        //     }
-        // }
-
 
         const size_t dataSize = data.size();
         std::mutex mutex;
@@ -70,7 +56,7 @@ public:
                 mutex.unlock();
             }
         }, numberOfThreads);
-        
+
         return {matrix, listVector};
     }
 };
