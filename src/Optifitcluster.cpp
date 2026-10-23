@@ -867,7 +867,7 @@ ListVector OptiFitCluster::clusterRefs(OptiData*& refsMatrix, ClusterMetric*& me
 
     cluster.Initialize(listVectorMetric, true, "singleton");
 
-    long long numBins = cluster.getNumBins();
+    // long long numBins = cluster.getNumBins();
     // Rcpp::message("\n\niter\ttime\tlabel\tnum_otus\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n");
 
     // double tp, tn, fp, fn;
@@ -936,7 +936,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     long long numFitBins = getNumFitBins();
     std::vector<double> fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
 
-    bool printStepsHeader = true;
+    // bool printStepsHeader = true;
     // outputSteps(outStepFile, printStepsHeader, tp, tn, fp, fn, results, numBins, fittp, fittn, fitfp, fitfn, fitresults, numFitBins, 0, true, 0);
 
     std::vector<std::string> sensfileHeaders{"label","cutoff","numOtus", "tp","tn","fp","fn","sensitivity",

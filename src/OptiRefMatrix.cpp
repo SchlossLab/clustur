@@ -506,8 +506,6 @@ int OptiRefMatrix::ReadFiles(const OptiData* matrix,
     } //you have weighted selection
     else {
         if (refWeightMethod != "accnos") { //fitIndexes are filled above { //randomly select references
-            long long numSelected = 0;
-            // const long long totalSeqs = numberOfSequences;
             std::vector<long long> tempFitSeqs(numberOfSequences, 0);
             std::iota(tempFitSeqs.begin(), tempFitSeqs.end(), 0);
             Utils::mothurRandomShuffle(tempFitSeqs, rng);

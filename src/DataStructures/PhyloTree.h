@@ -37,7 +37,7 @@ public:
 	PhyloTree();
 	PhyloTree(std::string);  //pass it a taxonomy file and it makes the tree
 	PhyloTree(std::ifstream&, std::string);  //pass it a taxonomy file and it makes the train.tree
-	~PhyloTree() = default;;
+	~PhyloTree() = default;
 	int addSeqToTree(const std::string&, std::string);
     int addSeqToTree(const std::string &seqName, const std::vector<Taxon> &seqTax);
 	void assignHeirarchyIDs(int);

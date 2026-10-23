@@ -248,7 +248,7 @@ void PhyloTree::binUnclassified(const std::string& file){
 	fillOutTree(0, copy);
 
 	//get leaf nodes that may need extension
-	for (int i = 0; i < copy.size(); i++) {
+	for (int i = 0; i < static_cast<int>(copy.size()); i++) {
 
 		if (copy[i].children.empty()) {
 			leafNodes[i] = i;
@@ -401,7 +401,7 @@ TaxNode PhyloTree::get(const std::string& seqName){
 }
 /**************************************************************************************************/
 std::string PhyloTree::getName(const int i){
-	if (i < tree.size()) {  return tree[i].name;	 }
+	if (i < static_cast<int>(tree.size())) {  return tree[i].name;	 }
 	Rcpp::stop("Mismatch with taxonomy and template files. Cannot continue.\n");
 }
 /**************************************************************************************************/
