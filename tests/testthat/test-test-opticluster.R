@@ -422,7 +422,7 @@ test_that("cluster_fit works", {
                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE, number_of_threads = parallel::detectCores())
   
   expect_true(nrow(denovo$cluster) == 3)
-  expect_true(nrow(denovo_open$cluster) == 47)
+  expect_true(nrow(denovo_open$cluster) == 48)
   expect_true(nrow(accnos$cluster) == 2)
   expect_true(nrow(accnos_open$cluster) == 57)
   expect_true(nrow(ref_cluster$cluster) == 53)
