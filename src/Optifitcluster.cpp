@@ -288,7 +288,7 @@ bool OptiFitCluster::update(double& listMetric) {
             }
 
             if (ties.size() > 1) {
-                int randomTie = Utils::getRandomIndex(static_cast<int>(ties.size())-1, rng);
+                long long randomTie = Utils::getRandomIndex(static_cast<long long>(ties.size()-1), rng);
                 bestMetric[1] = ties[randomTie][0]; bestBin[1] = ties[randomTie][1]; bestTp[1] = ties[randomTie][2]; bestTn[1] = ties[randomTie][3]; bestFp[1] = ties[randomTie][4]; bestFn[1] = ties[randomTie][5];
                 bestMetric[0] = ties0[randomTie][0]; bestBin[0] = ties0[randomTie][1]; bestTp[0] = ties0[randomTie][2]; bestTn[0] = ties0[randomTie][3]; bestFp[0] = ties0[randomTie][4]; bestFn[0] = ties0[randomTie][5];
             }

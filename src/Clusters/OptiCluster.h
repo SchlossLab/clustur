@@ -26,7 +26,6 @@ class OptiCluster final : public ClusterMethod {
 
     bool update(double&); //returns whether list changed and MCC
     std::vector<double> getStats( double&,  double&,  double&,  double&) const;
-    [[nodiscard]] std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     [[nodiscard]] std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
     [[nodiscard]] ListVector getList() const;
     void SetClusterParameters(const ClusterParameters &) override;

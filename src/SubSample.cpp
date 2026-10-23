@@ -43,7 +43,7 @@ std::set<long long> SubSample::getWeightedSample(std::map<long long, long long>&
     weights.clear();
     
     while(numSampled != num) {
-        long long index = Utils::getRandomIndex(static_cast<int>(total), rng); //random index including weights
+        long long index = Utils::getRandomIndex(total, rng); //random index including weights
         
         std::map<long long, std::set<long long> >::iterator itWeight = cumulative.lower_bound(index);
         

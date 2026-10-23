@@ -156,7 +156,7 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row, RandomNu
 	}
     if(mins.empty())
         return -1;
-    const unsigned long num = Utils::getRandomIndex(static_cast<int>(mins.size()) - 1, rng);
+    const unsigned long num = Utils::getRandomIndex(static_cast<long long>(mins.size()) - 1, rng);
     row = mins[num].row;
     const unsigned long col = mins[num].col; // This actually represents the PDISTCellindex rather than the actually index
 	return col;

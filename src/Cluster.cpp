@@ -123,8 +123,6 @@ ClusterExport* Cluster::ExecuteCluster() {
 /***********************************************************************/
 bool Cluster::update(double &cutOFF) {
     smallCol = dMatrix->getSmallestCell(smallRow, rng);
-    if (static_cast<int>(smallCol) == -1)
-        return false;
     nColCells = dMatrix->seqVec[smallCol].size();
     nRowCells = dMatrix->seqVec[smallRow].size();
     std::vector<int> foundCol(nColCells, 0);
@@ -136,14 +134,14 @@ bool Cluster::update(double &cutOFF) {
 
 
         //if you are not the smallCell
-        if (dMatrix->seqVec[smallRow][i].index != smallCol) {
+        if (dMatrix->seqVec[smallRow][i].index != static_cast<long long>(smallCol)) {
             const long long search = dMatrix->seqVec[smallRow][i].index;
 
             bool merged = false;
             for (size_t j = 0; j < nColCells; j++) {
                 //go through each distance the smallCol has looking for matching distance to find
 
-                if (dMatrix->seqVec[smallCol][j].index != smallRow) {
+                if (dMatrix->seqVec[smallCol][j].index != static_cast<long long>(smallRow)) {
                     //if you are not the smallest distance
                     if (dMatrix->seqVec[smallCol][j].index == search) {
                         //we found a distance for the merge
@@ -192,11 +190,12 @@ bool Cluster::update(double &cutOFF) {
     clusterNames();
 
     if (method == "nearest") {
-        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
+        const auto castedSmallRow = static_cast<long long>(smallRow);
+        for (size_t i = nColCells; i-- > 0;) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
-                if (dMatrix->seqVec[smallCol][i].index == smallRow) {
+                if (dMatrix->seqVec[smallCol][i].index == castedSmallRow) {
                     //you are the smallest distance
                     dMatrix->rmCell(smallCol, i);
                     break;
@@ -204,7 +203,7 @@ bool Cluster::update(double &cutOFF) {
             }
         }
     } else {
-        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
+        for (size_t i = nColCells; i-- > 0;) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
@@ -215,7 +214,7 @@ bool Cluster::update(double &cutOFF) {
                     dMatrix->updateCellCompliment(smallCol, i);
                 } else {
                     if (method == "average" || method == "weighted") {
-                        if (dMatrix->seqVec[smallCol][i].index != smallRow) {
+                        if (dMatrix->seqVec[smallCol][i].index != static_cast<long long>(smallRow)) {
                             //if you are not the smallest distance
                             if (cutOFF > dMatrix->seqVec[smallCol][i].dist) {
                                 cutOFF = dMatrix->seqVec[smallCol][i].dist;

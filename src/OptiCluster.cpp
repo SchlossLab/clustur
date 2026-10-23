@@ -342,36 +342,9 @@ std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, do
     return results;
 }
 
-std::vector<double> OptiCluster::getCloseFarFitCounts(const long long seq, const long long newBin) const {
-    std::vector<double> results;
-    results.push_back(0);
-    results.push_back(0); //results[0] = close count, results[1] = far count
-
-    if (newBin == -1) {
-    } //making a singleton bin. Close but we are forcing apart.
-    else {
-        //merging a bin
-        for (const long long& bin : bins[newBin]) {
-            if (seq == bin) {
-            } //ignore self
-            else {
-                bool isFit = true;
-                if (const bool closeFit = matrix->isCloseFit(seq, bin, isFit)) {
-                    //you are close if you are fit and close
-                    results[0]++;
-                } else if (isFit) { results[1]++; } //this sequence is "far away" and fit - above the cutoff
-            }
-        }
-    }
-
-    return results;
-}
-
-/***********************************************************************/
-
 /***********************************************************************/
 long long OptiCluster::getNumBins() const {
-    long long singleton = matrix->getNumSingletons();
+    auto singleton = static_cast<long long>(matrix->getNumSingletons());
 
     for (const auto & bin : bins) {
         if (!bin.empty()) {
@@ -414,8 +387,6 @@ ClusterExport* OptiCluster::Execute() {
     std::vector<std::string> clusterMetricsHeaders{"iter","time","label","num_otus","cutoff","tp","tn",
       "fp","fn","sensitivity","specificity","ppv","npv",
         "fdr", "accuracy", "mcc", "f1score"};
-    bool printHeaders = true;
-
 
     double listVectorMetric = 0; //worst state
     long long numBins;

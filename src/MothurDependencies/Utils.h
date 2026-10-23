@@ -24,7 +24,7 @@ public:
     Utils() = default;
     // static void mothurRandomShuffle(std::vector<int>& randomize);
     // static void mothurRandomShuffle(std::vector<long long>& randomize);
-    static int getRandomIndex(int highest, RandomNumberSitmo &sitmo);
+    static long long getRandomIndex(long long highest, RandomNumberSitmo &sitmo);
     static int getNumNames(std::string names);
     static bool mothurConvert(const std::string& item, int& num);
     static bool isNumeric1(const std::string& stringToCheck);

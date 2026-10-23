@@ -71,15 +71,15 @@ void DistanceFileReader::AddFittedDataToReference(
     list.push_back(otherListVector);
     countTable.AddCountTable(otherCountTable);
     sparseMatrix.resize(currentSize + otherSize);
-    const int newSize = otherSize + currentSize;
+    const size_t newSize = otherSize + currentSize;
     list.resize(newSize);
     std::unordered_map<std::string, int> indexMap;
     indexMap.reserve(newSize);
-    for (int i = 0; i < currentSize; i++) {
+    for (int i = 0; i < static_cast<int>(currentSize); i++) {
         indexMap[list.get(i)] = i;
     }
     PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
-    int counter = currentSize;
+    int counter = static_cast<int>(currentSize);
     for (int i = 0; i < newSize; i++) {
         std::string names = otherListVector.get(i);
         std::vector<std::string> splitNames;

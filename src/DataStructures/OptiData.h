@@ -106,9 +106,9 @@ public:
 
     [[nodiscard]] virtual std::map<std::string, long long> getNameIndexMap() const {
         std::map<std::string, long long> nameIndexes;
-        for (int i = 0; i < nameMap.size(); i++) {
+        for (size_t i = 0; i < nameMap.size(); i++) {
             std::vector<std::string> thisBinsSeqs; Utils::splitAtComma(nameMap[i], thisBinsSeqs);
-            if (i < closeness.size()) { nameIndexes[thisBinsSeqs[0]] = i;  }
+            if (i < closeness.size()) { nameIndexes[thisBinsSeqs[0]] = static_cast<long long>(i);  }
         }
         return nameIndexes;
     }

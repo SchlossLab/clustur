@@ -70,7 +70,7 @@ public:
     std::string print(std::ostream&, std::map<std::string, int>&);
     int size() const;
     void clear();
-    void resize(int);
+    void resize(size_t);
     Rcpp::DataFrame CreateDataFrameFromList(const std::string &featureColumnName = "feature",
         const std::string &binColumnName = "bin") const;
 

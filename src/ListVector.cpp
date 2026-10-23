@@ -116,7 +116,7 @@ int ListVector::size() const {
 void ListVector::clear() {
     data.clear();
 }
-void ListVector::resize(const int size) {
+void ListVector::resize(const size_t size) {
     data.resize(size);
 }
 

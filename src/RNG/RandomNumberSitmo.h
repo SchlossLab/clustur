@@ -7,7 +7,7 @@
 #include <threefry.h>
 class RandomNumberSitmo {
 public:
-    using result_type = uint64_t;
+    using result_type = long long;
     explicit RandomNumberSitmo(int seed) {
         rngEngine.seed(seed);
     }
@@ -27,12 +27,12 @@ public:
     }
     // [[Rcpp::depends(sitmo)]]
     result_type NextRandomValue() {
-        double dis = max() - min();
-        double result = min() + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
-        return static_cast<uint64_t>(result);
+        constexpr double dis = max() - min();
+        const double result = min() + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
+        return static_cast<long long>(result);
     }
     result_type GetRandomNumber(const double min = 0.0, const double max = 1.0) {
-        double dis = max - min + 1;
+        const double dis = max - min + 1;
         return min + (static_cast<double>(rngEngine()) / (sitmo::threefry::max())) * (dis);
     }
 

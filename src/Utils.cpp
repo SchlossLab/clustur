@@ -25,9 +25,9 @@
 #include "Clusters/Metrics/tptn.h"
 
 
-int Utils::getRandomIndex(const int highest, RandomNumberSitmo &sitmo) {
+long long Utils::getRandomIndex(const long long highest, RandomNumberSitmo &sitmo) {
     if (highest == 0) { return 0; }
-    return static_cast<int>(sitmo.GetRandomNumber(0, highest));
+    return sitmo.GetRandomNumber(0, static_cast<double>(highest));
 }
 
 int Utils::getNumNames(std::string names){

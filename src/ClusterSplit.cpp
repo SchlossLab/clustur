@@ -105,8 +105,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
     //for each file group figure out which process will complete it
     //want to divide the load intelligently so the big files are spread between processes
-    for (int i = 0; i < matricesSize; i++) {
-        int processToAssign = (i+1) % processors;
+    for (size_t i = 0; i < matricesSize; i++) {
+        size_t processToAssign = (i+1) % processors;
         if (processToAssign == 0) {
 	        processToAssign = processors;
         }
@@ -116,8 +116,8 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
     }
 
     //now lets reverse the order of ever other process, so we balance big files running with little ones
-    for (int i = 0; i < processors; i++) {
-        int remainder = ((i+1) % processors);
+    for (size_t i = 0; i < processors; i++) {
+        const size_t remainder = ((i+1) % processors);
         if (remainder) { std::reverse(dividedWork[i].begin(), dividedWork[i].end());  }
     }
 
@@ -130,9 +130,9 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 	data.reserve(dividedWork.size() - 1);
 
     //Lauch worker threads
-    for (int i = 1; i < processors; i++) {
+    for (int i = 1; i < static_cast<int>(processors); i++) {
     	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[i], clusterParameters, metric,
-    		seed + i, cutoff, i);
+    		seed + i, cutoff);
         data.emplace_back(dataBundle);
 
         workerThreads.push_back(new RcppThread::Thread([&, dataBundle] {
@@ -142,21 +142,18 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
 
 	SplitClusterData* dataBundle = new SplitClusterData(dividedWork[0], clusterParameters, metric,
-		seed, cutoff, 0);
+		seed, cutoff);
     cluster(dataBundle);
 
 	std::vector<ClusterExport*> results = dataBundle->results;
 	results.reserve(distanceMatrices.size());
-    for (int i = 0; i < processors - 1; i++) {
+    for (size_t i = 0; i < processors - 1; i++) {
         workerThreads[i]->join();
         delete workerThreads[i];
     }
 	for (const auto& result: data) {
 		results.insert(results.end(), result->results.cbegin(), result->results.cend());
 	}
-	// for(const auto& dat: results) {
-	// 	Rcpp::Rcout << std::to_string(dat->GetListVector().listVector.size())  << std::endl;
-	// }
 
 	dataBundle->results.clear();
 	delete dataBundle;
