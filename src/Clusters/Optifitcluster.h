@@ -36,10 +36,10 @@ public:
     long long getNumFitBins();
 
     std::vector<double>  getStats( double&, double&,  double&,  double&);  //combo stats
-    std::vector<double>  getFitStats( double&,  double&,  double&,  double&); //fitted seqs stats
+    std::vector<double>  getFitStats( double&,  double&,  double&,  double&) const; //fitted seqs stats
 
-    ListVector* getList();
-    ListVector* getFittedList(std::string, bool);
+    ListVector* getList() const;
+    ListVector* getFittedList(const std::string&, bool);
     std::set<std::string> getUnfittedNames() { return unfittedNames; }
 
 protected:
@@ -61,10 +61,10 @@ protected:
     RandomNumberSitmo rng;
     int seed;
 
-    int findInsert();
+    int findInsert() const;
 
     ClusterExport *runDenovoOptiCluster(std::map<std::string, int> &counts,
-                                        std::string outStepFile);
+                                        const std::string& outStepFile);
 
     ClusterExport *runUserRefOptiCluster(ClusterMetric *&metric, const std::vector<std::string>& refListLabels, std::vector<std::vector<std::string>> otus);
 
@@ -81,8 +81,8 @@ protected:
                      std::vector<double> fitresults, long long numFitBins, int iter, bool printToFile, int denovoIter);
 
 
-    std::vector<double> getCloseFarCounts(long long seq, long long newBin);
-    std::vector<double> getCloseFarFitCounts(long long seq, long long newBin);
+    std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
+    std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
 
 public:

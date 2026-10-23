@@ -80,7 +80,7 @@ void DistanceFileReader::AddFittedDataToReference(
     }
     PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
     int counter = static_cast<int>(currentSize);
-    for (int i = 0; i < newSize; i++) {
+    for (int i = 0; i < static_cast<int>(newSize); i++) {
         std::string names = otherListVector.get(i);
         std::vector<std::string> splitNames;
         Utils::splitAtComma(names, splitNames);

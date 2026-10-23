@@ -12,14 +12,14 @@
 
 OptiMatrix* OptimatrixAdapter::ConvertToOptimatrix(const SparseDistanceMatrix* matrixData,
                                                    const ListVector* listVector, const bool sim) const {
-    const auto size = static_cast<long long>(matrixData->seqVec.size());
+    const size_t size = matrixData->seqVec.size();
     std::vector<std::string> nameList(size);
     std::vector<std::string> singletons;
-    std::unordered_map<unsigned long, int> indexSwap;
-    int nonSingletonCount = 0;
-    for(int i = 0; i < size; i++) {
+    std::unordered_map<unsigned long, unsigned long> indexSwap;
+    unsigned long nonSingletonCount = 0;
+    for(size_t i = 0; i < size; i++) {
         if(!matrixData->seqVec[i].empty()) {
-            indexSwap[static_cast<unsigned long>(i)] = nonSingletonCount++;
+            indexSwap[i] = nonSingletonCount++;
         }
     }
     int count = 0;
