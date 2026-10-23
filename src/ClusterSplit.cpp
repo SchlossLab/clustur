@@ -154,6 +154,9 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 	for (const auto& result: data) {
 		results.insert(results.end(), result->results.cbegin(), result->results.cend());
 	}
+	// for(const auto& dat: results) {
+	// 	Rcpp::Rcout << std::to_string(dat->GetListVector().listVector.size())  << std::endl;
+	// }
 
 	dataBundle->results.clear();
 	delete dataBundle;

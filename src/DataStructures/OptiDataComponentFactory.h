@@ -64,6 +64,9 @@ public:
             }
         }, numberOfThreads);
 
+        bool a = matrix.print();
+        Rcpp::stop("For the moment");
+
         return {matrix, listVector};
     }
 };

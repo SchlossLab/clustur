@@ -170,7 +170,9 @@ bool SparseDistanceMatrix::print() const{
         return false;
     //saves time in getSmallestCell, by making it so you dont search the repeats
     for (size_t i = 0; i < seqVec.size(); i++) {
-   //     for (const auto j : seqVec[i]) { Rcpp::Rcout << i << '\t' << j.index << '\t' << j.dist << std::endl; }
+        for (const auto j : seqVec[i]) {
+            Rcpp::Rcout << i << '\t' << j.index << '\t' << j.dist << std::endl;
+        }
     }
     return true;
 }

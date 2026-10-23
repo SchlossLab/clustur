@@ -136,14 +136,20 @@ int OptiCluster::Initialize(double &value, const bool randomize, const std::stri
  * keep or move the sequence to the OTU where the `metric` is the largest - flip a coin on ties */
 bool OptiCluster::update(double &listMetric) {
     //for each sequence (singletons removed on read)
+
     for (const int randomizeSeq : randomizeSeqs) {
         // const auto it = seqBin.find(randomizeSeq);
         // seqBin[randomizeSeq]
+        // Rcpp::Rcout << "seq: " << std::to_string(randomizeSeq) << std::endl;
 
         long long seqNumber = randomizeSeq;
         const std::vector<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
         const long long binNumber = seqBin[randomizeSeq];
 
+        // Rcpp::Rcout << "\nClose Seqs of: " << std::to_string(randomizeSeq) << "\n";
+        // for (const auto& seq: closeSeqs) {
+        //     Rcpp::Rcout << seq << " ";
+        // }
         double tn = trueNegatives;
         double tp = truePositives;
         double fp = falsePositives;
@@ -241,6 +247,11 @@ bool OptiCluster::update(double &listMetric) {
         seqBin[seqNumber] = bestBin; //set new OTU location
     }
 
+
+    // Rcpp::Rcout << "TP: " << truePositives << std::endl;
+    // Rcpp::Rcout << "TN: " << trueNegatives << std::endl;
+    // Rcpp::Rcout << "FP: " << falsePositives << std::endl;
+    // Rcpp::Rcout << "FN: " << falseNegatives << std::endl;
 
     listMetric = metric->getValue(truePositives, trueNegatives, falsePositives, falseNegatives);
 
@@ -445,19 +456,26 @@ ClusterExport* OptiCluster::Execute() {
         clusterMetrics += (std::to_string(result) + ",");
     }
     Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
-
+    // Rcpp::Rcout << "Closeness: " <<  matrix->GetCloseness().size() << std::endl;
+    // Rcpp::Rcout << "Singletons: " << matrix->GetSingletons().size() << std::endl;
+    // Rcpp::Rcout << "NameMap: " << matrix->GetNameList().size() << std::endl;
     while ((delta > stableMetric) && (iters < maxIters)) {
         //long start = std::time(nullptr);
         double oldMetric = listVectorMetric;
         auto startTime = std::chrono::system_clock::now();
         update(listVectorMetric);
 
+        // Rcpp::Rcout << "List Vector Metric: " << listVectorMetric << std::endl;
         delta = std::fabs(oldMetric - listVectorMetric);
         iters++;
 
         stats = getStats(tp, tn, fp, fn);
-
         numBins = getNumBins();
+        // Rcpp::Rcout << "Delta: " << delta << std::endl;
+        // Rcpp::Rcout << "Bins: " << numBins << std::endl;
+        // Rcpp::Rcout << "Iters: " << iters << std::endl;
+
+
         auto endTime = std::chrono::system_clock::now();
         std::chrono::duration<double> currentTime = endTime - startTime;
         clusterMetrics = (std::to_string(iters) + "," + std::to_string(currentTime.count()) + "," +
@@ -485,6 +503,6 @@ ClusterExport* OptiCluster::Execute() {
             std::to_string(fp) + ',' + std::to_string(fn) + ',';
     for (double result: stats) { sensFile += std::to_string(result) + ','; }
     Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
-
+    Rcpp::Rcout << std::endl;
     return data;
 }
