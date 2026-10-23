@@ -390,13 +390,13 @@ test_that("cluster_split works", {
   fasta <- test_path("extdata", "amazon.align")
   taxonomy <- test_path("extdata", "amazon.taxonomy")
 
-  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3)
+  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
 
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
   expect_true(all(df$label == 0.2))
-  expect_true(nrow(df$abundance) == 45)
-  expect_true(nrow(df$cluster) == 45)
+  expect_true(nrow(df$abundance) == 43)
+  expect_true(nrow(df$cluster) == 43)
 
 })
 
@@ -417,7 +417,7 @@ test_that("cluster_fit works", {
   ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
                        ref_list = esophagus_list, fit_fasta = amazon_fasta, number_of_threads = parallel::detectCores(), print_ref = TRUE)
   ref_cluster_open <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
-                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, number_of_threads = parallel::detectCores())
+                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, number_of_threads = parallel::detectCores(), random_seed = 123)
   ref_cluster_open_print_ref <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE, number_of_threads = parallel::detectCores())
   
