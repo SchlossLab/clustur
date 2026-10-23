@@ -16,7 +16,7 @@ public:
     OptiDataComponentFactory() = default;
     ~OptiDataComponentFactory() = default;
     static OptiDataComponent CreateOptiDataComponent(const FastaDatabase& database, const PairwiseDistanceCalculator* calculator,
-        const std::unordered_set<std::string>& filteredNameList, const double cutoff, const int numberOfThreads) {
+         const std::vector<std::string>& filteredNameList, const double cutoff, const int numberOfThreads) {
         const size_t filteredNameSize = filteredNameList.size();
         SparseDistanceMatrix matrix;
         ListVector listVector;
@@ -27,7 +27,9 @@ public:
         const std::vector<FastaData>& data = database.GetFastaDataBase();
         size_t count = 0;
         for (const auto& name : filteredNameList) {
+
             listVector.set(count, name);
+            Rcpp::Rcout << name << " : " << count << std::endl;
             nameToIndex[name] = count++;
         }
         // for (const auto& [name, sequence] : data) {
@@ -48,15 +50,20 @@ public:
         std::mutex mutex;
         RcppThread::parallelFor(0, dataSize, [&filteredNameList, &matrix, &data, &mutex, &calculator,
             &cutoff, &dataSize, &nameToIndex](size_t i) {
-            const FastaData& fastaData = data[i];
-           if (filteredNameList.find(fastaData.name) == filteredNameList.end()) return;
-           const size_t& index = nameToIndex[fastaData.name];
+
+            const auto&[name, sequence] = data[i];
+            if (!std::binary_search(filteredNameList.begin(), filteredNameList.end(), name)) return;
+            const size_t& index = nameToIndex[name];
+
             for (size_t j = i + 1; j < dataSize; j++) {
-                const FastaData& otherFastaData = data[j];
-                if (filteredNameList.find(otherFastaData.name) == filteredNameList.end()) continue;
-                const size_t& otherIndex = nameToIndex[otherFastaData.name];
-                const double result = calculator->Execute(fastaData.sequence,
-                  otherFastaData.sequence);
+                const auto&[otherName, otherSequence] = data[j];
+                if (!std::binary_search(filteredNameList.begin(), filteredNameList.end(), otherName))
+                    continue;
+
+                const size_t& otherIndex = nameToIndex[otherName];
+                const double result = calculator->Execute(sequence,
+                  otherSequence);
+
                 if (result > cutoff) continue;
                 mutex.lock();
                 matrix.addCell(otherIndex, PDistCell(index, result));
@@ -65,7 +72,7 @@ public:
         }, numberOfThreads);
 
         bool a = matrix.print();
-        Rcpp::stop("For the moment");
+        // Rcpp::stop("For the moment");
 
         return {matrix, listVector};
     }
