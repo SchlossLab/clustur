@@ -31,7 +31,7 @@ SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
                     long long seq1Index = -1;
                     if (itSeq1 != nameIndex.end()) { seq1Index = itSeq1->second; } //you have distances in the matrix
 
-                    newNames.push_back(seq1Index);
+                    newNames.push_back(static_cast<int>(seq1Index));
                 }
 
                 //if there are names in this bin add to new list
@@ -45,15 +45,15 @@ void SensSpecCalc::getResults(const OptiData& matrix, double& tp, double& tn, do
 
         for(auto & otu : otus){
 
-            for(int i=0;i<otu.size();i++){
-                for(int j=0;j<i;j++){
+            for(size_t i=0;i<otu.size();i++){
+                for(size_t j=0;j<i;j++){
                     if (matrix.isClose(otu[i], otu[j])) { tp++; }
                     else { fp++; }
                 }
             }
         }
         const double numSeqs = static_cast<double>(matrix.getNumSeqs() + matrix.getNumSingletons());
-        const double numDists = matrix.getNumDists(); //square matrix OptiData:: uses the parent class function so that we can pass a optiref matrix
+        const double numDists = static_cast<double>(matrix.getNumDists()); //square matrix OptiData:: uses the parent class function so that we can pass a optiref matrix
 
         fn = (numDists/2) - tp;
         tn = numSeqs * (numSeqs-1)/2  - (fp + fn + tp);

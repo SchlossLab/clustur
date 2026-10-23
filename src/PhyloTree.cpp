@@ -64,20 +64,18 @@ int PhyloTree::addSeqToTree(const std::string &seqName, const std::vector<Taxon>
 
     numSeqs++;
 
-    std::map<std::string, int>::iterator childPointer;
-
     int currentNode = 0;
     int level = 0;
 
     tree[0].accessions.push_back(seqName);
 
-    for (int i = 0; i < seqTax.size(); i++) {
+    for (size_t i = 0; i < seqTax.size(); i++) {
 
         level++;
         std::string taxon = seqTax[i].name;
 
 
-        childPointer = tree[currentNode].children.find(taxon);
+        std::map<std::string, int>::iterator childPointer = tree[currentNode].children.find(taxon);
 
         if(childPointer != tree[currentNode].children.end()){    //if the node already exists, move on
             currentNode = childPointer->second;
@@ -107,7 +105,7 @@ int PhyloTree::addSeqToTree(const std::string &seqName, const std::vector<Taxon>
 }
 /**************************************************************************************************/
 
-int PhyloTree::addSeqToTree(std::string seqName, std::string seqTaxonomy){
+int PhyloTree::addSeqToTree(const std::string& seqName, std::string seqTaxonomy){
 
 	numSeqs++;
 
@@ -120,7 +118,7 @@ int PhyloTree::addSeqToTree(std::string seqName, std::string seqTaxonomy){
     int level = 0;
     int currentNode = 0;
 
-    for(std::string taxon : taxons) {
+    for(const std::string& taxon : taxons) {
 
         level++;
 
@@ -138,7 +136,7 @@ int PhyloTree::addSeqToTree(std::string seqName, std::string seqTaxonomy){
 			name2Taxonomy[seqName] = currentNode;
 		}
 		else{											//otherwise, create it
-			tree.push_back(TaxNode(taxon));
+			tree.emplace_back(taxon);
 
 			tree[currentNode].children[taxon] = numNodes;
             tree[numNodes].level = level;
@@ -167,9 +165,9 @@ std::vector<int> PhyloTree::getGenusNodes()	{
     std::map<int, int> temp;
 	for (it2=uniqueTaxonomies.begin(); it2!=uniqueTaxonomies.end(); it2++) {  genusIndex.push_back(*it2); 	temp[*it2] = genusIndex.size()-1; }
 
-    for (std::map<std::string, int>::iterator itName = name2Taxonomy.begin(); itName != name2Taxonomy.end(); itName++) {
-        std::map<int, int>::iterator itTemp = temp.find(itName->second);
-        if (itTemp != temp.end()) { name2GenusNodeIndex[itName->first] = itTemp->second; }
+    for (const auto & itName : name2Taxonomy) {
+        std::map<int, int>::iterator itTemp = temp.find(itName.second);
+        if (itTemp != temp.end()) { name2GenusNodeIndex[itName.first] = itTemp->second; }
       //  else {  m->mothurOut("[ERROR]: trouble making name2GenusNodeIndex, aborting.\n"); m->setControl_pressed(true); }
     }
 
@@ -181,8 +179,8 @@ std::vector<int> PhyloTree::getGenusTotals()	{
 		if (calcTotals) {
 			totals.clear();
 			//reset counts because we are on a new word
-			for (int j = 0; j < genusIndex.size(); j++) {
-				totals.push_back(tree[genusIndex[j]].accessions.size());
+			for (const auto& genus : genusIndex) {
+				totals.push_back(static_cast<int>(tree[genus].accessions.size()));
 			}
 			return totals;
 		}else{
@@ -191,7 +189,7 @@ std::vector<int> PhyloTree::getGenusTotals()	{
 
 }
 /**************************************************************************************************/
-std::vector<TaxNode> PhyloTree::getNodes(int level)	{
+std::vector<TaxNode> PhyloTree::getNodes(const int level) const {
 
     std::vector<TaxNode> thisLevelsNodes;
 
@@ -201,17 +199,17 @@ std::vector<TaxNode> PhyloTree::getNodes(int level)	{
       //  m->setControl_pressed(true); return thisLevelsNodes;
     }
 
-    for (size_t i = 0; i < tree.size(); i++) {
-        if (tree[i].level == level) {
-            thisLevelsNodes.push_back(tree[i]);
-        }
-    }
+	for (const auto& tax : tree) {
+		if (tax.level != level) continue;
+			thisLevelsNodes.emplace_back(tax);
+	}
+
 
     return thisLevelsNodes;
 }
 /**************************************************************************************************/
 
-void PhyloTree::assignHeirarchyIDs(int index){
+void PhyloTree::assignHeirarchyIDs(const int index){
 	std::map<std::string,int>::iterator it;
 	int counter = 1;
 
@@ -231,12 +229,12 @@ void PhyloTree::assignHeirarchyIDs(int index){
 
 }
 /**************************************************************************************************/
-void PhyloTree::setUp(std::string tfile){
-	std::string taxFileNameTest = tfile.substr(0,tfile.find_last_of(".")+1) + "tree.sum";
+void PhyloTree::setUp(const std::string& tfile){
+	const std::string taxFileNameTest = tfile.substr(0,tfile.find_last_of(".")+1) + "tree.sum";
     binUnclassified(taxFileNameTest);
 }
 /**************************************************************************************************/
-void PhyloTree::binUnclassified(std::string file){
+void PhyloTree::binUnclassified(const std::string& file){
 
 	std::ofstream out;
 	//Utils::openOutputFile(file, out);
@@ -252,14 +250,14 @@ void PhyloTree::binUnclassified(std::string file){
 	//get leaf nodes that may need extension
 	for (int i = 0; i < copy.size(); i++) {
 
-		if (copy[i].children.size() == 0) {
+		if (copy[i].children.empty()) {
 			leafNodes[i] = i;
 		}
 	}
 
   //  if (m->getDebug()) { m->mothurOut("maxLevel = " + tostd::string(maxLevel) +'\n'); }
 
-	int copyNodes = copy.size();
+	int copyNodes = static_cast<int>(copy.size());
 
 	//go through the seqs and if a sequence finest taxon is not the same level as the most finely defined taxon then classify it as unclassified where necessary
 	std::map<int, int>::iterator itLeaf;
@@ -287,7 +285,7 @@ void PhyloTree::binUnclassified(std::string file){
 				currentNode = childPointer->second; //currentNode becomes 'unclassified'
 			}
 			else{											//otherwise, create it
-				copy.push_back(TaxNode(taxon));
+				copy.emplace_back(taxon);
 
 				copy[currentNode].children[taxon] = copyNodes;
 				copy[copyNodes].parent = currentNode;
@@ -304,15 +302,15 @@ void PhyloTree::binUnclassified(std::string file){
 	// }
 }
 /**************************************************************************************************/
-void PhyloTree::fillOutTree(int index, std::vector<TaxNode>& copy) {
+void PhyloTree::fillOutTree(const int index, std::vector<TaxNode>& copy) {
 
 	std::map<std::string,int>::iterator it;
 
 	it = copy[index].children.find("unclassified");
 	if (it == copy[index].children.end()) { //no unclassified at this level
-		std::string taxon = "unclassified";
-		copy.push_back(TaxNode(taxon));
-		copy[index].children[taxon] = copy.size()-1;
+		const std::string taxon = "unclassified";
+		copy.emplace_back(taxon);
+		copy[index].children[taxon] = static_cast<int>(copy.size()-1);
 		copy[copy.size()-1].parent = index;
 		copy[copy.size()-1].level = copy[index].level + 1;
 	}
@@ -324,7 +322,7 @@ void PhyloTree::fillOutTree(int index, std::vector<TaxNode>& copy) {
 	}
 }
 /**************************************************************************************************/
-std::string PhyloTree::getFullTaxonomy(std::string seqName) {
+std::string PhyloTree::getFullTaxonomy(const std::string& seqName) {
 	std::string tax = "";
 
 	int currentNode = name2Taxonomy[seqName];
@@ -390,42 +388,43 @@ void PhyloTree::printTreeNodes(std::string treefilename) {
     // outTree.close();
 }
 /**************************************************************************************************/
-TaxNode PhyloTree::get(int i ){
-	if (i < tree.size()) {  return tree[i];	 }
-//	else {  m->mothurOut("Mismatch with taxonomy and template files. Cannot continue.\n");  exit(1); }
+TaxNode PhyloTree::get(const int i){
+	if (i < static_cast<int>(tree.size())) {  return tree[i];	 }
+	Rcpp::stop("Mismatch with taxonomy and template files. Cannot continue.\n");
 }
 /**************************************************************************************************/
-TaxNode PhyloTree::get(std::string seqName){
+TaxNode PhyloTree::get(const std::string& seqName){
 	std::map<std::string, int>::iterator itFind = name2Taxonomy.find(seqName);
 
 	if (itFind != name2Taxonomy.end()) {  return tree[name2Taxonomy[seqName]];  }
-	//else { m->mothurOut("Cannot find " + seqName + ". Mismatch with taxonomy and template files. Cannot continue.\n");  exit(1);}
+	Rcpp::stop("Cannot find " + seqName + ". Mismatch with taxonomy and template files. Cannot continue.\n");
 }
 /**************************************************************************************************/
-std::string PhyloTree::getName(int i ){
+std::string PhyloTree::getName(const int i){
 	if (i < tree.size()) {  return tree[i].name;	 }
-	//else { m->mothurOut("Mismatch with taxonomy and template files. Cannot continue.\n");  exit(1); }
+	Rcpp::stop("Mismatch with taxonomy and template files. Cannot continue.\n");
 }
 /**************************************************************************************************/
-int PhyloTree::getGenusIndex(std::string seqName){
+int PhyloTree::getGenusIndex(const std::string& seqName){
 
 	std::map<std::string, int>::iterator itFind = name2GenusNodeIndex.find(seqName);
 
 	if (itFind != name2GenusNodeIndex.end()) {  return itFind->second;  }
-	//else { m->mothurOut("Cannot find " + seqName + ". Could be a mismatch with taxonomy and template files. Cannot continue.\n");  exit(1);}
+	Rcpp::stop("Cannot find " + seqName +
+		". Could be a mismatch with taxonomy and template files. Cannot continue.\n");
 }
 /**************************************************************************************************/
-bool PhyloTree::ErrorCheck(std::vector<std::string> templateFileNames){
+bool PhyloTree::ErrorCheck(std::vector<std::string> templateFileNames) const {
 	bool okay = true;
-	templateFileNames.push_back("unknown");
+	templateFileNames.emplace_back("unknown");
 
 	std::map<std::string, int>::iterator itFind;
 	std::map<std::string, int> taxonomyFileNames = name2Taxonomy;
 
   //  if (m->getDebug()) { m->mothurOut("[DEBUG]: in error check. Numseqs in template = " + tostd::string(templateFileNames.size()) + ". Numseqs in taxonomy = " + tostd::string(taxonomyFileNames.size()) + ".\n"); }
 
-	for (int i = 0; i < templateFileNames.size(); i++) {
-		itFind = taxonomyFileNames.find(templateFileNames[i]);
+	for (const auto & templateFileName : templateFileNames) {
+		itFind = taxonomyFileNames.find(templateFileName);
 
 		if (itFind != taxonomyFileNames.end()) { //found it so erase it
 			taxonomyFileNames.erase(itFind);
@@ -439,7 +438,7 @@ bool PhyloTree::ErrorCheck(std::vector<std::string> templateFileNames){
 	}
 	templateFileNames.clear();
 
-	if (taxonomyFileNames.size() > 0) { //there are names in tax file that are not in template
+	if (!taxonomyFileNames.empty()) { //there are names in tax file that are not in template
 		okay = false;
 
 		for (itFind = taxonomyFileNames.begin(); itFind != taxonomyFileNames.end(); itFind++) {

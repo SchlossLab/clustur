@@ -69,7 +69,7 @@ void SparseDistanceMatrix::updateCellCompliment(const unsigned long row, const u
 
     //find the columns entry for this cell as well
     for (size_t i = 0; i < seqVec[vrow].size(); i++) {
-        if (seqVec[vrow][i].index == row) { vcol = i;  break; }
+        if (seqVec[vrow][i].index == static_cast<long long>(row)) { vcol = i;  break; }
     }
 
     seqVec[vrow][vcol].dist = seqVec[row][col].dist;
@@ -84,7 +84,11 @@ int SparseDistanceMatrix::rmCell(const unsigned long row, const unsigned long co
     unsigned long vcol = 0;
 
     //find the columns entry for this cell as well
-    for (size_t i = 0; i < seqVec[vrow].size(); i++) {  if (seqVec[vrow][i].index == row) { vcol = i;  break; }  }
+    for (size_t i = 0; i < seqVec[vrow].size(); i++) {
+        if (seqVec[vrow][i].index == static_cast<long long>(row)) {
+            vcol = i;  break;
+        }
+    }
     seqVec[vrow].erase(seqVec[vrow].begin()+static_cast<int>(vcol));
     seqVec[row].erase(seqVec[row].begin()+static_cast<int>(col));
 
@@ -99,7 +103,7 @@ void SparseDistanceMatrix::addCell(const unsigned long row, const PDistCell cell
     if(cell.dist < smallDist){ smallDist = cell.dist;}
 
     seqVec[row].emplace_back(cell);
-    const PDistCell temp(row, cell.dist);
+    const PDistCell temp(static_cast<long long>(row), cell.dist);
     seqVec[cell.index].emplace_back(temp);
 
     // It pushes itself back in the row, and in the column to create the sparse matrix
@@ -111,7 +115,7 @@ int SparseDistanceMatrix::addCellSorted(const unsigned long row, const PDistCell
 	if(cell.dist < smallDist){ smallDist = cell.dist; }
 
     seqVec[row].emplace_back(cell);
-    const PDistCell temp(row, cell.dist);
+    const PDistCell temp(static_cast<long long>(row), cell.dist);
     seqVec[cell.index].emplace_back(temp);
 
     sortSeqVec(row);
@@ -139,7 +143,7 @@ unsigned long SparseDistanceMatrix::getSmallestCell(unsigned long& row, RandomNu
     for (size_t i = 0; i < seqVec.size(); i++) {
         for (size_t j = 0; j < seqVec[i].size(); j++) {
 
-            if (i < seqVec[i][j].index) {
+            if (static_cast<long long>(i)< seqVec[i][j].index) {
                 if(const float dist = seqVec[i][j].dist; dist < smallDist){  //found a new smallest distance
                     mins.clear();
                     smallDist = dist;

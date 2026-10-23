@@ -165,7 +165,6 @@ ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *l
     if(method == "nearest") return new SingleLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
     if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
     return new WeightedLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
-
 }
 
 ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {
@@ -253,6 +252,7 @@ ClusterMetric * Utils::GetClusterMetric(const std::string &metric) {
     if (metric == "npv")        { return new NPV();              }
     if (metric == "fdr")        { return new FDR();              }
     if (metric == "fpfn")       { return new FPFN();             }
+    Rcpp::stop("Cannot determine metric, please use a proper metric");
 }
 
 float Utils::removeConfidences(std::string& tax) {
