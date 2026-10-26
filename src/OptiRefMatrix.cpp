@@ -252,7 +252,7 @@ std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<
 }
 /***********************************************************************/
 //assumes that i is a fitSeq
-bool OptiRefMatrix::isCloseFit(const long long i, const long long toFind, bool& isFit){
+bool OptiRefMatrix::isCloseFit(const long long i, const long long toFind, bool& isFit) const {
     if (i < 0) return false;
     if (i > static_cast<long long>(closeness.size())) { Rcpp::stop("[ERROR]: index is not valid.\n");}
 

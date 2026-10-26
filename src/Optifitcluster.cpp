@@ -473,7 +473,6 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
     //numFitSeqs does not include any kind of singleton
     long long numUnFitted = (numFitSeqs + numFitSingletons - numListSeqs); //getNumFitTrueSingletons are fit reads that have no dists in the matrix. This can be confusing, think of it like this: there are true singletons, meaning we don't care if you are a ref or fit and you have no dists below the cutoff. This means you will be in your own OTU no matter what we do. There are fitSingletons, meaning you are a fit sequence and have no dists below the cutoff that coorespond to other fit seqs ( NOTE: you may or may not have dists to ref seqs or you could be a true singleton or a just a singleton because of the references chosen).
 
-    long long numSingletonBins = 0;
     if ((!label.empty()) && (numUnFitted != 0)) {
 
         // Rcpp::Rcout << ("\nFitted " + std::to_string(numListSeqs) + " sequences to " + std::to_string(newBins.size()) + " existing OTUs.\n");
@@ -506,7 +505,6 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
                         list->push_back(singleton->get(i));
                     }
                 }
-                numSingletonBins += singleton->getNumBins();
                 delete singleton;
             }
 

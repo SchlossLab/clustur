@@ -73,9 +73,9 @@ public:
     std::set<long long> getCloseFitSeqs(long long);
     std::set<long long> getCloseRefSeqs(long long);
 
-    std::map<std::string, long long> getNameIndexMap() const;
+    std::map<std::string, long long> getNameIndexMap() const override;
 
-    bool isCloseFit(long long, long long, bool&);
+    bool isCloseFit(long long, long long, bool&) const override;
     std::vector<long long> getCloseSeqs(long long i);
     [[nodiscard]] std::string getName(long long) const; //name from nameMap index
     [[nodiscard]] std::set<std::string> getNames(const std::unordered_set<long long>& indexes) const;
@@ -98,6 +98,9 @@ protected:
     std::vector<bool> isRef; //same size as closeness, this tells us whether a seq with distances in the matrix is a reference
     std::vector<bool> isSingleRef; ////same size as singletons, this tells us whether a seq WITHOUT distances in the matrix (singleton) is a reference
     void calcCounts();
+
+public:
+
 };
 
 

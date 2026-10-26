@@ -122,7 +122,6 @@ void ListVector::resize(const size_t size) {
 
 std::string ListVector::print(std::ostream &output) {
     std::map<std::string, int> ct;
-    int counter = 0;
     for (const auto & i : data) {
         if (!i.empty()) {
             std::string bin = i;
@@ -140,7 +139,6 @@ std::string ListVector::print(std::ostream &output) {
                 ct[key] = 1;
             }
         }
-        counter++;
     }
 
     return print(output, ct);

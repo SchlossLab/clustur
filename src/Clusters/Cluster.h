@@ -19,7 +19,6 @@ class Cluster {
 
 public:
     Cluster(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed, float, std::string, float);
-    Cluster() = default;
     virtual ~Cluster() = default;
     ClusterExport* ExecuteCluster();
     virtual bool update(double&);

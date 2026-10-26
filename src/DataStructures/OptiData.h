@@ -10,7 +10,7 @@
 #include "../DataStructures/ListVector.h"
 
 
-class OptiData {
+class  OptiData {
 public:
     OptiData() = default;
     virtual ~OptiData() = default;
