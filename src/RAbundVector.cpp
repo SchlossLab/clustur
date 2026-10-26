@@ -3,6 +3,8 @@
 //
 
 #include "DataStructures/RAbundVector.h"
+
+#include <Rcpp/exceptions/cpp11/exceptions.h>
 /*
  *  rabundvector.cpp
  *
@@ -43,6 +45,8 @@ void RAbundVector::set(const int binNumber, const int newBinSize){
 /***********************************************************************/
 
 int RAbundVector::get(const int index) const {
+	if (const size_t size = data.size();
+		index < 0 || index > size) Rcpp::stop("index out of range");
 	return data[index];
 
 }

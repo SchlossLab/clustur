@@ -123,6 +123,7 @@ ClusterExport* Cluster::ExecuteCluster() {
 /***********************************************************************/
 bool Cluster::update(double &cutOFF) {
     smallCol = dMatrix->getSmallestCell(smallRow, rng);
+    if (smallCol > dMatrix->seqVec.size()) return false;
     nColCells = dMatrix->seqVec[smallCol].size();
     nRowCells = dMatrix->seqVec[smallRow].size();
     std::vector<int> foundCol(nColCells, 0);

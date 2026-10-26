@@ -52,6 +52,7 @@ void ListVector::push_back(const ListVector& listVector) {
 }
 
 void ListVector::set(const int binNumber, const std::string &seqNames) {
+    if (binNumber > data.size() || binNumber < 0 ) Rcpp::stop("binNumber out of range");
     const int nNames_old = Utils::getNumNames(data[binNumber]);
     data[binNumber] = seqNames;
     const int nNames_new = Utils::getNumNames(seqNames);

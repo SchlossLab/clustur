@@ -22,10 +22,10 @@
 struct TaxNode {
 	std::vector<std::string> accessions;	//names of seqs in this branch of tree
 	std::map<std::string, int> children;  //childs name to index in tree
-	int parent, childNumber, level;
+	int parent{}, childNumber{}, level{};
 	std::string name, heirarchyID;
-	
-	TaxNode(std::string n) : parent(-1), level(0), name(std::move(n)) {		}
+
+	explicit TaxNode(std::string n) : parent(-1), level(0), name(std::move(n)) {		}
 	TaxNode() = default;
 };
 
