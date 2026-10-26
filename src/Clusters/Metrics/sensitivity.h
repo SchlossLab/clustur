@@ -18,7 +18,7 @@
 class Sensitivity final : public ClusterMetric  {
     
 public:
-    Sensitivity() : ClusterMetric("sens") {};
+    Sensitivity() : ClusterMetric("sens"){};
     double getValue(const double tp, const double tn, const double fp, const double fn) override {
         const double p = tp + fn;
         double sensitivity = tp / p;

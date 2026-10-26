@@ -61,6 +61,7 @@ Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std
     delete(result);
     delete(listVector);
     delete(sparseMatrix);
+    delete(clusterMethod);
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
     Rcpp::Named("abundance") = tidySharedDataFrame,
     Rcpp::Named("cluster") = clusterDataFrame);

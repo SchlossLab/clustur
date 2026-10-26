@@ -113,12 +113,12 @@ public:
         return nameIndexes;
     }
 
-    [[nodiscard]] virtual long long getNumDists() const {
+    [[nodiscard]] virtual unsigned long getNumDists() const {
         size_t foundDists = 0;
         for (const auto & closenes : closeness) {
             foundDists += closenes.size();
         }
-        return static_cast<long long>(foundDists);
+        return foundDists;
     }
 
 protected:

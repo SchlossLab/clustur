@@ -1028,7 +1028,8 @@ void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std:
     double tn =  trueNegatives;
     double fn =  falseNegatives;
 
-    Sensitivity sens;   double sensitivity = sens.getValue(tp, tn, fp, fn);
+    Sensitivity sens{};
+    double sensitivity = sens.getValue(tp, tn, fp, fn);
     Specificity spec;   double specificity = spec.getValue(tp, tn, fp, fn);
     PPV ppv;            double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
     NPV npv;            double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);

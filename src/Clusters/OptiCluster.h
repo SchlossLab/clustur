@@ -49,7 +49,7 @@ protected:
     double cutoff;
 private:
     int maxIters = 100;
-    double delta;
+    double delta{};
     std::string initialize;
 };
 

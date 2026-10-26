@@ -22,7 +22,15 @@
 /***********************************************************************/
 
 OptiRefMatrix::OptiRefMatrix(const std::vector<std::vector<long long>>& close,  const std::vector<std::string>& name,
-const std::vector<std::string>& singleton, const double c, const int seed):rng(seed), seed(seed) {
+const std::vector<std::string>& singleton, const double c, const int seed) : rng(seed), seed(seed), square(false),
+                                                                             numFitDists(0),
+                                                                             numRefDists(0),
+                                                                             numRefSingletons(0),
+                                                                             numFitSingletons(0),
+                                                                             numBetweenDists(0),
+                                                                             numSingletons(0),
+                                                                             numFitSeqs(0),
+                                                                             fitPercent(0) {
     closeness = close;
     nameMap = name;
     singletons = singleton;
@@ -30,7 +38,7 @@ const std::vector<std::string>& singleton, const double c, const int seed):rng(s
 }
 
 OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& adapter, const double fP,
-    const std::string& refWeight, const int seed):rng(seed), seed(seed) {
+                             const std::string& refWeight, const int seed):rng(seed), seed(seed) {
 
     numFitSingletons = 0;
     numRefSingletons = 0;

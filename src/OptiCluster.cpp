@@ -18,7 +18,8 @@
 
 
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const long long ns) : matrix(
+        mt),
     metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
     fittrueNegatives(0),
     fitfalsePositives(0),
@@ -29,7 +30,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const
     combofalseNegatives(0), numFitSeqs(0),
     numFitSingletons(0),
     numComboSeqs(0), numComboSingletons(0),
-    cutoff(cutoff) {
+    cutoff(cutoff), delta(0) {
     truePositives = 0;
     trueNegatives = 0;
     falseNegatives = 0;
@@ -37,7 +38,8 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const
     stableMetric = 0;
 }
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const double stableMetric, const long long ns) : matrix(mt),
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const double stableMetric, const long long ns) : matrix(
+        mt),
     metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
     fittrueNegatives(0),
     fitfalsePositives(0),
@@ -49,7 +51,7 @@ OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const
     numFitSingletons(0),
     numComboSeqs(0), numComboSingletons(0),
     stableMetric(stableMetric),
-    cutoff(cutoff) {
+    cutoff(cutoff), delta(0) {
     truePositives = 0;
     trueNegatives = 0;
     falseNegatives = 0;
@@ -373,7 +375,7 @@ ClusterExport* OptiCluster::Execute() {
     // clusterMetrics += ("\nClustering " + distfile + "\n");
     std::string initializeString = "singleton";
     auto* data = new OptiClusterData("");
-    std::string clusterMetrics;
+    std::string clusterMetrics = "";
     std::string sensFile;
     bool canShuffle = true;
     int iters = 0;
