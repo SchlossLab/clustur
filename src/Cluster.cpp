@@ -129,8 +129,7 @@ bool Cluster::update(double &cutOFF) {
     std::vector<int> foundCol(nColCells, 0);
 
     bool changed = false;
-
-    for (int i = static_cast<int>(nRowCells) - 1; i >= 0; i--) {
+    for (size_t i = nRowCells; i-- > 0;) {
         //matrix indexes sorted from largest to smallest, so start at smallest index
 
 
