@@ -829,7 +829,7 @@ ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, con
     clusterInformation.clusterBins = list->print(listFile);
     result->AddToData(clusterInformation);
     result->SetListVector(*list, std::to_string(cutoff));
-    delete list;
+
 
     if (closed) {//method == "closed") {
         // sensFile << "label\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
@@ -852,6 +852,7 @@ ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, con
         runSensSpec(matrix, list, sensFile);
     }
     Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
+    delete list;
     return result;
 }
 
