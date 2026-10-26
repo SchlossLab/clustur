@@ -191,7 +191,7 @@ bool Cluster::update(double &cutOFF) {
 
     if (method == "nearest") {
         const auto castedSmallRow = static_cast<long long>(smallRow);
-        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
+        for (size_t i = nColCells; i-- > 0;) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
@@ -203,7 +203,7 @@ bool Cluster::update(double &cutOFF) {
             }
         }
     } else {
-        for (int i = static_cast<int>(nColCells) - 1; i >= 0; i--) {
+        for (size_t i = nColCells; i-- > 0;) {
             //remove any unfound dists from merged column, need special case for nn, since unfound dists mean above the cutoff . keep smaller dist in col
             if (foundCol[i] == 0) {
                 //not found
@@ -249,8 +249,3 @@ bool Cluster::updateMap() {
     seq2Bin[individual] = static_cast<int>(smallCol);
     return true;
 }
-
-/***********************************************************************/
-
-
-
