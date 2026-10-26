@@ -3,8 +3,7 @@
 //
 
 #include "DataStructures/RAbundVector.h"
-
-#include <Rcpp/exceptions/cpp11/exceptions.h>
+#include <Rcpp.h>
 /*
  *  rabundvector.cpp
  *
