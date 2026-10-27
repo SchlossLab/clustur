@@ -66,6 +66,8 @@ void OptiFitCluster::Reset() {
 
     numFitSeqs = 0;  fittruePositives = 0; fitfalsePositives = 0; fitfalseNegatives = 0; fittrueNegatives = 0; numFitSingletons = 0;
     numComboSeqs = 0; numComboSingletons = 0; combotruePositives = 0; combofalsePositives = 0; combofalseNegatives = 0; combotrueNegatives = 0;
+    dataframeMapSensMetrics.clear();
+    dataframeMapClusterMetrics.clear();
 }
 
 
@@ -561,8 +563,15 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     OptifitClusterInformation clusterInformation;
     clusterInformation.numberOfOtu = -1;
     constexpr double stableMetric = 0;
+    constexpr size_t mccIndex = 7;
     // Could thread?
     OptiData* ref = matrix->extractRefMatrix();
+    std::vector<double> mccScores;
+
+    senSpecDenovo.reserve(denovoIters);
+    clusterMetricsDenovo.reserve(denovoIters);
+    denovoListResults.reserve(denovoIters);
+    mccScores.reserve(denovoIters);
     for (int i = 0; i < denovoIters; i++) {
 
         // OptiFitCluster cluster(matrix, metric, 0);
@@ -644,33 +653,47 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
 
         }
         ListVector* list = getFittedList(cutoffString, printRef);
-        if (const int binCount = static_cast<int>(list->getNumBins());
-            clusterInformation.numberOfOtu == -1 || binCount < clusterInformation.numberOfOtu) {
-            clusterInformation.label = cutoffString;
-            clusterInformation.numberOfOtu = binCount;
-            // clusterInformation.clusterBins = list->print(listFile);
-            // Rcpp::Rcout << clusterInformation.clusterBins << std::endl;
-            result->SetListVector(*list, cutoffString);
-            // result->GetListVector().listVector.print()
-            list->setLabel(std::to_string(cutoff));
-        }
-
+        // if (const int binCount = static_cast<int>(list->getNumBins());
+        //     clusterInformation.numberOfOtu == -1 || binCount < clusterInformation.numberOfOtu) {
+        //     clusterInformation.label = cutoffString;
+        //     clusterInformation.numberOfOtu = binCount;
+        //     // clusterInformation.clusterBins = list->print(listFile);
+        //     // Rcpp::Rcout << clusterInformation.clusterBins << std::endl;
+        //     result->SetListVector(*list, cutoffString);
+        //     // result->GetListVector().listVector.print()
+        //     list->setLabel(std::to_string(cutoff));
+        // }
+        list->setLabel(std::to_string(cutoff));
+        denovoListResults.emplace_back(*list);
+        // 7 is the index of the mcc score
+        mccScores.emplace_back(results[mccIndex]);
         sensFile += cutoffString + ',' + cutoffString + ',' + std::to_string(tp) + ',' +
                 std::to_string(tn) + ',' +
                 std::to_string(fp) + ',' + std::to_string(fn) + ',';
         for (double res: results) { sensFile += std::to_string(res) + ','; }
         Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
-
+        senSpecDenovo.emplace_back(dataframeMapSensMetrics);
+        clusterMetricsDenovo.emplace_back(dataframeMapClusterMetrics);
         delete list;
         Reset();
         matrix->randomizeRefs();
+
     }
+
+    const size_t index = std::distance(mccScores.begin(), std::max_element(mccScores.begin(), mccScores.end()));
+    optimalDenovoIndex = index;
+    ListVector list = denovoListResults[index];
+    list.setLabel(cutoffString);
+    clusterInformation.label = cutoffString;
+    clusterInformation.numberOfOtu = list.getNumBins();
+
 
     // tag = "optifit_" + metric->getName() + "_denovo";
     // string listFileName = fileroot+ tag + ".list";
     std::ofstream listFile;
     clusterInformation.clusterBins = result->GetListVector().listVector.print(listFile);
     result->AddToData(clusterInformation);
+    result->SetListVector(list, cutoffString);
     delete ref;
     return result;
 }

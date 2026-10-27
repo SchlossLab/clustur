@@ -124,7 +124,8 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
 //[[Rcpp::export]]
 Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const double fitPercent = 50, const bool isClosed = true, const bool printRef = true,
-    const bool selfReference = false, const int maxIters = 100, const int denovoIters = 10, const int seed = 123) {
+    const bool selfReference = false, const bool optimalDenovoCluster = false, const int maxIters = 100,
+    const int denovoIters = 10, const int seed = 123) {
     const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
     const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
     const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
@@ -152,19 +153,45 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
-    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
-    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    size_t index = cluster.GetOptimalDenovoIndex();
+    const std::vector<ListVector>& denovoListVectors = cluster.GetAllDenovoResults();
+    const std::vector<std::unordered_map<std::string, std::vector<std::string>>>& denovoClusterMetrics =
+        cluster.GetAllClusterMetrics();
+    const std::vector<std::unordered_map<std::string, std::vector<std::string>>>& denovoSenSpecMetrics =
+       cluster.GetAllSenSpecMetrics();
     const auto label = result->GetListVector().label;
-    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
-        featureColumnName, binColumnName);
-    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
-    delete(result);
+    if (optimalDenovoCluster) {
+        const Rcpp::DataFrame clusterMetricsDataFrame = denovoSenSpecMetrics[index];
+        const Rcpp::DataFrame iterationsMetricsDataFrame = denovoClusterMetrics[index];
+        const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+            featureColumnName, binColumnName);
+        const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+        delete(result);
 
-    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
-      Rcpp::Named("abundance") = tidySharedDataFrame,
-      Rcpp::Named("cluster") = clusterDataFrame,
-      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
-      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+        return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+          Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    }
+    Rcpp::List results(denovoIters);
+    for (size_t i = 0; i < denovoIters; i++) {
+        ClusterExport* clusterExport = new ClusterExport();
+        clusterExport->SetListVector(denovoListVectors[i], label);
+        const Rcpp::DataFrame clusterDataFrame = denovoListVectors[i].CreateDataFrameFromList(
+            featureColumnName, binColumnName);
+        const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, clusterExport, binColumnName);
+        const Rcpp::DataFrame clusterMetricsDataFrame = denovoSenSpecMetrics[i];
+        const Rcpp::DataFrame iterationsMetricsDataFrame = denovoClusterMetrics[i];
+
+        results[i] = Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+          Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    }
+
+    return results;
 }
 
 //[[Rcpp::export]]

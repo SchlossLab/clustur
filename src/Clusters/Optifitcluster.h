@@ -41,6 +41,12 @@ public:
     ListVector* getList() const;
     ListVector* getFittedList(const std::string&, bool);
     std::set<std::string> getUnfittedNames() { return unfittedNames; }
+    const std::vector<ListVector>& GetAllDenovoResults() {return denovoListResults;}
+    const std::vector<std::unordered_map<std::string, std::vector<std::string>>>&
+    GetAllSenSpecMetrics() {return senSpecDenovo;}
+    std::vector<std::unordered_map<std::string, std::vector<std::string>>>
+    GetAllClusterMetrics() {return clusterMetricsDenovo;}
+    size_t GetOptimalDenovoIndex() const {return optimalDenovoIndex;}
 
 protected:
     ClusterMetric* metric;
@@ -85,6 +91,8 @@ protected:
     std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
     ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
 
+
+
 public:
     void SetClusterParameters(const ClusterParameters &) override;
 
@@ -93,7 +101,10 @@ private:
     bool printRef;
     int denovoIters;
     int maxIters;
-
+    size_t optimalDenovoIndex;
+    std::vector<ListVector> denovoListResults;
+    std::vector<std::unordered_map<std::string, std::vector<std::string>>> senSpecDenovo;
+    std::vector<std::unordered_map<std::string, std::vector<std::string>>> clusterMetricsDenovo;
 };
 
 

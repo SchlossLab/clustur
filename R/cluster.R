@@ -316,7 +316,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     }
     # run denovo
     result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref, 
-                      selfReference = FALSE, max_iterations, denovo_iters, random_seed)
+                      selfReference = FALSE, optimal_denovo_result, max_iterations, denovo_iters, random_seed)
   } else if (!is.null(accnos)) {
     message("Accnos file is not null, running optifit using accnos.")
     result <- OptiFit2(fit_dist, feature_column_name, bin_column_name, accnos, cutoff, closed, print_ref,
