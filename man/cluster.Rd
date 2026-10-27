@@ -11,9 +11,8 @@ cluster(
   feature_column_name_to = "feature",
   bin_column_name_to = "bin",
   random_seed = 123,
-  precision = 100,
   delta = 1e-04,
-  iters = 100,
+  max_iterations = 100,
   initialize = "singleton",
   strollur_object = NULL
 )
@@ -34,6 +33,22 @@ dataframe that contains the sequence names.}
 cluster dataframe that contains the name of the group of sequence names.}
 
 \item{random_seed}{the random seed to use, (default = 123).}
+
+\item{delta}{Allows you to set the stable value for the metric in the
+opticluster method. It defaults to 0.0001, to reach full convergence
+set this value to 0.}
+
+\item{max_iterations}{the max amount of iterations the opticluster
+method will run. The default is 100.}
+
+\item{initialize}{this parameter allows you to set the default randomization of
+for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
+will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
+into one OTU. Defaults to singleton.}
+
+\item{strollur_object}{Using the `strollur` r package, you can use your
+created strollur object to save your clustering results to. This allows you
+to seamless modify your strollur object and analysis results as needed.}
 }
 \value{
 A list of `data.frames` that contain abundance, and clustering

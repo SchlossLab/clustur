@@ -79,6 +79,18 @@ read_dist <- function(distance_file, count_table,
 #' @param bin_column_name_to Set the name of the column in the
 #' cluster dataframe that contains the name of the group of sequence names.
 #' @param random_seed the random seed to use, (default = 123).
+#' @param delta Allows you to set the stable value for the metric in the
+#' opticluster method. It defaults to 0.0001, to reach full convergence
+#' set this value to 0.
+#' @param max_iterations the max amount of iterations the opticluster
+#' method will run. The default is 100.
+#' @param initialize this parameter allows you to set the default randomization of
+#' for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
+#' will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
+#' into one OTU. Defaults to singleton.
+#' @param strollur_object Using the `strollur` r package, you can use your
+#' created strollur object to save your clustering results to. This allows you
+#' to seamless modify your strollur object and analysis results as needed. 
 #' @return A list of `data.frames` that contain abundance, and clustering
 #' results. If you used `method = opticlust`, it will also return clustering
 #' performance metrics.
@@ -107,7 +119,7 @@ read_dist <- function(distance_file, count_table,
 cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
                     bin_column_name_to = "bin", random_seed = 123,
-                    precision = 100, delta = 0.0001, iters = 100, 
+                    delta = 0.0001, max_iterations = 100, 
                     initialize = "singleton", strollur_object = NULL) {
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
@@ -121,11 +133,11 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
  if (method != "opticlust") {
     df <- Cluster(distance_object, method,
                   feature_column_name_to, bin_column_name_to, cutoff,
-                  random_seed, precision)
+                  random_seed)
   } else {
     df <- OptiClust(distance_object, feature_column_name_to,
                       bin_column_name_to, cutoff, random_seed,
-                      delta, iters, initialize)
+                      delta, max_iterations, initialize)
     df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
                                                      "label", "num_otus",
                                                      "cutoff", "tp", "tn",
@@ -230,13 +242,14 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 }
 
 #' @title Optifit
-#' @description
-#' Optifit is the 'cluster.fit' command in mothur. It allows you to fit sequences to OTUs or existing OTUS. Just like
+#' 
+#' @description Optifit is the 'cluster.fit' command in mothur. It allows you to fit sequences to OTUs or existing OTUS. Just like
 #' mothur, there are two ways of running this command: open, or closed. Closed fits reads into existing OTUs, 
 #' and scraps any reads that cannot be fitted(default it closed). Open fits reads into existing OTUs while unfitted
 #' OTUs are clustered into new OTUs.
 #' @param fit_dist The distance object that will be used to fit to the new reference. This must be
 #' created using the `read_dist()` function.
+#' @param cutoff The cutoff you want to cluster towards.
 #' @param feature_column_name Set the name of the column in the cluster
 #' dataframe that contains the sequence names. This is a `character` value.
 #' @param bin_column_name Set the name of the column in the
@@ -262,9 +275,29 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
+#'  amazon_count <- read_count(example_path("amazon.full.count_table"))
+#'  amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
+#'
+#'  esophagus_fasta <- example_path("esophagus.fasta")
+#'  esophagus_count <- read_count(example_path("esophagus.count_table"))
+#'  amazon_fasta <- example_path("amazon.align")
+#'  esophagus_list <- example_path("esophagus.list")
+#'
+#'
+#'  denovo <- optifit(amazon_dist, 0.03)
+#'  denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
+#'  accnos <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40])
+#'  accnos_open <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40],
+#'                         closed=FALSE)
+#'
+#'  ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+#'                         ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+#'                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
+#'                         number_of_threads = parallel::detectCores(), print_ref = TRUE)
 #' @return A `list` of a list of `data.frames` that contain abundance, and clustering
 #' results. If you used `method = opticlust`, it will also return clustering
 #' performance metrics.
+#' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL, fit_percent = 50, closed = TRUE, print_ref = FALSE,
                     random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, 
@@ -309,7 +342,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 }
 
 #' @export
-#' @title Clust Split
+#' @title Cluster Split
 #' @description
 #' Cluster Split splits data into groups based on taxomic group. It then clusters them using 
 #' the following methods: opticluster, average neighbor, nearest neighbor, furthest
@@ -332,6 +365,13 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
+#' 
+#'  cutoff <- 0.2
+#'  count_table <- read_count(example_path("amazon.full.count_table"))
+#'  fasta <- example_path("amazon.align")
+#'  taxonomy <- example_path("amazon.taxonomy")
+#'  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
+#' 
 #' @return A list of `data.frames` that contain abundance, and clustering
 #' results.
 cluster_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, cutoff,

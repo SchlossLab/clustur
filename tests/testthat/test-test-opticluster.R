@@ -180,7 +180,7 @@ test_that("Opticluster works with phylip files", {
 test_that("Example Path returns the correct path", {
   expect_true(class(example_path("amazon_phylip.dist")) == "character")
   expect_error(example_path("a"))
-  expect_true(length(example_path()) == 4)
+  expect_true(length(example_path()) == 11)
 })
 
 test_that("cluster works via phylip file", {
@@ -387,8 +387,8 @@ test_that("opticluster will generate a warning if the mcc
 test_that("cluster_split works", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  fasta <- test_path("extdata", "amazon.align")
-  taxonomy <- test_path("extdata", "amazon.taxonomy")
+  fasta <- example_path("amazon.align")
+  taxonomy <- example_path("amazon.taxonomy")
 
   df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
 
@@ -401,13 +401,14 @@ test_that("cluster_split works", {
 })
 
 test_that("cluster_fit works", {
+  
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
   amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.03)
 
-  esophagus_fasta <- test_path("extdata", "esophagus.fasta")
-  esophagus_count <- read_count(test_path("extdata", "esophagus.count_table"))
-  amazon_fasta <- test_path("extdata", "amazon.align")
-  esophagus_list <- test_path("extdata", "esophagus.list")
+  esophagus_fasta <- example_path("esophagus.fasta")
+  esophagus_count <- read_count(example_path("esophagus.count_table"))
+  amazon_fasta <- example_path("amazon.align")
+  esophagus_list <- example_path("esophagus.list")
 
 
   denovo <- optifit(amazon_dist, 0.03)
