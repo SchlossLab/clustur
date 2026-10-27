@@ -19,7 +19,7 @@ Imports:
     methods,
     Rcpp (>= 1.0.12),
     utils,
-    RcppThread
+    reshape2
 Depends:
     R (>= 3.5.0)
 LinkingTo: Rcpp, RcppThread, sitmo,
@@ -28,7 +28,8 @@ Suggests:
     knitr,
     rmarkdown,
     testthat (>= 3.0.0),
-    xml2
+    xml2,
+    strollur
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: http://www.schlosslab.org/clustur/, https://github.com/SchlossLab/clustur

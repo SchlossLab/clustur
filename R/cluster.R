@@ -229,7 +229,42 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
   spMatrix(size, size, i_index, j_index, distances)
 }
 
-#' @export
+#' @title Optifit
+#' @description
+#' Optifit is the 'cluster.fit' command in mothur. It allows you to fit sequences to OTUs or existing OTUS. Just like
+#' mothur, there are two ways of running this command: open, or closed. Closed fits reads into existing OTUs, 
+#' and scraps any reads that cannot be fitted(default it closed). Open fits reads into existing OTUs while unfitted
+#' OTUs are clustered into new OTUs.
+#' @param fit_dist The distance object that will be used to fit to the new reference. This must be
+#' created using the `read_dist()` function.
+#' @param feature_column_name Set the name of the column in the cluster
+#' dataframe that contains the sequence names. This is a `character` value.
+#' @param bin_column_name Set the name of the column in the
+#' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
+#' @param accnos a `vector` of strings that represent the reference sequences by name. Use this when you know the
+#' group of sequences you want your fit data to fit against.
+#' @param ref_fasta the file name of your reference's fasta data. This is a `character` value.
+#' @param ref_count the file name of your reference's count table. This is a `character` value.
+#' @param ref_list the file name of your reference's list file that you want the fit data to fit against.
+#' This is a `character` value.
+#' @param fit_fasta the file name of your fitted data's fasta file. This is a `character` value.
+#' @param fit_percent allows you to set the percentage of reads that need to be fitted. This is a `numerical` value.
+#' @param closed deteremines whether you want the function to run using the closed or open method. The closed method
+#' will return reads that fit into existing otus and scrap those that did not. The open method will keep reads
+#' that fit into existing otus and create new OTUs for those that did not. This is a `logical` value.
+#' @param print_ref controls whether all the reference sequences are printed in the final result.
+#' This is a `character` value.
+#' @param random_seed a `integer` value that represents the current random seed.
+#' @param max_iterations the max number of iterations that cluster computes. This is a `integer` value.
+#' @param denovo_iters the max number of iterations the denovo method computes.  This is a `integer` value.
+#' @param optimal_denovo_result determines whether or not you want the denovo method to return the cluster
+#' with the highest mcc value or all of the randomly computed clusters. This is a `logical` value.
+#' @param number_of_threads a `integer` value that represents the amount of allotted threads that
+#' can be used.
+#' @examples
+#' @return A `list` of a list of `data.frames` that contain abundance, and clustering
+#' results. If you used `method = opticlust`, it will also return clustering
+#' performance metrics.
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL, fit_percent = 50, closed = TRUE, print_ref = FALSE,
                     random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, 
@@ -274,6 +309,31 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 }
 
 #' @export
+#' @title Clust Split
+#' @description
+#' Cluster Split splits data into groups based on taxomic group. It then clusters them using 
+#' the following methods: opticluster, average neighbor, nearest neighbor, furthest
+#' neighbor, and weighted neighbor. You can read more about
+#' [cluster split](https://mothur.org/wiki/cluster.split/) on the mothur wiki.
+#' @param fasta_file a `string` value that represents the path to your fasta file.
+#' @param taxonomy_file a `string` value that represents the path to your taxonomy file.
+#' @param count_table the count table that represents the data, must be read using the `read_count()`
+#' function.
+#' @param cluster_method the clustering method you wish to use. Your clustering options are: 
+#' opticluster, average neighbor, nearest neighbor, furthest
+#' neighbor, and weighted neighbor.
+#' @param cutoff a `numerical` value that represents the distance cutoff.
+#' @param taxonomy_cutoff a `integer` value that represents the taxonomic level cutoff. 
+#' @param feature_column_name Set the name of the column in the cluster
+#' dataframe that contains the sequence names. This is a `character` value.
+#' @param bin_column_name Set the name of the column in the
+#' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
+#' @param random_seed a `integer` value that represents the current random seed.
+#' @param number_of_threads a `integer` value that represents the amount of allotted threads that
+#' can be used.
+#' @examples
+#' @return A list of `data.frames` that contain abundance, and clustering
+#' results.
 cluster_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, cutoff,
                        taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
                        random_seed = 123, number_of_threads = 1) {

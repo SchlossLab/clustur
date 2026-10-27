@@ -208,16 +208,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Shuffle
-std::vector<int> Shuffle(std::vector<int> rand, int seed);
-RcppExport SEXP _clustur_Shuffle(SEXP randSEXP, SEXP seedSEXP) {
+// RecreateFastaFile
+void RecreateFastaFile(const Rcpp::DataFrame& fastaDf, const std::string& outputFile);
+RcppExport SEXP _clustur_RecreateFastaFile(SEXP fastaDfSEXP, SEXP outputFileSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<int> >::type rand(randSEXP);
-    Rcpp::traits::input_parameter< int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(Shuffle(rand, seed));
-    return rcpp_result_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fastaDf(fastaDfSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type outputFile(outputFileSEXP);
+    RecreateFastaFile(fastaDf, outputFile);
+    return R_NilValue;
 END_RCPP
 }
 // DetermineIfPhylipOrColumnFile
@@ -305,7 +304,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 11},
     {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
     {"_clustur_Dist_Seqs", (DL_FUNC) &_clustur_Dist_Seqs, 2},
-    {"_clustur_Shuffle", (DL_FUNC) &_clustur_Shuffle, 2},
+    {"_clustur_RecreateFastaFile", (DL_FUNC) &_clustur_RecreateFastaFile, 2},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

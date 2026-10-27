@@ -16,7 +16,7 @@ read_count <- function(count_table) {
 #' @rdname read_count
 read_count.strollur <- function(count_table) {
   abundances_table <- strollur::abundance(count_table, by_sample = T)
-  shared_table <- reshape2::dcast(abundances_table, sequence_name ~ sample, value.var = "abundance")
+  shared_table <- dcast(abundances_table, sequence_name ~ sample, value.var = "abundance")
   shared_table[is.na(shared_table)] <- 0
   row_names <- strollur::names(count_table, type = "sample")
   shared_table$total <- rowSums(shared_table[, row_names])

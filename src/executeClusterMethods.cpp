@@ -324,8 +324,14 @@ int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile) {
 }
 
 //[[Rcpp::export]]
-std::vector<int> Shuffle(std::vector<int> rand, int seed = 123) {
-    RandomNumberSitmo rng(seed);
-    Utils::mothurRandomShuffle(rand, rng);
-    return rand;
+void RecreateFastaFile(const Rcpp::DataFrame& fastaDf, const std::string& outputFile) {
+    const std::vector<std::string>& sequence_name = fastaDf["sequence_name"];
+    const std::vector<std::string>& sequence = fastaDf["sequence"];
+    const size_t size = sequence.size();
+    std::ofstream seqFile(outputFile);
+    if (!seqFile.is_open()) Rcpp::stop("Could not open sequence file.");
+    for (size_t i = 0; i < size; i++) {
+        seqFile << ">" << sequence_name[i] << "\n" << sequence[i] << "\n";
+    }
+    seqFile.close();
 }

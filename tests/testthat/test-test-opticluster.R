@@ -404,10 +404,11 @@ test_that("cluster_fit works", {
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
   amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.03)
 
-  esophagus_fasta <- test_path("extdata", "esophagus.unique.align")
-  esophagus_count <- read_count(test_path("extdata", "esophagus.unique.count_table"))
+  esophagus_fasta <- test_path("extdata", "esophagus.fasta")
+  esophagus_count <- read_count(test_path("extdata", "esophagus.count_table"))
   amazon_fasta <- test_path("extdata", "amazon.align")
-  esophagus_list <- test_path("extdata", "esophagus.unique.opti_mcc.0.03.list")
+  esophagus_list <- test_path("extdata", "esophagus.list")
+
 
   denovo <- optifit(amazon_dist, 0.03)
   denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
@@ -425,8 +426,8 @@ test_that("cluster_fit works", {
   expect_true(nrow(denovo_open$cluster) == 48)
   expect_true(nrow(accnos$cluster) == 2)
   expect_true(nrow(accnos_open$cluster) == 57)
-  expect_true(nrow(ref_cluster$cluster) == 53)
-  expect_true(nrow(ref_cluster_open$cluster) == 149)
-  expect_true(nrow(ref_cluster_open_print_ref$cluster) == 149)
+  expect_true(nrow(ref_cluster$cluster) == 24)
+  expect_true(nrow(ref_cluster_open$cluster) == 121)
+  expect_true(nrow(ref_cluster_open_print_ref$cluster) == 121)
 
 })

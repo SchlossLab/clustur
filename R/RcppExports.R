@@ -53,8 +53,8 @@ Dist_Seqs <- function(fastaData, outputFile) {
     .Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile)
 }
 
-Shuffle <- function(rand, seed = 123L) {
-    .Call('_clustur_Shuffle', PACKAGE = 'clustur', rand, seed)
+RecreateFastaFile <- function(fastaDf, outputFile) {
+    invisible(.Call('_clustur_RecreateFastaFile', PACKAGE = 'clustur', fastaDf, outputFile))
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {
