@@ -6,6 +6,8 @@ reference:
 - title: Clustering
   contents:
   - cluster
+  - optifit
+  - cluster_split
 - title: Process Data
   contents:
   - read_dist

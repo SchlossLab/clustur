@@ -312,6 +312,7 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
         parameter, metric, countTableAdapter, cutoff, taxonomyCutoff, seed, numberOfThreads);
 
     const auto* result = cluster.Execute();
+    delete calculator;
     delete metric;
     // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
     // const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
