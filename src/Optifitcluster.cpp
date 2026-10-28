@@ -671,8 +671,6 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
                 std::to_string(tn) + ',' +
                 std::to_string(fp) + ',' + std::to_string(fn) + ',';
         for (double res: results) { sensFile += std::to_string(res) + ','; }
-        Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
-        senSpecDenovo.emplace_back(dataframeMapSensMetrics);
         clusterMetricsDenovo.emplace_back(dataframeMapClusterMetrics);
         delete list;
         Reset();
@@ -680,9 +678,8 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
 
     }
 
-    const size_t index = std::distance(mccScores.begin(), std::max_element(mccScores.begin(), mccScores.end()));
-    optimalDenovoIndex = index;
-    ListVector list = denovoListResults[index];
+    compareSensSpec(matrix, metric, denovoListResults);
+    ListVector list = denovoListResults[optimalDenovoIndex];
     list.setLabel(cutoffString);
     clusterInformation.label = cutoffString;
     clusterInformation.numberOfOtu = list.getNumBins();
@@ -1074,6 +1071,133 @@ void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std:
 
     sensSpecFile += std::to_string(falseDiscoveryRate) + ',' + std::to_string(accuracy) +
         ',' + std::to_string(matthewsCorrCoef) + ',' + std::to_string(f1Score) + "\n";
+}
+
+
+void OptiFitCluster::compareSensSpec(OptiRefMatrix*& matrix, ClusterMetric*& userMetric,
+    std::vector<ListVector> listVectors) {
+    // std::string columnNames = "iter\tlabel\tcutoff\tnumotus\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+    std::vector<std::string> sensfileHeaders{"iter","label","cutoff","numOtus", "tp","tn","fp","fn","sensitivity",
+  "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
+
+    double bestStat = 0; int bestResult = 0;
+
+    if ((method == "open") && (printRef)) {
+
+        for (int i = 0; i < listVectors.size(); i++) {
+            std::string senSpecString;
+            const ListVector* list = &listVectors[i];
+
+            const std::string label = list->getLabel();
+            const int numBins = list->getNumBins();
+
+            SensSpecCalc senscalc(*matrix, list);
+            double truePositives, trueNegatives, falsePositives, falseNegatives;
+            senscalc.getResults(*matrix, truePositives, trueNegatives, falsePositives, falseNegatives);
+
+            double tp =  truePositives;
+            double fp =  falsePositives;
+            double tn =  trueNegatives;
+            double fn =  falseNegatives;
+
+            Sensitivity sens;   double sensitivity = sens.getValue(tp, tn, fp, fn);
+            Specificity spec;   double specificity = spec.getValue(tp, tn, fp, fn);
+            PPV ppv;            double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
+            NPV npv;            double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);
+            FDR fdr;            double falseDiscoveryRate = fdr.getValue(tp, tn, fp, fn);
+            Accuracy acc;       double accuracy = acc.getValue(tp, tn, fp, fn);
+            MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
+            F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn);
+
+            senSpecString += std::to_string(i+1) + ',' + label + ',' + std::to_string(cutoff) + ',' +
+                std::to_string(numBins) + ',';
+            senSpecString += std::to_string(truePositives) + ',' + std::to_string(trueNegatives) + ',' +
+                std::to_string(falsePositives) + ',' + std::to_string(falseNegatives) + ',';
+            senSpecString += std::to_string(sensitivity) + ',' + std::to_string(specificity) + ',' +
+                std::to_string(positivePredictiveValue) + ',' + std::to_string(negativePredictiveValue) + ',';
+            senSpecString += std::to_string(falseDiscoveryRate) + ',' + std::to_string(accuracy) + ',' +
+                std::to_string(matthewsCorrCoef) + ',' + std::to_string(f1Score) + "\n";
+
+            // m->mothurOut(toString(i+1) + "\t" + label + "\t" + toString(cutoff) + "\t" + toString(numBins) + "\t"+ toString(truePositives) + "\t" + toString(trueNegatives) + "\t" + toString(falsePositives) + "\t" + toString(falseNegatives) + "\t");
+            // m->mothurOut(toString(sensitivity) + "\t" + toString(specificity) + "\t" + toString(positivePredictiveValue) + "\t" + toString(negativePredictiveValue) + "\t");
+            // m->mothurOut(toString(falseDiscoveryRate) + "\t" + toString(accuracy) + "\t" + toString(matthewsCorrCoef) + "\t" + toString(f1Score) + "\n\n");
+
+            const double userStat = userMetric->getValue(tp, tn, fp, fn);
+            if (userStat > bestStat) {
+                bestStat = userStat;
+                bestResult = i;
+            }
+
+            Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, senSpecString, sensfileHeaders);
+            senSpecDenovo.emplace_back(dataframeMapSensMetrics);
+            dataframeMapSensMetrics.clear();
+        }
+    }else {
+
+        for (size_t i = 0; i < listVectors.size(); i++) {
+            std::string senSpecString;
+            const ListVector* list = &listVectors[i];
+
+            const std::string label = list->getLabel();
+            const int numBins = list->getNumBins();
+
+            //extract seqs in list file from matrix
+            std::unordered_set<std::string> listNames;
+            listNames.reserve(numBins);
+            for (int j = 0; j < numBins; j++){
+                const std::string bin = list->get(j);
+                if (!bin.empty()) {
+                    std::vector<std::string> binSeqs; Utils::splitAtComma(bin, binSeqs);
+                    for (size_t k = 0; k < binSeqs.size(); k++) {
+                        listNames.insert(binSeqs[k]);
+                    }
+                }
+            }
+
+            OptiData* fitMatrix = matrix->extractMatrixSubset(listNames);
+            SensSpecCalc senscalc(*fitMatrix, list);
+            double truePositives, trueNegatives, falsePositives, falseNegatives;
+            senscalc.getResults(*fitMatrix, truePositives, trueNegatives, falsePositives, falseNegatives);
+            delete fitMatrix;
+
+            double tp =  truePositives;
+            double fp =  falsePositives;
+            double tn =  trueNegatives;
+            double fn =  falseNegatives;
+
+            Sensitivity sens;   double sensitivity = sens.getValue(tp, tn, fp, fn);
+            Specificity spec;   double specificity = spec.getValue(tp, tn, fp, fn);
+            PPV ppv;            double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
+            NPV npv;            double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);
+            FDR fdr;            double falseDiscoveryRate = fdr.getValue(tp, tn, fp, fn);
+            Accuracy acc;       double accuracy = acc.getValue(tp, tn, fp, fn);
+            MCC mcc;            double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
+            F1Score f1;         double f1Score = f1.getValue(tp, tn, fp, fn);
+
+            senSpecString += std::to_string(i+1) + ',' + label + ',' + std::to_string(cutoff) + ',' +
+                std::to_string(numBins) + ',';
+            senSpecString += std::to_string(truePositives) + ',' + std::to_string(trueNegatives) + ',' +
+                std::to_string(falsePositives) + ',' + std::to_string(falseNegatives) + ',';
+            senSpecString += std::to_string(sensitivity) + ',' + std::to_string(specificity) + ',' +
+                std::to_string(positivePredictiveValue) + ',' + std::to_string(negativePredictiveValue) + ',';
+            senSpecString += std::to_string(falseDiscoveryRate) + ',' + std::to_string(accuracy) + ',' +
+                std::to_string(matthewsCorrCoef) + ',' + std::to_string(f1Score) + "\n";
+
+            // m->mothurOut(toString(i+1) + "\t" + label + "\t" + toString(cutoff) + "\t" + toString(numBins) + "\t"+ toString(truePositives) + "\t" + toString(trueNegatives) + "\t" + toString(falsePositives) + "\t" + toString(falseNegatives) + "\t");
+            // m->mothurOut(toString(sensitivity) + "\t" + toString(specificity) + "\t" + toString(positivePredictiveValue) + "\t" + toString(negativePredictiveValue) + "\t");
+            // m->mothurOut(toString(falseDiscoveryRate) + "\t" + toString(accuracy) + "\t" + toString(matthewsCorrCoef) + "\t" + toString(f1Score) + "\n\n");
+
+            const double userStat = userMetric->getValue(tp, tn, fp, fn);
+            if (userStat > bestStat) {
+                bestStat = userStat;
+                bestResult = i;
+            }
+            Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, senSpecString, sensfileHeaders);
+            senSpecDenovo.emplace_back(dataframeMapSensMetrics);
+            dataframeMapSensMetrics.clear();
+        }
+    }
+    optimalDenovoIndex = bestResult;
 }
 
 void OptiFitCluster::outputSteps(const std::string& outputName, bool& printHeaders, double tp, double tn, double fp, double fn, std::vector<double> results, long long numBins, double fittp, double fittn, double fitfp, double fitfn, std::vector<double> fitresults, long long numFitBins, int iter, bool printToFile, int denovoIter) {

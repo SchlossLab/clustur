@@ -81,6 +81,9 @@ protected:
 
     void runSensSpec(OptiRefMatrix *&matrix, ListVector *&list, std::string &sensSpecFile) const;
 
+    void compareSensSpec(OptiRefMatrix *&matrix, ClusterMetric *&userMetric,
+                                std::vector<ListVector> listVectors);
+
     void outputSteps(const std::string &outputName, bool &printHeaders, double tp, double tn, double fp, double fn,
                      std::vector<double> results, long long numBins, double fittp, double fittn, double fitfp,
                      double fitfn,

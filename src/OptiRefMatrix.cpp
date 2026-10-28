@@ -156,7 +156,7 @@ OptiData* OptiRefMatrix::extractRefMatrix() {
 }
 /***********************************************************************/
 //given std::set of names, pull out their dists and create optimatrix
-OptiData* OptiRefMatrix::extractMatrixSubset(std::unordered_set<std::string>& seqs) {
+OptiData* OptiRefMatrix::extractMatrixSubset(const std::unordered_set<std::string>& seqs) {
         std::unordered_set<long long> seqIndexes = getIndexes(seqs);
         return extractMatrixSubset(seqIndexes);
 }

@@ -424,10 +424,10 @@ test_that("cluster_fit works", {
   ref_cluster_open_print_ref <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta, ref_count = esophagus_count, 
                        ref_list = esophagus_list, fit_fasta = amazon_fasta, closed = FALSE, print_ref = TRUE, number_of_threads = parallel::detectCores())
   
-  expect_true(nrow(denovo$cluster) == 7)
-  expect_true(nrow(denovo$cluster) == nrow(denovo_optimal_false[[1]]$cluster))
+  expect_true(nrow(denovo$cluster) == 4)
+  expect_true(nrow(denovo$cluster) == nrow(denovo_optimal_false[[2]]$cluster))
   expect_true(length(denovo_optimal_false) == 10)
-  expect_true(nrow(denovo_open$cluster) == 48)
+  expect_true(nrow(denovo_open$cluster) == 50)
   expect_true(nrow(accnos$cluster) == 2)
   expect_true(nrow(accnos_open$cluster) == 57)
   expect_true(nrow(ref_cluster$cluster) == 24)

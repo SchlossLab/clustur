@@ -45,7 +45,7 @@ public:
     ~OptiRefMatrix() override = default;
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;
     OptiData* extractMatrixSubset(std::unordered_set<long long>&);
-    OptiData* extractMatrixSubset(std::unordered_set<std::string> &seqs);
+    OptiData* extractMatrixSubset(const std::unordered_set<std::string> &seqs);
     OptiData* extractRefMatrix();
     void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
@@ -79,6 +79,7 @@ public:
     std::vector<long long> getCloseSeqs(long long i);
     [[nodiscard]] std::string getName(long long) const; //name from nameMap index
     [[nodiscard]] std::set<std::string> getNames(const std::unordered_set<long long>& indexes) const;
+
 
 
 protected:

@@ -53,7 +53,7 @@ void SensSpecCalc::getResults(const OptiData& matrix, double& tp, double& tn, do
             }
         }
         const double numSeqs = static_cast<double>(matrix.getNumSeqs() + matrix.getNumSingletons());
-        const double numDists = static_cast<double>(matrix.getNumDists()); //square matrix OptiData:: uses the parent class function so that we can pass a optiref matrix
+        const double numDists = static_cast<double>(matrix.OptiData::getNumDists()); //square matrix OptiData:: uses the parent class function so that we can pass a optiref matrix
 
         fn = (numDists/2) - tp;
         tn = numSeqs * (numSeqs-1)/2  - (fp + fn + tp);
