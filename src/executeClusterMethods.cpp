@@ -189,6 +189,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
           Rcpp::Named("cluster") = clusterDataFrame,
           Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
           Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+        delete clusterExport;
     }
 
     return results;
@@ -279,6 +280,7 @@ Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, co
     const auto* result = cluster.Execute();
     delete metric;
     delete refMatrix;
+    delete combinedOptiMatrix;
     const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
     const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
     const auto label = result->GetListVector().label;

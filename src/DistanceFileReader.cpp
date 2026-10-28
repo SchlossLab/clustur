@@ -78,7 +78,7 @@ void DistanceFileReader::AddFittedDataToReference(
     for (int i = 0; i < static_cast<int>(currentSize); i++) {
         indexMap[list.get(i)] = i;
     }
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    const PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
     int counter = static_cast<int>(currentSize);
     for (int i = 0; i < static_cast<int>(newSize); i++) {
         std::string names = otherListVector.get(i);
@@ -90,6 +90,7 @@ void DistanceFileReader::AddFittedDataToReference(
         }
     }
     CalculateDistances(database, otherDatabase, calculator, indexMap, cut, numberOfThreads);
+    delete calculator;
 }
 void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
     const FastaDatabase& otherDatabase, const PairwiseDistanceCalculator* calculator,
