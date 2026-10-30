@@ -44,8 +44,8 @@ public:
 
     ~OptiRefMatrix() override = default;
     std::vector<long long> getTranslatedBins(std::vector<std::vector<std::string> >&, std::vector< std::vector<long long> >&) override;
-    OptiData* extractMatrixSubset(std::unordered_set<long long>&);
-    OptiData* extractMatrixSubset(const std::unordered_set<std::string> &seqs);
+    OptiData* extractMatrixSubset(std::vector<long long>&);
+    OptiData* extractMatrixSubset(const std::vector<std::string> &seqs);
     OptiData* extractRefMatrix();
     void randomizeRefs();
     std::vector<std::string> getRefSingletonNames();
@@ -61,7 +61,7 @@ public:
     [[nodiscard]] unsigned long getNumDists() const override    { return numFitDists +numRefDists+numBetweenDists; } //all distances under cutoff
     [[nodiscard]] long long getNumFitDists() const { return numFitDists; } //user distances under cutoff
     [[nodiscard]] long long getNumRefDists() const { return numRefDists; } //ref distances under cutoff
-    std::unordered_set<long long> getIndexes(std::unordered_set<std::string> seqs) const;
+    std::vector<long long> getIndexes(const std::vector<std::string>& seqs) const;
 
     ListVector* getFitListSingle();
 
@@ -78,7 +78,7 @@ public:
     bool isCloseFit(long long, long long, bool&) const override;
     std::vector<long long> getCloseSeqs(long long i);
     [[nodiscard]] std::string getName(long long) const; //name from nameMap index
-    [[nodiscard]] std::set<std::string> getNames(const std::unordered_set<long long>& indexes) const;
+    [[nodiscard]] std::vector<std::string> getNames(const std::vector<long long>& indexes) const;
 
 
 

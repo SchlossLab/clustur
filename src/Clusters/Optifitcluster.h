@@ -40,7 +40,7 @@ public:
 
     ListVector* getList() const;
     ListVector* getFittedList(const std::string&, bool);
-    std::set<std::string> getUnfittedNames() { return unfittedNames; }
+    // std::set<std::string> getUnfittedNames() { return unfittedNames; }
     const std::vector<ListVector>& GetAllDenovoResults() {return denovoListResults;}
     const std::vector<std::unordered_map<std::string, std::vector<std::string>>>&
     GetAllSenSpecMetrics() {return senSpecDenovo;}
@@ -59,7 +59,7 @@ protected:
     long long maxRefBinNumber;
     bool closed, denovo;
     std::string method;
-    std::set<std::string> unfittedNames;
+    std::vector<std::string> unfittedNames;
     double cutoff;
     double fittruePositives, fittrueNegatives, fitfalsePositives, fitfalseNegatives, combotruePositives, combotrueNegatives, combofalsePositives, combofalseNegatives;
     long long  numFitSeqs, insertLocation, numFitSingletons;

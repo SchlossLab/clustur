@@ -431,10 +431,10 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
     ListVector* list = new ListVector();
 
     std::unordered_map<long long, std::string> newBins;
-    std::unordered_set<long long> unFitted;
+    std::vector<long long> unFitted;
+    unFitted.reserve(matrix->GetNameList().size());
     long long numListSeqs = 0;
     for (long long randomizeSeq : randomizeSeqs) { //build otus
-
         auto it = seqBin.find(randomizeSeq);
 
         long long seqNumber = it->first;
@@ -451,7 +451,7 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
             }else { //append bin
                 newBins[binNumber] += "," + matrix->getName(seqNumber);
             }
-        }else { unFitted.insert(seqNumber); }
+        }else { unFitted.emplace_back(seqNumber); }
     }
 
     if (denovo || includerefs) { //add in refs
@@ -483,8 +483,10 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
             // Rcpp::Rcout << (std::to_string(numUnFitted) + " sequences were unable to be fitted existing OTUs, excluding singletons.\n");
 
             // Rcpp::Rcout << ("\n**************** Clustering the unfitted sequences ****************\n");
-
+            // std::vector<long long> unFittedVec = {unFitted.begin(), unFitted.end()};
+            // std::sort(unFitted.begin(), unFitted.end());
             OptiData* unFittedMatrix = matrix->extractMatrixSubset(unFitted);
+            //
 
             ListVector* unfittedList = clusterUnfitted(unFittedMatrix, label); //unfittedList includes unfitted singletons
             if (unfittedList != nullptr) {
@@ -513,6 +515,7 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
         }else {
             // Rcpp::Rcout << ("\nSequences that were unable to be fitted existing OTUs will be listed in the *.optifit_scrap.accnos file.\n");
             unfittedNames = matrix->getNames(unFitted);
+            //TODO Change all the unordered maps to vectors! Should be faster and should fix our metric issues.
 
             //add in fit singletons
             ListVector* singleton = matrix->getFitListSingle();
@@ -520,7 +523,7 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
             if (singleton != nullptr) { //add in any sequences above cutoff in read. Removing these saves clustering time.
                 for (int i = 0; i < singleton->getNumBins(); i++) {
                     if (!singleton->get(i).empty()) {
-                        unfittedNames.insert(singleton->get(i));
+                        unfittedNames.emplace_back(singleton->get(i));
                     }
                 }
                 delete singleton;
@@ -644,7 +647,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
                               cutoffString + "," + std::to_string(numBins) + "," +
                               cutoffString + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
                               + std::to_string(fp) + "," + std::to_string(fn) + ",");
-            for (double stat: fitresults) {
+            for (double stat: results) {
                 clusterMetrics += (std::to_string(stat) + ",");
             }
             Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
@@ -869,7 +872,7 @@ ClusterExport* OptiFitCluster::runUserRefOptiCluster(ClusterMetric*& metric, con
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
             for (double res: fitresults) { sensFile += std::to_string(res) + ','; }
         }
-        std::set<std::string> unfitted = getUnfittedNames();
+        // std::set<std::string> unfitted = getUnfittedNames();
     }else {
         runSensSpec(matrix, list, sensFile);
     }
@@ -1018,7 +1021,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
             fitresults = getFitStats(fittp, fittn, fitfp, fitfn);
             for (double res: fitresults) { sensFile += std::to_string(res) + ','; }
         }
-        std::set<std::string> unfitted = getUnfittedNames();
+        // std::set<std::string> unfitted = getUnfittedNames();
 
     }else {
         runSensSpec(matrix, list, sensFile);
@@ -1040,8 +1043,10 @@ void OptiFitCluster::runSensSpec(OptiRefMatrix*& matrix, ListVector*& list, std:
     }else { //pass subset matrix
         std::vector<long long> fSeqs = matrix->getFitSeqs();
         // std::set<long long> fitSeqs = Utils::mothurConvert(fSeqs);
-        std::unordered_set<long long> fitSeqs{fSeqs.begin(), fSeqs.end()};
-        OptiData* fitMatrix = matrix->extractMatrixSubset(fitSeqs);
+        // std::unordered_set<long long> fitSeqs{fSeqs.begin(), fSeqs.end()};
+        // std::sort(fSeqs.begin(), fSeqs.end());
+        // fSeqs = {fSeqs.begin(), std::unique(fSeqs.begin(), fSeqs.end())};
+        OptiData* fitMatrix = matrix->extractMatrixSubset(fSeqs);
         SensSpecCalc senscalc(*fitMatrix, list);
         senscalc.getResults(*fitMatrix, truePositives, trueNegatives, falsePositives, falseNegatives);
         delete fitMatrix;
@@ -1142,17 +1147,19 @@ void OptiFitCluster::compareSensSpec(OptiRefMatrix*& matrix, ClusterMetric*& use
             const int numBins = list->getNumBins();
 
             //extract seqs in list file from matrix
-            std::unordered_set<std::string> listNames;
+            std::vector<std::string> listNames;
             listNames.reserve(numBins);
             for (int j = 0; j < numBins; j++){
                 const std::string bin = list->get(j);
                 if (!bin.empty()) {
                     std::vector<std::string> binSeqs; Utils::splitAtComma(bin, binSeqs);
                     for (size_t k = 0; k < binSeqs.size(); k++) {
-                        listNames.insert(binSeqs[k]);
+                        listNames.emplace_back(binSeqs[k]);
                     }
                 }
             }
+            // std::sort(listNames.begin(), listNames.end());
+            // listNames = {listNames.begin(), std::unique(listNames.begin(), listNames.end())};
 
             OptiData* fitMatrix = matrix->extractMatrixSubset(listNames);
             SensSpecCalc senscalc(*fitMatrix, list);
@@ -1245,4 +1252,5 @@ void OptiFitCluster::outputSteps(const std::string& outputName, bool& printHeade
     //         Rcpp::Rcout << (std::to_string(denovoIter+1) + "\t" +"fit\t" + std::to_string(iter) + "\t" + std::to_string(cutoff) + "\t" + std::to_string(numFitBins) + "\t"+ std::to_string(cutoff) + "\t" + std::to_string(fittp) + "\t" + std::to_string(fittn) + "\t" + std::to_string(fitfp) + "\t" + std::to_string(fitfn) + "\t") << std::endl;
     //         for (int i = 0; i < fitresults.size(); i++) {  Rcpp::Rcout << (std::to_string(fitresults[i]) + "\t");  } Rcpp::Rcout << std::endl;// m->mothurOutEndLine();
     //     }
-}
+}               
+

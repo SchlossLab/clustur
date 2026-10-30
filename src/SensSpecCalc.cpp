@@ -29,7 +29,9 @@ SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
                 for (const auto & name : bnames) {
                     auto itSeq1 = nameIndex.find(name);
                     long long seq1Index = -1;
-                    if (itSeq1 != nameIndex.end()) { seq1Index = itSeq1->second; } //you have distances in the matrix
+                    if (itSeq1 != nameIndex.end()) {
+                        seq1Index = itSeq1->second;
+                    } //you have distances in the matrix
 
                     newNames.push_back(static_cast<int>(seq1Index));
                 }
@@ -44,11 +46,14 @@ void SensSpecCalc::getResults(const OptiData& matrix, double& tp, double& tn, do
         tp = 0; tn = 0; fp = 0; fn = 0;
 
         for(auto & otu : otus){
-
-            for(size_t i=0;i<otu.size();i++){
-                for(size_t j=0;j<i;j++){
-                    if (matrix.isClose(otu[i], otu[j])) { tp++; }
-                    else { fp++; }
+            for(size_t i=0;i<otu.size();i++) {
+                for(size_t j=0;j<i;j++) {
+                    if (matrix.isClose(otu[i], otu[j])) {
+                        tp++;
+                    }
+                    else {
+                        fp++;
+                    }
                 }
             }
         }
