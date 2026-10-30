@@ -163,75 +163,70 @@ OptiData* OptiRefMatrix::extractMatrixSubset(const std::vector<std::string>& seq
 /***********************************************************************/
 //given matrix indexes of seqs, pull out their dists and create optimatrix
 OptiData* OptiRefMatrix::extractMatrixSubset(std::vector<long long> & seqs) {
-    try {
-        std::vector<std::string> subsetNameMap;
-        std::vector<std::string> subsetSingletons;
-        std::vector< std::vector<long long> > subsetCloseness;
-        std::map<long long, long long> thisNameMap;
-        std::map<long long, long long> nonSingletonNameMap;
-        std::vector<bool> singleton; singleton.resize(seqs.size(), true);
-        std::sort(seqs.begin(), seqs.end());
-        int count = 0;
 
-        for (auto it = seqs.begin(); it != seqs.end(); it++) {
+    std::vector<std::string> subsetNameMap;
+    std::vector<std::string> subsetSingletons;
+    std::vector< std::vector<long long> > subsetCloseness;
+    std::map<long long, long long> thisNameMap;
+    std::map<long long, long long> nonSingletonNameMap;
+    std::vector<bool> singleton; singleton.resize(seqs.size(), true);
+    std::sort(seqs.begin(), seqs.end());
+    int count = 0;
 
-            long long seqNum = *it;
-            thisNameMap[seqNum] = count;
-            nonSingletonNameMap[count] = seqNum;
+    for (auto it = seqs.begin(); it != seqs.end(); it++) {
 
-            std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
-            for (long long thisSeq : thisSeqsCloseSeqs) {
-                //is this seq in the std::set of unfitted?
-                if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
-                    singleton[thisNameMap[seqNum]] = false;
-                }
+        long long seqNum = *it;
+        thisNameMap[seqNum] = count;
+        nonSingletonNameMap[count] = seqNum;
+
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        for (long long thisSeq : thisSeqsCloseSeqs) {
+            //is this seq in the std::set of unfitted?
+            if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
+                singleton[thisNameMap[seqNum]] = false;
             }
-            count++;
         }
-
-        int nonSingletonCount = 0;
-        for (long long i = 0; i < static_cast<long long>(singleton.size()); i++) {
-            if (!singleton[i]) { //if you are a singleton
-                nonSingletonNameMap[i] = nonSingletonCount;
-                nonSingletonCount++;
-            }else {
-                seqs[nonSingletonNameMap[i]] = -1;
-                subsetSingletons.push_back(getName(nonSingletonNameMap[i]));
-            } //remove from unfitted
-        }
-        singleton.clear();
-
-        subsetCloseness.resize(nonSingletonCount);
-        for (const auto seq : seqs) {
-            if (seq == -1) continue;
-            long long seqNum = seq;
-
-            std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
-            std::vector<long long> thisSeqsCloseUnFittedSeqs;
-            for (long long thisSeq : thisSeqsCloseSeqs) {
-                //is this seq in the std::set of unfitted?
-                if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
-                    thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]);
-                }
-            }
-
-            if (!thisSeqsCloseUnFittedSeqs.empty()) {
-                if (nonSingletonNameMap[thisNameMap[seqNum]] > subsetCloseness.size()) {
-                    Rcpp::stop("Size Error");
-                }
-                subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
-                subsetNameMap.push_back(getName(seqNum));
-            }
-
-        }
-
-
-        return new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff, seed);
+        count++;
     }
-    catch (std::exception& e) {
-        Rcpp::stop("OptiRefMatrix::extractMatrixSubset");
-        return nullptr;
+
+    int nonSingletonCount = 0;
+    for (long long i = 0; i < static_cast<long long>(singleton.size()); i++) {
+        if (!singleton[i]) { //if you are a singleton
+            nonSingletonNameMap[i] = nonSingletonCount;
+            nonSingletonCount++;
+        }else {
+            seqs[nonSingletonNameMap[i]] = -1;
+            subsetSingletons.push_back(getName(nonSingletonNameMap[i]));
+        } //remove from unfitted
     }
+    singleton.clear();
+
+    subsetCloseness.resize(nonSingletonCount);
+    for (const auto seq : seqs) {
+        if (seq == -1) continue;
+        long long seqNum = seq;
+
+        std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
+        std::vector<long long> thisSeqsCloseUnFittedSeqs;
+        for (long long thisSeq : thisSeqsCloseSeqs) {
+            //is this seq in the std::set of unfitted?
+            if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
+                thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]);
+            }
+        }
+
+        if (!thisSeqsCloseUnFittedSeqs.empty()) {
+            if (nonSingletonNameMap[thisNameMap[seqNum]] > subsetCloseness.size()) {
+                Rcpp::stop("Size Error");
+            }
+            subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
+            subsetNameMap.push_back(getName(seqNum));
+        }
+
+    }
+
+
+    return new OptiRefMatrix(subsetCloseness, subsetNameMap, subsetSingletons, cutoff, seed);
 }
 /***********************************************************************/
 std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<std::string> > & binNames, std::vector<std::vector<long long> > & fixedBins) {
