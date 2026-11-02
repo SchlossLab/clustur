@@ -195,7 +195,7 @@ OptiData* OptiRefMatrix::extractMatrixSubset(std::vector<long long> & seqs) {
             nonSingletonNameMap[i] = nonSingletonCount;
             nonSingletonCount++;
         }else {
-            seqs[nonSingletonNameMap[i]] = -1;
+            seqs[thisNameMap[nonSingletonNameMap[i]]] = -1;
             subsetSingletons.push_back(getName(nonSingletonNameMap[i]));
         } //remove from unfitted
     }
@@ -216,9 +216,9 @@ OptiData* OptiRefMatrix::extractMatrixSubset(std::vector<long long> & seqs) {
         }
 
         if (!thisSeqsCloseUnFittedSeqs.empty()) {
-            if (nonSingletonNameMap[thisNameMap[seqNum]] > subsetCloseness.size()) {
-                Rcpp::stop("Size Error");
-            }
+            // if (nonSingletonNameMap[thisNameMap[seqNum]] > subsetCloseness.size()) {
+            //     Rcpp::stop("Size Error");
+            // }
             subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
             subsetNameMap.push_back(getName(seqNum));
         }
