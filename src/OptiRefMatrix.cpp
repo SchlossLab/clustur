@@ -167,59 +167,75 @@ OptiData* OptiRefMatrix::extractMatrixSubset(std::vector<long long> & seqs) {
     std::vector<std::string> subsetNameMap;
     std::vector<std::string> subsetSingletons;
     std::vector< std::vector<long long> > subsetCloseness;
-    std::map<long long, long long> thisNameMap;
-    std::map<long long, long long> nonSingletonNameMap;
+    std::vector<std::pair<long long, long long> > thisNameMap;
+    // std::map<long long, long long> thisNameMap;
+    std::vector<std::pair<long long, long long>> nonSingletonNameMap;
+    thisNameMap.reserve(seqs.size());
+    nonSingletonNameMap.reserve(seqs.size());
+    // std::map<long long, long long> nonSingletonNameMap;
     std::vector<bool> singleton; singleton.resize(seqs.size(), true);
     std::sort(seqs.begin(), seqs.end());
     int count = 0;
 
     for (auto it = seqs.begin(); it != seqs.end(); it++) {
-
         long long seqNum = *it;
-        thisNameMap[seqNum] = count;
-        nonSingletonNameMap[count] = seqNum;
+        thisNameMap.emplace_back(count, seqNum);
+        nonSingletonNameMap.emplace_back(seqNum, count);
+        // nonSingletonNameMap[count] = seqNum;
 
         std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
         for (long long thisSeq : thisSeqsCloseSeqs) {
+            // const auto iter =
+            //   std::lower_bound(seqs.begin(), seqs.end(), thisSeq);
+            // if (iter == seqs.end() || *iter != thisSeq) continue;
+            // const size_t index = iter - seqs.begin();
+            // singleton[count] = false;
             //is this seq in the std::set of unfitted?
             if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
-                singleton[thisNameMap[seqNum]] = false;
+                singleton[count] = false;
             }
         }
         count++;
     }
 
     int nonSingletonCount = 0;
+    size_t offset = 0;
     for (long long i = 0; i < static_cast<long long>(singleton.size()); i++) {
         if (!singleton[i]) { //if you are a singleton
-            nonSingletonNameMap[i] = nonSingletonCount;
+            nonSingletonNameMap[i].second = nonSingletonCount;
             nonSingletonCount++;
         }else {
-            seqs[thisNameMap[nonSingletonNameMap[i]]] = -1;
-            subsetSingletons.push_back(getName(nonSingletonNameMap[i]));
+            // const long long& seqNum = nonSingletonNameMap[i].first;
+            seqs[i] = -1;
+            offset++;
+            subsetSingletons.push_back(getName(nonSingletonNameMap[i].first));
         } //remove from unfitted
     }
     singleton.clear();
-
+    std::sort(seqs.begin(), seqs.end());
     subsetCloseness.resize(nonSingletonCount);
     for (const auto seq : seqs) {
         if (seq == -1) continue;
-        long long seqNum = seq;
+        const long long seqNum = seq;
 
         std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
         std::vector<long long> thisSeqsCloseUnFittedSeqs;
         for (long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
-            if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
-                thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]);
-            }
+            const auto it =
+                std::lower_bound(seqs.begin(), seqs.end(), thisSeq);
+            if (it == seqs.end() || *it != thisSeq) continue;
+            const size_t index = it - seqs.begin();
+            thisSeqsCloseUnFittedSeqs.emplace_back(thisNameMap[index - offset].first);
         }
 
         if (!thisSeqsCloseUnFittedSeqs.empty()) {
             // if (nonSingletonNameMap[thisNameMap[seqNum]] > subsetCloseness.size()) {
             //     Rcpp::stop("Size Error");
             // }
-            subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
+            const size_t index =
+               std::lower_bound(seqs.begin(), seqs.end(), seqNum) - seqs.begin();
+            subsetCloseness[index - offset] = thisSeqsCloseUnFittedSeqs;
             subsetNameMap.push_back(getName(seqNum));
         }
 
