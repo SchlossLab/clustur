@@ -424,28 +424,29 @@ long long OptiRefMatrix::getNumRefClose(const long long index) {
         return numClose;
 }
 /***********************************************************************/
-std::set<long long> OptiRefMatrix::getCloseFitSeqs(const long long index){
-    std::set<long long> closeSeqs;
-
+std::vector<long long> OptiRefMatrix::getCloseFitSeqs(const long long index){
+    std::vector<long long> closeSeqs;
     if (index < 0) return closeSeqs;
     if (index > static_cast<long long>(closeness.size())) { Rcpp::stop("[ERROR]: index is not valid.\n"); } //
+    closeSeqs.reserve(closeness[index].size());
 
         //reference seqs all have indexes less than refEnd
     for (const long long it : closeness[index]) {
-        if (!isRef[it]) closeSeqs.insert(it);  //you are a fit seq
+        if (!isRef[it]) closeSeqs.emplace_back(it);  //you are a fit seq
     }
 
     return closeSeqs;
 }
 /***********************************************************************/
-std::set<long long> OptiRefMatrix::getCloseRefSeqs(const long long index) {
-    std::set<long long> closeSeqs;
+std::vector<long long> OptiRefMatrix::getCloseRefSeqs(const long long index) {
+    std::vector<long long> closeSeqs;
 
     if (index < 0) return closeSeqs;
     if (index > static_cast<long long>(closeness.size())) { Rcpp::stop("[ERROR]: index is not valid.\n"); }
+    closeSeqs.reserve(closeness[index].size());
     //reference seqs all have indexes less than refEnd
     for (long long it : closeness[index]) {
-        if (isRef[it]) { closeSeqs.insert(it); } //you are a ref seq
+        if (isRef[it]) { closeSeqs.emplace_back(it); } //you are a ref seq
     }
     return closeSeqs;
 }

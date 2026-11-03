@@ -433,5 +433,4 @@ test_that("cluster_fit works", {
   expect_true(nrow(ref_cluster$cluster) == 24)
   expect_true(nrow(ref_cluster_open$cluster) == 110)
   expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
-
 })

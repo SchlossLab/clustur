@@ -70,8 +70,8 @@ public:
     [[nodiscard]] long long getNumFitSeqs() const { return numFitSeqs; } //only Fit seqs that are in fitdistfile and not singletons
     long long getNumFitClose(long long);
     long long getNumRefClose(long long);
-    std::set<long long> getCloseFitSeqs(long long);
-    std::set<long long> getCloseRefSeqs(long long);
+    std::vector<long long> getCloseFitSeqs(long long);
+    std::vector<long long> getCloseRefSeqs(long long);
 
     std::map<std::string, long long> getNameIndexMap() const override;
 

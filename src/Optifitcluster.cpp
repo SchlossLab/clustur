@@ -245,10 +245,17 @@ bool OptiFitCluster::update(double& listMetric) {
                 }
             }
 
-            std::set<long long> binsToTry;
+
             // seq number is incorrect, we need to convert it to the actual number or else it will always be over
-            std::set<long long> closeSeqs = matrix->getCloseRefSeqs(seqNumber);
-            for (long long closeSeq : closeSeqs) { binsToTry.insert(seqBin[closeSeq]); }
+            std::vector<long long> closeSeqs = matrix->getCloseRefSeqs(seqNumber);
+            const size_t closeSeqsSize = closeSeqs.size();
+            std::vector<long long> binsToTry(closeSeqsSize);
+            for (size_t i = 0; i < closeSeqsSize; i++) {
+                binsToTry[i] = seqBin[closeSeqs[i]];
+            }
+            std::sort(binsToTry.begin(), binsToTry.end());
+            binsToTry.resize(std::distance(binsToTry.begin(), std::unique(binsToTry.begin(), binsToTry.end())));
+            // for (long long closeSeq : closeSeqs) { binsToTry.insert(seqBin[closeSeq]); }
 
             //merge into each "close" otu
             std::vector<std::vector<double> > ties; std::vector<std::vector<double> > ties0;
