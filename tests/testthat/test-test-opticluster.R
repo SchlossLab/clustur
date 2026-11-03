@@ -434,4 +434,8 @@ test_that("cluster_fit works", {
   expect_true(nrow(ref_cluster_open$cluster) == 110)
   expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
 
+  microbenchmark::microbenchmark(optifit(amazon_dist, 0.03), times = 100)
+#   Unit: milliseconds
+#                        expr      min       lq     mean   median       uq      max neval
+#  optifit(amazon_dist, 0.03) 1.764517 1.802627 1.969493 1.885426 1.951723 3.815665   100
 })

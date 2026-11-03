@@ -57,14 +57,6 @@ RecreateFastaFile <- function(fastaDf, outputFile) {
     invisible(.Call('_clustur_RecreateFastaFile', PACKAGE = 'clustur', fastaDf, outputFile))
 }
 
-start_profiler <- function(str) {
-    .Call('_clustur_start_profiler', PACKAGE = 'clustur', str)
-}
-
-stop_profiler <- function() {
-    .Call('_clustur_stop_profiler', PACKAGE = 'clustur')
-}
-
 DetermineIfPhylipOrColumnFile <- function(filePath) {
     .Call('_clustur_DetermineIfPhylipOrColumnFile', PACKAGE = 'clustur', filePath)
 }
