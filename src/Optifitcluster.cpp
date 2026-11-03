@@ -568,7 +568,7 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     constexpr double stableMetric = 0;
     constexpr size_t mccIndex = 7;
     // Could thread?
-    OptiData* ref = matrix->extractRefMatrix();
+   
     std::vector<double> mccScores;
 
     senSpecDenovo.reserve(denovoIters);
@@ -582,9 +582,8 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         int iters = 0;
         double listVectorMetric = 0; //worst state
         double delta = 1;
-
-        //get "ref" seqs for initialize inputs
-        OptiData* refMatrix = new OptiData(*ref); // This is an empty matrix, that is the issue
+        OptiData* refMatrix = matrix->extractRefMatrix();
+        //get "ref" seqs for initialize inputs// This is an empty matrix, that is the issue
         ClusterMetric* mcc = new MCC();
         OptiCluster clust(refMatrix, mcc, seed, cutoff, 0.0001, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
@@ -694,7 +693,6 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
     clusterInformation.clusterBins = result->GetListVector().listVector.print(listFile);
     result->AddToData(clusterInformation);
     result->SetListVector(list, cutoffString);
-    delete ref;
     return result;
 }
 /***********************************************************************/
