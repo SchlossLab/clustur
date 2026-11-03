@@ -254,12 +254,13 @@ bool OptiFitCluster::update(double& listMetric) {
                 binsToTry[i] = seqBin[closeSeqs[i]];
             }
             std::sort(binsToTry.begin(), binsToTry.end());
-            binsToTry.resize(std::distance(binsToTry.begin(), std::unique(binsToTry.begin(), binsToTry.end())));
+            const auto iterator = std::unique(binsToTry.begin(), binsToTry.end());
+            binsToTry.resize(std::distance(binsToTry.begin(), iterator));
             // for (long long closeSeq : closeSeqs) { binsToTry.insert(seqBin[closeSeq]); }
 
             //merge into each "close" otu
             std::vector<std::vector<double> > ties; std::vector<std::vector<double> > ties0;
-            for (long long it : binsToTry) {
+            for (long long bin : binsToTry) {
                 //reset tn, tp,fp,fn values to original bin
                 tn[0] = fittrueNegatives; tp[0] = fittruePositives; fp[0] = fitfalsePositives; fn[0] = fitfalseNegatives;
                 tn[1] = combotrueNegatives; tp[1] = combotruePositives; fp[1] = combofalsePositives; fn[1] = combofalseNegatives;
@@ -268,10 +269,10 @@ bool OptiFitCluster::update(double& listMetric) {
                 fn[0]+=fitcCount; tn[0]+=fitfCount; fp[0]-=fitfCount; tp[0]-=fitcCount;
                 fn[1]+=combocCount; tn[1]+=combofCount; fp[1]-=combofCount; tp[1]-=combocCount;
 
-                results = getCloseFarCounts(seqNumber, it); //results[0] = close count, results[1] = far count
+                results = getCloseFarCounts(seqNumber, bin); //results[0] = close count, results[1] = far count
                 fn[1]-=results[0]; tn[1]-=results[1];  tp[1]+=results[0]; fp[1]+=results[1]; //move into new bin
 
-                results = getCloseFarFitCounts(seqNumber, it);
+                results = getCloseFarFitCounts(seqNumber, bin);
                 fn[0]-=results[0]; tn[0]-=results[1];  tp[0]+=results[0]; fp[0]+=results[1]; //move into new bin - only consider fit seqs
 
                 double newComboMetric = metric->getValue(tp[1], tn[1], fp[1], fn[1]); //score when sequence is moved
@@ -279,8 +280,8 @@ bool OptiFitCluster::update(double& listMetric) {
                 //new best
                 if (newComboMetric > bestMetric[1]) {
                     ties.clear(); ties0.clear();
-                    bestMetric[1] = newComboMetric; bestBin[1] = it; bestTp[1] = tp[1]; bestTn[1] = tn[1]; bestFp[1] = fp[1]; bestFn[1] = fn[1];
-                    bestMetric[0] = newFitMetric; bestBin[0] = it; bestTp[0] = tp[0]; bestTn[0] = tn[0]; bestFp[0] = fp[0]; bestFn[0] = fn[0];
+                    bestMetric[1] = newComboMetric; bestBin[1] = bin; bestTp[1] = tp[1]; bestTn[1] = tn[1]; bestFp[1] = fp[1]; bestFn[1] = fn[1];
+                    bestMetric[0] = newFitMetric; bestBin[0] = bin; bestTp[0] = tp[0]; bestTn[0] = tn[0]; bestFp[0] = fp[0]; bestFn[0] = fn[0];
                     std::vector<double> tie; tie.push_back(bestMetric[1]); tie.push_back(bestBin[1]); tie.push_back(bestTp[1]);
                     tie.push_back(bestTn[1]); tie.push_back(bestFp[1]); tie.push_back(bestFn[1]); ties.push_back(tie);
                     std::vector<double> tie0; tie0.push_back(bestMetric[0]); tie0.push_back(bestBin[0]); tie0.push_back(bestTp[0]);
@@ -288,8 +289,8 @@ bool OptiFitCluster::update(double& listMetric) {
 
 
                 }else if (newComboMetric == bestMetric[1]) {
-                    bestMetric[1] = newComboMetric; bestBin[1] = it; bestTp[1] = tp[1]; bestTn[1] = tn[1]; bestFp[1] = fp[1]; bestFn[1] = fn[1];
-                    bestMetric[0] = newFitMetric; bestBin[0] = it; bestTp[0] = tp[0]; bestTn[0] = tn[0]; bestFp[0] = fp[0]; bestFn[0] = fn[0];
+                    bestMetric[1] = newComboMetric; bestBin[1] = bin; bestTp[1] = tp[1]; bestTn[1] = tn[1]; bestFp[1] = fp[1]; bestFn[1] = fn[1];
+                    bestMetric[0] = newFitMetric; bestBin[0] = bin; bestTp[0] = tp[0]; bestTn[0] = tn[0]; bestFp[0] = fp[0]; bestFn[0] = fn[0];
                     std::vector<double> tie; tie.push_back(bestMetric[1]); tie.push_back(bestBin[1]); tie.push_back(bestTp[1]);
                     tie.push_back(bestTn[1]); tie.push_back(bestFp[1]); tie.push_back(bestFn[1]); ties.push_back(tie);
                     std::vector<double> tie0; tie0.push_back(bestMetric[0]); tie0.push_back(bestBin[0]); tie0.push_back(bestTp[0]);

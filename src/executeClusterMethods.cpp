@@ -166,7 +166,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
         const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
             featureColumnName, binColumnName);
         const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
-        delete(result);
+        delete result;
 
         return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
           Rcpp::Named("abundance") = tidySharedDataFrame,
@@ -191,7 +191,7 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
           Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
         delete clusterExport;
     }
-
+    delete result;
     return results;
 }
 
