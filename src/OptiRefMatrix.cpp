@@ -95,54 +95,80 @@ fitPercent(fitPercent){
 /***********************************************************************/
 //Since we are extracting a subset of the seqs some reads that may not have been singletons
 OptiData* OptiRefMatrix::extractRefMatrix() {
-    std::set<long long> seqs;
-    for (long long i = 0; i < static_cast<long long>(isRef.size()); i++) {
-        if (isRef[i]) { seqs.insert(i); }
+    const long long isRefSize = static_cast<long long>(isRef.size());
+    std::vector<long long> seqs;
+    seqs.reserve(isRefSize);
+    for (long long i = 0; i < static_cast<long long>(isRefSize); i++) {
+        if (isRef[i]) {
+            seqs.emplace_back(i);
+        }
     }
 
     std::vector<std::string> subsetNameMap;
     std::vector<std::string> subsetSingletons;
     std::vector< std::vector<long long> > subsetCloseness;
-    std::map<long long, long long> thisNameMap;
-    std::map<long long, long long> nonSingletonNameMap;
+    std::vector<std::pair<long long, long long> > thisNameMap;
+    std::vector<std::pair<long long, long long>> nonSingletonNameMap;
+    thisNameMap.reserve(seqs.size());
+    nonSingletonNameMap.reserve(seqs.size());
+
     std::vector<bool> singleton; singleton.resize(seqs.size(), true);
+    std::sort(seqs.begin(), seqs.end());
     int count = 0;
-    for (const auto& seq : seqs)  {
-        long long seqNum = seq;
-        thisNameMap[seqNum] = count;
-        nonSingletonNameMap[count] = seqNum;
+
+    for (const auto& seqNum : seqs) {
+        thisNameMap.emplace_back(count, seqNum);
+        nonSingletonNameMap.emplace_back(seqNum, count);
+
 
         std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
-        for (const long long thisSeq : thisSeqsCloseSeqs) {
-            //is this seq in the std::set of unfitted?
-            if (seqs.count(thisSeq) != 0) { singleton[thisNameMap[seqNum]] = false; }
+        for (long long thisSeq : thisSeqsCloseSeqs) {
+            if (std::binary_search(seqs.begin(), seqs.end(), thisSeq)) {
+                singleton[count] = false;
+            }
         }
         count++;
     }
 
     int nonSingletonCount = 0;
+    size_t offset = 0;
     for (long long i = 0; i < static_cast<long long>(singleton.size()); i++) {
-        if (!singleton[i]) { //if you are not a singleton
-            nonSingletonNameMap[i] = nonSingletonCount;
+        if (!singleton[i]) { //if you are a singleton
+            nonSingletonNameMap[i].second = nonSingletonCount;
             nonSingletonCount++;
-        }else { seqs.erase(nonSingletonNameMap[i]);  subsetSingletons.push_back(getName(nonSingletonNameMap[i])); } //remove from unfitted
+        }else {
+            seqs[i] = -1;
+            offset++;
+            subsetSingletons.push_back(getName(nonSingletonNameMap[i].first));
+        } //remove from unfitted
     }
     singleton.clear();
-
+    std::sort(seqs.begin(), seqs.end());
     subsetCloseness.resize(nonSingletonCount);
-    for (const auto& seqNum : seqs) {
+    for (const auto seq : seqs) {
+        if (seq == -1) continue;
+        const long long seqNum = seq;
+
         std::vector<long long> thisSeqsCloseSeqs = getCloseSeqs(seqNum);
         std::vector<long long> thisSeqsCloseUnFittedSeqs;
         for (long long thisSeq : thisSeqsCloseSeqs) {
             //is this seq in the std::set of unfitted?
-            if (seqs.count(thisSeq) != 0) { thisSeqsCloseUnFittedSeqs.emplace_back(nonSingletonNameMap[thisNameMap[thisSeq]]); }
+            const auto it =
+                std::lower_bound(seqs.begin(), seqs.end(), thisSeq);
+            if (it == seqs.end() || *it != thisSeq) continue;
+            const size_t index = it - seqs.begin();
+            thisSeqsCloseUnFittedSeqs.emplace_back(thisNameMap[index - offset].first);
         }
+
         if (!thisSeqsCloseUnFittedSeqs.empty()) {
-            subsetCloseness[nonSingletonNameMap[thisNameMap[seqNum]]] = thisSeqsCloseUnFittedSeqs;
+            const size_t index =
+               std::lower_bound(seqs.begin(), seqs.end(), seqNum) - seqs.begin();
+            subsetCloseness[index - offset] = thisSeqsCloseUnFittedSeqs;
             subsetNameMap.push_back(getName(seqNum));
         }
 
     }
+
 
     for (size_t i = 0; i < isSingleRef.size(); i++) {
         if (isSingleRef[i]) {
