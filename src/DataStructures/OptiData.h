@@ -57,7 +57,7 @@ public:
         if (index > static_cast<long long>(closeness.size())) {
             return 0;
         }
-        return closeness[index].size();
+        return static_cast<long long>(closeness[index].size());
 
     }
 
@@ -104,12 +104,15 @@ public:
         return true;
     }
 
-    [[nodiscard]] virtual std::map<std::string, long long> getNameIndexMap() const {
-        std::map<std::string, long long> nameIndexes;
-        for (size_t i = 0; i < nameMap.size(); i++) {
-            std::vector<std::string> thisBinsSeqs; Utils::splitAtComma(nameMap[i], thisBinsSeqs);
-            if (i < closeness.size()) { nameIndexes[thisBinsSeqs[0]] = static_cast<long long>(i);  }
+    [[nodiscard]] virtual std::vector<std::pair<std::string, long long>> getNameIndexMap() const {
+        const auto closenessSize = static_cast<long long>(closeness.size());
+        std::vector<std::pair<std::string, long long>> nameIndexes(closenessSize);
+        for (long long i = 0; i < closenessSize; i++) {
+            std::vector<std::string> thisBinsSeqs;
+            Utils::splitAtComma(nameMap[i], thisBinsSeqs);
+            nameIndexes[i] = {thisBinsSeqs[0], i};
         }
+        std::sort(nameIndexes.begin(), nameIndexes.end());
         return nameIndexes;
     }
 

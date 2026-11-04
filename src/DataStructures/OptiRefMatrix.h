@@ -73,7 +73,7 @@ public:
     std::vector<long long> getCloseFitSeqs(long long);
     std::vector<long long> getCloseRefSeqs(long long);
 
-    std::map<std::string, long long> getNameIndexMap() const override;
+    // std::map<std::string, long long> getNameIndexMap() const override;
 
     bool isCloseFit(long long, long long, bool&) const override;
     std::vector<long long> getCloseSeqs(long long i);

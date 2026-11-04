@@ -11,11 +11,13 @@
 #include <string>
 #include <map>
 
+#include "DataStructures/VectorPairCompare.h"
+
 
 //***************************************************************************************************************
 //removes anyone with no valid dists and changes name to matrix short names
 SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
-        std::map<std::string, long long> nameIndex = matrix.getNameIndexMap();
+        std::vector<std::pair<std::string, long long>> nameIndex = matrix.getNameIndexMap();
 
         if (list != nullptr) {
             //for each bin
@@ -27,9 +29,11 @@ SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
 
                 std::vector<int> newNames;
                 for (const auto & name : bnames) {
-                    auto itSeq1 = nameIndex.find(name);
+                    const auto itSeq1 = std::lower_bound(nameIndex.begin(),
+                        nameIndex.end(), name, VectorPairCompare());
+                    // auto itSeq1 = nameIndex.find(name);
                     long long seq1Index = -1;
-                    if (itSeq1 != nameIndex.end()) {
+                    if (itSeq1->first == name) {
                         seq1Index = itSeq1->second;
                     } //you have distances in the matrix
 

@@ -7,6 +7,7 @@
 
 #include "Adapters/CountTableAdapter.h"
 #include "DataStructures/OptiMatrix.h"
+#include "DataStructures/VectorPairCompare.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include "MothurDependencies/PairwiseDistanceCalculator.h"
 #include "RNG/SubSample.h"
@@ -276,7 +277,6 @@ std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<
     fixedBins.clear();
 
     std::map<std::string, long long> nameIndexes;
-    std::set<std::string> unique;
     const auto nameMapSize = static_cast<long long>(nameMap.size());
     const auto singletonSize = static_cast<long long>(singletons.size());
     const auto closenessSize = static_cast<long long>(closeness.size());
@@ -284,16 +284,12 @@ std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<
     for (long long i = 0; i < nameMapSize; i++) { //std::vector of std::string representing the sequences in the matrix from the name file.
         std::vector<std::string> thisSeqsReps; Utils::splitAtComma(nameMap[i], thisSeqsReps); //split redundant names
         if (i < closenessSize) {  nameIndexes[thisSeqsReps[0]] = i;  } //this is a sequence with distances in the matrix
-        if (thisSeqsReps.size() == 1) { //you are unique
-            unique.insert(thisSeqsReps[0]);
-        }
     }
 
     for (long long i = 0; i < singletonSize; i++) {
         if (isSingleRef[i]) {
             std::vector<std::string> thisSeqsReps; Utils::splitAtComma(singletons[i], thisSeqsReps); //split redundant names
             nameIndexes[thisSeqsReps[0]] = -1;
-            if (thisSeqsReps.size() == 1) { unique.insert(thisSeqsReps[0]); }
         }
     }
 
@@ -304,8 +300,6 @@ std::vector<long long> OptiRefMatrix::getTranslatedBins(std::vector<std::vector<
             if (nameIndexes.find(name) != nameIndexes.end()) {
                 thisBinsSeqs.push_back(nameIndexes[name]);
             }
-            // if (it == nameIndexes.end()) { }//not in distance matrix, but needs a value in fixedBins. 2 reasons for making it here: you are a redundant name in the listfile, you do not have any distances
-            // else { thisBinsSeqs.push_back(it->second);  } //"name" of sequence in matrix
         }
         fixedBins.push_back(thisBinsSeqs);
     }
@@ -399,29 +393,29 @@ long long OptiRefMatrix::getNumFitTrueSingletons() {
 }
 /***********************************************************************/
 long long OptiRefMatrix::getNumFitClose(const long long index) {
-        long long numClose = 0;
-        if (index < 0) return numClose;
-        if (index > static_cast<long long>(closeness.size())) Rcpp::stop("[ERROR]: index is not valid.\n");
-            //reference seqs all have indexes less than refEnd
-        for (const long long it : closeness[index]) {
-            if (!isRef[it]) {  numClose++; } //you are a fit seq
-        }
+    long long numClose = 0;
+    if (index < 0) return numClose;
+    if (index > static_cast<long long>(closeness.size())) Rcpp::stop("[ERROR]: index is not valid.\n");
+        //reference seqs all have indexes less than refEnd
+    for (const long long it : closeness[index]) {
+        if (!isRef[it]) {  numClose++; } //you are a fit seq
+    }
 
 
         return numClose;
 }
 /***********************************************************************/
 long long OptiRefMatrix::getNumRefClose(const long long index) {
-        long long numClose = 0;
+    long long numClose = 0;
 
-        if (index < 0) return numClose;
-        if (index > static_cast<long long>(closeness.size())) Rcpp::stop("[ERROR]: index is not valid.\n");
-            //reference seqs all have indexes less than refEnd
-        for (const long long it : closeness[index]) {
-            if (isRef[it]) {  numClose++; } //you are a ref seq
-        }
+    if (index < 0) return numClose;
+    if (index > static_cast<long long>(closeness.size())) Rcpp::stop("[ERROR]: index is not valid.\n");
+        //reference seqs all have indexes less than refEnd
+    for (const long long it : closeness[index]) {
+        if (isRef[it]) {  numClose++; } //you are a ref seq
+    }
 
-        return numClose;
+    return numClose;
 }
 /***********************************************************************/
 std::vector<long long> OptiRefMatrix::getCloseFitSeqs(const long long index){
@@ -451,28 +445,29 @@ std::vector<long long> OptiRefMatrix::getCloseRefSeqs(const long long index) {
     return closeSeqs;
 }
 
-std::map<std::string, long long> OptiRefMatrix::getNameIndexMap() const {
-
-    const auto closenessSize = static_cast<long long>(closeness.size());
-    std::map<std::string, long long> nameIndexes;
-    for (long long i = 0; i < static_cast<long long>(nameMap.size()); i++) {
-        std::vector<std::string> thisBinsSeqs;
-        Utils::splitAtComma(nameMap[i], thisBinsSeqs);
-        if (i < closenessSize) {
-            nameIndexes[thisBinsSeqs[0]] = i;
-        }
-    }
-    return nameIndexes;
-}
+// std::map<std::string, long long> OptiRefMatrix::getNameIndexMap() const {
+//
+//     const auto closenessSize = static_cast<long long>(closeness.size());
+//     std::map<std::string, long long> nameIndexes;
+//     for (long long i = 0; i < static_cast<long long>(nameMap.size()); i++) {
+//         std::vector<std::string> thisBinsSeqs;
+//         Utils::splitAtComma(nameMap[i], thisBinsSeqs);
+//         if (i < closenessSize) {
+//             nameIndexes[thisBinsSeqs[0]] = i;
+//         }
+//     }
+//     return nameIndexes;
+// }
 
 std::vector<long long> OptiRefMatrix::getIndexes(const std::vector<std::string>& seqs) const {
-    std::map<std::string, long long> nameIndexes = getNameIndexMap();
+    std::vector<std::pair<std::string, long long>> nameIndexes = getNameIndexMap();
 
     std::vector<long long> indexes;
     indexes.reserve(seqs.size());
     for (const auto & seq : seqs) {
-        const auto& it = nameIndexes.find(seq);
-        if (it != nameIndexes.end()) {
+        const auto& it = std::lower_bound(nameIndexes.begin(),
+            nameIndexes.end(), seq, VectorPairCompare());
+        if (it->first == seq) {
             indexes.emplace_back(it->second);
         }
     }
