@@ -52,7 +52,7 @@ protected:
     ClusterMetric* metric;
     OptiRefMatrix* matrix;
     ListVector listVector;
-    std::map<long long, long long> seqBin; //sequence# -> bin#
+    std::vector<std::pair<long long, long long>> seqBin; //sequence# -> bin#
     std::vector<long long> randomizeSeqs;
     std::vector< std::vector<long long> > bins; //bin[0] -> seqs in bin[0]
     std::map<long long, std::string> binLabels; //for fitting - maps binNumber to existing reference label

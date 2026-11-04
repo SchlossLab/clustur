@@ -25,6 +25,7 @@
 #include <cmath>
 
 #include "Clusters/Cluster.h"
+#include "DataStructures/VectorPairCompare.h"
 #include "MothurDependencies/SensSpecCalc.h"
 
 
@@ -115,9 +116,12 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
     // Bins and translated bins are the same thing...
     int binNumber = 0;
     int placeHolderIndex = -1;
+    bool hasNegative = false;
+    const size_t reserveSize = translatedBins.size() + randomizeSeqs.size();
     bins.clear();
-    bins.reserve(translatedBins.size() + randomizeSeqs.size());
+    bins.reserve(reserveSize);
     seqBin.clear();
+    seqBin.reserve(reserveSize);
     for (size_t i = 0; i < translatedBins.size(); i++) {
         binLabels[binNumber] = bls[i];
         // bins[i] = translatedBins[i];
@@ -135,7 +139,15 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
                     }else { reffalsePositives++; }
                 }
             }
-            seqBin[translatedBins[i][j]] = binNumber;
+            // seqBin[translatedBins[i][j]] = binNumber;
+            if (translatedBins[i][j] >= 0) {
+                seqBin.emplace_back(translatedBins[i][j], binNumber);
+                continue;
+            }
+            if (!hasNegative) {
+                seqBin.emplace_back(translatedBins[i][j], binNumber);
+                hasNegative = true;
+            }
         }
         binNumber++;
     }
@@ -151,7 +163,8 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
         // std::vector<long long> thisBin;
         // thisBin.emplace_back(randomizeSeqs[i]);
         bins.emplace_back(std::vector<long long>{randomizeSeqs[i]});
-        seqBin[randomizeSeqs[i]] = numRefBins+i;
+        // seqBin[randomizeSeqs[i]] = numRefBins+i;
+        seqBin.emplace_back(randomizeSeqs[i], numRefBins + i);
 
         const long long numCloseSeqs = (matrix->getNumFitClose(randomizeSeqs[i])); //does not include self
         fitfalseNegatives += static_cast<double>(numCloseSeqs);
@@ -175,7 +188,8 @@ int OptiFitCluster::initialize(double& value, const bool randomize, std::vector<
 
     //add insert location
     const auto binSize = static_cast<long long>(bins.size());
-    seqBin[binSize] = -1;
+    seqBin.emplace_back(binSize, -1);
+    std::sort(seqBin.begin(), seqBin.end());
     insertLocation = binSize;
     // std::vector<long long> temp;
     bins.emplace_back();
@@ -193,7 +207,9 @@ bool OptiFitCluster::update(double& listMetric) {
     //for each sequence (singletons removed on read)
     for (long long randomizeSeq : randomizeSeqs) {
 
-        auto it = seqBin.find(randomizeSeq);
+        const auto it = std::lower_bound(seqBin.begin(), seqBin.end(),
+            randomizeSeq, VectorPairCompare());
+        // auto it = seqBin.find(randomizeSeq);
 
         long long seqNumber = it->first;
         long long binNumber = it->second;
@@ -251,7 +267,10 @@ bool OptiFitCluster::update(double& listMetric) {
             const size_t closeSeqsSize = closeSeqs.size();
             std::vector<long long> binsToTry(closeSeqsSize);
             for (size_t i = 0; i < closeSeqsSize; i++) {
-                binsToTry[i] = seqBin[closeSeqs[i]];
+                const auto seq = std::lower_bound(seqBin.begin(), seqBin.end(),
+                    closeSeqs[i], VectorPairCompare());
+                binsToTry[i] = seq->second;
+                // binsToTry[i] = seqBin[closeSeqs[i]];
             }
             std::sort(binsToTry.begin(), binsToTry.end());
             const auto iterator = std::unique(binsToTry.begin(), binsToTry.end());
@@ -323,7 +342,11 @@ bool OptiFitCluster::update(double& listMetric) {
             if (usedInsert) { insertLocation = findInsert(); }
 
             //update seqBins
-            seqBin[seqNumber] = newBin; //set new OTU location
+            const auto result = std::lower_bound(seqBin.begin(), seqBin.end(),
+                seqNumber, VectorPairCompare());
+            result->second = newBin;
+            // seqBin[seqNumber] = newBin;
+            // seqBin[//set new OTU location
         }
     }
 
@@ -443,7 +466,9 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
     unFitted.reserve(matrix->GetNameList().size());
     long long numListSeqs = 0;
     for (long long randomizeSeq : randomizeSeqs) { //build otus
-        auto it = seqBin.find(randomizeSeq);
+        const auto it = std::lower_bound(seqBin.begin(), seqBin.end(),
+            randomizeSeq, VectorPairCompare());
+        // auto it = seqBin.find(randomizeSeq);
 
         long long seqNumber = it->first;
         long long binNumber = it->second;
@@ -465,8 +490,10 @@ ListVector* OptiFitCluster::getFittedList(const std::string& label, bool include
     if (denovo || includerefs) { //add in refs
         std::vector<long long> refs = matrix->getRefSeqs();
         for (long long ref : refs) {
-            const auto it = seqBin.find(ref);
+            // const auto it = seqBin.find(ref);
 
+            const auto it = std::lower_bound(seqBin.begin(), seqBin.end(),
+                ref, VectorPairCompare());
             long long seqNumber = it->first;
             long long binNumber = it->second;
 
