@@ -5,8 +5,8 @@
 \title{Cluster Split}
 \usage{
 cluster_split(
-  fasta_file,
-  taxonomy_file,
+  fasta,
+  taxonomy,
   count_table,
   cluster_method,
   cutoff,
@@ -14,13 +14,14 @@ cluster_split(
   feature_column_name = "feature",
   bin_column_name = "bin",
   random_seed = 123,
+  metric = "mcc",
   number_of_threads = 1
 )
 }
 \arguments{
-\item{fasta_file}{a `string` value that represents the path to your fasta file.}
-
-\item{taxonomy_file}{a `string` value that represents the path to your taxonomy file.}
+\item{fasta}{a`data.frame` representation of your fasta data. This can be generated
+using the `read_fasta` function. The fasta `data.frame` must contain two columns:
+sequence_name and sequence.}
 
 \item{count_table}{the count table that represents the data, must be read using the `read_count()`
 function.}
@@ -41,8 +42,20 @@ cluster dataframe that contains the name of the group of sequence names. This is
 
 \item{random_seed}{a `integer` value that represents the current random seed.}
 
+\item{metric}{this parameter allows you to choose which metric the cluster will
+optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
+specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
+true positives (tp), true negative (tn), false positive (fp), false negative (fn),
+f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
+negative predictive value (npv), false discovery rate (fdr). The default
+metric is mcc.}
+
 \item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
 can be used.}
+
+\item{taxonomy_file}{a`data.frame` representation of your taxonomy data. This can be generated
+using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
+sequence_name and taxonomy.}
 }
 \value{
 A list of `data.frames` that contain abundance, and clustering
@@ -58,8 +71,8 @@ neighbor, and weighted neighbor. You can read more about
 
  cutoff <- 0.2
  count_table <- read_count(example_path("amazon.full.count_table"))
- fasta <- example_path("amazon.align")
- taxonomy <- example_path("amazon.taxonomy")
+ fasta <- read_fasta(example_path("amazon.align"))
+ taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
 
 }

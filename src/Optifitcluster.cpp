@@ -73,22 +73,6 @@ void OptiFitCluster::Reset() {
 
 
 ClusterExport * OptiFitCluster::Execute() {
-    // if (metricName == "mcc")             { metric = new MCC();              }
-    // else if (metricName == "sens")       { metric = new Sensitivity();      }
-    // else if (metricName == "spec")       { metric = new Specificity();      }
-    // else if (metricName == "tptn")       { metric = new TPTN();             }
-    // else if (metricName == "tp")         { metric = new TP();               }
-    // else if (metricName == "tn")         { metric = new TN();               }
-    // else if (metricName == "fp")         { metric = new FP();               }
-    // else if (metricName == "fn")         { metric = new FN();               }
-    // else if (metricName == "f1score")    { metric = new F1Score();          }
-    // else if (metricName == "accuracy")   { metric = new Accuracy();         }
-    // else if (metricName == "ppv")        { metric = new PPV();              }
-    // else if (metricName == "npv")        { metric = new NPV();              }
-    // else if (metricName == "fdr")        { metric = new FDR();              }
-    // else if (metricName == "fpfn")       { metric = new FPFN();             }
-
-
     std::map<std::string, int> counts;
 
     std::string outputName = "";
@@ -619,13 +603,11 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         double delta = 1;
         OptiData* refMatrix = matrix->extractRefMatrix();
         //get "ref" seqs for initialize inputs// This is an empty matrix, that is the issue
-        ClusterMetric* mcc = new MCC();
-        OptiCluster clust(refMatrix, mcc, seed, cutoff, 0.0001, 0);
+        OptiCluster clust(refMatrix, metric, seed, cutoff, 0.0001, 0);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
         delete exportResult;
         delete refMatrix;
-        delete mcc;
 
         std::vector<std::vector<std::string> > otus;
         for (int j = 0; j < refList.getNumBins(); j++) {

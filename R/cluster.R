@@ -88,6 +88,13 @@ read_dist <- function(distance_file, count_table,
 #' for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
 #' will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
 #' into one OTU. Defaults to singleton.
+#' @param metric this parameter allows you to choose which metric the cluster will
+#' optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
+#' specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
+#' true positives (tp), true negative (tn), false positive (fp), false negative (fn),
+#' f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
+#' negative predictive value (npv), false discovery rate (fdr). The default
+#' metric is mcc.
 #' @param strollur_object Using the `strollur` r package, you can use your
 #' created strollur object to save your clustering results to. This allows you
 #' to seamless modify your strollur object and analysis results as needed. 
@@ -120,7 +127,8 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
                     feature_column_name_to = "feature",
                     bin_column_name_to = "bin", random_seed = 123,
                     delta = 0.0001, max_iterations = 100, 
-                    initialize = "singleton", strollur_object = NULL) {
+                    initialize = "singleton", metric = "mcc", 
+                    strollur_object = NULL) {
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
@@ -137,7 +145,7 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
   } else {
     df <- OptiClust(distance_object, feature_column_name_to,
                       bin_column_name_to, cutoff, random_seed,
-                      delta, max_iterations, initialize)
+                      delta, max_iterations, initialize, metric)
     df$iteration_metrics <- df$iteration_metrics[, c("iter", "time",
                                                      "label", "num_otus",
                                                      "cutoff", "tp", "tn",
@@ -256,11 +264,17 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
 #' @param accnos a `vector` of strings that represent the reference sequences by name. Use this when you know the
 #' group of sequences you want your fit data to fit against.
-#' @param ref_fasta the file name of your reference's fasta data. This is a `character` value.
-#' @param ref_count the file name of your reference's count table. This is a `character` value.
-#' @param ref_list the file name of your reference's list file that you want the fit data to fit against.
-#' This is a `character` value.
-#' @param fit_fasta the file name of your fitted data's fasta file. This is a `character` value.
+#' @param ref_fasta a`data.frame` representation of your fasta data for your reference sequences.
+#' This can be generated using the `read_fasta()` function. The fasta `data.frame` must
+#' contain two columns: "sequence_name" and "sequence."
+#' @param ref_count a `data.frame` that display sequence abundance for the reference sequences. Must
+#' be generated using the `read_count()` function. 
+#' @param ref_list a `data.frame` respentation of the mothur list file you wish to fit your
+#' sequences to. Can be generated using the `read_mothur_list()` function. 
+#' Must include two columns: "bin_name" and "sequence_name."
+#' @param fit_fasta a`data.frame` representation of your fasta data for your fitted sequences.
+#' This can be generated using the `read_fasta()` function. The fasta `data.frame` must
+#' contain two columns: "sequence_name" and "sequence."
 #' @param fit_percent allows you to set the percentage of reads that need to be fitted. This is a `numerical` value.
 #' @param closed deteremines whether you want the function to run using the closed or open method. The closed method
 #' will return reads that fit into existing otus and scrap those that did not. The open method will keep reads
@@ -272,16 +286,22 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @param denovo_iters the max number of iterations the denovo method computes.  This is a `integer` value.
 #' @param optimal_denovo_result determines whether or not you want the denovo method to return the cluster
 #' with the highest mcc value or all of the randomly computed clusters. This is a `logical` value.
+#' @param ref_weight Ref Weight is used to randomize the reference sequences for the denovo method.
+#' There are three methods: none, abundance and connectivity. "none" will do a normal shuffle of
+#' the given sequences without any weights, abundance will shuffle the sequences using
+#' abundances as a weight, and connectivity will shuffle the sequences but uses
+#' a weight of one for every sequence.
+#' @inheritParams cluster metric
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
 #'  amazon_count <- read_count(example_path("amazon.full.count_table"))
 #'  amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
 #'
-#'  esophagus_fasta <- example_path("esophagus.fasta")
+#'  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
 #'  esophagus_count <- read_count(example_path("esophagus.count_table"))
-#'  amazon_fasta <- example_path("amazon.align")
-#'  esophagus_list <- example_path("esophagus.list")
+#'  amazon_fasta <- read_fasta(example_path("amazon.align"))
+#'  esophagus_list <- read_mothur_list(example_path("esophagus.list"))
 #'
 #'
 #'  denovo <- optifit(amazon_dist, 0.03)
@@ -300,38 +320,103 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL, fit_percent = 50, closed = TRUE, print_ref = FALSE,
-                    random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, 
-                    number_of_threads = 1) {
+                    random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, ref_weight = "none",
+                    metric = "mcc", number_of_threads = 1) {
 
+  if(!inherits(fit_dist, "distance_object")) {
+    stop("fit_dist must be created using the `read_dist()` function.")
+  }
   result <- c()
   ref_parameters_check <- all( as.logical(lapply(list(ref_fasta, ref_list, fit_fasta, ref_count), is.null)))
   if (ref_parameters_check && is.null(accnos)) {
-     message(paste0("accnos, ref_fasta, ref_count, ref_list, and fit_fasta parameters are",
-                   " all NULL. Running Optifit using denovo."))
     if(fit_percent < 0.01) {
+      message("fit_percent is less than 0.01, setting fit_percent to 0.01")
       fit_percent = 0.01
     }
     else if(fit_percent > 100) {
+      message("fit_percent is greater than 100, setting fit_percent to 100")
       fit_percent = 100
     }
+
+    ref_weight_options = c("abundance", "connectivity", "none")
+    if(!any(ref_weight_options == ref_weight)) {
+      stop(paste0(ref_weight, " is not a valid ref_weight options.", "options are: ",
+                  paste0(ref_weight_options, collapse = ", "), "."))
+    }
+    message(paste0("accnos, ref_fasta, ref_count, ref_list, and fit_fasta parameters are",
+                   " all NULL. Running Optifit using denovo."))
     # run denovo
     result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref, 
-                      selfReference = FALSE, optimal_denovo_result, max_iterations, denovo_iters, random_seed)
+                      selfReference = FALSE, optimal_denovo_result, max_iterations, denovo_iters, random_seed,
+                      metric, ref_weight)
   } else if (!is.null(accnos)) {
+    if(!inherits(accnos, "character")) {
+      stop("accnos must be a list of characters.")
+    }
+    if(length(accnos) == 0) {
+      stop("the length of the accnos cannot be 0.")
+    }
+    if(length(accnos) > nrow(get_count_table(fit_dist))) {
+      stop(paste0("length of accnos is greater than the number ",
+                  "sequences in the count table, please ensure accnos contains ",
+                  "sequences that are present in the count table."))
+    }
+    if(!all(accnos %in% get_count_table(fit_dist)$Representative_Sequences)) {
+      stop("accnos contains sequences that are not in the count table, please correct.")
+    }
     message("Accnos file is not null, running optifit using accnos.")
+    
     result <- OptiFit2(fit_dist, feature_column_name, bin_column_name, accnos, cutoff, closed, print_ref,
-                       selfReference = FALSE, max_iterations, random_seed)
+                       selfReference = FALSE, max_iterations, metric, random_seed)
   } else if (!ref_parameters_check) {
     message("ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.")
     # all ref list names have to be present in the fasta error catch that later
-    ref_fasta <- strollur::read_fasta(ref_fasta)
-    fit_fasta <- strollur::read_fasta(fit_fasta)
-    ref_list <- strollur::read_mothur_list(ref_list)
+    if(!inherits(fit_fasta, "data.frame")) {
+      stop("fit_fasta has to be a data frame, use the `read_fasta()` function to generate fasta data.")
+    }
+    if(!inherits(ref_fasta, "data.frame")) {
+      stop("ref_fasta has to be a data frame, use the `read_fasta()` function to generate fasta data.")
+    }
+    if(!inherits(ref_list, "data.frame")) {
+      stop("ref_list has to be a data frame, use the `read_fasta()` function to generate fasta data.")
+    }
+    if(ncol(fit_fasta) == 0 || ncol(ref_fasta) == 0) {
+      stop("fit_fasta or ref_fasta column or row size is 0, please correct")
+    }
+    if(nrow(fit_fasta) == 0 || nrow(ref_fasta) == 0) {
+      stop("fit_fasta or ref_fasta column or row size is 0, please correct")
+    }
+     if(ncol(ref_list) == 0 || nrow(ref_list) == 0) {
+      stop("ref_list column or row size is 0, please correct")
+    }
+    if(!all(c("sequence", "sequence_name") %in% colnames(fit_fasta)) ||
+       !all(c("sequence", "sequence_name") %in% colnames(ref_fasta)) ) {
+      stop("ensure that you are using the `read_fasta()` function to read your fasta data.")
+    }
+    if(ncol(ref_list) == 0 || !all(c("bin_name", "sequence_name") %in% colnames(ref_list))) {
+      stop("ensure that you are using the `read_mothur_list()` function to read your list data.")
+    }
+
+    if(!inherits(ref_count, "data.frame")) {
+      stop(paste0("ref_count has to be a data frame, use the `read_count()` ",
+                  "function to generate a count table"))
+    }
+    if(ncol(ref_count) == 0) {
+      stop("ref_count column or row size is 0, please correct")
+    }
+    if(!all(c("Representative_Sequence", "total") %in% colnames(ref_count)) ) {
+      stop(paste0("ensure that you are using the `read_count()`",
+                  "function to read your reference count table."))
+    }
+
+    # ref_fasta <- strollur::read_fasta(ref_fasta)
+    # fit_fasta <- strollur::read_fasta(fit_fasta)
+    # ref_list <- strollur::read_mothur_list(ref_list)
     copied_data <- CopyObject(fit_dist)
     class(copied_data) <- "distance_object"
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta, fit_fasta, cutoff, number_of_threads)
     result <- OptiFit3(copied_data, ref_list, ref_fasta$sequence_name, feature_column_name, bin_column_name, cutoff, closed,
-                       print_ref, selfReference = TRUE, max_iterations, random_seed)
+                       print_ref, selfReference = TRUE, max_iterations, metric, random_seed)
   }
   else {
     stop(paste0("You either have forget to supply proper parameters are you did not supply all,",
@@ -348,8 +433,12 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' the following methods: opticluster, average neighbor, nearest neighbor, furthest
 #' neighbor, and weighted neighbor. You can read more about
 #' [cluster split](https://mothur.org/wiki/cluster.split/) on the mothur wiki.
-#' @param fasta_file a `string` value that represents the path to your fasta file.
-#' @param taxonomy_file a `string` value that represents the path to your taxonomy file.
+#' @param fasta a`data.frame` representation of your fasta data. This can be generated
+#' using the `read_fasta` function. The fasta `data.frame` must contain two columns:
+#' sequence_name and sequence.
+#' @param taxonomy_file a`data.frame` representation of your taxonomy data. This can be generated
+#' using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
+#' sequence_name and taxonomy.
 #' @param count_table the count table that represents the data, must be read using the `read_count()`
 #' function.
 #' @param cluster_method the clustering method you wish to use. Your clustering options are: 
@@ -362,26 +451,56 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' @param bin_column_name Set the name of the column in the
 #' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
 #' @param random_seed a `integer` value that represents the current random seed.
+#' @inheritParams cluster metric
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
 #' 
 #'  cutoff <- 0.2
 #'  count_table <- read_count(example_path("amazon.full.count_table"))
-#'  fasta <- example_path("amazon.align")
-#'  taxonomy <- example_path("amazon.taxonomy")
+#'  fasta <- read_fasta(example_path("amazon.align"))
+#'  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
 #'  df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
 #' 
 #' @return A list of `data.frames` that contain abundance, and clustering
 #' results.
-cluster_split <- function(fasta_file, taxonomy_file, count_table, cluster_method, cutoff,
+cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                        taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
-                       random_seed = 123, number_of_threads = 1) {
+                       random_seed = 123, metric = "mcc", number_of_threads = 1) {
   
-
-  fasta <- strollur::read_fasta(fasta_file)
-  taxonomy <- strollur::read_mothur_taxonomy(taxonomy_file)
+    if(!inherits(fasta, "data.frame")) {
+      stop("fit_fasta has to be a data frame, use the `read_fasta()` function to generate fasta data.")
+    }
+    if(ncol(fasta) == 0) {
+      stop("fit_fasta column or row size is 0, please correct")
+    }
+    if(!all(c("sequence", "sequence_name") %in% colnames(fasta)) ) {
+      stop("ensure that you are using the `read_fasta()` function to read your fasta data.")
+    }
+  
+    if(!inherits(taxonomy, "data.frame")) {
+      stop(paste0("taxonomy has to be a data frame, use the `read_mothur_taxonomy()` ",
+                  "function to generate taxonomy data."))
+    }
+    if(ncol(taxonomy) == 0) {
+      stop("taxonomy column or row size is 0, please correct")
+    }
+    if(!all(c("sequence_name", "taxonomy") %in% colnames(taxonomy)) ) {
+      stop("ensure that you are using the `read_mothur_taxonomy()` function to read your taxonomy data.")
+    }
+  
+    if(!inherits(count_table, "data.frame")) {
+      stop(paste0("count_table has to be a data frame, use the `read_count()` ",
+                  "function to generate a count table"))
+    }
+    if(ncol(count_table) == 0) {
+      stop("count_table column or row size is 0, please correct")
+    }
+    if(!all(c("Representative_Sequence", "total") %in% colnames(count_table)) ) {
+      stop("ensure that you are using the `read_count()` function to read your count table.")
+    }
 
   OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
-            bin_column_name, cutoff, taxonomy_cutoff, random_seed, number_of_threads)
+            bin_column_name, cutoff, taxonomy_cutoff, random_seed, number_of_threads,
+            metric)
 }

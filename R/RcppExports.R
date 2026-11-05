@@ -29,32 +29,24 @@ Cluster <- function(DistanceData, method, featureColumnName, binColumnName, cuto
     .Call('_clustur_Cluster', PACKAGE = 'clustur', DistanceData, method, featureColumnName, binColumnName, cutoff, seed, precision)
 }
 
-OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L, delta = 1, iters = 100L, initialize = "singleton") {
-    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize)
+OptiClust <- function(DistanceData, featureColumnName, binColumnName, cutoff, seed = 123L, delta = 1, iters = 100L, initialize = "singleton", metricString = "mcc") {
+    .Call('_clustur_OptiClust', PACKAGE = 'clustur', DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize, metricString)
 }
 
-OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, optimalDenovoCluster = FALSE, maxIters = 100L, denovoIters = 10L, seed = 123L) {
-    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, optimalDenovoCluster, maxIters, denovoIters, seed)
+OptiFit <- function(distData, featureColumnName, binColumnName, cutoff, fitPercent = 50, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, optimalDenovoCluster = FALSE, maxIters = 100L, denovoIters = 10L, seed = 123L, metricString = "mcc", refWeight = "") {
+    .Call('_clustur_OptiFit', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, optimalDenovoCluster, maxIters, denovoIters, seed, metricString, refWeight)
 }
 
-OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, maxIters = 100L, seed = 123L) {
-    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, maxIters, seed)
+OptiFit2 <- function(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed = TRUE, printRef = TRUE, selfReference = FALSE, maxIters = 100L, metricString = "mcc", seed = 123L) {
+    .Call('_clustur_OptiFit2', PACKAGE = 'clustur', distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, maxIters, metricString, seed)
 }
 
-OptiFit3 <- function(combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE, maxIters = 100L, seed = 123L) {
-    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, seed)
+OptiFit3 <- function(combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed = TRUE, printRef = FALSE, selfReference = TRUE, maxIters = 100L, metricString = "mcc", seed = 123L) {
+    .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, metricString, seed)
 }
 
-OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads) {
-    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads)
-}
-
-Dist_Seqs <- function(fastaData, outputFile) {
-    .Call('_clustur_Dist_Seqs', PACKAGE = 'clustur', fastaData, outputFile)
-}
-
-RecreateFastaFile <- function(fastaDf, outputFile) {
-    invisible(.Call('_clustur_RecreateFastaFile', PACKAGE = 'clustur', fastaDf, outputFile))
+OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString = "mcc") {
+    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString)
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {

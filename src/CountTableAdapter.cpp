@@ -137,7 +137,7 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
         names[index] = name;
         columns[index] = columnData;
     }
-    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sequenceNames,
+    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative_Sequences") = sequenceNames,
         Rcpp::Named("total") = totals);
     for(size_t i = 0; i < size; i++) {
         countTable.push_back(columns[i], names[i]);

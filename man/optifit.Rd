@@ -21,6 +21,8 @@ optifit(
   max_iterations = 100,
   denovo_iters = 10,
   optimal_denovo_result = TRUE,
+  ref_weight = "none",
+  metric = "mcc",
   number_of_threads = 1
 )
 }
@@ -39,14 +41,20 @@ cluster dataframe that contains the name of the group of sequence names. This is
 \item{accnos}{a `vector` of strings that represent the reference sequences by name. Use this when you know the
 group of sequences you want your fit data to fit against.}
 
-\item{ref_fasta}{the file name of your reference's fasta data. This is a `character` value.}
+\item{ref_fasta}{a`data.frame` representation of your fasta data for your reference sequences.
+This can be generated using the `read_fasta()` function. The fasta `data.frame` must
+contain two columns: "sequence_name" and "sequence."}
 
-\item{ref_count}{the file name of your reference's count table. This is a `character` value.}
+\item{ref_count}{a `data.frame` that display sequence abundance for the reference sequences. Must
+be generated using the `read_count()` function.}
 
-\item{ref_list}{the file name of your reference's list file that you want the fit data to fit against.
-This is a `character` value.}
+\item{ref_list}{a `data.frame` respentation of the mothur list file you wish to fit your
+sequences to. Can be generated using the `read_mothur_list()` function. 
+Must include two columns: "bin_name" and "sequence_name."}
 
-\item{fit_fasta}{the file name of your fitted data's fasta file. This is a `character` value.}
+\item{fit_fasta}{a`data.frame` representation of your fasta data for your fitted sequences.
+This can be generated using the `read_fasta()` function. The fasta `data.frame` must
+contain two columns: "sequence_name" and "sequence."}
 
 \item{fit_percent}{allows you to set the percentage of reads that need to be fitted. This is a `numerical` value.}
 
@@ -66,6 +74,20 @@ This is a `character` value.}
 \item{optimal_denovo_result}{determines whether or not you want the denovo method to return the cluster
 with the highest mcc value or all of the randomly computed clusters. This is a `logical` value.}
 
+\item{ref_weight}{Ref Weight is used to randomize the reference sequences for the denovo method.
+There are three methods: none, abundance and connectivity. "none" will do a normal shuffle of
+the given sequences without any weights, abundance will shuffle the sequences using
+abundances as a weight, and connectivity will shuffle the sequences but uses
+a weight of one for every sequence.}
+
+\item{metric}{this parameter allows you to choose which metric the cluster will
+optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
+specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
+true positives (tp), true negative (tn), false positive (fp), false negative (fn),
+f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
+negative predictive value (npv), false discovery rate (fdr). The default
+metric is mcc.}
+
 \item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
 can be used.}
 }
@@ -84,10 +106,10 @@ OTUs are clustered into new OTUs.
  amazon_count <- read_count(example_path("amazon.full.count_table"))
  amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
 
- esophagus_fasta <- example_path("esophagus.fasta")
+ esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
  esophagus_count <- read_count(example_path("esophagus.count_table"))
- amazon_fasta <- example_path("amazon.align")
- esophagus_list <- example_path("esophagus.list")
+ amazon_fasta <- read_fasta(example_path("amazon.align"))
+ esophagus_list <- read_mothur_list(example_path("esophagus.list"))
 
 
  denovo <- optifit(amazon_dist, 0.03)

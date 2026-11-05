@@ -97,8 +97,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiClust
-Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int seed, const double delta, const int iters, const std::string& initialize);
-RcppExport SEXP _clustur_OptiClust(SEXP DistanceDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP seedSEXP, SEXP deltaSEXP, SEXP itersSEXP, SEXP initializeSEXP) {
+Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int seed, const double delta, const int iters, const std::string& initialize, const std::string& metricString);
+RcppExport SEXP _clustur_OptiClust(SEXP DistanceDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP seedSEXP, SEXP deltaSEXP, SEXP itersSEXP, SEXP initializeSEXP, SEXP metricStringSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -110,13 +110,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type delta(deltaSEXP);
     Rcpp::traits::input_parameter< const int >::type iters(itersSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type initialize(initializeSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiClust(DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize));
+    Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiClust(DistanceData, featureColumnName, binColumnName, cutoff, seed, delta, iters, initialize, metricString));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiFit
-Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const double fitPercent, const bool isClosed, const bool printRef, const bool selfReference, const bool optimalDenovoCluster, const int maxIters, const int denovoIters, const int seed);
-RcppExport SEXP _clustur_OptiFit(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP fitPercentSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP optimalDenovoClusterSEXP, SEXP maxItersSEXP, SEXP denovoItersSEXP, SEXP seedSEXP) {
+Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const double fitPercent, const bool isClosed, const bool printRef, const bool selfReference, const bool optimalDenovoCluster, const int maxIters, const int denovoIters, const int seed, const std::string& metricString, const std::string& refWeight);
+RcppExport SEXP _clustur_OptiFit(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP fitPercentSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP optimalDenovoClusterSEXP, SEXP maxItersSEXP, SEXP denovoItersSEXP, SEXP seedSEXP, SEXP metricStringSEXP, SEXP refWeightSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -132,13 +133,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type maxIters(maxItersSEXP);
     Rcpp::traits::input_parameter< const int >::type denovoIters(denovoItersSEXP);
     Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit(distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, optimalDenovoCluster, maxIters, denovoIters, seed));
+    Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type refWeight(refWeightSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiFit(distData, featureColumnName, binColumnName, cutoff, fitPercent, isClosed, printRef, selfReference, optimalDenovoCluster, maxIters, denovoIters, seed, metricString, refWeight));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiFit2
-Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const std::vector<std::string>& accnos, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference, const int maxIters, const int seed);
-RcppExport SEXP _clustur_OptiFit2(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP accnosSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP maxItersSEXP, SEXP seedSEXP) {
+Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName, const std::vector<std::string>& accnos, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference, const int maxIters, const std::string& metricString, const int seed);
+RcppExport SEXP _clustur_OptiFit2(SEXP distDataSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP accnosSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP maxItersSEXP, SEXP metricStringSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -151,14 +154,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
     Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
     Rcpp::traits::input_parameter< const int >::type maxIters(maxItersSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
     Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit2(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, maxIters, seed));
+    rcpp_result_gen = Rcpp::wrap(OptiFit2(distData, featureColumnName, binColumnName, accnos, cutoff, isClosed, printRef, selfReference, maxIters, metricString, seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiFit3
-Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference, const int maxIters, const int seed);
-RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP maxItersSEXP, SEXP seedSEXP) {
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const bool isClosed, const bool printRef, const bool selfReference, const int maxIters, const std::string& metricString, const int seed);
+RcppExport SEXP _clustur_OptiFit3(SEXP combinedDataSEXP, SEXP refListSEXP, SEXP accnosSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP isClosedSEXP, SEXP printRefSEXP, SEXP selfReferenceSEXP, SEXP maxItersSEXP, SEXP metricStringSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -172,14 +176,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const bool >::type printRef(printRefSEXP);
     Rcpp::traits::input_parameter< const bool >::type selfReference(selfReferenceSEXP);
     Rcpp::traits::input_parameter< const int >::type maxIters(maxItersSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
     Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, seed));
+    rcpp_result_gen = Rcpp::wrap(OptiFit3(combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, metricString, seed));
     return rcpp_result_gen;
 END_RCPP
 }
 // OptiSplit
-Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads);
-RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP) {
+Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads, const std::string& metricString);
+RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP, SEXP metricStringSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -193,31 +198,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type taxonomyCutoff(taxonomyCutoffSEXP);
     Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< const int >::type numberOfThreads(numberOfThreadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads));
+    Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString));
     return rcpp_result_gen;
-END_RCPP
-}
-// Dist_Seqs
-int Dist_Seqs(const Rcpp::DataFrame& fastaData, const std::string& outputFile);
-RcppExport SEXP _clustur_Dist_Seqs(SEXP fastaDataSEXP, SEXP outputFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fastaData(fastaDataSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type outputFile(outputFileSEXP);
-    rcpp_result_gen = Rcpp::wrap(Dist_Seqs(fastaData, outputFile));
-    return rcpp_result_gen;
-END_RCPP
-}
-// RecreateFastaFile
-void RecreateFastaFile(const Rcpp::DataFrame& fastaDf, const std::string& outputFile);
-RcppExport SEXP _clustur_RecreateFastaFile(SEXP fastaDfSEXP, SEXP outputFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fastaDf(fastaDfSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type outputFile(outputFileSEXP);
-    RecreateFastaFile(fastaDf, outputFile);
-    return R_NilValue;
 END_RCPP
 }
 // DetermineIfPhylipOrColumnFile
@@ -299,13 +282,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 7},
-    {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 8},
-    {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 12},
-    {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 10},
-    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 11},
-    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 10},
-    {"_clustur_Dist_Seqs", (DL_FUNC) &_clustur_Dist_Seqs, 2},
-    {"_clustur_RecreateFastaFile", (DL_FUNC) &_clustur_RecreateFastaFile, 2},
+    {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 9},
+    {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 14},
+    {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 11},
+    {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 12},
+    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 11},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

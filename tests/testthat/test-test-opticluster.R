@@ -387,8 +387,8 @@ test_that("opticluster will generate a warning if the mcc
 test_that("cluster_split works", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
-  fasta <- example_path("amazon.align")
-  taxonomy <- example_path("amazon.taxonomy")
+  fasta <- read_fasta(example_path("amazon.align"))
+  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
 
   df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
 
@@ -398,6 +398,35 @@ test_that("cluster_split works", {
   expect_true(nrow(df$abundance) == 43)
   expect_true(nrow(df$cluster) == 43)
 
+  # Error checking
+  expect_error(cluster_split("fasta", taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1),
+               "fit_fasta has to be a data frame,")
+  
+  expect_error(cluster_split(data.frame(), taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1),
+               "fit_fasta column or row size is 0")
+  
+  expect_error(cluster_split(data.frame(a = 1), taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1),
+              "ensure that you are using the")
+  
+  expect_error(cluster_split(fasta, "taxonomy", count_table, "opti", cutoff, 3, number_of_threads = 1),
+               "taxonomy has to be a data frame,")
+  
+  expect_error(cluster_split(fasta, data.frame(), count_table, "opti", cutoff, 3, number_of_threads = 1),
+               "taxonomy column or row size is 0")
+  
+  expect_error(cluster_split(fasta, data.frame(a = 1), count_table, "opti", cutoff, 3, number_of_threads = 1),
+              "ensure that you are using the")
+  
+    
+  expect_error(cluster_split(fasta, taxonomy, "count_table", "opti", cutoff, 3, number_of_threads = 1),
+               "count_table has to be a data frame,")
+  
+  expect_error(cluster_split(fasta, taxonomy, data.frame(), "opti", cutoff, 3, number_of_threads = 1),
+               "count_table column or row size is 0")
+  
+  expect_error(cluster_split(fasta, taxonomy, data.frame(a = 1), "opti", cutoff, 3, number_of_threads = 1),
+              "ensure that you are using the")
+
 })
 
 test_that("cluster_fit works", {
@@ -405,10 +434,10 @@ test_that("cluster_fit works", {
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
   amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"), amazon_count, 0.03)
 
-  esophagus_fasta <- example_path("esophagus.fasta")
+  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
   esophagus_count <- read_count(example_path("esophagus.count_table"))
-  amazon_fasta <- example_path("amazon.align")
-  esophagus_list <- example_path("esophagus.list")
+  amazon_fasta <- read_fasta(example_path("amazon.align"))
+  esophagus_list <- read_mothur_list(example_path("esophagus.list"))
 
 
   denovo <- optifit(amazon_dist, 0.03)
@@ -433,4 +462,91 @@ test_that("cluster_fit works", {
   expect_true(nrow(ref_cluster$cluster) == 24)
   expect_true(nrow(ref_cluster_open$cluster) == 110)
   expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
+
+  
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance")
+  expect_true(nrow(denovo$cluster) == 0)
+
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "connectivity")
+  expect_true(nrow(denovo$cluster) == 0)
+
+  expect_error(optifit(amazon_dist, 0.03, ref_weight = "something"),
+  "something is not a valid ref_weight options.options are: abundance, connectivity, none.")
+
+  # Error Checking
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = "",
+                       ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(), print_ref = TRUE),
+               "ref_fasta has to be a data frame")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                       ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = "",
+                       number_of_threads = parallel::detectCores(), print_ref = TRUE),
+               "fit_fasta has to be a data frame")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = data.frame(),
+                       ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(), print_ref = TRUE),
+               "fit_fasta or ref_fasta column or row size is 0")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = data.frame(),
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "fit_fasta or ref_fasta column or row size is 0")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = data.frame(a = 1),
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ensure that you are using the")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = data.frame(a = 1),
+                      ref_count = esophagus_count, ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ensure that you are using the")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                    ref_count = esophagus_count, ref_list = "", fit_fasta = amazon_fasta,
+                    number_of_threads = parallel::detectCores(), print_ref = TRUE),
+            "ref_list has to be a data frame,")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = esophagus_count, ref_list = data.frame(), fit_fasta = amazon_fasta,
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ref_list column or row size is 0")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = esophagus_count, ref_list = data.frame(a = 1), fit_fasta = amazon_fasta,
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ensure that you are using the")
+  
+  expect_error(optifit("amazon_dist", 0.03),
+               "fit_dist must be created using the")
+  
+  expect_error(accnos <- optifit(amazon_dist, 0.03, accnos = c(amazon_count$Representative_Sequence[1:40], "a")),
+               "accnos contains sequences that are not in the count table, please correct.")
+  
+  expect_error(accnos <- optifit(amazon_dist, 0.03, accnos = c(amazon_count$Representative_Sequence, "a")),
+               "length of accnos is greater than the number sequences in the count table")
+  
+  expect_error(accnos <- optifit(amazon_dist, 0.03, accnos = c(1,2,3)),
+              "accnos must be a list of characters.")
+  
+  expect_error(accnos <- optifit(amazon_dist, 0.03, accnos = character()),
+            "the length of the accnos cannot be 0.")
+  
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                  ref_count = "esophagus_count", ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                  number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ref_count has to be a data frame,")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = data.frame(), ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ref_count column or row size is 0")
+  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
+                      ref_count = data.frame(a = 1), ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
+              "ensure that you are using the")
 })
