@@ -291,7 +291,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' the given sequences without any weights, abundance will shuffle the sequences using
 #' abundances as a weight, and connectivity will shuffle the sequences but uses
 #' a weight of one for every sequence.
-#' @inheritParams cluster metric
+#' @inheritParams cluster metric strollur_object
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
@@ -321,7 +321,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL, fit_percent = 50, closed = TRUE, print_ref = FALSE,
                     random_seed = 123, max_iterations = 100, denovo_iters = 10, optimal_denovo_result = TRUE, ref_weight = "none",
-                    metric = "mcc", number_of_threads = 1) {
+                    metric = "mcc", number_of_threads = 1, strollur_object = NULL) {
 
   if(!inherits(fit_dist, "distance_object")) {
     stop("fit_dist must be created using the `read_dist()` function.")
@@ -349,6 +349,31 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
     result <- OptiFit(fit_dist, feature_column_name, bin_column_name, cutoff, fit_percent, closed, print_ref, 
                       selfReference = FALSE, optimal_denovo_result, max_iterations, denovo_iters, random_seed,
                       metric, ref_weight)
+
+    index <- 1
+    if(!optimal_denovo_result) {
+      index <- result[[1]]$optimal_index
+      result <- lapply(result, function(x) {
+        class(x) <- "mothur_cluster"
+        x$optimal_index <- NULL
+        return(x)
+      })
+      #  for(i in result) {
+      #   class(i) <- "mothur_cluster"
+      #   i$optimal_index <- NULL
+      # }
+    } else {
+      class(result) <- "mothur_cluster"
+    }
+
+   
+    if (!is.null(strollur_object)) {
+      res <- add_results_to_strollur_object(result[index])
+      strollur::xdev_assign_bin_representative_sequences(strollur_object,
+                                                         res)                                               
+    }
+    return(result)
+    
   } else if (!is.null(accnos)) {
     if(!inherits(accnos, "character")) {
       stop("accnos must be a list of characters.")
@@ -423,6 +448,11 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
                 "the parameters required to run the reference clustering method, please check again."))
   }
   class(result) <- "mothur_cluster"
+  if (!is.null(strollur_object)) {
+    result <- add_results_to_strollur_object(df)
+    strollur::xdev_assign_bin_representative_sequences(strollur_object,
+                                                        result)                                               
+  }
   result
 }
 
@@ -451,7 +481,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' @param bin_column_name Set the name of the column in the
 #' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
 #' @param random_seed a `integer` value that represents the current random seed.
-#' @inheritParams cluster metric
+#' @inheritParams cluster metric strollur_object
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
@@ -466,7 +496,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' results.
 cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                        taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
-                       random_seed = 123, metric = "mcc", number_of_threads = 1) {
+                       random_seed = 123, metric = "mcc", number_of_threads = 1,
+                       strollur_object = NULL) {
   
     if(!inherits(fasta, "data.frame")) {
       stop("fit_fasta has to be a data frame, use the `read_fasta()` function to generate fasta data.")
@@ -500,7 +531,15 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
       stop("ensure that you are using the `read_count()` function to read your count table.")
     }
 
-  OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
+  result <- OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
             bin_column_name, cutoff, taxonomy_cutoff, random_seed, number_of_threads,
             metric)
+  class(result) <- "mothur_cluster"
+  if (!is.null(strollur_object)) {
+    res <- add_results_to_strollur_object(result)
+    strollur::xdev_assign_bin_representative_sequences(strollur_object,
+                                                        res)                                               
+  }
+
+  return(result)
 }

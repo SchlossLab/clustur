@@ -15,7 +15,8 @@ cluster_split(
   bin_column_name = "bin",
   random_seed = 123,
   metric = "mcc",
-  number_of_threads = 1
+  number_of_threads = 1,
+  strollur_object = NULL
 )
 }
 \arguments{
@@ -52,6 +53,10 @@ metric is mcc.}
 
 \item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
 can be used.}
+
+\item{strollur_object}{Using the `strollur` r package, you can use your
+created strollur object to save your clustering results to. This allows you
+to seamless modify your strollur object and analysis results as needed.}
 
 \item{taxonomy_file}{a`data.frame` representation of your taxonomy data. This can be generated
 using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:

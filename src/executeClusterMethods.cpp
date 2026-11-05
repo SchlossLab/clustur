@@ -188,7 +188,8 @@ Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, c
           Rcpp::Named("abundance") = tidySharedDataFrame,
           Rcpp::Named("cluster") = clusterDataFrame,
           Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
-          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame,
+          Rcpp::Named("optimal_index") = index + 1);
         delete clusterExport;
     }
     delete result;

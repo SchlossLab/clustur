@@ -23,7 +23,8 @@ optifit(
   optimal_denovo_result = TRUE,
   ref_weight = "none",
   metric = "mcc",
-  number_of_threads = 1
+  number_of_threads = 1,
+  strollur_object = NULL
 )
 }
 \arguments{
@@ -90,6 +91,10 @@ metric is mcc.}
 
 \item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
 can be used.}
+
+\item{strollur_object}{Using the `strollur` r package, you can use your
+created strollur object to save your clustering results to. This allows you
+to seamless modify your strollur object and analysis results as needed.}
 }
 \value{
 A `list` of a list of `data.frames` that contain abundance, and clustering
