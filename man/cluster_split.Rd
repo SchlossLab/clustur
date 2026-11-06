@@ -24,6 +24,10 @@ cluster_split(
 using the `read_fasta` function. The fasta `data.frame` must contain two columns:
 sequence_name and sequence.}
 
+\item{taxonomy}{a`data.frame` representation of your taxonomy data. This can be generated
+using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
+sequence_name and taxonomy.}
+
 \item{count_table}{the count table that represents the data, must be read using the `read_count()`
 function.}
 
@@ -57,10 +61,6 @@ can be used.}
 \item{strollur_object}{Using the `strollur` r package, you can use your
 created strollur object to save your clustering results to. This allows you
 to seamless modify your strollur object and analysis results as needed.}
-
-\item{taxonomy_file}{a`data.frame` representation of your taxonomy data. This can be generated
-using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
-sequence_name and taxonomy.}
 }
 \value{
 A list of `data.frames` that contain abundance, and clustering

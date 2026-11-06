@@ -449,9 +449,9 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
   }
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
-    result <- add_results_to_strollur_object(df)
+    res <- add_results_to_strollur_object(result)
     strollur::xdev_assign_bin_representative_sequences(strollur_object,
-                                                        result)                                               
+                                                        res)                                               
   }
   result
 }
@@ -466,7 +466,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' @param fasta a`data.frame` representation of your fasta data. This can be generated
 #' using the `read_fasta` function. The fasta `data.frame` must contain two columns:
 #' sequence_name and sequence.
-#' @param taxonomy_file a`data.frame` representation of your taxonomy data. This can be generated
+#' @param taxonomy a`data.frame` representation of your taxonomy data. This can be generated
 #' using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
 #' sequence_name and taxonomy.
 #' @param count_table the count table that represents the data, must be read using the `read_count()`

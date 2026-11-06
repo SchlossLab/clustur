@@ -117,10 +117,10 @@ Along with the main cluster function, mothur also includes two other clustering 
   amazon_count <- read_count(example_path("amazon.full.count_table"))
   amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
 
-  esophagus_fasta <- example_path("esophagus.fasta")
+  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
   esophagus_count <- read_count(example_path("esophagus.count_table"))
-  amazon_fasta <- example_path("amazon.align")
-  esophagus_list <- example_path("esophagus.list")
+  amazon_fasta <- read_fasta(example_path("amazon.align"))
+  esophagus_list <- read_mothur_list(example_path("esophagus.list"))
 
 
   denovo <- optifit(amazon_dist, 0.03)
@@ -140,9 +140,9 @@ Along with the main cluster function, mothur also includes two other clustering 
 ```{r}
   cutoff <- 0.2
   count_table <- read_count(example_path("amazon.full.count_table"))
-  fasta <- example_path("amazon.align")
-  taxonomy <- example_path("amazon.taxonomy")
-  df <- cluster_split(fasta_file = fasta, taxonomy_file = taxonomy, count_table = count_table, cluster_method = "opti", cutoff = cutoff, taxonomy_cutoff = 3, number_of_threads = 1)
+  fasta <- read_fasta(example_path("amazon.align"))
+  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
+  df <- cluster_split(fasta = fasta, taxonomy = taxonomy, count_table = count_table, cluster_method = "opti", cutoff = cutoff, taxonomy_cutoff = 3, number_of_threads = 1)
 ```
 
 
