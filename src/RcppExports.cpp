@@ -11,29 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// CreateFastaDataBase
-SEXP CreateFastaDataBase(const std::vector<std::string>& names, const std::vector<std::string>& sequences);
-RcppExport SEXP _clustur_CreateFastaDataBase(SEXP namesSEXP, SEXP sequencesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type names(namesSEXP);
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type sequences(sequencesSEXP);
-    rcpp_result_gen = Rcpp::wrap(CreateFastaDataBase(names, sequences));
-    return rcpp_result_gen;
-END_RCPP
-}
-// GetSequences
-int GetSequences(const SEXP& fastaDatabase);
-RcppExport SEXP _clustur_GetSequences(SEXP fastaDatabaseSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const SEXP& >::type fastaDatabase(fastaDatabaseSEXP);
-    rcpp_result_gen = Rcpp::wrap(GetSequences(fastaDatabase));
-    return rcpp_result_gen;
-END_RCPP
-}
 // GetDistanceDataFrame
 Rcpp::DataFrame GetDistanceDataFrame(const SEXP& fileReader);
 RcppExport SEXP _clustur_GetDistanceDataFrame(SEXP fileReaderSEXP) {
@@ -64,18 +41,6 @@ BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type countTable(countTableSEXP);
     rcpp_result_gen = Rcpp::wrap(CreateDataFrameFromSparseCountTable(countTable));
-    return rcpp_result_gen;
-END_RCPP
-}
-// CreateSparseMatrix
-double CreateSparseMatrix(const std::vector<std::string>& sequences, const double cutoff);
-RcppExport SEXP _clustur_CreateSparseMatrix(SEXP sequencesSEXP, SEXP cutoffSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type sequences(sequencesSEXP);
-    Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
-    rcpp_result_gen = Rcpp::wrap(CreateSparseMatrix(sequences, cutoff));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -275,12 +240,9 @@ END_RCPP
 RcppExport SEXP run_testthat_tests(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_clustur_CreateFastaDataBase", (DL_FUNC) &_clustur_CreateFastaDataBase, 2},
-    {"_clustur_GetSequences", (DL_FUNC) &_clustur_GetSequences, 1},
     {"_clustur_GetDistanceDataFrame", (DL_FUNC) &_clustur_GetDistanceDataFrame, 1},
     {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
-    {"_clustur_CreateSparseMatrix", (DL_FUNC) &_clustur_CreateSparseMatrix, 2},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 7},
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 9},
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 14},

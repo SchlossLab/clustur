@@ -13,7 +13,56 @@ test_that("opticluster returns four dataframes", {
 
 })
 
-test_that("opticluster and other clustering methods 
+test_that("opticluster works using every metric", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "mcc")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "sens")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "spec")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tptn")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tp")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tn")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fp")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fn")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "f1score")
+  expect_true(nrow(df$cluster) == 27)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "accuracy")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "ppv")
+  expect_true(nrow(df$cluster) == 97)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "npv")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fdr")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fpfn")
+  expect_true(nrow(df$cluster) == 29)
+
+})
+
++test_that("opticluster and other clustering methods 
           do not cluster duplicate values with column files", {
             cutoff <- 0.2
             count_table <- read_count(test_path("extdata",
