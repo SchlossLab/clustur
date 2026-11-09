@@ -513,8 +513,10 @@ test_that("cluster_split works", {
   fasta <- strollur::report(miseq, type = "fasta")
   tax <- strollur::report(miseq, type = "sequence_taxonomy")
   taxonomy <- aggregate(. ~ sequence_name, data = tax[, c("sequence_name", "taxonomy")], FUN = paste0, collapse = ";")
-  df <- cluster_split(fasta, taxonomy, count, "opti", 0.2, 3, number_of_threads = 1)
-
+  df <- cluster_split(fasta, taxonomy, count, "opti", 0.2, 3, number_of_threads = 1, strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
 })
 
 test_that("cluster_fit works", {
@@ -529,6 +531,11 @@ test_that("cluster_fit works", {
 
 
   denovo <- optifit(amazon_dist, 0.03)
+  expect_message(optifit(amazon_dist, 0.03, fit_percent = 0),
+                 "fit_percent is less than 0.01, setting fit_percent to 0.01")
+  expect_message(optifit(amazon_dist, 0.03, fit_percent = 101),
+                "fit_percent is greater than 100, setting fit_percent to 100")
+  
   denovo_optimal_false <- optifit(amazon_dist, 0.03, optimal_denovo_result = FALSE)
   denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
   accnos <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40])

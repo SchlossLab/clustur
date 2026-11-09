@@ -51,8 +51,6 @@ OptiRefMatrix::OptiRefMatrix(const OptiData* matrix, const CountTableAdapter& ad
     refWeightMethod = refWeight;
 
     fitPercent = fP / 100.0;
-    if (fitPercent < 0.001) { fitPercent = 0.10; Rcpp::warning("[WARNING]: fit percentage must be between 0.001 (0.1%) and 1.0 (100%). Setting to 0.10 or 10%. \n"); } //minumum of 0.1%
-    else if (fitPercent > 100.0) {  Rcpp::stop("[ERROR]: fit percentage must be between 0.0001 and 100.0\n"); }
 
     square = false;
     std::unordered_set<std::string> noRefNamesSet;

@@ -330,11 +330,11 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
   if (ref_parameters_check && is.null(accnos)) {
     if(fit_percent < 0.01) {
       message("fit_percent is less than 0.01, setting fit_percent to 0.01")
-      fit_percent = 0.01
+      fit_percent <- 0.01
     }
     else if(fit_percent > 100) {
       message("fit_percent is greater than 100, setting fit_percent to 100")
-      fit_percent = 100
+      fit_percent <- 100
     }
 
     ref_weight_options = c("abundance", "connectivity", "none")
@@ -537,7 +537,7 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)
-    strollur::assign(strollur_object, result, type = "bin", bin_type = "otu")                                                     
+    strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")                                                     
   }
 
   return(result)
