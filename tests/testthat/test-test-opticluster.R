@@ -13,6 +13,37 @@ test_that("opticluster returns four dataframes", {
 
 })
 
+test_that("cluster with strollur objects", {
+  cutoff <- 0.03
+  miseq <- strollur::miseq_sop_example()
+  count <- read_count(miseq)
+  dist <- read_dist(test_path("extdata","miseq.column"), count, 0.03)
+  df <- cluster(dist, cutoff, strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "furthest")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "nearest")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "average")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "weighted")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+})
+
 test_that("opticluster works using every metric", {
   cutoff <- 0.2
   count_table <- read_count(test_path("extdata", "amazon.count_table"))
@@ -475,6 +506,14 @@ test_that("cluster_split works", {
   
   expect_error(cluster_split(fasta, taxonomy, data.frame(a = 1), "opti", cutoff, 3, number_of_threads = 1),
               "ensure that you are using the")
+  
+  # With Strollur object
+  miseq <- strollur::miseq_sop_example()
+  count <- read_count(miseq)
+  fasta <- strollur::report(miseq, type = "fasta")
+  tax <- strollur::report(miseq, type = "sequence_taxonomy")
+  taxonomy <- aggregate(. ~ sequence_name, data = tax[, c("sequence_name", "taxonomy")], FUN = paste0, collapse = ";")
+  df <- cluster_split(fasta, taxonomy, count, "opti", 0.2, 3, number_of_threads = 1)
 
 })
 
@@ -598,4 +637,22 @@ test_that("cluster_fit works", {
                       ref_count = data.frame(a = 1), ref_list = esophagus_list, fit_fasta = amazon_fasta,
                       number_of_threads = parallel::detectCores(), print_ref = TRUE),
               "ensure that you are using the")
+  
+  
+  # Strollur
+  cutoff <- 0.03
+  miseq <- strollur::miseq_sop_example()
+  fasta <- strollur::report(miseq, type = "fasta")
+  count <- read_count(miseq)
+  dist <- read_dist(test_path("extdata","miseq.column"), count, 0.03)
+
+  denovo <- optifit(dist, 0.03, strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(denovo$cluster))
+
+  accnos <- optifit(dist, 0.03, accnos = count$Representative_Sequence[1:100], strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(accnos$cluster))
 })

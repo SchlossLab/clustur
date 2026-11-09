@@ -158,8 +158,7 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
   class(df) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     result <- add_results_to_strollur_object(df)
-    strollur::xdev_assign_bin_representative_sequences(strollur_object,
-                                                       result)                                               
+    strollur::assign(strollur_object, result, type = "bin", bin_type = "otu")                                          
   }
   df
 }
@@ -362,15 +361,17 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
       #   class(i) <- "mothur_cluster"
       #   i$optimal_index <- NULL
       # }
+      optimal_result <- result[index]
     } else {
       class(result) <- "mothur_cluster"
+      optimal_result <- result
     }
+    
 
    
     if (!is.null(strollur_object)) {
-      res <- add_results_to_strollur_object(result[index])
-      strollur::xdev_assign_bin_representative_sequences(strollur_object,
-                                                         res)                                               
+      res <- add_results_to_strollur_object(optimal_result)
+      strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")                                       
     }
     return(result)
     
@@ -450,8 +451,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)
-    strollur::xdev_assign_bin_representative_sequences(strollur_object,
-                                                        res)                                               
+    strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")                                       
   }
   result
 }
@@ -537,8 +537,7 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)
-    strollur::xdev_assign_bin_representative_sequences(strollur_object,
-                                                        res)                                               
+    strollur::assign(strollur_object, result, type = "bin", bin_type = "otu")                                                     
   }
 
   return(result)

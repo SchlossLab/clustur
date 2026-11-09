@@ -99,3 +99,4 @@ SEXP CopyObject(const SEXP& distanceObject) {
     DistanceFileReader* copy = new DistanceFileReader(*refDistanceData.get());
     return Rcpp::XPtr<DistanceFileReader>(copy);
 }
+
