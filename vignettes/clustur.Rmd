@@ -132,11 +132,11 @@ Along with the main cluster function, mothur also includes two other clustering 
   ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
                          ref_fasta = esophagus_fasta, ref_count = esophagus_count,
                          ref_list = esophagus_list, fit_fasta = amazon_fasta,
-                         number_of_threads = parallel::detectCores(), print_ref = TRUE)
+                         number_of_threads = parallel::detectCores(), print_ref = TRUE, closed = FALSE)
 
 ```
 
-
+**Example of Optisplit**
 ```{r}
   cutoff <- 0.2
   count_table <- read_count(example_path("amazon.full.count_table"))
