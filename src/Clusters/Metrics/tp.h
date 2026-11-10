@@ -26,7 +26,6 @@ public:
         
         return tpmax;
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/TP"; }
 };
 
 /***********************************************************************/

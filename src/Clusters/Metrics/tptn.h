@@ -27,7 +27,6 @@ public:
         return tptn;
 
     }   
-    std::string getCitation() override { return "http://www.mothur.org/wiki/TPTN"; }
 };
 
 /***********************************************************************/

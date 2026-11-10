@@ -302,13 +302,18 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod,
     const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads,
-    const std::string& metricString = "mcc") {
+    const std::string& metricString = "mcc", const double delta = 1, const int iters = 100,
+    const int precision = 100, const std::string& initialize = "singleton") {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
     std::vector<TaxonomyData> taxonomyDatabase = Utils::CreateTaxonomyData(taxonomyData);
     PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
     ClusterParameters parameter(clusterMethod);
+    parameter.SetParameters("delta", std::to_string(delta));
+    parameter.SetParameters("iters", std::to_string(iters));
+    parameter.SetParameters("initialize", initialize);
+    parameter.SetParameters("precision", std::to_string(precision));
     ClusterMetric* metric = Utils::GetClusterMetric(metricString);
     ClusterSplit cluster(fastaDatabase, taxonomyDatabase, calculator,
         parameter, metric, countTableAdapter, cutoff, taxonomyCutoff, seed, numberOfThreads);
@@ -316,17 +321,21 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     const auto* result = cluster.Execute();
     delete calculator;
     delete metric;
-    // const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame SensMetricsDataFrame = cluster.GetSensitivityData();
     // const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
     const auto label = result->GetListVector().label;
     const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
         featureColumnName, binColumnName);
     const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
     delete(result);
+    if (clusterMethod != "opti") {
+        return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame);
+    }
     return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
-      Rcpp::Named("abundance") = tidySharedDataFrame,
-      Rcpp::Named("cluster") = clusterDataFrame);
-      // Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
-      // Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = SensMetricsDataFrame);
     // return Rcpp::List::create();
 }

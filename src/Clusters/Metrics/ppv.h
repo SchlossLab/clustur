@@ -27,9 +27,7 @@ public:
         
         if (std::isnan(positivePredictiveValue) || std::isinf(positivePredictiveValue)) { positivePredictiveValue = 0; }
         return positivePredictiveValue;
-        
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/PPV"; }
 };
 
 /***********************************************************************/

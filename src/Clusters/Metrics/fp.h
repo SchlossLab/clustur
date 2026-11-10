@@ -26,7 +26,6 @@ public:
         
         return (1.0 - fpmin);
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/FP"; }
 };
 
 /***********************************************************************/

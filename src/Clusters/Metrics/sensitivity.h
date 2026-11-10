@@ -28,7 +28,6 @@ public:
         
         return sensitivity;
     } //ignores tn, fp
-    std::string getCitation() override { return "http://www.mothur.org/wiki/Sensitivity"; }
 };
 
 /***********************************************************************/

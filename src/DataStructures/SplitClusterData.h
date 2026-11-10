@@ -27,6 +27,7 @@ struct SplitClusterData {
     int seed;
     std::vector<ClusterExport*> results{};
     double cutoff{};
+    double tp = 0, tn = 0, fp = 0, fn = 0;
 
     SplitClusterData() = default;
     explicit SplitClusterData(const std::vector<OptiDataComponent>& dividedData,

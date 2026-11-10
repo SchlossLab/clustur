@@ -17,7 +17,7 @@
 
 #include "../Adapters/CountTableAdapter.h"
 
-class ClusterSplit final : ClusterMethod {
+class ClusterSplit final : public ClusterMethod {
 public:
     ClusterSplit(FastaDatabase  fastaDatabase, const std::vector<TaxonomyData>& taxaData,
         PairwiseDistanceCalculator* calculator, ClusterParameters parameters, ClusterMetric* metric,
@@ -30,6 +30,7 @@ public:
     std::vector<ClusterExport *> createProcesses(std::vector<OptiDataComponent> &distanceMatrices,
                                                  std::set<std::string> &labels, size_t processors);
 
+    void RunSenSpec();
     void cluster(SplitClusterData *params) const;
     void SetClusterParameters(const ClusterParameters &) override {};
 
@@ -45,6 +46,7 @@ private:
     int numberOfThreads;
     double cutoff;
     const std::mutex mutex;
+    double tp, tn, fp, fn;
 
 };
 

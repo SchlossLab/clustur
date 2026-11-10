@@ -17,9 +17,9 @@
 //***************************************************************************************************************
 //removes anyone with no valid dists and changes name to matrix short names
 SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
-        std::vector<std::pair<std::string, long long>> nameIndex = matrix.getNameIndexMap();
+        const std::vector<std::pair<std::string, long long>> nameIndex = matrix.getNameIndexMap();
 
-        if (list != nullptr) {
+        if (list != nullptr && !nameIndex.empty()) {
             //for each bin
             for (int i = 0; i < list->getNumBins(); i++) {
 

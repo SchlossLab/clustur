@@ -8,20 +8,29 @@
 
 #include "Clusters/OptiCluster.h"
 #include "Adapters/OptimatrixAdapter.h"
+#include "Clusters/Metrics/accuracy.h"
+#include "Clusters/Metrics/f1score.h"
+#include "Clusters/Metrics/fdr.h"
+#include "Clusters/Metrics/mcc.h"
+#include "Clusters/Metrics/npv.h"
+#include "Clusters/Metrics/ppv.h"
+#include "Clusters/Metrics/sensitivity.h"
+#include "Clusters/Metrics/specificity.h"
 #include "DataStructures/OptiData.h"
 #include "DataStructures/SplitMatrix.h"
+#include "MothurDependencies/SensSpecCalc.h"
 
 ClusterSplit::ClusterSplit(FastaDatabase fastaDatabase, const std::vector<TaxonomyData> &taxaData,
-	PairwiseDistanceCalculator *calculator,
-	ClusterParameters parameters,
-	ClusterMetric *metric,
-	CountTableAdapter adapter,
-	const double cutoff,
-	const int taxonomyCutoff,
-	const int seed,
-	const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator),
-		clusterParameters(parameters), metric(metric), taxaData(taxaData), countTableAdapter(std::move(adapter)),
-		taxonomyCutoff(taxonomyCutoff), seed(seed), numberOfThreads(numberOfThreads), cutoff(cutoff){}
+                           PairwiseDistanceCalculator *calculator,
+                           ClusterParameters parameters,
+                           ClusterMetric *metric,
+                           CountTableAdapter adapter,
+                           const double cutoff,
+                           const int taxonomyCutoff,
+                           const int seed,
+                           const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator),
+                                                      clusterParameters(parameters), metric(metric), taxaData(taxaData), countTableAdapter(std::move(adapter)),
+                                                      taxonomyCutoff(taxonomyCutoff), seed(seed), numberOfThreads(numberOfThreads), cutoff(cutoff){}
 
 ClusterExport * ClusterSplit::Execute() {
 	std::vector<OptiDataComponent> splitMatrices =
@@ -67,6 +76,7 @@ ClusterExport * ClusterSplit::Execute() {
 
 	// singletons.push_back(completedListVector);
 	completeList->SetListVector(singletons, std::to_string(cutoff));
+	if (clusterParameters.GetClusterType() == "opti") RunSenSpec();
 	return completeList;
 }
 //**********************************************************************************************************************
@@ -147,12 +157,23 @@ std::vector<ClusterExport *> ClusterSplit::createProcesses(std::vector<OptiDataC
 
 	std::vector<ClusterExport*> results = dataBundle->results;
 	results.reserve(distanceMatrices.size());
+	if (dataBundle->clusterParameters.GetClusterType() == "opti") {
+		fp += dataBundle->fp;
+		fn += dataBundle->fn;
+		tp += dataBundle->tp;
+		tn += dataBundle->tn;
+	}
     for (size_t i = 0; i < processors - 1; i++) {
         workerThreads[i]->join();
         delete workerThreads[i];
     }
 	for (const auto& result: data) {
 		results.insert(results.end(), result->results.cbegin(), result->results.cend());
+		if (result->clusterParameters.GetClusterType() != "opti") continue;
+		fp += result->fp;
+		fn += result->fn;
+		tp += result->tp;
+		tn += result->tn;
 	}
 
 	dataBundle->results.clear();
@@ -170,11 +191,20 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 	params->results.reserve(params->dividedData.size());
 	for (auto&[matrix, listVector] : params->dividedData) {
 		if (params->clusterParameters.GetClusterType() == "opti") {
+			double fp = 0, fn = 0, tp = 0, tn = 0;
 			OptimatrixAdapter adapter(cutoff);
 			OptiData* data = adapter.ConvertToOptimatrix(&matrix, &listVector, false);
 			ClusterMethod* method = new OptiCluster(data, params->metric, params->seed, cutoff, 0);
 			method->SetClusterParameters(params->clusterParameters);
-			params->results.emplace_back(method->Execute());
+			ClusterExport* result = method->Execute();
+			params->results.emplace_back(result);
+			const ListVector& vector = result->GetListVector().listVector;
+			SensSpecCalc calc(*data, &vector);
+			calc.getResults(*data, tp, tn, fp, fn);
+			params->fp += fp;
+			params->fn += fn;
+			params->tp += tp;
+			params->tn += tn;
 			delete method;
 			delete data;
 			continue;
@@ -187,4 +217,46 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 		delete method;
 
 	}
+}
+
+// void ClusterSplit::runSensSpec() {
+//
+// }
+
+void ClusterSplit::RunSenSpec() {
+    std::vector<double> results;
+
+    Sensitivity sens;
+    double sensitivity = sens.getValue(tp, tn, fp, fn);
+    results.push_back(sensitivity);
+    Specificity spec;
+    double specificity = spec.getValue(tp, tn, fp, fn);
+    results.push_back(specificity);
+    PPV ppv;
+    double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
+    results.push_back(positivePredictiveValue);
+    NPV npv;
+    double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);
+    results.push_back(negativePredictiveValue);
+    FDR fdr;
+    double falseDiscoveryRate = fdr.getValue(tp, tn, fp, fn);
+    results.push_back(falseDiscoveryRate);
+    Accuracy acc;
+    double accuracy = acc.getValue(tp, tn, fp, fn);
+    results.push_back(accuracy);
+    MCC mcc;
+    double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
+    results.push_back(matthewsCorrCoef);
+    F1Score f1;
+    double f1Score = f1.getValue(tp, tn, fp, fn);
+    results.push_back(f1Score);
+
+	std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
+		"specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
+
+	std::string sensFile = std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
+			std::to_string(tn) + ',' +
+			std::to_string(fp) + ',' + std::to_string(fn) + ',';
+	for (double result: results) { sensFile += std::to_string(result) + ','; }
+	Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
 }

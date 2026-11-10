@@ -148,8 +148,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiSplit
-Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads, const std::string& metricString);
-RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP, SEXP metricStringSEXP) {
+Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads, const std::string& metricString, const double delta, const int iters, const int precision, const std::string& initialize);
+RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP, SEXP metricStringSEXP, SEXP deltaSEXP, SEXP itersSEXP, SEXP precisionSEXP, SEXP initializeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -164,7 +164,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< const int >::type numberOfThreads(numberOfThreadsSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type metricString(metricStringSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString));
+    Rcpp::traits::input_parameter< const double >::type delta(deltaSEXP);
+    Rcpp::traits::input_parameter< const int >::type iters(itersSEXP);
+    Rcpp::traits::input_parameter< const int >::type precision(precisionSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type initialize(initializeSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString, delta, iters, precision, initialize));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -248,7 +252,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 14},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 11},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 12},
-    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 11},
+    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 15},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},

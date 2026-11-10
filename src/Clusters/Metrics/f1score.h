@@ -30,7 +30,6 @@ public:
         
         return f1Score;
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/F1Score"; }
 };
 
 /***********************************************************************/

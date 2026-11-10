@@ -14,6 +14,9 @@ cluster_split(
   feature_column_name = "feature",
   bin_column_name = "bin",
   random_seed = 123,
+  delta = 1e-04,
+  max_iterations = 100,
+  initialize = "singleton",
   metric = "mcc",
   number_of_threads = 1,
   strollur_object = NULL
@@ -46,6 +49,18 @@ dataframe that contains the sequence names. This is a `character` value.}
 cluster dataframe that contains the name of the group of sequence names. This is a `character` value.}
 
 \item{random_seed}{a `integer` value that represents the current random seed.}
+
+\item{delta}{Allows you to set the stable value for the metric in the
+opticluster method. It defaults to 0.0001, to reach full convergence
+set this value to 0.}
+
+\item{max_iterations}{the max amount of iterations the opticluster
+method will run. The default is 100.}
+
+\item{initialize}{this parameter allows you to set the default randomization of
+for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
+will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
+into one OTU. Defaults to singleton.}
 
 \item{metric}{this parameter allows you to choose which metric the cluster will
 optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),

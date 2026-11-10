@@ -24,7 +24,6 @@ public:
         
         return (1.0 - fnmin);
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/FN"; }
 };
 
 /***********************************************************************/

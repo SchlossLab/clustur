@@ -16,7 +16,6 @@ public:
     virtual ~ClusterMetric() = default;
     virtual double getValue(double, double, double, double) = 0; //tp, tn, fp, fn
     virtual std::string getName() {return name;}
-    virtual std::string getCitation() = 0;
 
 protected:
     std::string name;

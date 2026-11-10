@@ -382,7 +382,7 @@ ClusterExport* OptiCluster::Execute() {
     // double delta = 1;
     // int maxIters = 100;
     std::ofstream listFile;
-    std::vector<std::string> sensfileHeaders{"label","cutoff","ttp","tn","fp","fn","sensitivity",
+    std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
         "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
     // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
 

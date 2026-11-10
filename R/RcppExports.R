@@ -33,8 +33,8 @@ OptiFit3 <- function(combinedData, refList, accnos, featureColumnName, binColumn
     .Call('_clustur_OptiFit3', PACKAGE = 'clustur', combinedData, refList, accnos, featureColumnName, binColumnName, cutoff, isClosed, printRef, selfReference, maxIters, metricString, seed)
 }
 
-OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString = "mcc") {
-    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString)
+OptiSplit <- function(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString = "mcc", delta = 1, iters = 100L, precision = 100L, initialize = "singleton") {
+    .Call('_clustur_OptiSplit', PACKAGE = 'clustur', fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString, delta, iters, precision, initialize)
 }
 
 DetermineIfPhylipOrColumnFile <- function(filePath) {

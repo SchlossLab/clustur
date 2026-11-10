@@ -26,7 +26,6 @@ public:
         
         return tnmax;
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/TN"; }
 };
 
 /***********************************************************************/

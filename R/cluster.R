@@ -481,7 +481,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' @param bin_column_name Set the name of the column in the
 #' cluster dataframe that contains the name of the group of sequence names. This is a `character` value.
 #' @param random_seed a `integer` value that represents the current random seed.
-#' @inheritParams cluster metric strollur_object
+#' @inheritParams cluster delta max_iterations initialize metric strollur_object
 #' @param number_of_threads a `integer` value that represents the amount of allotted threads that
 #' can be used.
 #' @examples
@@ -496,7 +496,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature", bin_colum
 #' results.
 cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                        taxonomy_cutoff, feature_column_name = "feature", bin_column_name = "bin",  
-                       random_seed = 123, metric = "mcc", number_of_threads = 1,
+                       random_seed = 123, delta = 0.0001, max_iterations = 100, 
+                       initialize = "singleton", metric = "mcc", number_of_threads = 1,
                        strollur_object = NULL) {
   
     if(!inherits(fasta, "data.frame")) {
@@ -532,8 +533,8 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
     }
 
   result <- OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
-            bin_column_name, cutoff, taxonomy_cutoff, random_seed, number_of_threads,
-            metric)
+                      bin_column_name, cutoff, taxonomy_cutoff,random_seed, number_of_threads,
+                      metric, delta, max_iterations, 100, initialize)
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)

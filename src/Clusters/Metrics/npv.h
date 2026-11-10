@@ -29,7 +29,6 @@ public:
         
         return negativePredictiveValue;
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/NPV"; }
 };
 
 /***********************************************************************/

@@ -27,7 +27,6 @@ public:
         
         return fpfn;
     }
-    std::string getCitation() override { return "http://www.mothur.org/wiki/FPFN"; }
 };
 
 /***********************************************************************/
