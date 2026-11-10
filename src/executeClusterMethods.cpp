@@ -84,14 +84,14 @@ Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnN
     auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
     delete(sparseMatrix);
     delete(listVector);
-    ClusterMetric* metric = nullptr;
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
     if (metricString == "mcc" && !optiMatrix->mccValidCalc()) {
         Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
             std::to_string(cutoff) + " using tptn instead.");
         delete metric;
         metric = new TPTN();
     }
-    metric = Utils::GetClusterMetric(metricString);
+
 
     // const RandomNumberSitmo rng(seed);
     ClusterParameters params;

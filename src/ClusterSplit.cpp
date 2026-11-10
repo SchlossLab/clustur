@@ -77,6 +77,10 @@ ClusterExport * ClusterSplit::Execute() {
 	// singletons.push_back(completedListVector);
 	completeList->SetListVector(singletons, std::to_string(cutoff));
 	if (clusterParameters.GetClusterType() == "opti") RunSenSpec();
+	//delete results
+	for (const auto& result : results) {
+		delete result;
+	}
 	return completeList;
 }
 //**********************************************************************************************************************

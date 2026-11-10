@@ -635,17 +635,22 @@ test_that("cluster_fit works", {
                   number_of_threads = parallel::detectCores(), print_ref = TRUE),
               "ref_count has to be a data frame,")
 
-  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
-                      ref_count = data.frame(), ref_list = esophagus_list, fit_fasta = amazon_fasta,
-                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
-              "ref_count column or row size is 0")
-  
-  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL, ref_fasta = esophagus_fasta,
-                      ref_count = data.frame(a = 1), ref_list = esophagus_list, fit_fasta = amazon_fasta,
-                      number_of_threads = parallel::detectCores(), print_ref = TRUE),
-              "ensure that you are using the")
-  
-  
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta,
+                       ref_count = data.frame(), ref_list = esophagus_list,
+                       fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_count column or row size is 0")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta,
+                       ref_count = data.frame(a = 1), ref_list = esophagus_list,
+                       fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ensure that you are using the")
+
   # Strollur
   cutoff <- 0.03
   miseq <- strollur::miseq_sop_example()
@@ -658,7 +663,8 @@ test_that("cluster_fit works", {
   last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
   expect_true(last_otu_number == nrow(denovo$cluster))
 
-  accnos <- optifit(dist, 0.03, accnos = count$Representative_Sequence[1:100], strollur_object = miseq)
+  accnos <- optifit(dist, 0.03, accnos = count$Representative_Sequence[1:100],
+                    strollur_object = miseq)
   otus <- strollur::report(miseq, "sequence_bin_assignment")
   last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
   expect_true(last_otu_number == nrow(accnos$cluster))
