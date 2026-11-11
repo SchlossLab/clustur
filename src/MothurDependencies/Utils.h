@@ -10,6 +10,8 @@
 #include <sstream>
 #include <unordered_map>
 #include <Rcpp.h>
+
+#include "PairwiseDistanceCalculator.h"
 #include "../Clusters/ClusterMetric.h"
 #include "../DataStructures/FastaDatabase.h"
 #include "../DataStructures/TaxonomyData.h"
@@ -38,6 +40,7 @@ public:
     static float ceilDist(float dist, int precision);
     static ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
     SparseDistanceMatrix* matrix, RAbundVector& rAbund, int seed, double cutoff, double adjust = -1);
+    static PairwiseDistanceCalculator* GetPairwiseDistanceCalculator(const std::string& type);
     template <typename T>
     static void SortVector(std::vector<T>&);
 

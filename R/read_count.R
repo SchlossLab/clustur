@@ -3,7 +3,7 @@
 #' This function will read and return your count table. It can take in
 #' sparse and full count tables.
 #'
-#' @param count_table The file path of your count table or strollur object.
+#' @param count_table The file path of your count table or a strollur object.
 #' @examples
 #' count_table <- read_count(example_path("amazon.full.count_table"))
 #' @return a count table `data.frame`.
@@ -15,13 +15,14 @@ read_count <- function(count_table) {
 #' @export
 #' @rdname read_count
 read_count.strollur <- function(count_table) {
-  abundances_table <- strollur::abundance(count_table, by_sample = T)
-  shared_table <- dcast(abundances_table, sequence_name ~ sample, value.var = "abundance")
+  abundances_table <- strollur::abundance(count_table, by_sample = TRUE)
+  shared_table <- dcast(abundances_table, sequence_name ~ sample,
+                        value.var = "abundance")
   shared_table[is.na(shared_table)] <- 0
   row_names <- strollur::names(count_table, type = "sample")
   shared_table$total <- rowSums(shared_table[, row_names])
   cbind(data.frame(Representative_Sequence = shared_table$sequence_name,
-                  total = shared_table$total),
+                   total = shared_table$total),
         shared_table[, row_names])
 }
 

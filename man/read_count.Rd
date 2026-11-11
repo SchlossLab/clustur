@@ -13,7 +13,7 @@ read_count(count_table)
 \method{read_count}{character}(count_table)
 }
 \arguments{
-\item{count_table}{The file path of your count table or strollur object.}
+\item{count_table}{The file path of your count table or a strollur object.}
 }
 \value{
 a count table `data.frame`.

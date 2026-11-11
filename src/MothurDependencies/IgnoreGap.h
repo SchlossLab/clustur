@@ -7,10 +7,10 @@
 #include "PairwiseDistanceCalculator.h"
 
 
-class OneGapIgnore final : public PairwiseDistanceCalculator{
+class IgnoreGap final : public PairwiseDistanceCalculator{
 public:
-    OneGapIgnore() = default;
-    ~OneGapIgnore() override = default;
+    IgnoreGap() = default;
+    ~IgnoreGap() override = default;
     [[nodiscard]] double Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const override;
 };
 

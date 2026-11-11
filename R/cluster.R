@@ -404,10 +404,10 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
     if (!inherits(accnos, "character")) {
       stop("accnos must be a list of characters.")
     }
-    if(length(accnos) == 0) {
+    if (length(accnos) == 0) {
       stop("the length of the accnos cannot be 0.")
     }
-    if(length(accnos) > nrow(get_count_table(fit_dist))) {
+    if (length(accnos) > nrow(get_count_table(fit_dist))) {
       stop(paste0("length of accnos is greater than the number ",
                   "sequences in the count table, please ensure accnos contains",
                   " sequences that are present in the count table."))
@@ -568,24 +568,26 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                 " taxonomy data."))
   }
 
-  if(!inherits(count_table, "data.frame")) {
+  if (!inherits(count_table, "data.frame")) {
     stop(paste0("count_table has to be a data frame, use the `read_count()` ",
                 "function to generate a count table"))
   }
-  if(ncol(count_table) == 0) {
+  if (ncol(count_table) == 0) {
     stop("count_table column or row size is 0, please correct")
   }
-  if(!all(c("Representative_Sequence", "total") %in% colnames(count_table)) ) {
-    stop("ensure that you are using the `read_count()` function to read your count table.")
+  if (!all(c("Representative_Sequence", "total") %in% colnames(count_table))) {
+    stop(paste0("ensure that you are using the `read_count()`",
+                " function to read your count table."))
   }
 
-  result <- OptiSplit(fasta, taxonomy, count_table, cluster_method, feature_column_name,
-                      bin_column_name, cutoff, taxonomy_cutoff,random_seed, number_of_threads,
+  result <- OptiSplit(fasta, taxonomy, count_table, cluster_method,
+                      feature_column_name, bin_column_name, cutoff,
+                      taxonomy_cutoff, random_seed, number_of_threads,
                       metric, delta, max_iterations, 100, initialize)
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)
-    strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")                                                     
+    strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")
   }
-  return(result)
+  result
 }

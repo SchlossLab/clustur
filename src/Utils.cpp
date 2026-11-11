@@ -23,6 +23,7 @@
 #include "Clusters/Metrics/tn.h"
 #include "Clusters/Metrics/tp.h"
 #include "Clusters/Metrics/tptn.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
 
 
 long long Utils::getRandomIndex(const long long highest, RandomNumberSitmo &sitmo) {
@@ -165,6 +166,11 @@ ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *l
     if(method == "nearest") return new SingleLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
     if(method == "average")	return new AverageLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
     return new WeightedLinkage(&rAbund, listVector, matrix, seed, cutoff, method, adjust);
+}
+
+PairwiseDistanceCalculator * Utils::GetPairwiseDistanceCalculator(const std::string &type) {
+    if (type == "onegap") return new OneGapPairwiseDistance();
+    if (type == "nogap") return new
 }
 
 ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {

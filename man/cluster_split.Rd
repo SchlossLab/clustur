@@ -23,30 +23,33 @@ cluster_split(
 )
 }
 \arguments{
-\item{fasta}{a`data.frame` representation of your fasta data. This can be generated
-using the `read_fasta` function. The fasta `data.frame` must contain two columns:
-sequence_name and sequence.}
+\item{fasta}{a`data.frame` representation of your fasta data.
+This can be generated using the `read_fasta` function.
+The fasta `data.frame` must contain two columns: sequence_name and sequence.}
 
-\item{taxonomy}{a`data.frame` representation of your taxonomy data. This can be generated
-using the `read_mothur_taxonomy` function. The taxonomy `data.frame` must contain two columns:
+\item{taxonomy}{a`data.frame` representation of your taxonomy data.
+This can be generated using the `read_mothur_taxonomy` function.
+The taxonomy `data.frame` must contain two columns:
 sequence_name and taxonomy.}
 
-\item{count_table}{the count table that represents the data, must be read using the `read_count()`
-function.}
+\item{count_table}{the count table that represents the data,
+must be read using the `read_count()` function.}
 
-\item{cluster_method}{the clustering method you wish to use. Your clustering options are: 
-opticluster, average neighbor, nearest neighbor, furthest
-neighbor, and weighted neighbor.}
+\item{cluster_method}{the clustering method you wish to use.
+Your clustering options are: opticluster, average neighbor,
+nearest neighbor, furthest neighbor, and weighted neighbor.}
 
 \item{cutoff}{a `numerical` value that represents the distance cutoff.}
 
-\item{taxonomy_cutoff}{a `integer` value that represents the taxonomic level cutoff.}
+\item{taxonomy_cutoff}{a `integer` value that represents the
+taxonomic level cutoff.}
 
 \item{feature_column_name}{Set the name of the column in the cluster
 dataframe that contains the sequence names. This is a `character` value.}
 
 \item{bin_column_name}{Set the name of the column in the
-cluster dataframe that contains the name of the group of sequence names. This is a `character` value.}
+cluster dataframe that contains the name of the group of sequence names.
+This is a `character` value.}
 
 \item{random_seed}{a `integer` value that represents the current random seed.}
 
@@ -57,21 +60,22 @@ set this value to 0.}
 \item{max_iterations}{the max amount of iterations the opticluster
 method will run. The default is 100.}
 
-\item{initialize}{this parameter allows you to set the default randomization of
-for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
-will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
-into one OTU. Defaults to singleton.}
+\item{initialize}{this parameter allows you to set the default randomization
+of for the opticluster method. The two methods are: "singleton" and "oneotu."
+Singleton will randomly assign each sequence to its own OTU while "oneotu"
+assigns all sequence into one OTU. Defaults to singleton.}
 
-\item{metric}{this parameter allows you to choose which metric the cluster will
-optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
-specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
-true positives (tp), true negative (tn), false positive (fp), false negative (fn),
-f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
-negative predictive value (npv), false discovery rate (fdr). The default
-metric is mcc.}
+\item{metric}{this parameter allows you to choose which metric the cluster
+will optimize to, the options are: Matthews correlation coefficient (mcc),
+sensitivity (sens), specificity (spec), true positives + true
+negatives (tptn), false positives + false negatives (fpfn),
+true positives (tp), true negative (tn), false positive (fp),
+false negative (fn), f1score (f1score), accuracy (accuracy),
+positive predictive value (ppv), negative predictive value (npv),
+false discovery rate (fdr). The default metric is mcc.}
 
-\item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
-can be used.}
+\item{number_of_threads}{a `integer` value that represents the amount of
+allotted threads that can be used.}
 
 \item{strollur_object}{Using the `strollur` r package, you can use your
 created strollur object to save your clustering results to. This allows you
@@ -82,8 +86,9 @@ A list of `data.frames` that contain abundance, and clustering
 results.
 }
 \description{
-Cluster Split splits data into groups based on taxomic group. It then clusters them using 
-the following methods: opticluster, average neighbor, nearest neighbor, furthest
+Cluster Split splits data into groups based on taxomic group.
+It then clusters them using the following methods: opticluster,
+average neighbor, nearest neighbor, furthest
 neighbor, and weighted neighbor. You can read more about
 [cluster split](https://mothur.org/wiki/cluster.split/) on the mothur wiki.
 }
@@ -93,6 +98,7 @@ neighbor, and weighted neighbor. You can read more about
  count_table <- read_count(example_path("amazon.full.count_table"))
  fasta <- read_fasta(example_path("amazon.align"))
  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
- df <- cluster_split(fasta, taxonomy, count_table, "opti", cutoff, 3, number_of_threads = 1)
+ df <- cluster_split(fasta, taxonomy, count_table, "opti",
+                     cutoff, 3, number_of_threads = 1)
 
 }

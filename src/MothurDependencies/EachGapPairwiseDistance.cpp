@@ -9,20 +9,17 @@
 
 double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::string& seqB) const {
 
-    int alignLength = seqA.length();
-    bool overlap = false;
+    const int alignLength = static_cast<int>(seqA.length());
 
-    int start = setStartIgnoreTermGap(seqA, seqB, overlap);
-    int end = setEndIgnoreTermGap(seqA, seqB, overlap);
-    double dist;
-
-    //non-overlapping sequences
-    if (!overlap) { return 1.0000; }
+    const int start = setStart(seqA, seqB);
+    const int end = setEnd(seqA, seqB);
 
     int maxMinLength = end - start + 1;
     int diff = 0;
+    double dist = 0;
+
     for(int i=start;i<alignLength;i++){
-        if(seqA[i] == '.' || seqB[i] == '.'){ //reached terminal gaps, so quit
+        if(seqA[i] == '.' && seqB[i] == '.'){ //reached terminal gaps, so quit
             break;
         }
         else if((seqA[i] == '-' && seqB[i] == '-') || (seqA[i] == '-' && seqB[i] == '.') || (seqA[i] == '.' && seqB[i] == '-')){ maxMinLength--; } //comparing gaps, ignore
@@ -33,6 +30,8 @@ double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::stri
         }
 
         // dist = (double)diff / maxMinLength;
+
+        // if (dist > cutoff) { return 1.0000; }
     }
 
     if(maxMinLength == 0)    {    dist = 1.0000;                                }

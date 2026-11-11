@@ -42,18 +42,19 @@ set this value to 0.}
 \item{max_iterations}{the max amount of iterations the opticluster
 method will run. The default is 100.}
 
-\item{initialize}{this parameter allows you to set the default randomization of
-for the opticluster method. The two methods are: "singleton" and "oneotu." Singleton
-will randomly assign each sequence to its own OTU while "oneotu" assigns all sequence
-into one OTU. Defaults to singleton.}
+\item{initialize}{this parameter allows you to set the default randomization
+of for the opticluster method. The two methods are: "singleton" and "oneotu."
+Singleton will randomly assign each sequence to its own OTU while "oneotu"
+assigns all sequence into one OTU. Defaults to singleton.}
 
-\item{metric}{this parameter allows you to choose which metric the cluster will
-optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
-specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
-true positives (tp), true negative (tn), false positive (fp), false negative (fn),
-f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
-negative predictive value (npv), false discovery rate (fdr). The default
-metric is mcc.}
+\item{metric}{this parameter allows you to choose which metric the cluster
+will optimize to, the options are: Matthews correlation coefficient (mcc),
+sensitivity (sens), specificity (spec), true positives + true
+negatives (tptn), false positives + false negatives (fpfn),
+true positives (tp), true negative (tn), false positive (fp),
+false negative (fn), f1score (f1score), accuracy (accuracy),
+positive predictive value (ppv), negative predictive value (npv),
+false discovery rate (fdr). The default metric is mcc.}
 
 \item{strollur_object}{Using the `strollur` r package, you can use your
 created strollur object to save your clustering results to. This allows you

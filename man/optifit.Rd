@@ -28,8 +28,8 @@ optifit(
 )
 }
 \arguments{
-\item{fit_dist}{The distance object that will be used to fit to the new reference. This must be
-created using the `read_dist()` function.}
+\item{fit_dist}{The distance object that will be used to fit to the
+new reference. This must be created using the `read_dist()` function.}
 
 \item{cutoff}{The cutoff you want to cluster towards.}
 
@@ -37,79 +37,96 @@ created using the `read_dist()` function.}
 dataframe that contains the sequence names. This is a `character` value.}
 
 \item{bin_column_name}{Set the name of the column in the
-cluster dataframe that contains the name of the group of sequence names. This is a `character` value.}
-
-\item{accnos}{a `vector` of strings that represent the reference sequences by name. Use this when you know the
-group of sequences you want your fit data to fit against.}
-
-\item{ref_fasta}{a`data.frame` representation of your fasta data for your reference sequences.
-This can be generated using the `read_fasta()` function. The fasta `data.frame` must
-contain two columns: "sequence_name" and "sequence."}
-
-\item{ref_count}{a `data.frame` that display sequence abundance for the reference sequences. Must
-be generated using the `read_count()` function.}
-
-\item{ref_list}{a `data.frame` respentation of the mothur list file you wish to fit your
-sequences to. Can be generated using the `read_mothur_list()` function. 
-Must include two columns: "bin_name" and "sequence_name."}
-
-\item{fit_fasta}{a`data.frame` representation of your fasta data for your fitted sequences.
-This can be generated using the `read_fasta()` function. The fasta `data.frame` must
-contain two columns: "sequence_name" and "sequence."}
-
-\item{fit_percent}{allows you to set the percentage of reads that need to be fitted. This is a `numerical` value.}
-
-\item{closed}{deteremines whether you want the function to run using the closed or open method. The closed method
-will return reads that fit into existing otus and scrap those that did not. The open method will keep reads
-that fit into existing otus and create new OTUs for those that did not. This is a `logical` value.}
-
-\item{print_ref}{controls whether all the reference sequences are printed in the final result.
+cluster dataframe that contains the name of the group of sequence names.
 This is a `character` value.}
+
+\item{accnos}{a `vector` of strings that represent the reference sequences
+by name. Use this when you know the group of sequences you want your fit
+data to fit against.}
+
+\item{ref_fasta}{a`data.frame` representation of your fasta data for
+your reference sequences. This can be generated using the `read_fasta()`
+function. The fasta `data.frame` must contain two columns: "sequence_name"
+and "sequence."}
+
+\item{ref_count}{a `data.frame` that display sequence abundance for
+the reference sequences. Must be generated using the `read_count()` function.}
+
+\item{ref_list}{a `data.frame` respentation of the mothur list file
+you wish to fit your sequences to. Can be generated using the
+`read_mothur_list()` function. Must include two columns: "bin_name" and
+"sequence_name."}
+
+\item{fit_fasta}{a`data.frame` representation of your fasta data for
+your fitted sequences. This can be generated using the `read_fasta()`
+function. The fasta `data.frame` must contain two columns: "sequence_name"
+and "sequence."}
+
+\item{fit_percent}{allows you to set the percentage of reads that need to
+be fitted. This is a `numerical` value.}
+
+\item{closed}{deteremines whether you want the function to run using the
+closed or open method. The closed method will return reads that fit into
+existing otus and scrap those that did not. The open method will keep reads
+that fit into existing otus and create new OTUs for those that did not.
+This is a `logical` value.}
+
+\item{print_ref}{controls whether all the reference sequences are printed
+in the final result. This is a `character` value.}
 
 \item{random_seed}{a `integer` value that represents the current random seed.}
 
-\item{max_iterations}{the max number of iterations that cluster computes. This is a `integer` value.}
+\item{max_iterations}{the max number of iterations that cluster computes.
+This is a `integer` value.}
 
-\item{denovo_iters}{the max number of iterations the denovo method computes.  This is a `integer` value.}
+\item{denovo_iters}{the max number of iterations the denovo method computes.
+This is a `integer` value.}
 
-\item{optimal_denovo_result}{determines whether or not you want the denovo method to return the cluster
-with the highest mcc value or all of the randomly computed clusters. This is a `logical` value.}
+\item{optimal_denovo_result}{determines whether or not you want the denovo
+method to return the cluster with the highest mcc value or all of the
+randomly computed clusters. This is a `logical` value.}
 
-\item{ref_weight}{Ref Weight is used to randomize the reference sequences for the denovo method.
-There are three methods: none, abundance and connectivity. "none" will do a normal shuffle of
-the given sequences without any weights, abundance will shuffle the sequences using
+\item{ref_weight}{Ref Weight is used to randomize the reference sequences
+for the denovo method. There are three methods: none, abundance and
+connectivity. "none" will do a normal shuffle of the given sequences
+without any weights, abundance will shuffle the sequences using
 abundances as a weight, and connectivity will shuffle the sequences but uses
 a weight of one for every sequence.}
 
-\item{metric}{this parameter allows you to choose which metric the cluster will
-optimize to, the options are: Matthews correlation coefficient (mcc), sensitivity (sens),
-specificity (spec), true positives + true negatives (tptn), false positives + false negatives (fpfn),
-true positives (tp), true negative (tn), false positive (fp), false negative (fn),
-f1score (f1score), accuracy (accuracy), positive predictive value (ppv),
-negative predictive value (npv), false discovery rate (fdr). The default
-metric is mcc.}
+\item{metric}{this parameter allows you to choose which metric the cluster
+will optimize to, the options are: Matthews correlation coefficient (mcc),
+sensitivity (sens), specificity (spec), true positives + true
+negatives (tptn), false positives + false negatives (fpfn),
+true positives (tp), true negative (tn), false positive (fp),
+false negative (fn), f1score (f1score), accuracy (accuracy),
+positive predictive value (ppv), negative predictive value (npv),
+false discovery rate (fdr). The default metric is mcc.}
 
-\item{number_of_threads}{a `integer` value that represents the amount of allotted threads that
-can be used.}
+\item{number_of_threads}{a `integer` value that represents the amount of
+allotted threads that can be used.}
 
 \item{strollur_object}{Using the `strollur` r package, you can use your
 created strollur object to save your clustering results to. This allows you
 to seamless modify your strollur object and analysis results as needed.}
 }
 \value{
-A `list` of a list of `data.frames` that contain abundance, and clustering
+A `list` of a list of `data.frames` that contain abundance,
+and clustering
 results. If you used `method = opticlust`, it will also return clustering
 performance metrics.
 }
 \description{
-Optifit is the 'cluster.fit' command in mothur. It allows you to fit sequences to OTUs or existing OTUS. Just like
-mothur, there are two ways of running this command: open, or closed. Closed fits reads into existing OTUs, 
-and scraps any reads that cannot be fitted(default it closed). Open fits reads into existing OTUs while unfitted
-OTUs are clustered into new OTUs.
+Optifit is the 'cluster.fit' command in mothur.
+It allows you to fit sequences to OTUs or existing OTUS. Just like
+mothur, there are two ways of running this command: open, or closed.
+Closed fits reads into existing OTUs, and scraps any reads that cannot
+be fitted(default it closed). Open fits reads into existing OTUs
+while unfitted OTUs are clustered into new OTUs.
 }
 \examples{
  amazon_count <- read_count(example_path("amazon.full.count_table"))
- amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
+ amazon_dist <- read_dist(example_path("amazon_phylip.dist"),
+                          amazon_count, 0.03)
 
  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
  esophagus_count <- read_count(example_path("esophagus.count_table"))
@@ -119,12 +136,16 @@ OTUs are clustered into new OTUs.
 
  denovo <- optifit(amazon_dist, 0.03)
  denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
- accnos <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40])
- accnos_open <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40],
+ accnos <- optifit(amazon_dist, 0.03,
+                   accnos = amazon_count$Representative_Sequence[1:40])
+ accnos_open <- optifit(amazon_dist, 0.03,
+                        accnos = amazon_count$Representative_Sequence[1:40],
                         closed=FALSE)
 
  ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
-                        ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                        ref_fasta = esophagus_fasta,
+                        ref_count = esophagus_count,
                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
-                        number_of_threads = parallel::detectCores(), print_ref = TRUE)
+                        number_of_threads = parallel::detectCores(),
+                        print_ref = TRUE)
 }
