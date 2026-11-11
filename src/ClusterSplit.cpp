@@ -228,37 +228,37 @@ void ClusterSplit::cluster(SplitClusterData* params) const {
 // }
 
 void ClusterSplit::RunSenSpec() {
-    std::vector<double> results;
+    std::vector<double> results(8, 0);
 
     Sensitivity sens;
     double sensitivity = sens.getValue(tp, tn, fp, fn);
-    results.push_back(sensitivity);
+    results[0] = sensitivity;
     Specificity spec;
     double specificity = spec.getValue(tp, tn, fp, fn);
-    results.push_back(specificity);
+	results[1] = specificity;
     PPV ppv;
     double positivePredictiveValue = ppv.getValue(tp, tn, fp, fn);
-    results.push_back(positivePredictiveValue);
+	results[2] = positivePredictiveValue;
     NPV npv;
     double negativePredictiveValue = npv.getValue(tp, tn, fp, fn);
-    results.push_back(negativePredictiveValue);
+	results[3] = negativePredictiveValue;
     FDR fdr;
     double falseDiscoveryRate = fdr.getValue(tp, tn, fp, fn);
-    results.push_back(falseDiscoveryRate);
+	results[4] = falseDiscoveryRate;
     Accuracy acc;
     double accuracy = acc.getValue(tp, tn, fp, fn);
-    results.push_back(accuracy);
+	results[5] = accuracy;
     MCC mcc;
     double matthewsCorrCoef = mcc.getValue(tp, tn, fp, fn);
-    results.push_back(matthewsCorrCoef);
+	results[6] = matthewsCorrCoef;
     F1Score f1;
     double f1Score = f1.getValue(tp, tn, fp, fn);
-    results.push_back(f1Score);
+	results[7] = f1Score;
 
 	std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
 		"specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
-
-	std::string sensFile = std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
+	std::string sensFile = "";
+	sensFile += std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
 			std::to_string(tn) + ',' +
 			std::to_string(fp) + ',' + std::to_string(fn) + ',';
 	for (double result: results) { sensFile += std::to_string(result) + ','; }
