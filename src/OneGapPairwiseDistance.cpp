@@ -5,7 +5,9 @@
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include <Rcpp.h>
 
-double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const {
+double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std::string &sequenceTwo,
+    const double cutoff) const {
+    double dist = 0;
     int difference = 0;
     bool openGapA = false;
     bool openGapB = false;
@@ -54,13 +56,10 @@ double OneGapPairwiseDistance::Execute(const std::string &sequenceOne, const std
             if(sequenceOneChar != sequenceTwoChar){ difference++; }
         }
             
-
-            
-        // if (dist > cutoff) { return 1.0000; }
+        dist = static_cast<double>(difference) / maxMinLength;
+        if (dist > cutoff) { return 1.0000; }
     }
 
-    if(maxMinLength == 0) {
-        return  1.0000;
-    }
-   return static_cast<double>(difference) / maxMinLength;
+    if(maxMinLength == 0) return  1.0000;
+    return static_cast<double>(difference) / static_cast<double>(maxMinLength);
 }

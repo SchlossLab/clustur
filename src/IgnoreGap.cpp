@@ -5,7 +5,7 @@
 #include "MothurDependencies/IgnoreGap.h"
 
 
-double IgnoreGap::Execute(const std::string &seqA, const std::string &seqB) const {
+double IgnoreGap::Execute(const std::string &seqA, const std::string &seqB, const double cutoff) const {
 
     int diff = 0;
     int start = 0;
@@ -46,12 +46,10 @@ double IgnoreGap::Execute(const std::string &seqA, const std::string &seqB) cons
             }
         }else {  maxMinLength--; }
 
-        // dist = (double)diff / maxMinLength;
-
+        dist = static_cast<double>(diff) / maxMinLength;
+        if (dist > cutoff) return 1.0000;
     }
 
-    if(maxMinLength == 0)    {    dist = 1.0000;                                    }
-    else                    {    dist = (static_cast<double>(diff)  / static_cast<double>(maxMinLength));    }
-
-    return dist;
+    if(maxMinLength == 0) return 1.0000;
+    return (static_cast<double>(diff)  / static_cast<double>(maxMinLength));
 }

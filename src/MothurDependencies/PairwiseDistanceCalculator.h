@@ -11,7 +11,8 @@ class PairwiseDistanceCalculator {
 public:
     PairwiseDistanceCalculator() = default;
     virtual ~PairwiseDistanceCalculator() = default;
-    virtual double Execute(const std::string& sequenceOne, const std::string& sequenceTwo) const = 0;
+    virtual double Execute(const std::string& sequenceOne, const std::string& sequenceTwo,
+         double cutoff = 1) const = 0;
 protected:
     [[nodiscard]] int setStart(const std::string &seqA, const std::string &seqB) const {
         int start = 0;

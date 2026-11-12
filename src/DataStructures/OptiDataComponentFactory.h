@@ -48,7 +48,7 @@ public:
 
                 const size_t& otherIndex = nameToIndex[otherName];
                 const double result = calculator->Execute(sequence,
-                  otherSequence);
+                  otherSequence, cutoff);
 
                 if (result > cutoff) continue;
                 mutex.lock();

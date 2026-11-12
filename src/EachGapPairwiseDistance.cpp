@@ -5,7 +5,8 @@
 #include "MothurDependencies/EachGapPairwiseDistance.h"
 
 
-double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::string& seqB) const {
+double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::string& seqB,
+    const double cutoff) const {
 
     const int alignLength = static_cast<int>(seqA.length());
 
@@ -27,13 +28,10 @@ double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::stri
             }
         }
 
-        // dist = (double)diff / maxMinLength;
-
-        // if (dist > cutoff) { return 1.0000; }
+        dist = static_cast<double>(diff) / maxMinLength;
+        if (dist > cutoff) return 1.0000;
     }
 
-    if(maxMinLength == 0)    {    dist = 1.0000;                                }
-    else            {    dist = (static_cast<double>(diff)  / static_cast<double>(maxMinLength));        }
-
-    return dist;
+    if(maxMinLength == 0)  return  1.0000;
+    return (static_cast<double>(diff)  / static_cast<double>(maxMinLength));
 }

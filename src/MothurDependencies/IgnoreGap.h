@@ -11,7 +11,8 @@ class IgnoreGap final : public PairwiseDistanceCalculator{
 public:
     IgnoreGap() = default;
     ~IgnoreGap() override = default;
-    [[nodiscard]] double Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const override;
+    [[nodiscard]] double Execute(const std::string &sequenceOne, const std::string &sequenceTwo,
+        double cutoff = 1) const override;
 };
 
 

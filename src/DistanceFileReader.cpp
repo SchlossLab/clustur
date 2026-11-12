@@ -110,7 +110,7 @@ void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
             const bool otherUseMainFasta = j < dataSize;
             const auto&[name, sequence] = otherUseMainFasta ? refData[j] : fitData[j - dataSize];
             if (const float result = static_cast<float>(calculator->Execute(fastaSequence,
-               sequence)); result < cut) {
+               sequence, cut)); result < cut) {
                const int jIndex = indexMap.at(name);
                mutex.lock();
                sparseMatrix.addCell(jIndex, {iIndex , result});

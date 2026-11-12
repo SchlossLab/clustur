@@ -11,7 +11,8 @@ class EachGapPairwiseDistance final : public PairwiseDistanceCalculator {
 public:
     EachGapPairwiseDistance() = default;
     ~EachGapPairwiseDistance() override = default;
-    [[nodiscard]] double Execute(const std::string &sequenceOne, const std::string &sequenceTwo) const override;
+    [[nodiscard]] double Execute(const std::string &sequenceOne, const std::string &sequenceTwo,
+        double cutoff = 1) const override;
 };
 
 
