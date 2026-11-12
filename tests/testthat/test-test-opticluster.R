@@ -577,10 +577,10 @@ test_that("cluster_fit works", {
             closed = FALSE, print_ref = TRUE,
             number_of_threads = parallel::detectCores())
 
-  expect_true(nrow(denovo$cluster) == 7)
+  expect_true(nrow(denovo$cluster) == 5)
   expect_true(nrow(denovo$cluster) == nrow(denovo_optimal_false[[1]]$cluster))
   expect_true(length(denovo_optimal_false) == 10)
-  expect_true(nrow(denovo_open$cluster) == 48)
+  expect_true(nrow(denovo_open$cluster) == 46)
   expect_true(nrow(accnos$cluster) == 2)
   expect_true(nrow(accnos_open$cluster) == 56)
   expect_true(nrow(ref_cluster$cluster) == 24)

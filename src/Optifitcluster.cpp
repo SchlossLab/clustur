@@ -604,6 +604,11 @@ ClusterExport* OptiFitCluster::runDenovoOptiCluster(std::map<std::string, int>& 
         OptiData* refMatrix = matrix->extractRefMatrix();
         //get "ref" seqs for initialize inputs// This is an empty matrix, that is the issue
         OptiCluster clust(refMatrix, metric, seed, cutoff, 0.0001, 0);
+        ClusterParameters params;
+        params.SetParameters("delta", std::to_string(delta));
+        params.SetParameters("iters", std::to_string(maxIters));
+        params.SetParameters("initialize", "singleton");
+        clust.SetClusterParameters(params);
         const auto exportResult = clust.Execute();//clusterRefs(refMatrix, metric);
         ListVector refList = exportResult->GetListVector().listVector;
         delete exportResult;
