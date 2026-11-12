@@ -2,7 +2,7 @@
 // Created by Gregory Johnson on 11/6/26.
 //
 
-#include "IgnoreGap.h"
+#include "MothurDependencies/IgnoreGap.h"
 
 
 double IgnoreGap::Execute(const std::string &seqA, const std::string &seqB) const {

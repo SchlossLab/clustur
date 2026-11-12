@@ -51,11 +51,6 @@ public:
     std::vector<std::string> getRefSingletonNames();
     int ReadFiles(const OptiData *matrix,
                   const CountTableAdapter &adapter, std::unordered_set<std::string> &optionalRefNames);
-
-    int ReadFiles(const OptiData *refMatrix, const CountTableAdapter &refAdapter, const OptiData *fitMatrix,
-                  const CountTableAdapter &fitAdapter, const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences);
-    void UpdateSingletons(const FastaDatabase &refFastaSequences, const FastaDatabase &fitFastaSequences,
-                          std::vector<bool> &singletons, std::unordered_map<std::string, long long> &nameMap);
     long long getNumFitTrueSingletons(); //reads that are true singletons (no valid dists in matrix) and are flagged as fit
     [[nodiscard]] long long getNumFitSingletons() const { return numFitSingletons; } //user singletons
     [[nodiscard]] unsigned long getNumDists() const override    { return numFitDists +numRefDists+numBetweenDists; } //all distances under cutoff

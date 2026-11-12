@@ -2,9 +2,7 @@
 // Created by Gregory Johnson on 11/6/26.
 //
 
-#include "EachGapPairwiseDistance.h"
-
-#include <Rcpp/exceptions.h>
+#include "MothurDependencies/EachGapPairwiseDistance.h"
 
 
 double EachGapPairwiseDistance::Execute(const std::string& seqA, const std::string& seqB) const {

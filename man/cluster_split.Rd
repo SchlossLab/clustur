@@ -18,6 +18,7 @@ cluster_split(
   max_iterations = 100,
   initialize = "singleton",
   metric = "mcc",
+  pairwise_distance_method = "onegap",
   number_of_threads = 1,
   strollur_object = NULL
 )
@@ -73,6 +74,13 @@ true positives (tp), true negative (tn), false positive (fp),
 false negative (fn), f1score (f1score), accuracy (accuracy),
 positive predictive value (ppv), negative predictive value (npv),
 false discovery rate (fdr). The default metric is mcc.}
+
+\item{pairwise_distance_method}{the method you wish to use to calculate
+pairwise distances between aligned sequences. As of current we only allow
+the calculation of fasta sequences, and the current methods are;
+onegap, nogap, and eachgap. For more information look at the 
+(mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+`character` value.}
 
 \item{number_of_threads}{a `integer` value that represents the amount of
 allotted threads that can be used.}

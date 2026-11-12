@@ -148,8 +148,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // OptiSplit
-Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads, const std::string& metricString, const double delta, const int iters, const int precision, const std::string& initialize);
-RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP, SEXP metricStringSEXP, SEXP deltaSEXP, SEXP itersSEXP, SEXP precisionSEXP, SEXP initializeSEXP) {
+Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData, const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod, const std::string& featureColumnName, const std::string& binColumnName, const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads, const std::string& metricString, const double delta, const int iters, const int precision, const std::string& initialize, const std::string& calculatorType);
+RcppExport SEXP _clustur_OptiSplit(SEXP fastaDataSEXP, SEXP taxonomyDataSEXP, SEXP countTableSEXP, SEXP clusterMethodSEXP, SEXP featureColumnNameSEXP, SEXP binColumnNameSEXP, SEXP cutoffSEXP, SEXP taxonomyCutoffSEXP, SEXP seedSEXP, SEXP numberOfThreadsSEXP, SEXP metricStringSEXP, SEXP deltaSEXP, SEXP itersSEXP, SEXP precisionSEXP, SEXP initializeSEXP, SEXP calculatorTypeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -168,7 +168,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int >::type iters(itersSEXP);
     Rcpp::traits::input_parameter< const int >::type precision(precisionSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type initialize(initializeSEXP);
-    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString, delta, iters, precision, initialize));
+    Rcpp::traits::input_parameter< const std::string& >::type calculatorType(calculatorTypeSEXP);
+    rcpp_result_gen = Rcpp::wrap(OptiSplit(fastaData, taxonomyData, countTable, clusterMethod, featureColumnName, binColumnName, cutoff, taxonomyCutoff, seed, numberOfThreads, metricString, delta, iters, precision, initialize, calculatorType));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -214,8 +215,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // AddDataToDistanceData
-void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const double cutoff, const int numberOfThreads);
-RcppExport SEXP _clustur_AddDataToDistanceData(SEXP fitDataSEXP, SEXP refListSEXP, SEXP refCountTableSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP cutoffSEXP, SEXP numberOfThreadsSEXP) {
+void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList, const Rcpp::DataFrame& refCountTable, const Rcpp::DataFrame& refFasta, const Rcpp::DataFrame& fitFasta, const std::string& calculatorMethod, const double cutoff, const int numberOfThreads);
+RcppExport SEXP _clustur_AddDataToDistanceData(SEXP fitDataSEXP, SEXP refListSEXP, SEXP refCountTableSEXP, SEXP refFastaSEXP, SEXP fitFastaSEXP, SEXP calculatorMethodSEXP, SEXP cutoffSEXP, SEXP numberOfThreadsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const SEXP& >::type fitData(fitDataSEXP);
@@ -223,9 +224,10 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refCountTable(refCountTableSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type refFasta(refFastaSEXP);
     Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type fitFasta(fitFastaSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type calculatorMethod(calculatorMethodSEXP);
     Rcpp::traits::input_parameter< const double >::type cutoff(cutoffSEXP);
     Rcpp::traits::input_parameter< const int >::type numberOfThreads(numberOfThreadsSEXP);
-    AddDataToDistanceData(fitData, refList, refCountTable, refFasta, fitFasta, cutoff, numberOfThreads);
+    AddDataToDistanceData(fitData, refList, refCountTable, refFasta, fitFasta, calculatorMethod, cutoff, numberOfThreads);
     return R_NilValue;
 END_RCPP
 }
@@ -252,11 +254,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_clustur_OptiFit", (DL_FUNC) &_clustur_OptiFit, 14},
     {"_clustur_OptiFit2", (DL_FUNC) &_clustur_OptiFit2, 11},
     {"_clustur_OptiFit3", (DL_FUNC) &_clustur_OptiFit3, 12},
-    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 15},
+    {"_clustur_OptiSplit", (DL_FUNC) &_clustur_OptiSplit, 16},
     {"_clustur_DetermineIfPhylipOrColumnFile", (DL_FUNC) &_clustur_DetermineIfPhylipOrColumnFile, 1},
     {"_clustur_ProcessDistanceFiles", (DL_FUNC) &_clustur_ProcessDistanceFiles, 4},
     {"_clustur_ProcessSparseMatrix", (DL_FUNC) &_clustur_ProcessSparseMatrix, 6},
-    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 7},
+    {"_clustur_AddDataToDistanceData", (DL_FUNC) &_clustur_AddDataToDistanceData, 8},
     {"_clustur_CopyObject", (DL_FUNC) &_clustur_CopyObject, 1},
     {"run_testthat_tests", (DL_FUNC) &run_testthat_tests, 1},
     {NULL, NULL, 0}

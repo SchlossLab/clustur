@@ -23,6 +23,8 @@
 #include "Clusters/Metrics/tn.h"
 #include "Clusters/Metrics/tp.h"
 #include "Clusters/Metrics/tptn.h"
+#include "MothurDependencies/EachGapPairwiseDistance.h"
+#include "MothurDependencies/IgnoreGap.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 
 
@@ -170,7 +172,9 @@ ClusterMethod * Utils::GetClusterMethod(const std::string &method, ListVector *l
 
 PairwiseDistanceCalculator * Utils::GetPairwiseDistanceCalculator(const std::string &type) {
     if (type == "onegap") return new OneGapPairwiseDistance();
-    if (type == "nogap") return new
+    if (type == "nogap") return new IgnoreGap();
+    if (type == "eachgap") return new EachGapPairwiseDistance();
+    Rcpp::stop("Unrecognized pairwise distance type.");
 }
 
 ListVector Utils::CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences) {

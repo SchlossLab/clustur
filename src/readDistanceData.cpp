@@ -77,7 +77,7 @@ SEXP ProcessDistanceFiles(const std::string& filePath, const Rcpp::DataFrame& co
 void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList,const Rcpp::DataFrame& refCountTable,
     const Rcpp::DataFrame& refFasta,
     const Rcpp::DataFrame& fitFasta,
-    const double cutoff, const int numberOfThreads = 1) {
+    const std::string& calculatorMethod, const double cutoff, const int numberOfThreads = 1) {
 
     const Rcpp::XPtr<DistanceFileReader> fitDistanceData(fitData);
 
@@ -87,9 +87,9 @@ void AddDataToDistanceData(const SEXP& fitData, const Rcpp::DataFrame& refList,c
     const FastaDatabase refFastaDatabase(refFasta["sequence_name"], refFasta["sequence"]);
     const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
       refList["sequence_name"]);
-
+    PairwiseDistanceCalculator* calculator = Utils::GetPairwiseDistanceCalculator(calculatorMethod);
     fitDistanceData.get()->AddFittedDataToReference(refListOtuVector, countTableAdapter,
-        fitFastaDatabase, refFastaDatabase, cutoff, numberOfThreads);
+        fitFastaDatabase, refFastaDatabase, calculator, cutoff, numberOfThreads);
 }
 
 

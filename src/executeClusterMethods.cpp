@@ -303,12 +303,13 @@ Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
     const std::string& featureColumnName, const std::string& binColumnName,
     const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads,
     const std::string& metricString = "mcc", const double delta = 1, const int iters = 100,
-    const int precision = 100, const std::string& initialize = "singleton") {
+    const int precision = 100, const std::string& initialize = "singleton",
+    const std::string& calculatorType = "onegap") {
     CountTableAdapter countTableAdapter;
     countTableAdapter.CreateDataFrameMap(countTable);
     FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
     std::vector<TaxonomyData> taxonomyDatabase = Utils::CreateTaxonomyData(taxonomyData);
-    PairwiseDistanceCalculator* calculator = new OneGapPairwiseDistance();
+    PairwiseDistanceCalculator* calculator = Utils::GetPairwiseDistanceCalculator(calculatorType);
     ClusterParameters parameter(clusterMethod);
     parameter.SetParameters("delta", std::to_string(delta));
     parameter.SetParameters("iters", std::to_string(iters));

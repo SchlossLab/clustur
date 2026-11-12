@@ -307,6 +307,12 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' abundances as a weight, and connectivity will shuffle the sequences but uses
 #' a weight of one for every sequence.
 #' @inheritParams cluster metric strollur_object
+#' @param pairwise_distance_method the method you wish to use to calculate
+#' pairwise distances between aligned sequences. As of current we only allow
+#' the calculation of fasta sequences, and the current methods are;
+#' onegap, nogap, and eachgap. For more information look at the 
+#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+#' `character` value.
 #' @param number_of_threads a `integer` value that represents the amount of
 #' allotted threads that can be used.
 #' @examples
@@ -332,6 +338,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #'                         ref_fasta = esophagus_fasta,
 #'                         ref_count = esophagus_count,
 #'                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
+#'                         pairwise_distance_method = "onegap",
 #'                         number_of_threads = parallel::detectCores(),
 #'                         print_ref = TRUE)
 #' @return A `list` of a list of `data.frames` that contain abundance,
@@ -345,7 +352,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
                     fit_percent = 50, closed = TRUE, print_ref = FALSE,
                     random_seed = 123, max_iterations = 100, denovo_iters = 10,
                     optimal_denovo_result = TRUE, ref_weight = "none",
-                    metric = "mcc", number_of_threads = 1,
+                    metric = "mcc", pairwise_distance_method = "onegap",
+                    number_of_threads = 1,
                     strollur_object = NULL) {
 
   if (!inherits(fit_dist, "distance_object")) {
@@ -473,7 +481,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
     copied_data <- CopyObject(fit_dist)
     class(copied_data) <- "distance_object"
     AddDataToDistanceData(copied_data, ref_list, ref_count, ref_fasta,
-                          fit_fasta, cutoff, number_of_threads)
+                          fit_fasta, pairwise_distance_method,
+                          cutoff, number_of_threads)
     result <- OptiFit3(copied_data, ref_list, ref_fasta$sequence_name,
                        feature_column_name, bin_column_name, cutoff, closed,
                        print_ref, selfReference = TRUE, max_iterations,
@@ -521,6 +530,12 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
 #' This is a `character` value.
 #' @param random_seed a `integer` value that represents the current random seed.
 #' @inheritParams cluster delta max_iterations initialize metric strollur_object
+#' @param pairwise_distance_method the method you wish to use to calculate
+#' pairwise distances between aligned sequences. As of current we only allow
+#' the calculation of fasta sequences, and the current methods are;
+#' onegap, nogap, and eachgap. For more information look at the 
+#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+#' `character` value.
 #' @param number_of_threads a `integer` value that represents the amount of
 #' allotted threads that can be used.
 #' @examples
@@ -540,6 +555,7 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                           random_seed = 123, delta = 0.0001,
                           max_iterations = 100,
                           initialize = "singleton", metric = "mcc",
+                          pairwise_distance_method = "onegap",
                           number_of_threads = 1,
                           strollur_object = NULL) {
 
@@ -583,7 +599,8 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
   result <- OptiSplit(fasta, taxonomy, count_table, cluster_method,
                       feature_column_name, bin_column_name, cutoff,
                       taxonomy_cutoff, random_seed, number_of_threads,
-                      metric, delta, max_iterations, 100, initialize)
+                      metric, delta, max_iterations, 100, initialize, 
+                      pairwise_distance_method)
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {
     res <- add_results_to_strollur_object(result)

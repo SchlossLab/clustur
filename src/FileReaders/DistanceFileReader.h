@@ -36,7 +36,8 @@ public:
     [[nodiscard]] bool GetIsSimularity() const {return sim;}
     void AddFittedDataToReference(const ListVector &otherListVector,
                                   const CountTableAdapter &, const FastaDatabase &database,
-                                  const FastaDatabase &otherDatabase, double cut, int numberOfThreads = 1);
+                                  const FastaDatabase &otherDatabase,
+                                  const PairwiseDistanceCalculator* calculator, double cut, int numberOfThreads = 1);
 
 private:
     void CalculateDistances(const FastaDatabase& database,
