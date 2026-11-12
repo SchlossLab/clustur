@@ -78,8 +78,8 @@ false discovery rate (fdr). The default metric is mcc.}
 \item{pairwise_distance_method}{the method you wish to use to calculate
 pairwise distances between aligned sequences. As of current we only allow
 the calculation of fasta sequences, and the current methods are;
-onegap, nogap, and eachgap. For more information look at the 
-(mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+onegap, nogap, and eachgap. For more information look at the
+(mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a
 `character` value.}
 
 \item{number_of_threads}{a `integer` value that represents the amount of

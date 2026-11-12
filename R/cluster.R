@@ -310,8 +310,8 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #' @param pairwise_distance_method the method you wish to use to calculate
 #' pairwise distances between aligned sequences. As of current we only allow
 #' the calculation of fasta sequences, and the current methods are;
-#' onegap, nogap, and eachgap. For more information look at the 
-#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+#' onegap, nogap, and eachgap. For more information look at the
+#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a
 #' `character` value.
 #' @param number_of_threads a `integer` value that represents the amount of
 #' allotted threads that can be used.
@@ -349,7 +349,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
                     bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
                     ref_count = NULL, ref_list = NULL, fit_fasta = NULL,
-                    fit_percent = 50, closed = TRUE, print_ref = FALSE,
+                    fit_percent = 50, closed = FALSE, print_ref = TRUE,
                     random_seed = 123, max_iterations = 100, denovo_iters = 10,
                     optimal_denovo_result = TRUE, ref_weight = "none",
                     metric = "mcc", pairwise_distance_method = "onegap",
@@ -533,8 +533,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
 #' @param pairwise_distance_method the method you wish to use to calculate
 #' pairwise distances between aligned sequences. As of current we only allow
 #' the calculation of fasta sequences, and the current methods are;
-#' onegap, nogap, and eachgap. For more information look at the 
-#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+#' onegap, nogap, and eachgap. For more information look at the
+#' (mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a
 #' `character` value.
 #' @param number_of_threads a `integer` value that represents the amount of
 #' allotted threads that can be used.
@@ -599,7 +599,7 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
   result <- OptiSplit(fasta, taxonomy, count_table, cluster_method,
                       feature_column_name, bin_column_name, cutoff,
                       taxonomy_cutoff, random_seed, number_of_threads,
-                      metric, delta, max_iterations, 100, initialize, 
+                      metric, delta, max_iterations, 100, initialize,
                       pairwise_distance_method)
   class(result) <- "mothur_cluster"
   if (!is.null(strollur_object)) {

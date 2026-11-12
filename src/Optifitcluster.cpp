@@ -1102,7 +1102,7 @@ void OptiFitCluster::compareSensSpec(OptiRefMatrix*& matrix, ClusterMetric*& use
 
     double bestStat = 0; int bestResult = 0;
 
-    if ((method == "open") && (printRef)) {
+    if ((!closed) && (printRef)) {
 
         for (int i = 0; i < listVectors.size(); i++) {
             std::string senSpecString;

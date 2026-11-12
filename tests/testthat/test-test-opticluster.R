@@ -467,7 +467,8 @@ test_that("cluster_split works", {
   taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
 
   df <- cluster_split(fasta, taxonomy, count_table, "opti",
-                      cutoff, 3, number_of_threads = 1)
+                      cutoff, 3, pairwise_distance_method = "onegap",
+                      number_of_threads = 1)
 
   expect_equal(class(df$cluster), "data.frame")
   expect_equal(class(df$abundance), "data.frame")
@@ -530,7 +531,7 @@ test_that("cluster_split works", {
 test_that("cluster_fit works", {
 
   amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
-  amazon_dist <- read_dist(test_path("extdata", "amazon_phylip.dist"),
+  amazon_dist <- read_dist(test_path("extdata", "amazon_column.dist"),
                            amazon_count, 0.03)
 
   esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
@@ -539,27 +540,28 @@ test_that("cluster_fit works", {
   esophagus_list <- read_mothur_list(example_path("esophagus.list"))
 
 
-  denovo <- optifit(amazon_dist, 0.03)
+  denovo <- optifit(amazon_dist, 0.03, close = TRUE)
   expect_message(optifit(amazon_dist, 0.03, fit_percent = 0),
                  "fit_percent is less than 0.01, setting fit_percent to 0.01")
   expect_message(optifit(amazon_dist, 0.03, fit_percent = 101),
                  "fit_percent is greater than 100, setting fit_percent to 100")
 
   denovo_optimal_false <- optifit(amazon_dist, 0.03,
-                                  optimal_denovo_result = FALSE)
-  denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
+                                  optimal_denovo_result = FALSE,
+                                  closed = TRUE)
+  denovo_open <- optifit(amazon_dist, 0.03)
   accnos <- optifit(amazon_dist, 0.03,
-                    accnos = amazon_count$Representative_Sequence[1:40])
+                    accnos = amazon_count$Representative_Sequence[1:40],
+                    closed = TRUE)
   accnos_open <- optifit(amazon_dist, 0.03,
-                         accnos = amazon_count$Representative_Sequence[1:40],
-                         closed = FALSE)
+                         accnos = amazon_count$Representative_Sequence[1:40])
 
   ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
                          ref_fasta = esophagus_fasta,
                          ref_count = esophagus_count,
                          ref_list = esophagus_list, fit_fasta = amazon_fasta,
                          number_of_threads = parallel::detectCores(),
-                         print_ref = TRUE)
+                         print_ref = TRUE, closed = TRUE)
   ref_cluster_open <- optifit(amazon_dist, 0.03, "feature", "bin",
                               accnos = NULL, ref_fasta = esophagus_fasta,
                               ref_count = esophagus_count,
@@ -579,17 +581,19 @@ test_that("cluster_fit works", {
   expect_true(nrow(denovo$cluster) == nrow(denovo_optimal_false[[1]]$cluster))
   expect_true(length(denovo_optimal_false) == 10)
   expect_true(nrow(denovo_open$cluster) == 48)
-  expect_true(nrow(accnos$cluster) == 3)
-  expect_true(nrow(accnos_open$cluster) == 57)
+  expect_true(nrow(accnos$cluster) == 2)
+  expect_true(nrow(accnos_open$cluster) == 56)
   expect_true(nrow(ref_cluster$cluster) == 24)
   expect_true(nrow(ref_cluster_open$cluster) == 110)
   expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
 
 
-  denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance")
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance",
+                    closed = TRUE)
   expect_true(nrow(denovo$cluster) == 0)
 
-  denovo <- optifit(amazon_dist, 0.03, ref_weight = "connectivity")
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "connectivity",
+                    closed = TRUE)
   expect_true(nrow(denovo$cluster) == 0)
 
   error_string <- paste0("something is not a valid ref_weight ",
@@ -713,13 +717,13 @@ test_that("cluster_fit works", {
   count <- read_count(miseq)
   dist <- read_dist(test_path("extdata", "miseq.column"), count, 0.03)
 
-  denovo <- optifit(dist, 0.03, strollur_object = miseq)
+  denovo <- optifit(dist, 0.03, strollur_object = miseq, closed = TRUE)
   otus <- strollur::report(miseq, "sequence_bin_assignment")
   last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
   expect_true(last_otu_number == nrow(denovo$cluster))
 
   accnos <- optifit(dist, 0.03, accnos = count$Representative_Sequence[1:100],
-                    strollur_object = miseq)
+                    strollur_object = miseq, closed = TRUE)
   otus <- strollur::report(miseq, "sequence_bin_assignment")
   last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
   expect_true(last_otu_number == nrow(accnos$cluster))

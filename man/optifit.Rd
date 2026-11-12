@@ -15,8 +15,8 @@ optifit(
   ref_list = NULL,
   fit_fasta = NULL,
   fit_percent = 50,
-  closed = TRUE,
-  print_ref = FALSE,
+  closed = FALSE,
+  print_ref = TRUE,
   random_seed = 123,
   max_iterations = 100,
   denovo_iters = 10,
@@ -106,8 +106,8 @@ false discovery rate (fdr). The default metric is mcc.}
 \item{pairwise_distance_method}{the method you wish to use to calculate
 pairwise distances between aligned sequences. As of current we only allow
 the calculation of fasta sequences, and the current methods are;
-onegap, nogap, and eachgap. For more information look at the 
-(mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a 
+onegap, nogap, and eachgap. For more information look at the
+(mother webpage)[https://mothur.org/wiki/dist.seqs/]. This is a
 `character` value.}
 
 \item{number_of_threads}{a `integer` value that represents the amount of
