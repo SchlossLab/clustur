@@ -28,6 +28,7 @@ For the official release from CRAN you can use the standard
 function:
 
 ``` r
+
 # install via cran
 install.packages("clustur")
 ```
@@ -36,6 +37,7 @@ For the developmental version, you can use the `install_github()`
 function from the {devtools} package
 
 ``` r
+
 # install via github
 devtools::install_github("SchlossLab/clustur")
 ```
@@ -44,6 +46,7 @@ Because {clustur}’s functions make use of a random number generator,
 users are strongly encouraged to set the seed.
 
 ``` r
+
 library(clustur)
 set.seed(19760620)
 ```
@@ -54,6 +57,7 @@ clustur will produce the same output using either a sparse (default) or
 full [count table](https://mothur.org/wiki/count_file/)
 
 ``` r
+
 full_count_table <- read_count(example_path("amazon.full.count_table"))
 sparse_count_table <- read_count(example_path("amazon.sparse.count_table"))
 ```
@@ -67,12 +71,14 @@ distance](https://mothur.org/wiki/phylip-formatted_distance_matrix/)
 matrix formats.
 
 ``` r
+
 column_distance <- read_dist(example_path("amazon_column.dist"), full_count_table, cutoff = 0.03)
 ```
 
 or
 
 ``` r
+
 phylip_distance <- read_dist(example_path("amazon_phylip.dist"), full_count_table, cutoff = 0.03)
 ```
 
@@ -81,6 +87,7 @@ want a data frame version of the distances, you can use
 `get_distance_df(distance_data)`.
 
 ``` r
+
 get_distance_df(column_distance)
 #>    FirstName SecondName Distance
 #> 1     U68638     U68618 0.020396
@@ -126,6 +133,7 @@ get_distance_df(phylip_distance)
 The default method for clustering in `cluster` is “opticlust”
 
 ``` r
+
 cutoff <- 0.03
 cluster_data <- cluster(column_distance, cutoff)
 ```
@@ -134,10 +142,58 @@ cluster_data <- cluster(column_distance, cutoff)
 
 ``` r
 
+
 cluster_data <- cluster(column_distance, cutoff, method = "furthest")
 cluster_data <- cluster(column_distance, cutoff, method = "nearest")
 cluster_data <- cluster(column_distance, cutoff, method = "average")
 cluster_data <- cluster(column_distance, cutoff, method = "weighted")
+```
+
+#### Additional clustering methods
+
+Along with the main cluster function, mothur also includes two other
+clustering methods: optifit and optisplit. Optifit allows you to fit
+sequences into existing OTUs. Optisplit takes advantage of multithread
+capabilities by splitting groups into taxonomy, and clustering those
+groups together. Then finishes by combining them together.
+
+``` r
+
+  amazon_count <- read_count(example_path("amazon.full.count_table"))
+  amazon_dist <- read_dist(example_path("amazon_phylip.dist"), amazon_count, 0.03)
+
+  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
+  esophagus_count <- read_count(example_path("esophagus.count_table"))
+  amazon_fasta <- read_fasta(example_path("amazon.align"))
+  esophagus_list <- read_mothur_list(example_path("esophagus.list"))
+
+
+  denovo <- optifit(amazon_dist, 0.03)
+#> accnos, ref_fasta, ref_count, ref_list, and fit_fastaparameters are all NULL. Running Optifit using denovo.
+  denovo_open <- optifit(amazon_dist, 0.03, close = FALSE)
+#> accnos, ref_fasta, ref_count, ref_list, and fit_fastaparameters are all NULL. Running Optifit using denovo.
+  accnos <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40])
+#> Accnos file is not null, running optifit using accnos.
+  accnos_open <- optifit(amazon_dist, 0.03, accnos = amazon_count$Representative_Sequence[1:40],
+                         closed=FALSE)
+#> Accnos file is not null, running optifit using accnos.
+
+  ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                         ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                         number_of_threads = parallel::detectCores(), print_ref = TRUE, closed = FALSE)
+#> ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.
+```
+
+**Example of Optisplit**
+
+``` r
+
+  cutoff <- 0.2
+  count_table <- read_count(example_path("amazon.full.count_table"))
+  fasta <- read_fasta(example_path("amazon.align"))
+  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
+  df <- cluster_split(fasta = fasta, taxonomy = taxonomy, count_table = count_table, cluster_method = "opti", cutoff = cutoff, taxonomy_cutoff = 3, number_of_threads = 1)
 ```
 
 ## Output data from clustering
@@ -157,9 +213,10 @@ clustur provides getter functions, `get_label()`, `get_clusters()`,
 which will be demonstrated below.
 
 ``` r
+
 clusters <- cluster(column_distance, cutoff, method = "opticlust")
 get_cutoff(clusters)
-#> [1] 0.03
+#> [1] 0.2
 get_bins(clusters)
 #>   feature  bin
 #> 1  U68630 bin1
@@ -180,8 +237,8 @@ get_abundance(clusters)
 #>  [ reached 'max' / getOption("max.print") -- omitted 171 rows ]
 get_metrics(clusters)
 #> $metrics
-#>      label   cutoff specificity      ppv       ttp  f1score          tn
-#> 1 0.030000 0.030000    1.000000 1.000000 17.000000 1.000000 4736.000000
+#>      label   cutoff specificity      ppv        tp  f1score          tn
+#> 1 0.200000 0.200000    1.000000 1.000000 17.000000 1.000000 4736.000000
 #>        mcc       fn       fp sensitivity      npv      fdr accuracy
 #> 1 1.000000 0.000000 0.000000    1.000000 1.000000 1.000000 1.000000
 #> 

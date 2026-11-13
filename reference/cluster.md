@@ -13,7 +13,12 @@ cluster(
   method = "opticlust",
   feature_column_name_to = "feature",
   bin_column_name_to = "bin",
-  random_seed = 123
+  random_seed = 123,
+  delta = 1e-04,
+  max_iterations = 100,
+  initialize = "singleton",
+  metric = "mcc",
+  strollur_object = NULL
 )
 ```
 
@@ -47,6 +52,41 @@ cluster(
 
   the random seed to use, (default = 123).
 
+- delta:
+
+  Allows you to set the stable value for the metric in the opticluster
+  method. It defaults to 0.0001, to reach full convergence set this
+  value to 0.
+
+- max_iterations:
+
+  the max amount of iterations the opticluster method will run. The
+  default is 100.
+
+- initialize:
+
+  this parameter allows you to set the default randomization of for the
+  opticluster method. The two methods are: "singleton" and "oneotu."
+  Singleton will randomly assign each sequence to its own OTU while
+  "oneotu" assigns all sequence into one OTU. Defaults to singleton.
+
+- metric:
+
+  this parameter allows you to choose which metric the cluster will
+  optimize to, the options are: Matthews correlation coefficient (mcc),
+  sensitivity (sens), specificity (spec), true positives + true
+  negatives (tptn), false positives + false negatives (fpfn), true
+  positives (tp), true negative (tn), false positive (fp), false
+  negative (fn), f1score (f1score), accuracy (accuracy), positive
+  predictive value (ppv), negative predictive value (npv), false
+  discovery rate (fdr). The default metric is mcc.
+
+- strollur_object:
+
+  Using the \`strollur\` r package, you can use your created strollur
+  object to save your clustering results to. This allows you to seamless
+  modify your strollur object and analysis results as needed.
+
 ## Value
 
 A list of \`data.frames\` that contain abundance, and clustering
@@ -56,6 +96,7 @@ clustering performance metrics.
 ## Examples
 
 ``` r
+
  cutoff <- 0.03
  count_table <- read_count(example_path("amazon.full.count_table"))
  distance_data <- read_dist(example_path("amazon_column.dist"),

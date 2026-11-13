@@ -23,6 +23,7 @@ a named \`list\` of clusters.
 ## Examples
 
 ``` r
+
  cutoff <- 0.2
  count_table <- read_count(example_path("amazon.full.count_table"))
  distance_data <- read_dist(example_path("amazon_column.dist"),

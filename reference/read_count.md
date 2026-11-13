@@ -6,14 +6,20 @@ sparse and full count tables.
 ## Usage
 
 ``` r
-read_count(count_table_path)
+read_count(count_table)
+
+# S3 method for class 'strollur'
+read_count(count_table)
+
+# S3 method for class 'character'
+read_count(count_table)
 ```
 
 ## Arguments
 
-- count_table_path:
+- count_table:
 
-  The file path of your count table.
+  The file path of your count table or a strollur object.
 
 ## Value
 

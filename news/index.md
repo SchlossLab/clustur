@@ -1,5 +1,29 @@
 # Changelog
 
+## clustur 0.2.0
+
+## clustur 0.2.0
+
+### New Features
+
+- Added the new function
+  [`optifit()`](http://www.schlosslab.org/clustur/reference/optifit.md),
+  which is the cluster.fit method from mothur. You can read up on it
+  [here](https://mothur.org/wiki/cluster.split/).
+- Added the new function `cluster_fit()`, which is the cluster.split
+  method from mothur. You can read up on it
+  [here](https://mothur.org/wiki/cluster.fit/).
+- Added support for `strollur` objects from the `strollur` package.
+
+### Improvements
+
+- Optimized all clustering methods to be faster and more memory
+  efficient.
+- Removed code bloat from the last version.
+- Added more customization to all the clustering functions, you can now
+  input parameters that were in mothur in clustur (i.e metrics, and
+  max_iterations).
+
 ## clustur 0.1.4
 
 CRAN release: 2026-01-08

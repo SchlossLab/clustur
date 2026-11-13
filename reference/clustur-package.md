@@ -22,7 +22,9 @@ Useful links:
 
 - <https://github.com/SchlossLab/clustur>
 
-- Report bugs at <https://github.com/SchlossLab/clustur/issues>
+- <https://github.com/SchlossLab/Clustur>
+
+- Report bugs at <https://github.com/SchlossLab/Clustur/issues>
 
 ## Author
 
@@ -30,6 +32,9 @@ Useful links:
 ([ORCID](https://orcid.org/0000-0002-6935-4275)) \[copyright holder\]
 
 Authors:
+
+- Patrick Schloss <pschloss@umich.edu>
+  ([ORCID](https://orcid.org/0000-0002-6935-4275)) \[copyright holder\]
 
 - Gregory Johnson <grejoh@umich.edu>
   ([ORCID](https://orcid.org/0009-0008-3890-0297))

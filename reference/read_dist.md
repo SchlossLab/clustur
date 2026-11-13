@@ -38,6 +38,7 @@ information. Can be accessed using \`get_distance_df()\`
 ## Examples
 
 ``` r
+
  i_values <- as.integer(1:100)
  j_values <- as.integer(sample(1:100, 100, TRUE))
  x_values <- as.numeric(runif(100, 0, 1))

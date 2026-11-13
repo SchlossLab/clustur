@@ -4,6 +4,10 @@
 
 - [`cluster()`](http://www.schlosslab.org/clustur/reference/cluster.md)
   : Cluster entities together
+- [`optifit()`](http://www.schlosslab.org/clustur/reference/optifit.md)
+  : Optifit
+- [`cluster_split()`](http://www.schlosslab.org/clustur/reference/cluster_split.md)
+  : Cluster Split
 
 ## Process Data
 

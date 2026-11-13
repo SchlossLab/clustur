@@ -7,6 +7,7 @@
 <url><loc>http://www.schlosslab.org/clustur/index.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/news/index.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/cluster.html</loc></url>
+<url><loc>http://www.schlosslab.org/clustur/reference/cluster_split.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/clustur-package.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/create_sparse_matrix.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/example_path.html</loc></url>
@@ -17,8 +18,10 @@
 <url><loc>http://www.schlosslab.org/clustur/reference/get_distance_df.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/get_metrics.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/index.html</loc></url>
+<url><loc>http://www.schlosslab.org/clustur/reference/optifit.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/read_count.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/read_dist.html</loc></url>
+<url><loc>http://www.schlosslab.org/clustur/reference/reexports.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/split_clusters_to_list.html</loc></url>
 <url><loc>http://www.schlosslab.org/clustur/reference/validate_count_table.html</loc></url>
 </urlset>

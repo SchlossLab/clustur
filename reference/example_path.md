@@ -28,6 +28,10 @@ giving example filenames if \`fill = NULL\`.
 example_path("amazon_phylip.dist")
 #> [1] "/home/runner/work/_temp/Library/clustur/extdata/amazon_phylip.dist"
 example_path()
-#> [1] "amazon.full.count_table"   "amazon.sparse.count_table"
-#> [3] "amazon_column.dist"        "amazon_phylip.dist"       
+#>  [1] "amazon.align"              "amazon.full.count_table"  
+#>  [3] "amazon.sparse.count_table" "amazon.taxonomy"          
+#>  [5] "amazon_column.dist"        "amazon_phylip.dist"       
+#>  [7] "esophagus.count_table"     "esophagus.dist"           
+#>  [9] "esophagus.fasta"           "esophagus.list"           
+#> [11] "esophagus.taxonomy"       
 ```

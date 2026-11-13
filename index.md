@@ -16,6 +16,7 @@ For the official release from CRAN you can use the standard
 function:
 
 ``` r
+
 # install via cran
 install.packages("clustur")
 library(clustur)
@@ -25,6 +26,7 @@ For the developmental version, you can use the `install_github()`
 function from the {devtools} package
 
 ``` r
+
 # install via github
 devtools::install_github("SchlossLab/clustur")
 library(clustur)
