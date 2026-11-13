@@ -1,4 +1,4 @@
-# clustur (development version)
+# clustur 0.2.0
 
 # clustur 0.2.0
 ## New Features
