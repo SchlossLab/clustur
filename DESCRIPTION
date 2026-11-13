@@ -22,7 +22,7 @@ Imports:
     reshape2,
     strollur
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.2.0)
 LinkingTo: Rcpp, RcppThread, sitmo,
     testthat
 Suggests:
