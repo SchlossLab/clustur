@@ -1,9 +1,14 @@
 //
+// Created by Gregory Johnson on 6/9/26.
+//
+
+
+//
 // Created by Gregory Johnson on 3/29/24.
 //
-#include "MothurDependencies/ListVector.h"
+#include "DataStructures/ListVector.h"
+#include "DataStructures/RAbundVector.h"
 #include "Adapters/DataFrameAdapter.h"
-#include "MothurDependencies/RAbundVector.h"
 
 std::string ListVector::getOTUName(const long long bin) {
     if (static_cast<long long>(binLabels.size()) > bin) {
@@ -11,7 +16,7 @@ std::string ListVector::getOTUName(const long long bin) {
     return binLabels[bin];
 }
 
-ListVector::ListVector(const ListVector& other)  : DataVector(other) {
+ListVector::ListVector(const ListVector& other) {
     for(const auto& currentData : other.data) {
         push_back(currentData);
     }
@@ -24,13 +29,11 @@ ListVector::ListVector(const ListVector& other)  : DataVector(other) {
     maxRank = other.maxRank;
 }
 
-
 /***********************************************************************/
 
 void ListVector::push_back(const std::string& seqNames) {
-    Utils util;
     data.push_back(seqNames);
-    const int nNames = util.getNumNames(seqNames);
+    const int nNames = Utils::getNumNames(seqNames);
 
     numBins++;
 
@@ -39,11 +42,20 @@ void ListVector::push_back(const std::string& seqNames) {
     numSeqs += nNames;
 }
 
+void ListVector::push_back(const ListVector& listVector) {
+    const int currentSize = size();
+    const int newSize = currentSize + listVector.size();
+    resize(newSize);
+    for (int i = currentSize; i < newSize; i++) {
+        set(i, listVector.get(i - currentSize));
+    }
+}
+
 void ListVector::set(const int binNumber, const std::string &seqNames) {
-    Utils util;
-    const int nNames_old = util.getNumNames(data[binNumber]);
+    if (binNumber > data.size() || binNumber < 0 ) Rcpp::stop("binNumber out of range");
+    const int nNames_old = Utils::getNumNames(data[binNumber]);
     data[binNumber] = seqNames;
-    const int nNames_new = util.getNumNames(seqNames);
+    const int nNames_new = Utils::getNumNames(seqNames);
 
     if(nNames_old == 0)			{	numBins++;				}
     if(nNames_new == 0)			{	numBins--;				}
@@ -53,8 +65,7 @@ void ListVector::set(const int binNumber, const std::string &seqNames) {
 }
 
 std::vector<std::string> ListVector::getLabels() {
-    Utils util;
-    util.getOTUNames(binLabels, numBins, otuTag);
+    Utils::getOTUNames(binLabels, numBins, otuTag);
     return binLabels;
 }
 
@@ -72,15 +83,12 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
     otuTag = "Otu";
     std::string output_cluster;
     printHeaders(output_cluster, ct, true);
-    // output_cluster += label + "\t" + std::to_string(numBins);
-    //TestHelper::Print(output_cluster);
-    Utils util;
     std::vector<listCt> hold;
     for (const auto & i : data) {
         if (!i.empty()) {
             std::vector<std::string> binNames;
             std::string bin = i;
-            util.splitAtComma(bin, binNames);
+            Utils::splitAtComma(bin, binNames);
             int total = 0;
             for (const auto & binName : binNames) {
                 auto it = ct.find(binName);
@@ -91,11 +99,7 @@ std::string ListVector::print(std::ostream &output, std::map<std::string, int> &
             hold.push_back(temp);
         }
     }
-    std::sort(hold.begin(), hold.end(), abundNamesSort2); // Mothur sorts
-    // its bins
-    // This means that we can create an rabundvector just by sorting it by size.
-    // And it should be equal. Rabund = binSize. And since it is sorted, they should be equal.
-
+    std::sort(hold.begin(), hold.end(), abundNamesSort2);
     for (auto & i : hold) {
         if (!i.bin.empty()) {
             //TestHelper::Print('\t' + hold[i].bin);
@@ -111,8 +115,9 @@ int ListVector::size() const {
 }
 
 void ListVector::clear() {
+    data.clear();
 }
-void ListVector::resize(const int size) {
+void ListVector::resize(const size_t size) {
     data.resize(size);
 }
 
@@ -122,8 +127,12 @@ std::string ListVector::print(std::ostream &output) {
         if (!i.empty()) {
             std::string bin = i;
             std::vector<std::string> binNames;
-            util.splitAtComma(bin, binNames);
+            Utils::splitAtComma(bin, binNames);
             if (!std::isdigit(bin[0])) {
+                if(binNames.empty()) {
+                    continue;
+                    //Rcpp::stop("Errored out in print");
+                }
                 binNames[0] = "";
                 //continue;
             }
@@ -137,9 +146,8 @@ std::string ListVector::print(std::ostream &output) {
 }
 RAbundVector ListVector::getRAbundVector() const {
     RAbundVector rav;
-    Utils util;
     for(const auto & i : data){
-        const int binSize = util.getNumNames(i);
+        const int binSize = Utils::getNumNames(i);
         rav.push_back(binSize);
     }
     rav.setLabel(label);
@@ -152,13 +160,12 @@ void ListVector::printHeaders(std::string &output, std::map<std::string, int> &c
         if (binLabels.empty()) { sortPlease = false; } //we are creating arbitary otuNames
         const std::vector<std::string> theseLabels = getLabels();
         if (sortPlease) {
-            Utils util;
             std::vector<listCt> hold;
             for (size_t i = 0; i < data.size(); i++) {
                 if (!data[i].empty()) {
                     std::vector<std::string> binNames;
                     std::string bin = data[i];
-                    util.splitAtComma(bin, binNames);
+                    Utils::splitAtComma(bin, binNames);
                     int total = 0;
                     for (const auto & binName : binNames) {
                         auto it = ct.find(binName);

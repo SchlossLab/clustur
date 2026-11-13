@@ -2,19 +2,28 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "MothurDependencies/CompleteLinkage.h"
+#include "Clusters/CompleteLinkage.h"
 
 /***********************************************************************/
 
-CompleteLinkage::CompleteLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c,
-    const std::string &s, const float a) :
-    Cluster(rav, lv, dm, c, s, a)
+CompleteLinkage::CompleteLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm,
+    const int seed, const float c, const std::string &s, const float a) :
+    Cluster(rav, lv, dm, seed, c, s, a)
 {}
 
 /***********************************************************************/
 //This function returns the tag of the method.
 std::string CompleteLinkage::getTag() {
     return("fn");
+}
+
+ClusterExport* CompleteLinkage::Execute() {
+    return ExecuteCluster();
+}
+
+void CompleteLinkage::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    precision = std::stoi(params.at("precision"));
 }
 
 
@@ -27,7 +36,7 @@ bool CompleteLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
         colCell.dist = rowCell.dist;
         changed = true;
     }
-    return(changed);
+    return changed;
 
 }
 

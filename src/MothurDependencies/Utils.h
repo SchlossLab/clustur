@@ -1,52 +1,67 @@
 //
-// Created by Gregory Johnson on 3/29/24.
+// Created by Gregory Johnson on 6/9/26.
 //
 
-#ifndef UTILS_H
-#define UTILS_H
-#define MOTHURMAX 1e6
-
+#ifndef REFACTOR_UTILS_H
+#define REFACTOR_UTILS_H
 #include <vector>
 #include <random>
-#include <algorithm>
 #include <set>
 #include <sstream>
-#include <stdexcept>
 #include <unordered_map>
-#include "PDistCell.h"
+#include <Rcpp.h>
 
-class BadConversion : public std::runtime_error {
-public:
-    BadConversion(const std::string& s) : runtime_error(s){ }
-};
+#include "PairwiseDistanceCalculator.h"
+#include "../Clusters/ClusterMetric.h"
+#include "../DataStructures/FastaDatabase.h"
+#include "../DataStructures/TaxonomyData.h"
+#include "../RNG/RandomNumberSitmo.h"
 
+class ClusterMethod;
+class SparseDistanceMatrix;
+class ListVector;
+class RAbundVector;
 class Utils {
 public:
     Utils() = default;
-    void mothurRandomShuffle(std::vector<int>& randomize);
-    void mothurRandomShuffle(std::vector<std::string>& randomize);
-    void mothurRandomShuffle(std::vector<PDistCellMin>& randomize);
-    int getRandomIndex(int highest);
-    int getNumNames(std::string names);
-    bool mothurConvert(const std::string& item, int& num);
-    bool isNumeric1(const std::string& stringToCheck);
-    int getOTUNames(std::vector<std::string>& currentLabels, int numBins, const std::string& tagHeader);
-    bool mothurConvert(const std::string &item, double& num);
-    bool mothurConvert(const std::string &item, float& num);
-    std::string getLabelTag(const std::string &label);
-    std::string getSimpleLabel(const std::string &label);
-    void splitAtComma(const std::string& s, std::vector<std::string>& container);
-    bool isEqual(float num1, float num2);
+    // static void mothurRandomShuffle(std::vector<int>& randomize);
+    // static void mothurRandomShuffle(std::vector<long long>& randomize);
+    static long long getRandomIndex(long long highest, RandomNumberSitmo &sitmo);
+    static int getNumNames(std::string names);
+    static bool mothurConvert(const std::string& item, int& num);
+    static bool isNumeric1(const std::string& stringToCheck);
+    static int getOTUNames(std::vector<std::string>& currentLabels, int numBins, const std::string& tagHeader);
+    static bool mothurConvert(const std::string &item, double& num);
+    static bool mothurConvert(const std::string &item, float& num);
+    static std::string getLabelTag(const std::string &label);
+    static std::string getSimpleLabel(const std::string &label);
+    static void splitAtComma(const std::string& s, std::vector<std::string>& container);
+    static bool isEqual(float num1, float num2);
+    static float ceilDist(float dist, int precision);
+    static ClusterMethod* GetClusterMethod(const std::string& method, ListVector* listVector,
+    SparseDistanceMatrix* matrix, RAbundVector& rAbund, int seed, double cutoff, double adjust = -1);
+    static PairwiseDistanceCalculator* GetPairwiseDistanceCalculator(const std::string& type);
+    template <typename T>
+    static void SortVector(std::vector<T>&);
 
-    float ceilDist(float dist, int precision);
+    template<class T>
+    static void mothurRandomShuffle(std::vector<T> &vec, RandomNumberSitmo &sitmo);
 
-    void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
+    static ListVector CreateListVectorFromOtuList(const std::vector<std::string> &otuBins, const std::vector<std::string> &sequences);
+    static void AddRowToDataFrameMap(std::unordered_map<std::string, std::vector<std::string>> &map, const std::string &data,
                               const std::vector<std::string> &headers);
     //Error Checking
-    void CheckForDistanceFileError(const std::set<std::string>&) const;
-
+    static void CheckForDistanceFileError(const std::set<std::string>&);
+    static ClusterMetric* GetClusterMetric(const std::string& metric);
+    static float removeConfidences(std::string &tax);
+    static bool hasConfidenceScore(std::string &taxon, float &confidence);
+    static bool isPositiveNumeric(const std::string &stringToCheck);
+    static void splitAtChar(std::string &prefix, std::string &suffix, char c);
+    static void splitAtChar(std::string &s, std::vector<std::string> &container, char symbol);
+    static void splitAtDash(const std::string &estim, std::vector<std::string> &container);
+    static std::vector<TaxonomyData> CreateTaxonomyData(const Rcpp::DataFrame& data);
     template <typename Out>
-    void split(const std::string &s, const char delim, Out result) {
+    static void split(const std::string &s, const char delim, Out result) {
         std::istringstream iss(s);
         std::string item;
         while (getline(iss, item, delim)) {
@@ -55,13 +70,21 @@ public:
             }
         }
     }
-
-    //template<typename T>
-    // void convert(const std::string& s, T& x, bool failIfLeftoverChars = true);
-private:
-    std::mt19937_64 mersenne_twister_engine;
 };
 
+template<typename T>
+void Utils::SortVector(std::vector<T>& vector) {
+    std::sort(vector.begin(), vector.end());
+}
+
+template<typename T>
+void Utils::mothurRandomShuffle(std::vector<T>& vec, RandomNumberSitmo& sitmo) {
+    if (vec.empty()) return;
+    for (size_t i = vec.size() - 1; i > 0; --i) {
+        const int randomNumber = sitmo.GetRandomNumber(0, vec.size() - 1);
+        std::swap(vec[i], vec[randomNumber]);
+    }
+}
 
 
-#endif //UTILS_H
+#endif //REFACTOR_UTILS_H

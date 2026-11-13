@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "CountTableAdapter.h"
-#include "../MothurDependencies/ReadPhylipMatrix.h"
+#include "../FileReaders/ReadPhylipMatrix.h"
 
 
 class MatrixAdapter {

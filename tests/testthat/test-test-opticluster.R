@@ -13,6 +13,87 @@ test_that("opticluster returns four dataframes", {
 
 })
 
+test_that("cluster with strollur objects", {
+  cutoff <- 0.03
+  miseq <- strollur::miseq_sop_example()
+  count <- read_count(miseq)
+  dist <- read_dist(test_path("extdata", "miseq.column"), count, 0.03)
+  df <- cluster(dist, cutoff, strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "furthest")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "nearest")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "average")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+
+  df <- cluster(dist, cutoff, strollur_object = miseq, "weighted")
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+})
+
+test_that("opticluster works using every metric", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  distance_data <- read_dist(test_path("extdata", "amazon_column.dist"),
+                             count_table, cutoff, FALSE)
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "mcc")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "sens")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "spec")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tptn")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tp")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "tn")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fp")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fn")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "f1score")
+  expect_true(nrow(df$cluster) == 27)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust",
+                metric = "accuracy")
+  expect_true(nrow(df$cluster) == 29)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "ppv")
+  expect_true(nrow(df$cluster) == 97)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "npv")
+  expect_true(nrow(df$cluster) == 21)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fdr")
+  expect_true(nrow(df$cluster) == 98)
+
+  df <- cluster(distance_data, cutoff, method = "opticlust", metric = "fpfn")
+  expect_true(nrow(df$cluster) == 29)
+
+})
+
 test_that("opticluster and other clustering methods 
           do not cluster duplicate values with column files", {
             cutoff <- 0.2
@@ -32,11 +113,6 @@ test_that("opticluster and other clustering methods
             expect_true(length(ls[which(duplicated(ls))]) <= 0)
             expect_true(length(unique(ls)) == length(ls))
 
-            # Works also when not opticluster
-            # Since furthest, nearest, average, and weighted all
-            # follow the same structure, I do not need
-            # to test them all individually
-            # We will use nearest...
 
             df <- cluster(distance_data, cutoff, method = "nearest")
 
@@ -180,7 +256,7 @@ test_that("Opticluster works with phylip files", {
 test_that("Example Path returns the correct path", {
   expect_true(class(example_path("amazon_phylip.dist")) == "character")
   expect_error(example_path("a"))
-  expect_true(length(example_path()) == 4)
+  expect_true(length(example_path()) == 11)
 })
 
 test_that("cluster works via phylip file", {
@@ -382,3 +458,273 @@ test_that("opticluster will generate a warning if the mcc
             expect_warning(df <- cluster(distance_data, cutoff,
                                          method = "opticlust"))
           })
+
+
+test_that("cluster_split works", {
+  cutoff <- 0.2
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
+  fasta <- read_fasta(example_path("amazon.align"))
+  taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
+
+  df <- cluster_split(fasta, taxonomy, count_table, "opti",
+                      cutoff, 3, pairwise_distance_method = "onegap",
+                      number_of_threads = 1)
+
+  expect_equal(class(df$cluster), "data.frame")
+  expect_equal(class(df$abundance), "data.frame")
+  expect_true(all(df$label == 0.2))
+  expect_true(nrow(df$abundance) == 43)
+  expect_true(nrow(df$cluster) == 43)
+
+  # Error checking
+  expect_error(cluster_split("fasta", taxonomy, count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "fit_fasta has to be a data frame,")
+
+  expect_error(cluster_split(data.frame(), taxonomy, count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "fit_fasta column or row size is 0")
+
+  expect_error(cluster_split(data.frame(a = 1), taxonomy, count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "ensure that you are using the")
+
+  expect_error(cluster_split(fasta, "taxonomy", count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "taxonomy has to be a data frame,")
+
+  expect_error(cluster_split(fasta, data.frame(), count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "taxonomy column or row size is 0")
+
+  expect_error(cluster_split(fasta, data.frame(a = 1), count_table,
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "ensure that you are using the")
+
+  expect_error(cluster_split(fasta, taxonomy, "count_table",
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "count_table has to be a data frame,")
+
+  expect_error(cluster_split(fasta, taxonomy, data.frame(),
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "count_table column or row size is 0")
+
+  expect_error(cluster_split(fasta, taxonomy, data.frame(a = 1),
+                             "opti", cutoff, 3, number_of_threads = 1),
+               "ensure that you are using the")
+
+  # With Strollur object
+  miseq <- strollur::miseq_sop_example()
+  count <- read_count(miseq)
+  fasta <- strollur::report(miseq, type = "fasta")
+  tax <- strollur::report(miseq, type = "sequence_taxonomy")
+  taxonomy <- aggregate(. ~ sequence_name,
+                        data = tax[, c("sequence_name", "taxonomy")],
+                        FUN = paste0, collapse = ";")
+  df <- cluster_split(fasta, taxonomy, count, "opti", 0.2, 3,
+                      number_of_threads = 1, strollur_object = miseq)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(df$cluster))
+})
+
+test_that("cluster_fit works", {
+
+  amazon_count <- read_count(test_path("extdata", "amazon.count_table"))
+  amazon_dist <- read_dist(test_path("extdata", "amazon_column.dist"),
+                           amazon_count, 0.03)
+
+  esophagus_fasta <- read_fasta(example_path("esophagus.fasta"))
+  esophagus_count <- read_count(example_path("esophagus.count_table"))
+  amazon_fasta <- read_fasta(example_path("amazon.align"))
+  esophagus_list <- read_mothur_list(example_path("esophagus.list"))
+
+
+  denovo <- optifit(amazon_dist, 0.03, close = TRUE)
+  expect_message(optifit(amazon_dist, 0.03, fit_percent = 0),
+                 "fit_percent is less than 0.01, setting fit_percent to 0.01")
+  expect_message(optifit(amazon_dist, 0.03, fit_percent = 101),
+                 "fit_percent is greater than 100, setting fit_percent to 100")
+
+  denovo_optimal_false <- optifit(amazon_dist, 0.03,
+                                  optimal_denovo_result = FALSE,
+                                  closed = TRUE)
+  denovo_open <- optifit(amazon_dist, 0.03)
+  accnos <- optifit(amazon_dist, 0.03,
+                    accnos = amazon_count$Representative_Sequence[1:40],
+                    closed = TRUE)
+  accnos_open <- optifit(amazon_dist, 0.03,
+                         accnos = amazon_count$Representative_Sequence[1:40])
+
+  ref_cluster <- optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                         ref_fasta = esophagus_fasta,
+                         ref_count = esophagus_count,
+                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                         number_of_threads = parallel::detectCores(),
+                         print_ref = TRUE, closed = TRUE)
+  ref_cluster_open <- optifit(amazon_dist, 0.03, "feature", "bin",
+                              accnos = NULL, ref_fasta = esophagus_fasta,
+                              ref_count = esophagus_count,
+                              ref_list = esophagus_list,
+                              fit_fasta = amazon_fasta, closed = FALSE,
+                              number_of_threads = parallel::detectCores(),
+                              random_seed = 123)
+
+  ref_cluster_open_print_ref <-
+    optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+            ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+            ref_list = esophagus_list, fit_fasta = amazon_fasta,
+            closed = FALSE, print_ref = TRUE,
+            number_of_threads = parallel::detectCores())
+
+  expect_true(nrow(denovo$cluster) == 5)
+  expect_true(nrow(denovo$cluster) == nrow(denovo_optimal_false[[1]]$cluster))
+  expect_true(length(denovo_optimal_false) == 10)
+  expect_true(nrow(denovo_open$cluster) == 46)
+  expect_true(nrow(accnos$cluster) == 3)
+  expect_true(nrow(accnos_open$cluster) == 57)
+  expect_true(nrow(ref_cluster$cluster) == 24)
+  expect_true(nrow(ref_cluster_open$cluster) == 110)
+  expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
+
+
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance",
+                    closed = TRUE)
+  expect_true(nrow(denovo$cluster) == 0)
+
+  denovo <- optifit(amazon_dist, 0.03, ref_weight = "connectivity",
+                    closed = TRUE)
+  expect_true(nrow(denovo$cluster) == 0)
+
+  error_string <- paste0("something is not a valid ref_weight ",
+                         "options.options are: abundance, connectivity, none.")
+  expect_error(optifit(amazon_dist, 0.03, ref_weight = "something"),
+               error_string)
+
+  # Error Checking
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = "", ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_fasta has to be a data frame")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = "",
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "fit_fasta has to be a data frame")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = data.frame(), ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "fit_fasta or ref_fasta column or row size is 0")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = data.frame(),
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "fit_fasta or ref_fasta column or row size is 0")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = data.frame(a = 1),
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ensure that you are using the")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = data.frame(a = 1),
+                       ref_count = esophagus_count,
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ensure that you are using the")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = "", fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_list has to be a data frame,")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = data.frame(), fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_list column or row size is 0")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta, ref_count = esophagus_count,
+                       ref_list = data.frame(a = 1), fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ensure that you are using the")
+
+  expect_error(optifit("amazon_dist", 0.03),
+               "fit_dist must be created using the")
+
+  expect_error(optifit(amazon_dist, 0.03, accnos =
+                         c(amazon_count$Representative_Sequence[1:40], "a")),
+               paste0("accnos contains sequences that ",
+                      "are not in the count table, please correct."))
+
+  expect_error(optifit(amazon_dist, 0.03,
+                       accnos = c(amazon_count$Representative_Sequence, "a")),
+               paste0("length of accnos is greater ",
+                      "than the number sequences in the count table"))
+
+  expect_error(optifit(amazon_dist, 0.03, accnos = c(1, 2, 3)),
+               "accnos must be a list of characters.")
+
+  expect_error(optifit(amazon_dist, 0.03, accnos = character()),
+               "the length of the accnos cannot be 0.")
+
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta,
+                       ref_count = "esophagus_count",
+                       ref_list = esophagus_list, fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_count has to be a data frame,")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta,
+                       ref_count = data.frame(), ref_list = esophagus_list,
+                       fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ref_count column or row size is 0")
+
+  expect_error(optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
+                       ref_fasta = esophagus_fasta,
+                       ref_count = data.frame(a = 1), ref_list = esophagus_list,
+                       fit_fasta = amazon_fasta,
+                       number_of_threads = parallel::detectCores(),
+                       print_ref = TRUE),
+               "ensure that you are using the")
+
+  # Strollur
+  cutoff <- 0.03
+  miseq <- strollur::miseq_sop_example()
+  fasta <- strollur::report(miseq, type = "fasta")
+  count <- read_count(miseq)
+  dist <- read_dist(test_path("extdata", "miseq.column"), count, 0.03)
+
+  denovo <- optifit(dist, 0.03, strollur_object = miseq, closed = TRUE)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(denovo$cluster))
+
+  accnos <- optifit(dist, 0.03, accnos = count$Representative_Sequence[1:100],
+                    strollur_object = miseq, closed = TRUE)
+  otus <- strollur::report(miseq, "sequence_bin_assignment")
+  last_otu_number <- as.integer(gsub("bin", "", otus$otu_id[nrow(otus)]))
+  expect_true(last_otu_number == nrow(accnos$cluster))
+})

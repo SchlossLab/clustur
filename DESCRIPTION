@@ -1,7 +1,7 @@
 Package: clustur
 Type: Package
 Title: Clustering
-Version: 0.1.4.9000
+Version: 0.2.0
 Date: 2025-12-12
 Authors@R: c(
     person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
@@ -18,10 +18,12 @@ Imports:
     Matrix,
     methods,
     Rcpp (>= 1.0.12),
-    utils
+    utils,
+    reshape2,
+    strollur
 Depends:
     R (>= 3.5.0)
-LinkingTo: Rcpp,
+LinkingTo: Rcpp, RcppThread, sitmo,
     testthat
 Suggests:
     knitr,
@@ -29,7 +31,7 @@ Suggests:
     testthat (>= 3.0.0),
     xml2
 Config/testthat/edition: 3
-RoxygenNote: 7.3.2
 VignetteBuilder: knitr
-URL: http://www.schlosslab.org/clustur/, https://github.com/SchlossLab/clustur
-BugReports: https://github.com/SchlossLab/clustur/issues
+URL: http://www.schlosslab.org/clustur/, https://github.com/SchlossLab/clustur, https://github.com/SchlossLab/Clustur
+BugReports: https://github.com/SchlossLab/Clustur/issues
+Config/roxygen2/version: 8.0.0

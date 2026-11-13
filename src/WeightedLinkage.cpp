@@ -4,14 +4,14 @@
 
 #include <utility>
 
-#include "MothurDependencies/WeightedLinkage.h"
+#include "Clusters/WeightedLinkage.h"
 /* This class implements the WPGMA, weighted average neighbor clustering algorithm */
 
 /***********************************************************************/
 
-WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c, std::string s, const float a) :
-    Cluster(rav, lv, dm, c, std::move(s), a)
-{
+WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm,
+    const int seed, const float c, std::string s, const float a) :
+    Cluster(rav, lv, dm, seed, c, std::move(s), a) {
     saveRow = -1;
     saveCol = -1;
 }
@@ -21,6 +21,15 @@ WeightedLinkage::WeightedLinkage(RAbundVector* rav, ListVector* lv, SparseDistan
 //This function returns the tag of the method.
 std::string WeightedLinkage::getTag() {
     return("wn");
+}
+
+ClusterExport* WeightedLinkage::Execute() {
+    return ExecuteCluster();
+}
+
+void WeightedLinkage::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    precision = std::stoi(params.at("precision"));
 }
 
 
@@ -35,7 +44,7 @@ bool WeightedLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
 
     colCell.dist = (colCell.dist + rowCell.dist) / 2;
 
-    return(true);
+    return true;
 
 }
 

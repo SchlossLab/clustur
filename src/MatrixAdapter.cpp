@@ -2,7 +2,8 @@
 // Created by Gregory Johnson on 6/28/24.
 //
 #include "Adapters/MatrixAdapter.h"
-#include <map>
+#include "DataStructures/SparseDistanceMatrix.h"
+#include "DataStructures/ListVector.h"
 #include <utility>
 
 MatrixAdapter::MatrixAdapter(const std::vector<int> &iIndexes, const std::vector<int> &jIndexes,
@@ -47,9 +48,6 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() const {
     auto sequences = countTable.GetSequences();
     names.insert(sequences.begin(), sequences.end());
     sparseMatrix.resize(static_cast<int>(names.size()));
-    // if (nSeqs > sequences.size()) {
-    //     Rcpp::stop("Your sparse matrix has more sequences than your counttable.\n");
-    // }
     // If the count table
     for (int i = 0; i < nSeqs;  i++) {
         double currentDist = data[i];
@@ -58,9 +56,8 @@ SparseDistanceMatrix MatrixAdapter::CreateSparseMatrix() const {
             currentDist = 0;
         }
         const int xIndex = xPosition[i]; // Coming from r -> c++, indeces start at 1 in r
-        const int yIndex = yPosition[i];
-      
-        if(xIndex > yIndex)
+
+        if(const int yIndex = yPosition[i]; xIndex > yIndex)
             sparseMatrix.addCell(yIndex, PDistCell(xIndex, static_cast<float>(currentDist)));
         else
             sparseMatrix.addCell(xIndex, PDistCell(yIndex, static_cast<float>(currentDist)));

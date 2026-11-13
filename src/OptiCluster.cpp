@@ -1,35 +1,72 @@
 //
 // Created by Gregory Johnson on 3/29/24.
 //
+#include <unordered_set>
+#include <fstream>
+#include "Clusters/OptiCluster.h"
+#include "Clusters/Metrics/accuracy.h"
+#include "Clusters/Metrics/f1score.h"
+#include "Clusters/Metrics/fdr.h"
+#include "Clusters/Metrics/mcc.h"
+#include "Clusters/Metrics/npv.h"
+#include "Clusters/Metrics/ppv.h"
+#include "Clusters/Metrics/sensitivity.h"
+#include "Clusters/Metrics/specificity.h"
+#include "DataExporters/OptiClusterData.h"
+#include "Clusters/Metrics/tptn.h"
+#include <chrono>
 
-#include "MothurDependencies/OptiCluster.h"
-#include "MothurDependencies/Metrics/accuracy.hpp"
-#include "MothurDependencies/Metrics/f1score.hpp"
-#include "MothurDependencies/Metrics/fdr.hpp"
-#include "MothurDependencies/Metrics/mcc.hpp"
-#include "MothurDependencies/Metrics/npv.hpp"
-#include "MothurDependencies/Metrics/ppv.hpp"
-#include "MothurDependencies/Metrics/sensitivity.hpp"
-#include "MothurDependencies/Metrics/specificity.hpp"
 
-OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const long long ns) {
-    matrix = mt;
-    metric = met;
+
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const long long ns) : matrix(
+        mt),
+    metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
+    fittrueNegatives(0),
+    fitfalsePositives(0),
+    fitfalseNegatives(0),
+    combotruePositives(0),
+    combotrueNegatives(0),
+    combofalsePositives(0),
+    combofalseNegatives(0), numFitSeqs(0),
+    numFitSingletons(0),
+    numComboSeqs(0), numComboSingletons(0),
+    cutoff(cutoff), delta(0) {
     truePositives = 0;
     trueNegatives = 0;
     falseNegatives = 0;
     falsePositives = 0;
-    numSingletons = ns;
+    stableMetric = 0;
 }
 
+OptiCluster::OptiCluster(OptiData *mt, ClusterMetric *met, const int seed, const double cutoff, const double stableMetric, const long long ns) : matrix(
+        mt),
+    metric(met), rngEngine(seed), numSeqs(0), insertLocation(0), numSingletons(ns), fittruePositives(0),
+    fittrueNegatives(0),
+    fitfalsePositives(0),
+    fitfalseNegatives(0),
+    combotruePositives(0),
+    combotrueNegatives(0),
+    combofalsePositives(0),
+    combofalseNegatives(0), numFitSeqs(0),
+    numFitSingletons(0),
+    numComboSeqs(0), numComboSingletons(0),
+    stableMetric(stableMetric),
+    cutoff(cutoff), delta(0) {
+    truePositives = 0;
+    trueNegatives = 0;
+    falseNegatives = 0;
+    falsePositives = 0;
+}
+
+
 OptiCluster::~OptiCluster() {
-    delete metric;
-    delete matrix;
+    // delete metric;
+    // delete matrix;
 }
 
 /***********************************************************************/
 //randomly assign sequences to OTUs
-int OptiCluster::initialize(double &value, const bool randomize, const std::string& initialize) {
+int OptiCluster::Initialize(double &value, const bool randomize, const std::string& initialize) {
     numSeqs = matrix->getNumSeqs();
     truePositives = 0;
     falsePositives = 0;
@@ -39,30 +76,32 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
     bins.resize(numSeqs); //place seqs in own bin
 
     const std::vector<long long> temp;
+    seqBin = std::vector<long long>(numSeqs, 0);
     bins.push_back(temp);
-    seqBin[numSeqs] = -1;
+    // seqBin[numSeqs] = -1;
     insertLocation = numSeqs;
-    Utils util;
 
     if (initialize == "singleton") {
         //put everyone in own bin
-        for (int i = 0; i < numSeqs; i++) { bins[i].push_back(i); }
-
-        //maps randomized sequences to bins
         for (int i = 0; i < numSeqs; i++) {
-            seqBin[i] = bins[i][0];
+            bins[i].push_back(i);
+            seqBin[i] = i;
             randomizeSeqs.push_back(i);
         }
 
-        if (randomize) { util.mothurRandomShuffle(randomizeSeqs); }
+        //maps randomized sequences to bins
+        // for (int i = 0; i < numSeqs; i++) {
+        //     seqBin[i] = bins[i][0];
+        //     // index[
+        //     randomizeSeqs.push_back(i);
+        // }
+
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
-        for (const auto & it : seqBin) {
-            if (it.second == -1) {
-            } else {
-                const long long numCloseSeqs = (matrix->getNumClose(it.first)); //does not include self
-                falseNegatives += static_cast<double>(numCloseSeqs);
-            }
+        for (const auto seq: seqBin) {
+            const long long numCloseSeqs = (matrix->getNumClose(seq)); //does not include self
+            falseNegatives += static_cast<double>(numCloseSeqs);
         }
         falseNegatives /= 2; //square matrix
         const auto nSeqs = static_cast<double>(numSeqs);
@@ -76,15 +115,12 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
             randomizeSeqs.push_back(i);
         }
 
-        if (randomize) { util.mothurRandomShuffle(randomizeSeqs); }
+        if (randomize) { Utils::mothurRandomShuffle(randomizeSeqs, rngEngine); }
 
         //for each sequence (singletons removed on read)
-        for (const auto & it : seqBin) {
-            if (it.second == -1) {
-            } else {
-                const long long numCloseSeqs = (matrix->getNumClose(it.first)); //does not include self
-                truePositives += static_cast<double>(numCloseSeqs);
-            }
+        for (const auto seq : seqBin) {
+            const long long numCloseSeqs = (matrix->getNumClose(seq)); //does not include self
+            truePositives += static_cast<double>(numCloseSeqs);
         }
         truePositives /= 2; //square matrix
         const auto nSeqs = static_cast<double>(numSeqs);
@@ -102,108 +138,108 @@ int OptiCluster::initialize(double &value, const bool randomize, const std::stri
  * keep or move the sequence to the OTU where the `metric` is the largest - flip a coin on ties */
 bool OptiCluster::update(double &listMetric) {
     //for each sequence (singletons removed on read)
+
     for (const int randomizeSeq : randomizeSeqs) {
-        // const auto it = seqBin.find(randomizeSeq);
-        // seqBin[randomizeSeq]
 
         long long seqNumber = randomizeSeq;
+        const std::vector<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
         const long long binNumber = seqBin[randomizeSeq];
 
-        if (binNumber == -1) {
-        } else {
-            double tn = trueNegatives;
-            double tp = truePositives;
-            double fp = falsePositives;
-            double fn = falseNegatives;
+        double tn = trueNegatives;
+        double tp = truePositives;
+        double fp = falsePositives;
+        double fn = falseNegatives;
 
-            //close / far count in current bin
-            std::vector<double> results = getCloseFarCounts(seqNumber, binNumber);
-            const double cCount = results[0];
-            const double fCount = results[1];
+        //close / far count in current bin
+        std::vector<double> results = getCloseFarCounts(seqNumber, binNumber);
+        const double cCount = results[0];
+        const double fCount = results[1];
 
-            //metric in current bin
-            double bestMetric = metric->getValue(tp, tn, fp, fn);
-            long long bestBin = binNumber;
-            double bestTp = tp;
-            double bestTn = tn;
-            double bestFp = fp;
-            double bestFn = fn;
+        //metric in current bin
+        double bestMetric = metric->getValue(tp, tn, fp, fn);
+        long long bestBin = binNumber;
+        double bestTp = tp;
+        double bestTn = tn;
+        double bestFp = fp;
+        double bestFn = fn;
 
-            //if not already singleton, then calc value if singleton was created
-            if ((bins[binNumber].size()) != 1) {
-                //make a singleton
-                //move out of old bin
-                fn += cCount;
-                tn += fCount;
-                fp -= fCount;
-                tp -= cCount;
-                const double singleMetric = metric->getValue(tp, tn, fp, fn);
-                if (singleMetric > bestMetric) {
-                    bestBin = -1;
-                    bestTp = tp;
-                    bestTn = tn;
-                    bestFp = fp;
-                    bestFn = fn;
-                    bestMetric = singleMetric;
-                }
+        //if not already singleton, then calc value if singleton was created
+        if ((bins[binNumber].size()) != 1) {
+            //make a singleton
+            //move out of old bin
+            fn += cCount;
+            tn += fCount;
+            fp -= fCount;
+            tp -= cCount;
+            if (const double singleMetric = metric->getValue(tp, tn, fp, fn); singleMetric > bestMetric) {
+                bestBin = -1;
+                bestTp = tp;
+                bestTn = tn;
+                bestFp = fp;
+                bestFn = fn;
+                bestMetric = singleMetric;
             }
-
-            std::set<long long> binsToTry;
-            std::unordered_set<long long> closeSeqs = matrix->getCloseSeqs(seqNumber);
-            for (long long closeSeq : closeSeqs) {
-                binsToTry.insert(seqBin[closeSeq]);
-            }
-
-            //merge into each "close" otu
-            for (const long long bins : binsToTry) {
-                tn = trueNegatives;
-                tp = truePositives;
-                fp = falsePositives;
-                fn = falseNegatives;
-                fn += cCount;
-                tn += fCount;
-                fp -= fCount;
-                tp -= cCount; //move out of old bin
-                results = getCloseFarCounts(seqNumber, bins);
-                fn -= results[0];
-                tn -= results[1];
-                tp += results[0];
-                fp += results[1]; //move into new bin
-                const double newMetric = metric->getValue(tp, tn, fp, fn); //score when sequence is moved
-                //new best
-                if (newMetric > bestMetric) {
-                    bestMetric = newMetric;
-                    bestBin = bins;
-                    bestTp = tp;
-                    bestTn = tn;
-                    bestFp = fp;
-                    bestFn = fn;
-                }
-            }
-
-            bool usedInsert = false;
-            if (bestBin == -1) {
-                bestBin = insertLocation;
-                usedInsert = true;
-            }
-
-            if (bestBin != binNumber) {
-                truePositives = bestTp;
-                trueNegatives = bestTn;
-                falsePositives = bestFp;
-                falseNegatives = bestFn;
-
-                //move seq from i to j
-                bins[bestBin].push_back(seqNumber); //add seq to bestbin
-                bins[binNumber].erase(remove(bins[binNumber].begin(), bins[binNumber].end(), seqNumber),
-                                      bins[binNumber].end()); //remove from old bin i
-            }
-
-            if (usedInsert) { insertLocation = findInsert(); }
-
-            //update seqBins
-            seqBin[seqNumber] = bestBin; //set new OTU location
         }
+
+
+
+        std::vector<long long> binsToTry;
+        //binsToTry.reserve(closeSeqs.size());
+        for (const long long closeSeq : closeSeqs) {
+            binsToTry.emplace_back(seqBin[closeSeq]);
+        }
+        std::sort(binsToTry.begin(), binsToTry.end());
+        const auto it = std::unique(binsToTry.begin(), binsToTry.end());
+        binsToTry.resize(std::distance(binsToTry.begin(), it));
+
+        //merge into each "close" otu
+        for (const long long bin : binsToTry) {
+            tn = trueNegatives;
+            tp = truePositives;
+            fp = falsePositives;
+            fn = falseNegatives;
+            fn += cCount;
+            tn += fCount;
+            fp -= fCount;
+            tp -= cCount; //move out of old bin
+            results = getCloseFarCounts(seqNumber, bin);
+            fn -= results[0];
+            tn -= results[1];
+            tp += results[0];
+            fp += results[1]; //move into new bin
+            //new best
+            if (const double newMetric = metric->getValue(tp, tn, fp, fn); newMetric > bestMetric) {
+                bestMetric = newMetric;
+                bestBin = bin;
+                bestTp = tp;
+                bestTn = tn;
+                bestFp = fp;
+                bestFn = fn;
+            }
+        }
+
+        bool usedInsert = false;
+        if (bestBin == -1) {
+            bestBin = insertLocation;
+            usedInsert = true;
+        }
+
+        if (bestBin != binNumber) {
+            truePositives = bestTp;
+            trueNegatives = bestTn;
+            falsePositives = bestFp;
+            falseNegatives = bestFn;
+
+            //move seq from i to j
+            bins[bestBin].push_back(seqNumber); //add seq to bestbin
+            bins[binNumber].erase(remove(bins[binNumber].begin(), bins[binNumber].end(), seqNumber),
+                                  bins[binNumber].end()); //remove from old bin i
+        }
+
+        if (usedInsert) { insertLocation = findInsert(); }
+
+        //update seqBins
+        seqBin[seqNumber] = bestBin; //set new OTU location
     }
 
     listMetric = metric->getValue(truePositives, trueNegatives, falsePositives, falseNegatives);
@@ -214,19 +250,17 @@ bool OptiCluster::update(double &listMetric) {
 
 /***********************************************************************/
 std::vector<double> OptiCluster::getCloseFarCounts(const long long seq, const long long newBin) const {
-    std::vector<double> results;
-    results.push_back(0);
-    results.push_back(0);
+    std::vector<double> results(2, 0);
     if (newBin == -1) {
     } //making a singleton bin. Close but we are forcing apart.
     else {
         //merging a bin
         for (const long long bin : bins[newBin]) {
-            if (seq == bin) {
-            } //ignore self
-            else if (!matrix->isClose(seq, bin)) { results[1]++; }
-            //this sequence is "far away" from sequence i - above the cutoff
-            else { results[0]++; } //this sequence is "close" to sequence i - distance between them is less than cutoff
+            if (seq == bin) continue; //ignore self
+            results[!matrix->isClose(seq, bin)]++;
+            // else if (!matrix->isClose(seq, bin)) { results[1]++; }
+            // //this sequence is "far away" from sequence i - above the cutoff
+            // else { results[0]++; } //this sequence is "close" to sequence i - distance between them is less than cutoff
         }
     }
     return results;
@@ -260,6 +294,13 @@ ListVector OptiCluster::getList() const {
         }
     }
     return list;
+}
+
+void OptiCluster::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    initialize = params.at("initialize");
+    delta = std::stod(params.at("delta"));
+    maxIters = std::stoi(params.at("iters"));
 }
 
 /***********************************************************************/
@@ -303,45 +344,17 @@ std::vector<double> OptiCluster::getStats(double &tp, double &tn, double &fp, do
     return results;
 }
 
-std::vector<double> OptiCluster::getCloseFarFitCounts(const long long seq, const long long newBin) const {
-    std::vector<double> results;
-    results.push_back(0);
-    results.push_back(0); //results[0] = close count, results[1] = far count
-
-    if (newBin == -1) {
-    } //making a singleton bin. Close but we are forcing apart.
-    else {
-        //merging a bin
-        for (const long long& bin : bins[newBin]) {
-            if (seq == bin) {
-            } //ignore self
-            else {
-                bool isFit = true;
-                const bool closeFit = matrix->isCloseFit(seq, bin, isFit);
-                if (closeFit) {
-                    //you are close if you are fit and close
-                    results[0]++;
-                } else if (isFit) { results[1]++; } //this sequence is "far away" and fit - above the cutoff
-            }
-        }
-    }
-
-    return results;
-}
-
-/***********************************************************************/
-
 /***********************************************************************/
 long long OptiCluster::getNumBins() const {
-    long long singletn = matrix->getNumSingletons();
+    auto singleton = static_cast<long long>(matrix->getNumSingletons());
 
     for (const auto & bin : bins) {
         if (!bin.empty()) {
-            singletn++;
+            singleton++;
         }
     }
 
-    return singletn;
+    return singleton;
 }
 
 /***********************************************************************/
@@ -355,3 +368,83 @@ long long OptiCluster::findInsert() const {
 }
 
 /***********************************************************************/
+
+
+
+ClusterExport* OptiCluster::Execute() {
+    // clusterMetrics += ("\nClustering " + distfile + "\n");
+    std::string initializeString = "singleton";
+    auto* data = new OptiClusterData("");
+    std::string clusterMetrics = "";
+    std::string sensFile;
+    bool canShuffle = true;
+    int iters = 0;
+    // double delta = 1;
+    // int maxIters = 100;
+    std::ofstream listFile;
+    std::vector<std::string> sensfileHeaders{"label","cutoff","tp","tn","fp","fn","sensitivity",
+        "specificity","ppv","npv","fdr","accuracy","mcc","f1score"};
+    // sensFile = "label\tcutoff\ttp\ttn\tfp\tfn\tsensitivity\tspecificity\tppv\tnpv\tfdr\taccuracy\tmcc\tf1score\n";
+
+    std::vector<std::string> clusterMetricsHeaders{"iter","time","label","num_otus","cutoff","tp","tn",
+      "fp","fn","sensitivity","specificity","ppv","npv",
+        "fdr", "accuracy", "mcc", "f1score"};
+
+    double listVectorMetric = 0; //worst state
+    long long numBins;
+    double tp, tn, fp, fn;
+    std::vector<double> stats;
+    std::vector<std::string> clusterMetricList;
+    Initialize(listVectorMetric, canShuffle, initializeString);
+    stats = getStats(tp, tn, fp, fn);
+    numBins = getNumBins();
+    clusterMetrics = ("0,0," + std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                       std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + "," +
+                       std::to_string(fp) + "," + std::to_string(fn) + ",");
+
+
+    for (double result: stats) {
+        clusterMetrics += (std::to_string(result) + ",");
+    }
+    Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+    while ((delta > stableMetric) && (iters < maxIters)) {
+        //long start = std::time(nullptr);
+        double oldMetric = listVectorMetric;
+        auto startTime = std::chrono::system_clock::now();
+        update(listVectorMetric);
+
+        delta = std::fabs(oldMetric - listVectorMetric);
+        iters++;
+
+        stats = getStats(tp, tn, fp, fn);
+        numBins = getNumBins();
+
+        auto endTime = std::chrono::system_clock::now();
+        std::chrono::duration<double> currentTime = endTime - startTime;
+        clusterMetrics = (std::to_string(iters) + "," + std::to_string(currentTime.count()) + "," +
+                           std::to_string(cutoff) + "," + std::to_string(numBins) + "," +
+                           std::to_string(cutoff) + "," + std::to_string(tp) + "," + std::to_string(tn) + ","
+                           + std::to_string(fp) + "," + std::to_string(fn) + ",");
+        for (double result: stats) {
+            clusterMetrics += (std::to_string(result) + ",");
+        }
+        Utils::AddRowToDataFrameMap(dataframeMapClusterMetrics, clusterMetrics, clusterMetricsHeaders);
+    }
+
+    ListVector list = getList();
+    list.setLabel(std::to_string(cutoff));
+    OptiClusterInformation clusterInformation;
+    clusterInformation.label = std::to_string(cutoff);
+    clusterInformation.numberOfOtu = static_cast<int>(numBins);
+    clusterInformation.clusterBins = list.print(listFile);
+    data->AddToData(clusterInformation);
+    data->SetListVector(list, std::to_string(cutoff));
+    stats = getStats(tp, tn, fp, fn);
+
+    sensFile += std::to_string(cutoff) + ',' + std::to_string(cutoff) + ',' + std::to_string(tp) + ',' +
+            std::to_string(tn) + ',' +
+            std::to_string(fp) + ',' + std::to_string(fn) + ',';
+    for (double result: stats) { sensFile += std::to_string(result) + ','; }
+    Utils::AddRowToDataFrameMap(dataframeMapSensMetrics, sensFile, sensfileHeaders);
+    return data;
+}
