@@ -134,6 +134,7 @@ cluster <- function(distance_object, cutoff, method = "opticlust",
   if (!inherits(distance_object, "distance_object")) {
     stop("`distance_object` must be generated using the `read_dist` function")
   }
+  error_for_invalid_cutoff(distance_object, cutoff)
   if (!(method %in% c("opticlust",
                       "furthest", "nearest", "average", "weighted",
                       "optifit"))) {
@@ -360,6 +361,7 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
   if (!inherits(fit_dist, "distance_object")) {
     stop("fit_dist must be created using the `read_dist()` function.")
   }
+  error_for_invalid_cutoff(fit_dist, cutoff)
   result <- c()
   ref_parameters_check <- all(as.logical(lapply(list(ref_fasta,
                                                      ref_list,
@@ -608,4 +610,16 @@ cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
     strollur::assign(strollur_object, res, type = "bin", bin_type = "otu")
   }
   result
+}
+
+
+error_for_invalid_cutoff <- function(dist, new_cutoff) {
+  cutoff <- GetDistObjectCutoff(dist)
+  if (cutoff < new_cutoff) {
+    stop(paste0("You created a dist object with cutoff ", cutoff,
+                " you cannot use a cutoff higher than this.",
+                " For example, you inputted: ", new_cutoff,
+                ". Please use a cutoff that is less than this",
+                " or recreate the distance object using `read_dist()`"))
+  }
 }

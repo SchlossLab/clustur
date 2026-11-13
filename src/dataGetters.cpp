@@ -15,6 +15,13 @@ Rcpp::DataFrame GetCountTable(const SEXP& fileReader) {
     return ptr.get()->GetCountTable();
 }
 
+//[[Rcpp::export]]
+double GetDistObjectCutoff(const SEXP& fileReader) {
+    const Rcpp::XPtr<DistanceFileReader> ptr(fileReader);
+    return ptr.get()->GetCutoff();
+}
+
+
 
 //[[Rcpp::export]]
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable) {

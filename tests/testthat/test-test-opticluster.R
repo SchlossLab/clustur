@@ -11,6 +11,11 @@ test_that("opticluster returns four dataframes", {
   expect_equal(class(df$abundance), "data.frame")
   expect_true(all(csv$label == df$label))
 
+  # Fails when given a higher cutoff than what was already used for dist
+  expect_error(cluster(distance_data, 0.3, method = "opticlust"),
+               "You created a dist object with cutoff 0.2")
+
+
 })
 
 test_that("Read Dist fails when given incorrect parameters", {
@@ -561,6 +566,8 @@ test_that("cluster_fit works", {
                  "fit_percent is less than 0.01, setting fit_percent to 0.01")
   expect_message(optifit(amazon_dist, 0.03, fit_percent = 101),
                  "fit_percent is greater than 100, setting fit_percent to 100")
+  expect_error(optifit(amazon_dist, 0.04, close = TRUE),
+               "You created a dist object with cutoff 0.03")
 
   denovo_optimal_false <- optifit(amazon_dist, 0.03,
                                   optimal_denovo_result = FALSE,
@@ -586,7 +593,7 @@ test_that("cluster_fit works", {
                               number_of_threads = parallel::detectCores(),
                               random_seed = 123)
 
-  ref_cluster_open_print_ref_false <-
+  ref_cluster_open_print_ref_f <-
     optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
             ref_fasta = esophagus_fasta, ref_count = esophagus_count,
             ref_list = esophagus_list, fit_fasta = amazon_fasta,
@@ -601,7 +608,7 @@ test_that("cluster_fit works", {
   expect_true(nrow(accnos_open$cluster) == 57)
   expect_true(nrow(ref_cluster$cluster) == 24)
   expect_true(nrow(ref_cluster_open$cluster) == 110)
-  expect_true(nrow(ref_cluster_open_print_ref_false$cluster) == 0)
+  expect_true(nrow(ref_cluster_open_print_ref_f$cluster) == 0)
 
 
   denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance",

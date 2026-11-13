@@ -33,6 +33,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// GetDistObjectCutoff
+double GetDistObjectCutoff(const SEXP& fileReader);
+RcppExport SEXP _clustur_GetDistObjectCutoff(SEXP fileReaderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const SEXP& >::type fileReader(fileReaderSEXP);
+    rcpp_result_gen = Rcpp::wrap(GetDistObjectCutoff(fileReader));
+    return rcpp_result_gen;
+END_RCPP
+}
 // CreateDataFrameFromSparseCountTable
 Rcpp::DataFrame CreateDataFrameFromSparseCountTable(const Rcpp::DataFrame& countTable);
 RcppExport SEXP _clustur_CreateDataFrameFromSparseCountTable(SEXP countTableSEXP) {
@@ -248,6 +259,7 @@ RcppExport SEXP run_testthat_tests(SEXP);
 static const R_CallMethodDef CallEntries[] = {
     {"_clustur_GetDistanceDataFrame", (DL_FUNC) &_clustur_GetDistanceDataFrame, 1},
     {"_clustur_GetCountTable", (DL_FUNC) &_clustur_GetCountTable, 1},
+    {"_clustur_GetDistObjectCutoff", (DL_FUNC) &_clustur_GetDistObjectCutoff, 1},
     {"_clustur_CreateDataFrameFromSparseCountTable", (DL_FUNC) &_clustur_CreateDataFrameFromSparseCountTable, 1},
     {"_clustur_Cluster", (DL_FUNC) &_clustur_Cluster, 7},
     {"_clustur_OptiClust", (DL_FUNC) &_clustur_OptiClust, 9},

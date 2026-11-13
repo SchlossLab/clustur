@@ -9,6 +9,10 @@ GetCountTable <- function(fileReader) {
     .Call('_clustur_GetCountTable', PACKAGE = 'clustur', fileReader)
 }
 
+GetDistObjectCutoff <- function(fileReader) {
+    .Call('_clustur_GetDistObjectCutoff', PACKAGE = 'clustur', fileReader)
+}
+
 CreateDataFrameFromSparseCountTable <- function(countTable) {
     .Call('_clustur_CreateDataFrameFromSparseCountTable', PACKAGE = 'clustur', countTable)
 }
