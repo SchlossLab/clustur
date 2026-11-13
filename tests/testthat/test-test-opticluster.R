@@ -14,6 +14,7 @@ test_that("opticluster returns four dataframes", {
 })
 
 test_that("Read Dist fails when given incorrect parameters", {
+  count_table <- read_count(test_path("extdata", "amazon.count_table"))
   expect_error(read_dist(12, count_table),
                "If you are not using a file")
 })
