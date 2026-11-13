@@ -222,7 +222,7 @@ groups together. Then finishes by combining them together.</p>
 <span><span class="co">#&gt; ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.</span></span></code></pre></div>
 <p><strong>Example of Optisplit</strong></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span>  <span class="va">cutoff</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<code class="sourceCode R"><span>  <span class="va">cutoff</span> <span class="op">&lt;-</span> <span class="fl">0.03</span></span>
 <span>  <span class="va">count_table</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_count.html">read_count</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"amazon.full.count_table"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">fasta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mothur.org/strollur/reference/read_fasta.html" class="external-link">read_fasta</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"amazon.align"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">taxonomy</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://mothur.org/strollur/reference/read_mothur_taxonomy.html" class="external-link">read_mothur_taxonomy</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"amazon.taxonomy"</span><span class="op">)</span><span class="op">)</span></span>
@@ -250,7 +250,7 @@ iteration. clustur provides getter functions, <code>get_label()</code>,
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">clusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cluster.html">cluster</a></span><span class="op">(</span><span class="va">column_distance</span>, <span class="va">cutoff</span>, method <span class="op">=</span> <span class="st">"opticlust"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get_cutoff.html">get_cutoff</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0.2</span></span>
+<span><span class="co">#&gt; [1] 0.03</span></span>
 <span><span class="fu"><a href="../reference/get_bins.html">get_bins</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   feature  bin</span></span>
 <span><span class="co">#&gt; 1  U68630 bin1</span></span>
@@ -272,7 +272,7 @@ iteration. clustur provides getter functions, <code>get_label()</code>,
 <span><span class="fu"><a href="../reference/get_metrics.html">get_metrics</a></span><span class="op">(</span><span class="va">clusters</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $metrics</span></span>
 <span><span class="co">#&gt;      label   cutoff specificity      ppv        tp  f1score          tn</span></span>
-<span><span class="co">#&gt; 1 0.200000 0.200000    1.000000 1.000000 17.000000 1.000000 4736.000000</span></span>
+<span><span class="co">#&gt; 1 0.030000 0.030000    1.000000 1.000000 17.000000 1.000000 4736.000000</span></span>
 <span><span class="co">#&gt;        mcc       fn       fp sensitivity      npv      fdr accuracy</span></span>
 <span><span class="co">#&gt; 1 1.000000 0.000000 0.000000    1.000000 1.000000 1.000000 1.000000</span></span>
 <span><span class="co">#&gt; </span></span>

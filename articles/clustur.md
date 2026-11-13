@@ -189,7 +189,7 @@ groups together. Then finishes by combining them together.
 
 ``` r
 
-  cutoff <- 0.2
+  cutoff <- 0.03
   count_table <- read_count(example_path("amazon.full.count_table"))
   fasta <- read_fasta(example_path("amazon.align"))
   taxonomy <- read_mothur_taxonomy(example_path("amazon.taxonomy"))
@@ -216,7 +216,7 @@ which will be demonstrated below.
 
 clusters <- cluster(column_distance, cutoff, method = "opticlust")
 get_cutoff(clusters)
-#> [1] 0.2
+#> [1] 0.03
 get_bins(clusters)
 #>   feature  bin
 #> 1  U68630 bin1
@@ -238,7 +238,7 @@ get_abundance(clusters)
 get_metrics(clusters)
 #> $metrics
 #>      label   cutoff specificity      ppv        tp  f1score          tn
-#> 1 0.200000 0.200000    1.000000 1.000000 17.000000 1.000000 4736.000000
+#> 1 0.030000 0.030000    1.000000 1.000000 17.000000 1.000000 4736.000000
 #>        mcc       fn       fp sensitivity      npv      fdr accuracy
 #> 1 1.000000 0.000000 0.000000    1.000000 1.000000 1.000000 1.000000
 #> 
