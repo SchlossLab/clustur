@@ -586,11 +586,11 @@ test_that("cluster_fit works", {
                               number_of_threads = parallel::detectCores(),
                               random_seed = 123)
 
-  ref_cluster_open_print_ref <-
+  ref_cluster_open_print_ref_false <-
     optifit(amazon_dist, 0.03, "feature", "bin", accnos = NULL,
             ref_fasta = esophagus_fasta, ref_count = esophagus_count,
             ref_list = esophagus_list, fit_fasta = amazon_fasta,
-            closed = FALSE, print_ref = TRUE,
+            closed = TRUE, print_ref = FALSE,
             number_of_threads = parallel::detectCores())
 
   expect_true(nrow(denovo$cluster) == 5)
@@ -601,7 +601,7 @@ test_that("cluster_fit works", {
   expect_true(nrow(accnos_open$cluster) == 57)
   expect_true(nrow(ref_cluster$cluster) == 24)
   expect_true(nrow(ref_cluster_open$cluster) == 110)
-  expect_true(nrow(ref_cluster_open_print_ref$cluster) == 110)
+  expect_true(nrow(ref_cluster_open_print_ref_false$cluster) == 0)
 
 
   denovo <- optifit(amazon_dist, 0.03, ref_weight = "abundance",

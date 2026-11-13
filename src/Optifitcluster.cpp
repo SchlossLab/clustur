@@ -821,7 +821,7 @@ ClusterExport* OptiFitCluster::runUserRefOptiCluster(){
     }
 
     std::ofstream listFile;
-    ListVector* list = getFittedList(std::to_string(cutoff), true);
+    ListVector* list = getFittedList(std::to_string(cutoff), printRef);
     list->setLabel(std::to_string(cutoff));
     clusterInformation.label = std::to_string(cutoff);
     clusterInformation.numberOfOtu = static_cast<int>(numBins);
@@ -944,7 +944,7 @@ ClusterExport* OptiFitCluster::runRefOptiCluster(ListVector refList, std::map<st
     }
     std::ofstream listFile;
     auto* result = new OptifitClusterData("");
-    ListVector* list = getFittedList(std::to_string(cutoff), true);
+    ListVector* list = getFittedList(std::to_string(cutoff), printRef);
     list->setLabel(std::to_string(cutoff));
     OptifitClusterInformation clusterInformation;
     clusterInformation.label = std::to_string(cutoff);
