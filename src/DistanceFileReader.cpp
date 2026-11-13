@@ -4,12 +4,17 @@
 
 #include <utility>
 
-#include "Adapters/DistanceFileReader.h"
+#include "FileReaders/DistanceFileReader.h"
+
+#include "DataStructures/FastaDatabase.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+#include <RcppThread.h>
+#include <mutex>
 
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
-    const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
-countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
+                                       const ListVector& listVector, CountTableAdapter countTable, const double cutoff, const bool isSim):sparseMatrix(sparseDistanceMatrix),
+                                                                                                                                          countTable(std::move(countTable)), list(listVector), cutoff(cutoff), sim(isSim) {}
 
 DistanceFileReader::DistanceFileReader(const SparseDistanceMatrix& sparseDistanceMatrix,
     const ListVector& listVector, const double cutoff, const bool isSim) :sparseMatrix(sparseDistanceMatrix),
@@ -53,8 +58,65 @@ void DistanceFileReader::SetCountTableAdapter(const CountTableAdapter &adapter) 
 }
 
 Rcpp::DataFrame DistanceFileReader::GetCountTable() const {
-    // Recreate and return the count table
-    // Might actually just store it in memory and return it
-    // return countTable.GetCountTable();
     return countTable.ReCreateDataFrame();
+}
+
+void DistanceFileReader::AddFittedDataToReference(
+    const ListVector& otherListVector,
+    const CountTableAdapter& otherCountTable,
+    const FastaDatabase& database,
+    const FastaDatabase& otherDatabase,
+    const PairwiseDistanceCalculator* calculator,
+    const double cut, const int numberOfThreads) {
+    const size_t otherSize = otherCountTable.GetSequences().size();
+    const size_t currentSize = countTable.GetSequences().size();
+    list.push_back(otherListVector);
+    countTable.AddCountTable(otherCountTable);
+    sparseMatrix.resize(currentSize + otherSize);
+    const size_t newSize = otherSize + currentSize;
+    list.resize(newSize);
+    std::unordered_map<std::string, int> indexMap;
+    indexMap.reserve(newSize);
+    for (int i = 0; i < static_cast<int>(currentSize); i++) {
+        indexMap[list.get(i)] = i;
+    }
+    int counter = static_cast<int>(currentSize);
+    for (int i = 0; i < static_cast<int>(newSize); i++) {
+        std::string names = otherListVector.get(i);
+        std::vector<std::string> splitNames;
+        Utils::splitAtComma(names, splitNames);
+        for (const auto& splitName : splitNames) {
+            list.set(counter, splitName);
+            indexMap[splitName] = counter++;
+        }
+    }
+    CalculateDistances(database, otherDatabase, calculator, indexMap, cut, numberOfThreads);
+    delete calculator;
+}
+void DistanceFileReader::CalculateDistances(const FastaDatabase& database,
+    const FastaDatabase& otherDatabase, const PairwiseDistanceCalculator* calculator,
+    const std::unordered_map<std::string, int>& indexMap, const double cut, const int numberOfThreads) {
+    const std::vector<FastaData>& refData = otherDatabase.GetFastaDataBase();
+    const std::vector<FastaData>& fitData = database.GetFastaDataBase();
+    const size_t dataSize = refData.size();
+    const size_t otherDataSize = fitData.size();
+    const size_t size = dataSize + otherDataSize;
+    std::mutex mutex;
+    RcppThread::parallelFor(0, size, [&](size_t i) {
+        const bool useMainFasta = i < dataSize;
+        const auto&[fastaName, fastaSequence] = useMainFasta ? refData[i] : fitData[i - dataSize];
+        const int iIndex = indexMap.at(fastaName);
+        for (size_t j = i + 1; j < size; j++) {
+            const bool otherUseMainFasta = j < dataSize;
+            const auto&[name, sequence] = otherUseMainFasta ? refData[j] : fitData[j - dataSize];
+            if (const float result = static_cast<float>(calculator->Execute(fastaSequence,
+               sequence, cut)); result < cut) {
+               const int jIndex = indexMap.at(name);
+               mutex.lock();
+               sparseMatrix.addCell(jIndex, {iIndex , result});
+               mutex.unlock();
+           }
+
+        }
+    }, numberOfThreads);
 }

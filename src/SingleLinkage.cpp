@@ -2,13 +2,13 @@
 // Created by Gregory Johnson on 6/17/24.
 //
 
-#include "MothurDependencies/SingleLinkage.h"
+#include "Clusters/SingleLinkage.h"
 
 /***********************************************************************/
 
-SingleLinkage::SingleLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const float c,
-    const std::string& s, const float a) :
-Cluster(rav, lv, dm, c, s, a)
+SingleLinkage::SingleLinkage(RAbundVector* rav, ListVector* lv, SparseDistanceMatrix* dm, const int seed,
+    const float c, const std::string& s, const float a) :
+Cluster(rav, lv, dm, seed, c, s, a)
 {}
 
 
@@ -17,6 +17,16 @@ Cluster(rav, lv, dm, c, s, a)
 std::string SingleLinkage::getTag() {
     return("nn");
 }
+
+ClusterExport* SingleLinkage::Execute() {
+    return ExecuteCluster();
+}
+
+void SingleLinkage::SetClusterParameters(const ClusterParameters &parameters) {
+    const std::unordered_map<std::string, std::string>& params = parameters.GetClusterParameters();
+    precision = std::stoi(params.at("precision"));
+}
+
 /***********************************************************************/
 //This function updates the distance based on the nearest neighbor method.
 bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
@@ -24,7 +34,7 @@ bool SingleLinkage::updateDistance(PDistCell& colCell, PDistCell& rowCell) {
     if (colCell.dist > rowCell.dist) {
         colCell.dist = rowCell.dist;
     }
-    return(changed);
+    return changed;
 
 }
 /***********************************************************************/

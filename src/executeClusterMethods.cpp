@@ -1,0 +1,342 @@
+//
+// Created by Gregory Johnson on 8/21/26.
+//
+
+#include <Rcpp.h>
+
+#include "Adapters/OptimatrixAdapter.h"
+#include "Clusters/AverageLinkage.h"
+#include "Clusters/ClusterMethod.h"
+#include "Clusters/ClusterSplit.h"
+#include "Clusters/CompleteLinkage.h"
+#include "Clusters/OptiCluster.h"
+#include "Clusters/Optifitcluster.h"
+#include "Clusters/SingleLinkage.h"
+#include "Clusters/WeightedLinkage.h"
+#include "Clusters/Metrics/mcc.h"
+#include "Clusters/Metrics/tptn.h"
+#include "DataStructures/ClusterParameters.h"
+// #include "DataStructures/OpticlusterParameters.h"
+// #include "DataStructures/OpticlusterParameters.h"
+#include "DataStructures/SplitMatrix.h"
+#include "FileReaders/DistanceFileReader.h"
+#include "MothurDependencies/OneGapPairwiseDistance.h"
+#include "RNG/RandomNumberSitmo.h"
+#include "SharedFileData/SharedFileBuilder.h"
+
+
+
+Rcpp::DataFrame CreateSharedDataFrame(const CountTableAdapter& countTable, const ClusterExport* result,
+                                      const std::string& binName) {
+    std::unordered_map<std::string, RAbundVector> map;
+    std::unordered_map<std::string, ListVector> listMap;
+    const auto [listVector, label] = result->GetListVector();
+    const SharedFile* sharedFile = SharedFileBuilder::BuildSharedFile(listVector, countTable, binName);
+    Rcpp::DataFrame tidySharedDataFrame = sharedFile->PrintData(binName);
+    delete(sharedFile);
+    return tidySharedDataFrame;
+}
+
+//[[Rcpp::export]]
+Rcpp::List Cluster(const SEXP& DistanceData,const std::string& method, const std::string& featureColumnName,
+    const std::string& binColumnName, const double cutoff, const int seed = 123, const int precision = 100) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    ListVector* listVector = distanceData.get()->GetListVector(); // Going to have to make a copy of list vector, this two values are definitely being changed
+    SparseDistanceMatrix* sparseMatrix = distanceData.get()->GetSparseMatrix(); // Going to have to make a copy of sparse matrix
+    RAbundVector rAbund = listVector->getRAbundVector();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
+    ClusterParameters params;
+    params.SetParameters("precision", std::to_string(precision));
+    ClusterMethod* clusterMethod = Utils::GetClusterMethod(method, listVector, sparseMatrix,
+        rAbund, seed, cutoff);
+    clusterMethod->SetClusterParameters(params);
+    const auto result = clusterMethod->Execute();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    delete(result);
+    delete(listVector);
+    delete(sparseMatrix);
+    delete(clusterMethod);
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+    Rcpp::Named("abundance") = tidySharedDataFrame,
+    Rcpp::Named("cluster") = clusterDataFrame);
+}
+
+//[[Rcpp::export]]
+Rcpp::List OptiClust(const SEXP& DistanceData, const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff, const int seed = 123, const double delta = 1, const int iters = 100,
+    const std::string& initialize = "singleton", const std::string& metricString = "mcc") {
+
+    const Rcpp::XPtr<DistanceFileReader> distanceData(DistanceData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
+    auto listVector = distanceData.get()->GetListVector();
+    const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
+    const OptimatrixAdapter optiAdapter(cutoff);
+    auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
+    delete(sparseMatrix);
+    delete(listVector);
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
+    if (metricString == "mcc" && !optiMatrix->mccValidCalc()) {
+        Rcpp::warning("[WARNING]: The mcc metric is not suitible for your data with a cutoff of " +
+            std::to_string(cutoff) + " using tptn instead.");
+        delete metric;
+        metric = new TPTN();
+    }
+
+
+    // const RandomNumberSitmo rng(seed);
+    ClusterParameters params;
+    params.SetParameters("delta", std::to_string(delta));
+    params.SetParameters("iters", std::to_string(iters));
+    params.SetParameters("initialize", initialize);
+    OptiCluster cluster(optiMatrix, metric, seed, cutoff, 0);
+    cluster.SetClusterParameters(params);
+    const auto* result = cluster.Execute();
+
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    delete metric;
+    delete result;
+    delete optiMatrix;
+
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+}
+
+
+//[[Rcpp::export]]
+Rcpp::List OptiFit(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff, const double fitPercent = 50, const bool isClosed = true, const bool printRef = true,
+    const bool selfReference = false, const bool optimalDenovoCluster = false, const int maxIters = 100,
+    const int denovoIters = 10, const int seed = 123, const std::string& metricString = "mcc",
+    const std::string& refWeight = "") {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
+    auto listVector = distanceData.get()->GetListVector();
+    const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
+    const OptimatrixAdapter optiAdapter(cutoff);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter, fitPercent, refWeight, seed);
+    delete optiMatrix;
+    delete(sparseMatrix);
+    delete(listVector);
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "denovo");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", std::to_string(denovoIters));
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
+    const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
+    size_t index = cluster.GetOptimalDenovoIndex();
+    const std::vector<ListVector>& denovoListVectors = cluster.GetAllDenovoResults();
+    const std::vector<std::unordered_map<std::string, std::vector<std::string>>>& denovoClusterMetrics =
+        cluster.GetAllClusterMetrics();
+    const std::vector<std::unordered_map<std::string, std::vector<std::string>>>& denovoSenSpecMetrics =
+       cluster.GetAllSenSpecMetrics();
+    const auto label = result->GetListVector().label;
+    if (optimalDenovoCluster) {
+        const Rcpp::DataFrame clusterMetricsDataFrame = denovoSenSpecMetrics[index];
+        const Rcpp::DataFrame iterationsMetricsDataFrame = denovoClusterMetrics[index];
+        const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+            featureColumnName, binColumnName);
+        const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+        delete result;
+
+        return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+          Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+    }
+    Rcpp::List results(denovoIters);
+    for (size_t i = 0; i < denovoIters; i++) {
+        ClusterExport* clusterExport = new ClusterExport();
+        clusterExport->SetListVector(denovoListVectors[i], label);
+        const Rcpp::DataFrame clusterDataFrame = denovoListVectors[i].CreateDataFrameFromList(
+            featureColumnName, binColumnName);
+        const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, clusterExport, binColumnName);
+        const Rcpp::DataFrame clusterMetricsDataFrame = denovoSenSpecMetrics[i];
+        const Rcpp::DataFrame iterationsMetricsDataFrame = denovoClusterMetrics[i];
+
+        results[i] = Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+          Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+          Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame,
+          Rcpp::Named("optimal_index") = index + 1);
+        delete clusterExport;
+    }
+    delete result;
+    return results;
+}
+
+//[[Rcpp::export]]
+Rcpp::List OptiFit2(const SEXP& distData, const std::string& featureColumnName, const std::string& binColumnName,
+    const std::vector<std::string>& accnos, const double cutoff, const bool isClosed = true, const bool printRef = true,
+    const bool selfReference = false, const int maxIters = 100, const std::string& metricString = "mcc",
+    const int seed = 123) {
+    const Rcpp::XPtr<DistanceFileReader> distanceData(distData);
+    const CountTableAdapter countTableAdapter = distanceData.get()->GetCountTableAdapter();
+    const auto sparseMatrix =  distanceData.get()->GetSparseMatrix();
+    const auto listVector = distanceData.get()->GetListVector();
+    const bool isSim = distanceData.get()->GetIsSimularity();
+    const auto lastCutoff = distanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        sparseMatrix->FilterSparseMatrix(cutoff);
+    const OptimatrixAdapter optiAdapter(cutoff);
+    const auto* optiMatrix = optiAdapter.ConvertToOptimatrix(sparseMatrix, listVector, isSim);
+    auto* refMatrix = new OptiRefMatrix(optiMatrix, countTableAdapter,
+        {accnos.begin(), accnos.end()}, seed);
+    delete optiMatrix;
+    delete(sparseMatrix);
+    delete(listVector);
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "userref");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", "10");
+    OptiFitCluster cluster(refMatrix, metric, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
+
+    const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    delete(result);
+
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+}
+
+//[[Rcpp::export]]
+Rcpp::List OptiFit3(const SEXP& combinedData, const Rcpp::DataFrame& refList, const std::vector<std::string>& accnos,
+    const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff, const bool isClosed = true, const bool printRef = false, const bool selfReference = true,
+    const int maxIters = 100, const std::string& metricString = "mcc", const int seed = 123) {
+// fitPercent = fitPercent = ((count-refCount) / static_cast<float>(count));
+    const ListVector refListOtuVector = Utils::CreateListVectorFromOtuList(refList["bin_name"],
+        refList["sequence_name"]);
+    const Rcpp::XPtr<DistanceFileReader> combinedDistanceData(combinedData);
+    const CountTableAdapter combinedCountTableAdapter = combinedDistanceData.get()->GetCountTableAdapter();
+    SparseDistanceMatrix* combinedSparseMartix = combinedDistanceData.get()->GetSparseMatrix();
+    const ListVector* combinedListVector = combinedDistanceData.get()->GetListVector();
+    const bool combinedIsSim = combinedDistanceData.get()->GetIsSimularity();
+    const auto lastCutoff = combinedDistanceData.get()->GetCutoff();
+    if(cutoff < lastCutoff)
+        combinedSparseMartix->FilterSparseMatrix(cutoff);
+    const OptimatrixAdapter combinedOptiAdapter(cutoff);
+    const auto* combinedOptiMatrix = combinedOptiAdapter.ConvertToOptimatrix(combinedSparseMartix, combinedListVector, combinedIsSim);
+    delete combinedSparseMartix;
+    delete combinedListVector;
+
+    auto* refMatrix = new OptiRefMatrix(combinedOptiMatrix, combinedCountTableAdapter,
+        {accnos.begin(), accnos.end()}, seed);
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
+    ClusterParameters params;
+    params.SetParameters("selfReference", std::to_string(selfReference));
+    params.SetParameters("iters", std::to_string(maxIters));
+    params.SetParameters("printRef", std::to_string(printRef));
+    params.SetParameters("method", "refcluster");
+    params.SetParameters("closed", std::to_string(isClosed));
+    params.SetParameters("denovoIters", "10");
+    OptiFitCluster cluster(refMatrix, metric, refListOtuVector, cutoff, 0, seed);
+    cluster.SetClusterParameters(params);
+    const auto* result = cluster.Execute();
+    delete metric;
+    delete refMatrix;
+    delete combinedOptiMatrix;
+    const Rcpp::DataFrame clusterMetricsDataFrame = cluster.GetSensitivityData();
+    const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(combinedCountTableAdapter, result, binColumnName);
+    delete(result);
+
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+      Rcpp::Named("abundance") = tidySharedDataFrame,
+      Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = clusterMetricsDataFrame,
+      Rcpp::Named("iteration_metrics") = iterationsMetricsDataFrame);
+}
+
+//[[Rcpp::export]]
+Rcpp::List OptiSplit(const Rcpp::DataFrame& fastaData,
+    const Rcpp::DataFrame& taxonomyData, const Rcpp::DataFrame& countTable, const std::string& clusterMethod,
+    const std::string& featureColumnName, const std::string& binColumnName,
+    const double cutoff, const int taxonomyCutoff, const int seed, const int numberOfThreads,
+    const std::string& metricString = "mcc", const double delta = 1, const int iters = 100,
+    const int precision = 100, const std::string& initialize = "singleton",
+    const std::string& calculatorType = "onegap") {
+    CountTableAdapter countTableAdapter;
+    countTableAdapter.CreateDataFrameMap(countTable);
+    FastaDatabase fastaDatabase(fastaData["sequence_name"], fastaData["sequence"]);
+    std::vector<TaxonomyData> taxonomyDatabase = Utils::CreateTaxonomyData(taxonomyData);
+    PairwiseDistanceCalculator* calculator = Utils::GetPairwiseDistanceCalculator(calculatorType);
+    ClusterParameters parameter(clusterMethod);
+    parameter.SetParameters("delta", std::to_string(delta));
+    parameter.SetParameters("iters", std::to_string(iters));
+    parameter.SetParameters("initialize", initialize);
+    parameter.SetParameters("precision", std::to_string(precision));
+    ClusterMetric* metric = Utils::GetClusterMetric(metricString);
+    ClusterSplit cluster(fastaDatabase, taxonomyDatabase, calculator,
+        parameter, metric, countTableAdapter, cutoff, taxonomyCutoff, seed, numberOfThreads);
+
+    const auto* result = cluster.Execute();
+    delete calculator;
+    delete metric;
+    const Rcpp::DataFrame SensMetricsDataFrame = cluster.GetSensitivityData();
+    // const Rcpp::DataFrame iterationsMetricsDataFrame = cluster.GetClusterMetrics();
+    const auto label = result->GetListVector().label;
+    const Rcpp::DataFrame clusterDataFrame = result->GetListVector().listVector.CreateDataFrameFromList(
+        featureColumnName, binColumnName);
+    const Rcpp::DataFrame tidySharedDataFrame = CreateSharedDataFrame(countTableAdapter, result, binColumnName);
+    delete(result);
+    if (clusterMethod != "opti") {
+        return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame);
+    }
+    return Rcpp::List::create(Rcpp::Named("label") = std::stod(label),
+          Rcpp::Named("abundance") = tidySharedDataFrame,
+          Rcpp::Named("cluster") = clusterDataFrame,
+      Rcpp::Named("cluster_metrics") = SensMetricsDataFrame);
+    // return Rcpp::List::create();
+}

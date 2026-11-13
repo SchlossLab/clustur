@@ -1,12 +1,12 @@
 //
-// Created by Gregory Johnson on 8/21/24.
+// Created by Gregory Johnson on 6/9/26.
 //
 
-#include "MothurDependencies/OpticlusterData.h"
+#include "DataExporters/OptiClusterData.h"
 
-bool OpticlusterData::AddToData(OptiClusterInformation& information) {
+bool OptiClusterData::AddToData(OptiClusterInformation& information) {
     if(information.label.empty())
         return false;
-    opticlusterInformation.emplace_back(information);
+    optiClusterInformation.emplace_back(information);
     return true;
 }

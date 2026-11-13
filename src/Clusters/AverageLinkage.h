@@ -1,0 +1,31 @@
+//
+// Created by Gregory Johnson on 6/17/24.
+//
+
+#ifndef AVERAGELINKAGE_H
+#define AVERAGELINKAGE_H
+#include "Cluster.h"
+#include <string>
+
+#include "ClusterMethod.h"
+
+class AverageLinkage final: public Cluster, public ClusterMethod {
+public:
+    AverageLinkage(RAbundVector*, ListVector*, SparseDistanceMatrix*, int seed,
+        float, std::string, float);
+    bool updateDistance(PDistCell& colCell, PDistCell& rowCell) override;
+    std::string getTag() override;
+    ClusterExport * Execute() override;
+    void SetClusterParameters(const ClusterParameters &) override;
+
+private:
+    unsigned long saveRow;
+    unsigned long saveCol;
+    unsigned long rowBin;
+    unsigned long colBin;
+    unsigned long totalBin;
+
+};
+
+
+#endif //AVERAGELINKAGE_H

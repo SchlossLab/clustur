@@ -5,6 +5,7 @@
 #include "Adapters/CountTableAdapter.h"
 #include "DataStructures/IndexAbundancePair.h"
 #include "MothurDependencies/Utils.h"
+#include <queue>
 
 bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
 
@@ -16,6 +17,7 @@ bool CountTableAdapter::CreateDataFrameMap(const Rcpp::DataFrame& count) {
     for (const auto &name: columnNames) {
         if (sequenceColumn) {
             sequenceColumn = false; //Skip the first column
+            // Sorted in R before we create the counttable adapter
             const std::vector<std::string> sequences = count[name];
             sequenceNames = sequences;
             continue;
@@ -59,7 +61,6 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
         }
 
 
-        Utils util;
         const size_t size = columnData.size();
         for(size_t i = 0; i < size; i++) {
             const std::string& columnString = columnData[i];
@@ -67,7 +68,7 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
                 continue;
             }
             std::vector<std::string> container;
-            util.splitAtComma(columnString, container);
+            Utils::splitAtComma(columnString, container);
             // the first one is the value we are looking for
             if(container[0] == "NA") continue;
             const int groupIndex = std::stoi(container[0]) - 1;
@@ -78,8 +79,8 @@ bool CountTableAdapter::CreateDataFrameMapFromSparseCountTable(const Rcpp::DataF
     }
     groups.insert(groups.end(), columnNames.begin() + 2, columnNames.end());
     while(!indexAbundanceQueue.empty()) {
-        const IndexAbundancePair pair = indexAbundanceQueue.front();
-        data[groups[pair.groupIndex]][pair.sequenceIndex] = pair.abundance;
+        const auto [groupIndex, sequenceIndex, abundance] = indexAbundanceQueue.front();
+        data[groups[groupIndex]][sequenceIndex] = abundance;
         indexAbundanceQueue.pop();
     }
     dataFrameMap = data;
@@ -123,24 +124,72 @@ Rcpp::DataFrame CountTableAdapter::ReCreateDataFrame() const {
     std::vector<std::string> names(size);
     std::unordered_map<std::string, size_t> groupIndexes;
     for(size_t i = 0; i < groups.size(); i++) {
+        // if groups are duplicated, then the index will be wrong.
         groupIndexes[groups[i]] = i;
     }
-    for(const auto& column: dataFrameMap) {
+    for(const auto&[name, columnData]: dataFrameMap) {
 
-        if(column.first == "total") {
-            totals = column.second;
+        if(name == "total") {
+            totals = columnData;
             continue;
         }
-        const size_t index = groupIndexes[column.first];
-        names[index] = column.first;
-        columns[index] = column.second;
+        const size_t index = groupIndexes[name];
+        names[index] = name;
+        columns[index] = columnData;
     }
-    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative Sequences") = sequenceNames,
+    Rcpp::DataFrame countTable = Rcpp::DataFrame::create(Rcpp::Named("Representative_Sequences") = sequenceNames,
         Rcpp::Named("total") = totals);
     for(size_t i = 0; i < size; i++) {
         countTable.push_back(columns[i], names[i]);
     }
     return countTable;
+}
+
+void CountTableAdapter::AddCountTable(const CountTableAdapter &other) {
+    const std::vector<std::string>& sequences = other.GetSequences();
+    const size_t currentSequenceSize = sequenceNames.size();
+    sequenceNames.insert(sequenceNames.end(), sequences.begin(), sequences.end());
+    const size_t otherSequenceSize = sequences.size();
+    const size_t newSequenceSize = currentSequenceSize + otherSequenceSize;
+    nameToRowIndex.reserve(newSequenceSize);
+
+    for(size_t i = 0; i < otherSequenceSize; i++) {
+        nameToRowIndex[sequences[i]] = i + currentSequenceSize;
+    }
+    //std::vector<std::string> uniqueGroups = {groups.begin(), groups.end()};
+    groups.insert(groups.end(), other.groups.begin(), other.groups.end());
+    std::sort(groups.begin(), groups.end());
+    // const auto iter = std::unique(uniqueGroups.begin(), uniqueGroups.end());
+    // groups = {uniqueGroups.begin(), uniqueGroups.end()};
+    groups = {groups.begin(), std::unique(groups.begin(), groups.end())};
+    // groups.insert(groups.end(), other.groups.begin(), other.groups.end());
+    groups.emplace_back("total");
+    for (const auto& group : groups) {
+        //If the same name they will double copy into the same group
+        //
+        const bool currentHasGroup = dataFrameMap.find(group) != dataFrameMap.end();
+        const bool otherHasGroup = other.dataFrameMap.find(group) != other.dataFrameMap.end();
+
+        if (otherHasGroup && currentHasGroup)  { // If they both have it
+            const std::vector<double>& abundances = other.dataFrameMap.at(group);
+            dataFrameMap[group].insert(dataFrameMap[group].end(), abundances.begin(),
+                abundances.end());
+            continue;
+        }
+        // It always means one has it and one doesnt have the group
+        if (!otherHasGroup) {
+            dataFrameMap[group].resize(newSequenceSize, 0);
+            continue;
+        }
+        // Means !currentHasGroup
+        std::vector<double> newAbundances = std::vector<double>(currentSequenceSize, 0);
+        const std::vector<double>& abundances = other.dataFrameMap.at(group);
+        newAbundances.insert(newAbundances.end(), abundances.begin(), abundances.end());
+        dataFrameMap[group] = newAbundances;
+    }
+    groups.pop_back();
+
+
 }
 
 
