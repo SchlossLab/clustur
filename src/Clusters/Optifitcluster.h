@@ -38,7 +38,7 @@ public:
     std::vector<double>  getStats( double&, double&,  double&,  double&);  //combo stats
     std::vector<double>  getFitStats( double&,  double&,  double&,  double&) const; //fitted seqs stats
 
-    ListVector* getList() const;
+    [[nodiscard]] ListVector* getList() const;
     ListVector* getFittedList(const std::string&, bool);
     // std::set<std::string> getUnfittedNames() { return unfittedNames; }
     const std::vector<ListVector>& GetAllDenovoResults() {return denovoListResults;}
@@ -46,7 +46,7 @@ public:
     GetAllSenSpecMetrics() {return senSpecDenovo;}
     std::vector<std::unordered_map<std::string, std::vector<std::string>>>
     GetAllClusterMetrics() {return clusterMetricsDenovo;}
-    size_t GetOptimalDenovoIndex() const {return optimalDenovoIndex;}
+    [[nodiscard]] size_t GetOptimalDenovoIndex() const {return optimalDenovoIndex;}
 
 protected:
     ClusterMetric* metric;
@@ -67,14 +67,14 @@ protected:
     RandomNumberSitmo rng;
     int seed;
 
-    int findInsert() const;
+    [[nodiscard]] int findInsert() const;
 
     ClusterExport *runDenovoOptiCluster(std::map<std::string, int> &counts,
                                         const std::string& outStepFile);
 
-    ClusterExport *runUserRefOptiCluster(ClusterMetric *&metric, const std::vector<std::string>& refListLabels, std::vector<std::vector<std::string>> otus);
+    ClusterExport *runUserRefOptiCluster();
 
-    ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric);
+    ListVector clusterRefs(OptiData *&refsMatrix, ClusterMetric *&metric) const;
 
     ClusterExport *runRefOptiCluster(ListVector refList,
                                      std::map<std::string, int> &counts, const std::string& outStepFile);
@@ -84,15 +84,10 @@ protected:
     void compareSensSpec(OptiRefMatrix *&matrix, ClusterMetric *&userMetric,
                                 std::vector<ListVector> listVectors);
 
-    void outputSteps(const std::string &outputName, bool &printHeaders, double tp, double tn, double fp, double fn,
-                     std::vector<double> results, long long numBins, double fittp, double fittn, double fitfp,
-                     double fitfn,
-                     std::vector<double> fitresults, long long numFitBins, int iter, bool printToFile, int denovoIter);
 
-
-    std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
-    std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
-    ListVector* clusterUnfitted(OptiData *unfittedMatrix, std::string);
+    [[nodiscard]] std::vector<double> getCloseFarCounts(long long seq, long long newBin) const;
+    [[nodiscard]] std::vector<double> getCloseFarFitCounts(long long seq, long long newBin) const;
+    ListVector clusterUnfitted(OptiData *unfittedMatrix) const;
 
 
 
