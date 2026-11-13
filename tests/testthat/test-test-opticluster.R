@@ -13,6 +13,10 @@ test_that("opticluster returns four dataframes", {
 
 })
 
+test_that("Read Dist fails when given incorrect parameters", {
+  expect_error(read_dist(12, count_table),
+               "If you are not using a file")
+})
 test_that("cluster with strollur objects", {
   cutoff <- 0.03
   miseq <- strollur::miseq_sop_example()
@@ -475,6 +479,17 @@ test_that("cluster_split works", {
   expect_true(all(df$label == 0.2))
   expect_true(nrow(df$abundance) == 43)
   expect_true(nrow(df$cluster) == 43)
+
+  df <- cluster_split(fasta, taxonomy, count_table, "opti",
+                      cutoff, 3, pairwise_distance_method = "eachgap",
+                      number_of_threads = 1)
+
+  expect_true(nrow(df$cluster) == 57)
+
+  df <- cluster_split(fasta, taxonomy, count_table, "opti",
+                      cutoff, 3, pairwise_distance_method = "nogap",
+                      number_of_threads = 1)
+  expect_true(nrow(df$cluster) == 53)
 
   # Error checking
   expect_error(cluster_split("fasta", taxonomy, count_table,
