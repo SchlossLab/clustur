@@ -32,6 +32,6 @@ Suggests:
     xml2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: http://www.schlosslab.org/clustur/, https://github.com/SchlossLab/clustur
-BugReports: https://github.com/SchlossLab/clustur/issues
+URL: http://www.schlosslab.org/clustur/, https://github.com/SchlossLab/clustur, https://github.com/SchlossLab/Clustur
+BugReports: https://github.com/SchlossLab/Clustur/issues
 Config/roxygen2/version: 8.0.0

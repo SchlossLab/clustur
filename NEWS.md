@@ -1,5 +1,16 @@
 # clustur (development version)
 
+# clustur 0.2.0
+## New Features
+* Added the new function `optifit()`, which is the cluster.fit method from mothur. You can read up on it [here](https://mothur.org/wiki/cluster.split/).
+* Added the new function `cluster_fit()`, which is the cluster.split method from mothur. You can read up on it [here](https://mothur.org/wiki/cluster.fit/).
+* Added support for `strollur` objects from the `strollur` package. 
+
+## Improvements
+* Optimized all clustering methods to be faster and more memory efficient. 
+* Removed code bloat from the last version.
+* Added more customization to all the clustering functions, you can now input parameters that were in mothur in clustur (i.e metrics, and max_iterations). 
+
 # clustur 0.1.4
 * Updated the `cluster()` function to change the current clustering metric it is using if it is not suitable for your data.
 

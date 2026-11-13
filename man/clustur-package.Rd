@@ -13,7 +13,8 @@ Useful links:
 \itemize{
   \item \url{http://www.schlosslab.org/clustur/}
   \item \url{https://github.com/SchlossLab/clustur}
-  \item Report bugs at \url{https://github.com/SchlossLab/clustur/issues}
+  \item \url{https://github.com/SchlossLab/Clustur}
+  \item Report bugs at \url{https://github.com/SchlossLab/Clustur/issues}
 }
 
 }
