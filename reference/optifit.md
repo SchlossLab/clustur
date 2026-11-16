@@ -204,7 +204,7 @@ clustering performance metrics.
                         ref_count = esophagus_count,
                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
                         pairwise_distance_method = "onegap",
-                        number_of_threads = parallel::detectCores(),
+                        number_of_threads = 1,
                         print_ref = TRUE)
 #> ref_fasta, ref_list, ref_count, and fit_fasta are not NULL, running reference based optifit.
 ```
