@@ -90,8 +90,8 @@ created strollur object to save your clustering results to. This allows you
 to seamless modify your strollur object and analysis results as needed.}
 }
 \value{
-A list of `data.frames` that contain abundance, and clustering
-results.
+A `list` of `data.frames` that contain abundance and clustering
+results, and clustering performance metrics.
 }
 \description{
 Cluster Split splits data into groups based on taxomic group.

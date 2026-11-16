@@ -343,10 +343,12 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #'                         pairwise_distance_method = "onegap",
 #'                         number_of_threads = parallel::detectCores(),
 #'                         print_ref = TRUE)
-#' @return A `list` of a list of `data.frames` that contain abundance,
-#' and clustering
-#' results. If you used `method = opticlust`, it will also return clustering
-#' performance metrics.
+#' @return If used with the denovo method, it will return a `list` of `list`
+#' of `data.frames` that contain abundance and clustering results,
+#' and clustering performance metrics. If used with any other method
+#' (or with the optimal_denovo_result = T parameter), it will return a `list`
+#' of `data.frames` that contain abundance and clustering results, and
+#' clustering performance metrics.
 #' @export
 optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
                     bin_column_name = "bin",  accnos = NULL, ref_fasta = NULL,
@@ -550,8 +552,8 @@ optifit <- function(fit_dist, cutoff, feature_column_name = "feature",
 #'  df <- cluster_split(fasta, taxonomy, count_table, "opti",
 #'                      cutoff, 3, number_of_threads = 1)
 #'
-#' @return A list of `data.frames` that contain abundance, and clustering
-#' results.
+#' @return A `list` of `data.frames` that contain abundance and clustering
+#' results, and clustering performance metrics.
 cluster_split <- function(fasta, taxonomy, count_table, cluster_method, cutoff,
                           taxonomy_cutoff, feature_column_name = "feature",
                           bin_column_name = "bin",

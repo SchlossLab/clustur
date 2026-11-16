@@ -3,9 +3,7 @@
 //
 
 #include <utility>
-
 #include "FileReaders/DistanceFileReader.h"
-
 #include "DataStructures/FastaDatabase.h"
 #include "MothurDependencies/OneGapPairwiseDistance.h"
 #include <RcppThread.h>

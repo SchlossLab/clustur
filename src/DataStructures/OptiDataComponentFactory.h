@@ -6,7 +6,6 @@
 #define REFACTOR_OPTIDATACOMPONENTFACTORY_H
 #include <RcppThread.h>
 #include <mutex>
-#include <atomic>
 #include "FastaDatabase.h"
 #include "OptidataComponents.h"
 #include "../MothurDependencies/PairwiseDistanceCalculator.h"
