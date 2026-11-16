@@ -341,7 +341,7 @@ create_sparse_matrix <- function(i_index, j_index, distances) {
 #'                         ref_count = esophagus_count,
 #'                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
 #'                         pairwise_distance_method = "onegap",
-#'                         number_of_threads = parallel::detectCores(),
+#'                         number_of_threads = 1,
 #'                         print_ref = TRUE)
 #' @return If used with the denovo method, it will return a `list` of `list`
 #' of `data.frames` that contain abundance and clustering results,

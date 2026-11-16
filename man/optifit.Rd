@@ -157,6 +157,6 @@ while unfitted OTUs are clustered into new OTUs.
                         ref_count = esophagus_count,
                         ref_list = esophagus_list, fit_fasta = amazon_fasta,
                         pairwise_distance_method = "onegap",
-                        number_of_threads = parallel::detectCores(),
+                        number_of_threads = 1,
                         print_ref = TRUE)
 }
