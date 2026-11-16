@@ -127,8 +127,8 @@ cluster_split(
 
 ## Value
 
-A list of \`data.frames\` that contain abundance, and clustering
-results.
+A \`list\` of \`data.frames\` that contain abundance and clustering
+results, and clustering performance metrics.
 
 ## Examples
 

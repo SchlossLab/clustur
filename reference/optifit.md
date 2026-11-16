@@ -167,9 +167,12 @@ optifit(
 
 ## Value
 
-A \`list\` of a list of \`data.frames\` that contain abundance, and
-clustering results. If you used \`method = opticlust\`, it will also
-return clustering performance metrics.
+If used with the denovo method, it will return a \`list\` of \`list\` of
+\`data.frames\` that contain abundance and clustering results, and
+clustering performance metrics. If used with any other method (or with
+the optimal_denovo_result = T parameter), it will return a \`list\` of
+\`data.frames\` that contain abundance and clustering results, and
+clustering performance metrics.
 
 ## Examples
 

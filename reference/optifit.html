@@ -222,10 +222,12 @@ to seamless modify your strollur object and analysis results as needed.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A `list` of a list of `data.frames` that contain abundance,
-and clustering
-results. If you used `method = opticlust`, it will also return clustering
-performance metrics.</p>
+    <p>If used with the denovo method, it will return a `list` of `list`
+of `data.frames` that contain abundance and clustering results,
+and clustering performance metrics. If used with any other method
+(or with the optimal_denovo_result = T parameter), it will return a `list`
+of `data.frames` that contain abundance and clustering results, and
+clustering performance metrics.</p>
     </div>
 
     <div class="section level2">
