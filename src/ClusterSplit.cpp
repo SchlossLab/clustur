@@ -30,7 +30,8 @@ ClusterSplit::ClusterSplit(FastaDatabase fastaDatabase, const std::vector<Taxono
                            const int seed,
                            const int numberOfThreads):fastaData(std::move(fastaDatabase)), calculator(calculator),
                                                       clusterParameters(parameters), metric(metric), taxaData(taxaData), countTableAdapter(std::move(adapter)),
-                                                      taxonomyCutoff(taxonomyCutoff), seed(seed), numberOfThreads(numberOfThreads), cutoff(cutoff){}
+                                                      taxonomyCutoff(taxonomyCutoff), seed(seed),
+													  numberOfThreads(numberOfThreads), cutoff(cutoff), tp(0), tn(0), fp(0), fn(0){}
 
 ClusterExport * ClusterSplit::Execute() {
 	std::vector<OptiDataComponent> splitMatrices =
