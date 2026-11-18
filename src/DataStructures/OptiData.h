@@ -106,11 +106,12 @@ public:
 
     [[nodiscard]] virtual std::vector<std::pair<std::string, long long>> getNameIndexMap() const {
         const auto closenessSize = static_cast<long long>(closeness.size());
-        std::vector<std::pair<std::string, long long>> nameIndexes(closenessSize);
+        std::vector<std::pair<std::string, long long>> nameIndexes;
+        nameIndexes.reserve(closenessSize);
         for (long long i = 0; i < closenessSize; i++) {
             std::vector<std::string> thisBinsSeqs;
             Utils::splitAtComma(nameMap[i], thisBinsSeqs);
-            nameIndexes[i] = {thisBinsSeqs[0], i};
+            nameIndexes.emplace_back(thisBinsSeqs[0], i);
         }
         std::sort(nameIndexes.begin(), nameIndexes.end());
         return nameIndexes;
