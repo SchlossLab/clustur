@@ -2,7 +2,11 @@
 
 ## clustur 0.2.0
 
+CRAN release: 2026-11-17
+
 ## clustur 0.2.0
+
+CRAN release: 2026-11-17
 
 ### New Features
 
