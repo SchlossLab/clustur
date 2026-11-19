@@ -33,7 +33,7 @@ SensSpecCalc::SensSpecCalc(const OptiData& matrix, const ListVector* list){
                         nameIndex.end(), name, VectorPairCompare());
                     // auto itSeq1 = nameIndex.find(name);
                     long long seq1Index = -1;
-                    if (itSeq1->first == name) {
+                    if (itSeq1 != nameIndex.cend() && itSeq1->first == name) {
                         seq1Index = itSeq1->second;
                     } //you have distances in the matrix
 
