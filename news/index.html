@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">clustur</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,18 +40,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="clustur-020">clustur 0.2.0<a class="anchor" aria-label="anchor" href="#clustur-020"></a></h2><p class="text-muted">CRAN release: 2026-11-17</p>
-</div>
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="clustur-020-1">clustur 0.2.0<a class="anchor" aria-label="anchor" href="#clustur-020-1"></a></h2><p class="text-muted">CRAN release: 2026-11-17</p>
-<div class="section level3">
-<h3 id="new-features-0-2-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
-<ul><li>Added the new function <code><a href="../reference/optifit.html">optifit()</a></code>, which is the cluster.fit method from mothur. You can read up on it <a href="https://mothur.org/wiki/cluster.split/" class="external-link">here</a>.</li>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="clustur-021">clustur 0.2.1<a class="anchor" aria-label="anchor" href="#clustur-021"></a></h2>
+<ul><li>Fix for Valgrind, M1-SAN, gcc-ASAN, clang-ASAN errors. # clustur 0.2.0 ## New Features</li>
+<li>Added the new function <code><a href="../reference/optifit.html">optifit()</a></code>, which is the cluster.fit method from mothur. You can read up on it <a href="https://mothur.org/wiki/cluster.split/" class="external-link">here</a>.</li>
 <li>Added the new function <code>cluster_fit()</code>, which is the cluster.split method from mothur. You can read up on it <a href="https://mothur.org/wiki/cluster.fit/" class="external-link">here</a>.</li>
 <li>Added support for <code>strollur</code> objects from the <code>strollur</code> package.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="improvements-0-2-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-0"></a></h3>
+</ul><div class="section level3">
+<h3 id="improvements-0-2-1">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-2-1"></a></h3>
 <ul><li>Optimized all clustering methods to be faster and more memory efficient.</li>
 <li>Removed code bloat from the last version.</li>
 <li>Added more customization to all the clustering functions, you can now input parameters that were in mothur in clustur (i.e metrics, and max_iterations).</li>

@@ -1,15 +1,9 @@
 # Changelog
 
-## clustur 0.2.0
+## clustur 0.2.1
 
-CRAN release: 2026-11-17
-
-## clustur 0.2.0
-
-CRAN release: 2026-11-17
-
-### New Features
-
+- Fix for Valgrind, M1-SAN, gcc-ASAN, clang-ASAN errors. \# clustur
+  0.2.0 \## New Features
 - Added the new function
   [`optifit()`](http://www.schlosslab.org/clustur/reference/optifit.md),
   which is the cluster.fit method from mothur. You can read up on it
