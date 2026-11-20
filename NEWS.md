@@ -1,5 +1,5 @@
-# clustur 0.2.0
-
+# clustur 0.2.1
+- Fix for Valgrind, M1-SAN, gcc-ASAN, clang-ASAN errors. 
 # clustur 0.2.0
 ## New Features
 * Added the new function `optifit()`, which is the cluster.fit method from mothur. You can read up on it [here](https://mothur.org/wiki/cluster.split/).
