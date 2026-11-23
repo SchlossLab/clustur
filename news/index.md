@@ -1,5 +1,7 @@
 # Changelog
 
+## clustur (development version)
+
 ## clustur 0.2.1
 
 CRAN release: 2026-11-23

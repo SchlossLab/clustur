@@ -12,15 +12,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/SchlossLab/Clustur/blob/v0.2.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/SchlossLab/Clustur/blob/master/DESCRIPTION)
 
 Johnson G, Westcott S, Schloss P (2026). *clustur: Clustering*. R
-package version 0.2.1, <http://www.schlosslab.org/clustur/>.
+package version 0.2.1.9000, <http://www.schlosslab.org/clustur/>.
 
     @Manual{,
       title = {clustur: Clustering},
       author = {Gregory Johnson and Sarah Westcott and Patrick Schloss},
       year = {2026},
-      note = {R package version 0.2.1},
+      note = {R package version 0.2.1.9000},
       url = {http://www.schlosslab.org/clustur/},
     }
