@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/SchlossLab/Clustur/blob/master/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/SchlossLab/Clustur/blob/v0.2.1/DESCRIPTION)
 
 Johnson G, Westcott S, Schloss P (2026). *clustur: Clustering*. R
 package version 0.2.1, <http://www.schlosslab.org/clustur/>.

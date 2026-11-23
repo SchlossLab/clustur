@@ -2,6 +2,8 @@
 
 ## clustur 0.2.1
 
+CRAN release: 2026-11-23
+
 - Fix for Valgrind, M1-SAN, gcc-ASAN, clang-ASAN errors. \# clustur
   0.2.0 \## New Features
 - Added the new function
